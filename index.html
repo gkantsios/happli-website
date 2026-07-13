@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Happli — Your AI back-office COO for your beauty business</title>
+<meta name="description" content="Happli watches your beauty business, finds what needs attention, prepares the next action, and waits for your approval. Built for spray tan studios, salons, and aesthetic businesses." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600;700&family=Dancing+Script:wght@500;600&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --sage:#b2c4b2;
+    --sage-deep:#728c74;
+    --charcoal:#2f2f2b;
+    --green:#b2c4b2;
+    --green-deep:#9fb59f;
+    --green-soft:#728c74;
+    --ink:#26261f;
+    --muted:#767065;
+    --cream:#f6f2ea;
+    --cream-2:#efe9dd;
+    --paper:#fffdf9;
+    --line:#e6e0d4;
+    --line-soft:#efeae0;
+    --tan:#a68d5b;
+    --white:#ffffff;
+    --shadow:0 18px 50px -20px rgba(50,50,30,.28);
+    --shadow-sm:0 6px 20px -10px rgba(50,50,30,.25);
+    --radius:16px;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+    color:var(--ink);
+    background:var(--paper);
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3,h4{font-family:'Fraunces',Georgia,serif;font-weight:500;color:var(--ink);margin:0;line-height:1.12;letter-spacing:-.01em;}
+  p{margin:0;}
+  a{color:inherit;text-decoration:none;}
+  .wrap{max-width:1160px;margin:0 auto;padding:0 28px;}
+  .eyebrow{font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);font-weight:600;}
+  .eyebrow.tan{color:var(--tan);}
+
+  /* Buttons */
+  .btn{display:inline-flex;align-items:center;gap:9px;font-weight:600;font-size:15px;border-radius:999px;padding:14px 26px;cursor:pointer;border:1px solid transparent;transition:.18s;font-family:inherit;}
+  .btn-primary{background:var(--sage);color:var(--charcoal);}
+  .btn-primary:hover{background:var(--green-deep);}
+  .btn-outline{background:transparent;color:var(--ink);border-color:var(--line);}
+  .btn-outline:hover{border-color:var(--green-soft);background:#fff;}
+  .btn svg{width:16px;height:16px;}
+  .play{width:34px;height:34px;border-radius:999px;border:1.5px solid var(--sage-deep);display:inline-flex;align-items:center;justify-content:center;color:var(--sage-deep);margin-right:-8px;}
+  .play svg{width:12px;height:12px;}
+
+  /* Nav */
+  header.nav{position:sticky;top:0;z-index:50;background:rgba(255,253,249,.86);backdrop-filter:blur(10px);border-bottom:1px solid var(--line-soft);}
+  .nav-inner{display:flex;align-items:center;justify-content:space-between;height:76px;}
+  .logo{display:inline-flex;align-items:center;}
+  .logo img{height:40px;width:auto;display:block;}
+  .nav-links{display:flex;gap:34px;}
+  .nav-links a{font-size:15px;color:var(--ink);font-weight:500;transition:.15s;}
+  .nav-links a:hover{color:var(--sage-deep);}
+  .nav-cta{font-size:14px;padding:12px 22px;}
+
+  /* Hero */
+  .hero{background:var(--cream);border-bottom:1px solid var(--line-soft);}
+  .hero-grid{display:grid;grid-template-columns:0.92fr 1.08fr;gap:56px;align-items:center;padding:76px 0 84px;}
+  .hero h1{font-size:58px;margin:22px 0 24px;}
+  .hero .lead{font-size:19px;color:#4a473f;max-width:440px;}
+  .script{font-family:'Dancing Script',cursive;font-size:27px;color:var(--green-soft);margin:22px 0 6px;transform:rotate(-2deg);display:inline-block;}
+  .hero-actions{display:flex;gap:16px;align-items:center;flex-wrap:wrap;margin:26px 0 22px;}
+  .fineprint{font-size:14px;color:var(--muted);}
+
+  /* Hero dashboard card */
+  .dash{background:#fff;border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);overflow:hidden;font-size:12px;}
+  .dash-top{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--line-soft);}
+  .dash-brand{font-family:'Fraunces',serif;font-weight:600;font-size:17px;color:var(--ink);}
+  .dash-acct{display:flex;align-items:center;gap:8px;color:var(--muted);}
+  .dash-acct .who{font-weight:600;color:var(--ink);font-size:12px;line-height:1.2;}
+  .dash-acct .sub{font-size:10.5px;color:var(--muted);}
+  .avatar{width:24px;height:24px;border-radius:50%;background:var(--cream-2);display:flex;align-items:center;justify-content:center;color:var(--green-soft);}
+  .dash-body{display:grid;grid-template-columns:150px 1fr;}
+  .dash-side{border-right:1px solid var(--line-soft);padding:16px 12px;display:flex;flex-direction:column;gap:4px;min-height:340px;}
+  .side-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:10px;color:var(--muted);font-weight:500;font-size:12.5px;}
+  .side-item.active{background:var(--cream);color:var(--ink);font-weight:600;}
+  .side-item svg{width:15px;height:15px;}
+  .badge{margin-left:auto;background:var(--sage-deep);color:#fff;font-size:10px;font-weight:600;border-radius:999px;padding:1px 7px;}
+  .side-foot{margin-top:auto;color:var(--muted);font-size:12px;padding:8px 12px;}
+  .dash-main{padding:18px 20px;}
+  .dash-main h4{font-family:'Fraunces',serif;font-size:16px;font-weight:600;}
+  .dash-main .desc{color:var(--muted);font-size:11.5px;margin:4px 0 14px;}
+  .prio{border:1px solid var(--line-soft);border-radius:12px;padding:13px 15px;margin-bottom:10px;display:flex;justify-content:space-between;gap:12px;}
+  .prio-tag{font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--tan);font-weight:700;}
+  .prio-title{font-weight:600;font-size:12.5px;margin:5px 0 3px;color:var(--ink);}
+  .prio-sub{color:var(--muted);font-size:11px;line-height:1.4;}
+  .prio-btn{display:inline-block;margin-top:9px;border:1px solid var(--line);border-radius:8px;padding:5px 11px;font-size:11px;font-weight:600;color:var(--ink);}
+  .prio-right{text-align:right;min-width:96px;display:flex;flex-direction:column;align-items:flex-end;gap:4px;}
+  .prio-right .lbl{font-size:9px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);}
+  .prio-right .val{font-family:'Fraunces',serif;font-weight:600;font-size:16px;color:var(--ink);}
+  .prio-right .val small{display:block;font-family:'Inter';font-weight:500;font-size:9.5px;color:var(--muted);}
+  .prio-ic{width:26px;height:26px;border-radius:8px;background:var(--cream);display:flex;align-items:center;justify-content:center;color:var(--green-soft);margin-top:2px;}
+  .prio-ic svg{width:14px;height:14px;}
+  .recent{border-top:1px solid var(--line-soft);margin-top:8px;padding-top:12px;}
+  .recent h5{font-family:'Fraunces',serif;font-size:12.5px;font-weight:600;margin-bottom:8px;}
+  .recent-row{display:flex;justify-content:space-between;color:var(--muted);font-size:11px;}
+
+  /* Section shells */
+  section{padding:88px 0;}
+  .section-head{text-align:center;max-width:720px;margin:0 auto;}
+  .section-head h2{font-size:34px;margin-top:14px;}
+
+  /* Value trio */
+  .trio{display:grid;grid-template-columns:repeat(3,1fr);gap:0;margin-top:56px;}
+  .trio-col{text-align:center;padding:0 36px;position:relative;}
+  .trio-col + .trio-col::before{content:"";position:absolute;left:0;top:6px;bottom:6px;width:1px;background:var(--line-soft);}
+  .trio-ic{width:64px;height:64px;border-radius:50%;background:var(--cream);display:flex;align-items:center;justify-content:center;margin:0 auto 20px;color:var(--sage-deep);}
+  .trio-ic svg{width:26px;height:26px;}
+  .trio-col h3{font-size:19px;margin-bottom:10px;}
+  .trio-col p{color:var(--muted);font-size:15px;}
+
+  /* How it works */
+  .how{background:var(--paper);}
+  .how-grid{display:grid;grid-template-columns:0.85fr 1.15fr;gap:56px;align-items:center;margin-top:52px;}
+  .steps{display:flex;flex-direction:column;gap:6px;}
+  .step{display:grid;grid-template-columns:34px 1fr;gap:18px;padding:14px 0;position:relative;}
+  .step-num{width:32px;height:32px;border-radius:50%;background:var(--sage);color:var(--charcoal);font-weight:600;font-size:14px;display:flex;align-items:center;justify-content:center;font-family:'Fraunces',serif;z-index:2;}
+  .step:not(:last-child) .step-num::after{content:"";position:absolute;left:16px;top:46px;bottom:-14px;width:1.5px;background:var(--line);}
+  .step h3{font-size:18px;margin-bottom:5px;}
+  .step p{color:var(--muted);font-size:14.5px;}
+
+  /* Messages preview */
+  .msg-stack{position:relative;}
+  .msg-card{background:#fff;border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);overflow:hidden;font-size:12px;}
+  .msg-top{display:flex;align-items:center;gap:14px;padding:15px 18px;border-bottom:1px solid var(--line-soft);}
+  .msg-top .t{font-family:'Fraunces',serif;font-weight:600;font-size:16px;}
+  .msg-tab{font-size:12px;color:var(--muted);padding-bottom:2px;}
+  .msg-tab.active{color:var(--ink);font-weight:600;border-bottom:2px solid var(--sage-deep);}
+  .msg-sub{padding:12px 18px 6px;color:var(--muted);font-weight:600;font-size:11px;}
+  table.msg{width:100%;border-collapse:collapse;}
+  table.msg th{text-align:left;font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600;padding:6px 18px;}
+  table.msg td{padding:8px 18px;border-top:1px solid var(--line-soft);font-size:11.5px;color:#3f3c34;}
+  .pill{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:var(--cream-2);color:var(--green-soft);font-size:10px;font-weight:600;}
+  .chan{color:var(--muted);}
+  .review-card{position:absolute;right:-18px;bottom:-26px;width:300px;background:#fff;border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);padding:18px;font-size:12px;}
+  .review-card h5{font-family:'Fraunces',serif;font-size:14px;font-weight:600;display:flex;align-items:center;gap:8px;margin-bottom:12px;}
+  .sms-tag{background:var(--cream-2);color:var(--green-soft);font-size:9px;font-weight:700;letter-spacing:.06em;border-radius:5px;padding:2px 6px;}
+  .review-card p{color:#45423a;font-size:12px;line-height:1.5;margin-bottom:10px;}
+  .review-link{color:var(--sage-deep);font-weight:600;display:inline-flex;align-items:center;gap:5px;font-size:12px;margin-bottom:12px;}
+  .why{font-weight:600;font-size:12px;margin-bottom:3px;}
+  .why-txt{color:var(--muted);font-size:11.5px;margin-bottom:14px;line-height:1.45;}
+  .review-actions{display:flex;gap:8px;}
+  .ra{flex:1;text-align:center;font-size:12px;font-weight:600;border-radius:8px;padding:8px 0;cursor:pointer;border:1px solid transparent;}
+  .ra.approve{background:var(--sage);color:var(--charcoal);}
+  .ra.edit{background:var(--cream);color:var(--ink);border-color:var(--line);}
+  .ra.reject{background:#fff;color:#b0555a;border-color:#e7cdcf;}
+
+  /* Trust */
+  .trust{background:var(--cream);}
+  .trust-row{display:grid;grid-template-columns:repeat(5,1fr);gap:26px;margin-top:52px;}
+  .trust-col{text-align:center;}
+  .trust-ic{width:52px;height:52px;margin:0 auto 16px;display:flex;align-items:center;justify-content:center;color:var(--sage-deep);}
+  .trust-ic svg{width:30px;height:30px;stroke-width:1.4;}
+  .trust-col p{font-size:14px;color:#43403a;max-width:170px;margin:0 auto;}
+
+  /* Pricing */
+  .pricing{background:var(--paper);}
+  .price-card-outer{background:var(--cream);border-radius:24px;padding:52px;display:grid;grid-template-columns:0.95fr 1.05fr;gap:52px;align-items:center;position:relative;overflow:hidden;}
+  .price-left h2{font-size:30px;line-height:1.15;margin-bottom:24px;}
+  .checklist{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:13px;}
+  .checklist li{display:flex;gap:12px;align-items:flex-start;font-size:15px;color:#3f3c34;}
+  .check{flex:none;width:22px;height:22px;border-radius:50%;background:var(--sage);display:flex;align-items:center;justify-content:center;margin-top:1px;}
+  .check svg{width:12px;height:12px;color:var(--charcoal);}
+  .tiers{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px;}
+  .tier{background:#fff;border:1px solid var(--line);border-radius:14px;padding:22px 14px;text-align:center;}
+  .tier .loc{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:14px;}
+  .tier .amt{font-family:'Fraunces',serif;font-size:34px;font-weight:600;color:var(--ink);}
+  .tier .per{font-size:12px;color:var(--muted);}
+  .price-note{font-size:12.5px;color:var(--muted);line-height:1.5;margin-bottom:22px;max-width:430px;}
+  .price-cta{width:100%;justify-content:center;padding:16px;font-size:15px;}
+  .leaf{position:absolute;right:-40px;bottom:-40px;width:260px;height:260px;opacity:.5;pointer-events:none;}
+
+  /* Footer */
+  footer{background:var(--charcoal);color:#e9ecdf;padding:56px 0 40px;}
+  .foot-grid{display:flex;justify-content:space-between;align-items:flex-start;gap:40px;flex-wrap:wrap;}
+  .foot-logo{font-family:'Fraunces',serif;font-weight:600;font-size:24px;color:#fff;}
+  .foot-tag{color:#c7cdb6;font-size:14px;margin-top:8px;max-width:280px;}
+  .foot-links{display:flex;gap:40px;flex-wrap:wrap;}
+  .foot-col h5{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:#aab493;margin-bottom:14px;font-family:'Inter';font-weight:600;}
+  .foot-col a{display:block;color:#dfe4d2;font-size:14px;margin-bottom:9px;transition:.15s;}
+  .foot-col a:hover{color:#fff;}
+  .foot-bottom{border-top:1px solid rgba(255,255,255,.14);margin-top:40px;padding-top:22px;display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;color:#aab493;font-size:13px;}
+
+  /* Responsive */
+  @media(max-width:900px){
+    .nav-links,.nav-cta{display:none;}
+    .hero-grid,.how-grid,.price-card-outer{grid-template-columns:1fr;gap:40px;}
+    .hero h1{font-size:44px;}
+    .trio{grid-template-columns:1fr;gap:40px;}
+    .trio-col{padding:0;}
+    .trio-col + .trio-col::before{display:none;}
+    .trust-row{grid-template-columns:repeat(2,1fr);gap:32px;}
+    .section-head h2,.price-left h2{font-size:27px;}
+    .review-card{position:static;width:100%;margin-top:16px;}
+    .price-card-outer{padding:32px 22px;}
+  }
+  @media(max-width:520px){
+    .wrap{padding:0 18px;}
+    .hero h1{font-size:36px;}
+    .tiers{grid-template-columns:1fr;}
+    .trust-row{grid-template-columns:1fr;}
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<header class="nav">
+  <div class="wrap nav-inner">
+    <a href="#" class="logo"><img src="logo.png" alt="Happli" /></a>
+    <nav class="nav-links">
+      <a href="#how">How It Works</a>
+      <a href="#what">What You Get</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#roadmap">Roadmap</a>
+    </nav>
+    <a href="#pricing" class="btn btn-primary nav-cta">Become a Founding Member</a>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero" style="padding:0;">
+  <div class="wrap hero-grid">
+    <div class="hero-left">
+      <span class="eyebrow">AI Back-Office COO for Beauty Businesses</span>
+      <h1>Your AI back-office COO for your beauty business.</h1>
+      <p class="lead">Happli watches your business, finds what needs attention, prepares the next action, and waits for your approval.</p>
+      <div class="script">Nothing goes out without your say-so.</div>
+      <div class="hero-actions">
+        <a href="#how" class="btn btn-primary">See Happli in Action
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M13 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+        <a href="#" class="btn btn-outline">
+          <span class="play"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span>
+          Watch 2 Min Overview
+        </a>
+      </div>
+      <p class="fineprint">Built for spray tan studios, salons, and aesthetic businesses.</p>
+    </div>
+
+    <!-- Hero dashboard -->
+    <div class="dash">
+      <div class="dash-top">
+        <div class="dash-brand">Happli.</div>
+        <div class="dash-acct">
+          <div style="text-align:right;">
+            <div class="who">A Spray of Sunshine</div>
+            <div class="sub">2 locations</div>
+          </div>
+          <div class="avatar"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6"/></svg></div>
+        </div>
+      </div>
+      <div class="dash-body">
+        <aside class="dash-side">
+          <div class="side-item active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>Home</div>
+          <div class="side-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>Analytics</div>
+          <div class="side-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Messages<span class="badge">7</span></div>
+          <div class="side-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 0 0-.1-1l2-1.5-2-3.4-2.3 1a7 7 0 0 0-1.7-1l-.3-2.5H9.4l-.3 2.5a7 7 0 0 0-1.7 1l-2.3-1-2 3.4 2 1.5a7 7 0 0 0 0 2l-2 1.5 2 3.4 2.3-1a7 7 0 0 0 1.7 1l.3 2.5h5.2l.3-2.5a7 7 0 0 0 1.7-1l2.3 1 2-3.4-2-1.5a7 7 0 0 0 .1-1z"/></svg>Settings</div>
+          <div class="side-foot">Sign out</div>
+        </aside>
+        <main class="dash-main">
+          <h4>Here's what I'd focus on today</h4>
+          <div class="desc">Based on your data, here are 3 priorities that will have the biggest impact.</div>
+
+          <div class="prio">
+            <div>
+              <div class="prio-tag">Fill Slow Days</div>
+              <div class="prio-title">Wednesday is trending slow</div>
+              <div class="prio-sub">Only 18% booked. Send a rebooking offer to fill open slots.</div>
+              <span class="prio-btn">View details</span>
+            </div>
+            <div class="prio-right">
+              <div class="lbl">Potential impact</div>
+              <div class="val">$1,450<small>revenue</small></div>
+              <div class="prio-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></div>
+            </div>
+          </div>
+
+          <div class="prio">
+            <div>
+              <div class="prio-tag">Get More Reviews</div>
+              <div class="prio-title">7 review requests ready</div>
+              <div class="prio-sub">Clients had a great experience and haven't left a review.</div>
+              <span class="prio-btn">Review requests</span>
+            </div>
+            <div class="prio-right">
+              <div class="lbl">Potential impact</div>
+              <div class="val">+7<small>new reviews</small></div>
+              <div class="prio-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2l2.9 6.3 6.9.7-5.2 4.6 1.5 6.8L12 17.8 5.9 20.4l1.5-6.8L2.2 9l6.9-.7z"/></svg></div>
+            </div>
+          </div>
+
+          <div class="prio">
+            <div>
+              <div class="prio-tag">Reconnect Clients</div>
+              <div class="prio-title">307 clients due to return</div>
+              <div class="prio-sub">It's been 45+ days since their last visit.</div>
+              <span class="prio-btn">View clients</span>
+            </div>
+            <div class="prio-right">
+              <div class="lbl">Potential impact</div>
+              <div class="val">$2,890<small>revenue</small></div>
+              <div class="prio-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8"/></svg></div>
+            </div>
+          </div>
+
+          <div class="recent">
+            <h5>Recent activity</h5>
+            <div class="recent-row"><span>Review campaign approved for 7 clients</span><span>2h ago</span></div>
+          </div>
+        </main>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- VALUE TRIO -->
+<section id="what">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>Happli helps you run the back office&mdash;so you can focus on what you do best.</h2>
+    </div>
+    <div class="trio">
+      <div class="trio-col">
+        <div class="trio-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 17l6-6 4 4 8-8" stroke-linecap="round" stroke-linejoin="round"/><path d="M17 7h4v4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <h3>Know what needs attention</h3>
+        <p>Happli reviews your business data every day and gives you a prioritized plan of what will make the biggest impact.</p>
+      </div>
+      <div class="trio-col">
+        <div class="trio-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></div>
+        <h3>Prepare the next action</h3>
+        <p>It drafts messages, campaigns, review requests, and recommendations in your brand voice&mdash;ready for you to review.</p>
+      </div>
+      <div class="trio-col">
+        <div class="trio-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <h3>Keep you in control</h3>
+        <p>You review, edit, approve, or reject everything before it reaches a client. Human approval is always part of the process.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section id="how" class="how">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow tan">How Happli Works</span>
+      <h2>From business data to completed action.</h2>
+    </div>
+    <div class="how-grid">
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div><h3>Connect your business</h3><p>Happli securely connects to your booking system, locations, services, and clients.</p></div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div><h3>Identify what matters</h3><p>It analyzes your data to surface opportunities, risks, and changes that need your attention.</p></div>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div><h3>Prepare the work</h3><p>Happli creates the messages, campaigns, and recommendations&mdash;explaining the why.</p></div>
+        </div>
+        <div class="step">
+          <div class="step-num">4</div>
+          <div><h3>You approve</h3><p>Nothing is sent without your approval. You stay in complete control.</p></div>
+        </div>
+      </div>
+
+      <div class="msg-stack">
+        <div class="msg-card">
+          <div class="msg-top">
+            <span class="t">Messages</span>
+            <span class="badge">7</span>
+            <span class="msg-tab active" style="margin-left:auto;">Approvals</span>
+          </div>
+          <div class="msg-sub">Recipients (7)</div>
+          <table class="msg">
+            <thead><tr><th></th><th>Channel</th><th>Type</th><th>Service</th></tr></thead>
+            <tbody>
+              <tr><td><span class="pill">JS</span> Jodi S.</td><td class="chan">SMS</td><td>Review Request</td><td>Pre-Paid Tan</td></tr>
+              <tr><td><span class="pill">HS</span> Hannah S.</td><td class="chan">SMS</td><td>Review Request</td><td>Studio Spray Tan</td></tr>
+              <tr><td><span class="pill">AC</span> Anne C.</td><td class="chan">SMS</td><td>Review Request</td><td>Membership Tan</td></tr>
+              <tr><td><span class="pill">TK</span> Tiphanie K.</td><td class="chan">SMS</td><td>Review Request</td><td>Studio Tan</td></tr>
+              <tr><td><span class="pill">CW</span> Cathy W.</td><td class="chan">SMS</td><td>Review Request</td><td>Studio Tan</td></tr>
+              <tr><td><span class="pill">AD</span> Amanda D.</td><td class="chan">SMS</td><td>Review Request</td><td>Studio Spray Tan</td></tr>
+              <tr><td><span class="pill">MR</span> Marisa R.</td><td class="chan">SMS</td><td>Review Request</td><td>Studio Tan</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="review-card">
+          <h5>Review request for Jodi S. <span class="sms-tag">SMS</span></h5>
+          <p>Hi Jodi! Thanks for visiting A Spray of Sunshine &mdash; we'd love a quick Google review:</p>
+          <a href="#" class="review-link">Google review link
+            <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6M10 14L21 3"/></svg>
+          </a>
+          <div class="why">Why this recipient?</div>
+          <div class="why-txt">Jodi completed Pre-Paid Tan &ndash; Regular on Jul 10. No review request in 90 days.</div>
+          <div class="review-actions">
+            <span class="ra approve">Approve</span>
+            <span class="ra edit">Edit</span>
+            <span class="ra reject">Reject</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TRUST -->
+<section id="roadmap" class="trust">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow tan">AI That Works With You&mdash;Not Around You</span>
+      <h2>Happli is designed to earn your trust.</h2>
+    </div>
+    <div class="trust-row">
+      <div class="trust-col">
+        <div class="trust-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/><circle cx="12" cy="16" r="1"/></svg></div>
+        <p>Nothing sends automatically</p>
+      </div>
+      <div class="trust-col">
+        <div class="trust-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
+        <p>Every recommendation includes the reason behind it</p>
+      </div>
+      <div class="trust-col">
+        <div class="trust-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></div>
+        <p>Every outgoing message can be reviewed and edited</p>
+      </div>
+      <div class="trust-col">
+        <div class="trust-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+        <p>Each business and location stays separate and secure</p>
+      </div>
+      <div class="trust-col">
+        <div class="trust-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 3l1.9 4.6L18.5 9l-3.6 3 1.1 4.8L12 14.7 8 16.8 9.1 12 5.5 9l4.6-1.4z"/><path d="M19 3v3M20.5 4.5h-3M5 18v2M6 19H4" stroke-linecap="round"/></svg></div>
+        <p>Built specifically for beauty businesses</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section id="pricing" class="pricing">
+  <div class="wrap">
+    <div class="price-card-outer">
+      <div class="price-left">
+        <span class="eyebrow tan">Founding Member Program</span>
+        <h2 style="margin-top:14px;">Help shape the COO beauty businesses actually need.</h2>
+        <ul class="checklist">
+          <li><span class="check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M4 12l5 5L20 6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Locked founding pricing for current locations</li>
+          <li><span class="check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M4 12l5 5L20 6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>White-glove onboarding &amp; priority support</li>
+          <li><span class="check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M4 12l5 5L20 6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Early access to new capabilities</li>
+          <li><span class="check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M4 12l5 5L20 6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Direct influence on the product roadmap</li>
+          <li><span class="check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M4 12l5 5L20 6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Featured as a founding case study</li>
+        </ul>
+      </div>
+
+      <div class="price-right">
+        <div class="tiers">
+          <div class="tier"><div class="loc">1 Location</div><div class="amt">$99</div><div class="per">/month</div></div>
+          <div class="tier"><div class="loc">2 Locations</div><div class="amt">$149</div><div class="per">/month</div></div>
+          <div class="tier"><div class="loc">3 Locations</div><div class="amt">$199</div><div class="per">/month</div></div>
+        </div>
+        <p class="price-note">Normal email and SMS usage included during the founding phase. Unusually high messaging usage, dedicated phone numbers, or carrier fees may be priced separately in the future. Founding pricing applies to the locations enrolled when you join.</p>
+        <a href="#" class="btn btn-primary price-cta">Become a Founding Member
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M13 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+      </div>
+      <svg class="leaf" viewBox="0 0 200 200" fill="none"><path d="M180 20C120 30 40 70 20 180c90-10 150-70 160-160z" fill="#b2c4b2" opacity=".55"/><path d="M170 30C120 60 60 110 30 170" stroke="#9fb59f" stroke-width="1.5"/></svg>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <div class="foot-logo">Happli.</div>
+        <p class="foot-tag">Your AI back-office COO for spray tan studios, salons, and aesthetic businesses.</p>
+      </div>
+      <div class="foot-links">
+        <div class="foot-col">
+          <h5>Product</h5>
+          <a href="#how">How It Works</a>
+          <a href="#what">What You Get</a>
+          <a href="#pricing">Pricing</a>
+          <a href="#roadmap">Roadmap</a>
+        </div>
+        <div class="foot-col">
+          <h5>Company</h5>
+          <a href="#">About</a>
+          <a href="#">Contact</a>
+          <a href="#">Careers</a>
+        </div>
+        <div class="foot-col">
+          <h5>Legal</h5>
+          <a href="#">Privacy</a>
+          <a href="#">Terms</a>
+          <a href="#">Security</a>
+        </div>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>&copy; 2026 Happli. All rights reserved.</span>
+      <span>Nothing goes out without your say-so.</span>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
