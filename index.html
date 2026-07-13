@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Happli — Your AI back-office COO for your beauty business</title>
-<meta name="description" content="Happli watches your beauty business, finds what needs attention, prepares the next action, and waits for your approval. Built for spray tan studios, salons, and aesthetic businesses." />
+<title>Happli — AI Operating Partner for Beauty Businesses</title>
+<meta name="description" content="Happli watches your numbers, spots what needs attention, prepares the next move, and waits for your approval. Built for spray tan studios, salons, and aesthetic businesses." />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600;700&family=Dancing+Script:wght@500;600&display=swap" rel="stylesheet" />
@@ -76,7 +76,8 @@
   .fineprint{font-size:14px;color:var(--muted);}
 
   /* Hero dashboard card — mirrors the Happli app UI */
-  .dash{background:#fff;border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);overflow:hidden;font-size:12px;}
+  .dash{background:#fff;border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);overflow:hidden;font-size:12px;position:relative;max-height:512px;}
+  .dash::after{content:"";position:absolute;left:0;right:0;bottom:0;height:104px;background:linear-gradient(to bottom,rgba(255,255,255,0),#ffffff 92%);pointer-events:none;z-index:2;}
   .dash-body{display:grid;grid-template-columns:160px 1fr;}
   .dash-side{border-right:1px solid var(--line-soft);padding:16px 12px;display:flex;flex-direction:column;gap:3px;background:#fff;}
   .dash-logo{font-family:'Fraunces',serif;font-weight:600;font-size:18px;color:var(--ink);padding:4px 10px 2px;}
@@ -176,6 +177,17 @@
   .trust-ic svg{width:30px;height:30px;stroke-width:1.4;}
   .trust-col p{font-size:14px;color:#43403a;max-width:170px;margin:0 auto;}
 
+  /* What's Next — editorial roadmap */
+  .whatsnext{background:var(--paper);}
+  .wn-intro{max-width:660px;margin:16px auto 0;color:var(--muted);font-size:16.5px;text-align:center;line-height:1.6;}
+  .wn-grid{display:grid;grid-template-columns:1fr 1fr;gap:72px;margin-top:60px;}
+  .wn-col-label{font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--tan);font-weight:600;margin-bottom:4px;}
+  .wn-item{padding:26px 0;border-top:1px solid var(--line-soft);display:grid;grid-template-columns:44px 1fr;gap:18px;align-items:start;}
+  .wn-num{font-family:'Fraunces',serif;font-size:17px;color:var(--sage-deep);font-weight:500;letter-spacing:.02em;}
+  .wn-item h3{font-size:19px;margin-bottom:8px;letter-spacing:-.005em;}
+  .wn-item p{color:var(--muted);font-size:15px;line-height:1.6;}
+  .wn-note{max-width:740px;margin:56px auto 0;text-align:center;color:var(--muted);font-size:14.5px;font-style:italic;line-height:1.6;}
+
   /* Pricing */
   .pricing{background:var(--paper);}
   .price-card-outer{background:var(--cream);border-radius:24px;padding:52px;display:grid;grid-template-columns:0.95fr 1.05fr;gap:52px;align-items:center;position:relative;overflow:hidden;}
@@ -213,6 +225,8 @@
     .trio-col{padding:0;}
     .trio-col + .trio-col::before{display:none;}
     .trust-row{grid-template-columns:repeat(2,1fr);gap:32px;}
+    .wn-grid{grid-template-columns:1fr;gap:8px;margin-top:44px;}
+    .wn-col + .wn-col{margin-top:44px;}
     .section-head h2,.price-left h2{font-size:27px;}
     .review-card{position:static;width:100%;margin-top:16px;}
     .price-card-outer{padding:32px 22px;}
@@ -245,9 +259,9 @@
 <section class="hero" style="padding:0;">
   <div class="wrap hero-grid">
     <div class="hero-left">
-      <span class="eyebrow">AI Back-Office COO for Beauty Businesses</span>
-      <h1>Your AI back-office COO for your beauty business.</h1>
-      <p class="lead">Happli watches your business, finds what needs attention, prepares the next action, and waits for your approval.</p>
+      <span class="eyebrow">AI Operating Partner for Beauty Businesses</span>
+      <h1>Run your beauty business with a COO in your corner.</h1>
+      <p class="lead">Happli watches your numbers, spots what needs attention, prepares the next move, and waits for your approval.</p>
       <div class="script">Nothing goes out without your say-so.</div>
       <div class="hero-actions">
         <a href="#how" class="btn btn-primary">See Happli in Action
@@ -341,7 +355,7 @@
       <div class="trio-col">
         <div class="trio-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 17l6-6 4 4 8-8" stroke-linecap="round" stroke-linejoin="round"/><path d="M17 7h4v4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
         <h3>Know what needs attention</h3>
-        <p>Happli reviews your business data every day and gives you a prioritized plan of what will make the biggest impact.</p>
+        <p>Happli reviews your business data every day and gives you a prioritized plan of what deserves attention first.</p>
       </div>
       <div class="trio-col">
         <div class="trio-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></div>
@@ -426,7 +440,7 @@
 </section>
 
 <!-- TRUST -->
-<section id="roadmap" class="trust">
+<section id="trust" class="trust">
   <div class="wrap">
     <div class="section-head">
       <span class="eyebrow tan">AI That Works With You&mdash;Not Around You</span>
@@ -454,6 +468,50 @@
         <p>Built specifically for beauty businesses</p>
       </div>
     </div>
+  </div>
+</section>
+
+<!-- WHAT'S NEXT -->
+<section id="roadmap" class="whatsnext">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow tan">What's Next</span>
+      <h2>More of the business, handled.</h2>
+      <p class="wn-intro">Happli is growing around the work beauty business owners told us is easiest to miss&mdash;and hardest to keep up with.</p>
+    </div>
+    <div class="wn-grid">
+      <div class="wn-col">
+        <div class="wn-col-label">Coming next</div>
+        <div class="wn-item">
+          <div class="wn-num">01</div>
+          <div><h3>Rebooking and win-back campaigns</h3><p>Turn overdue-client insights into thoughtful outreach that is ready for your approval.</p></div>
+        </div>
+        <div class="wn-item">
+          <div class="wn-num">02</div>
+          <div><h3>Branded email campaigns</h3><p>Preview the exact on-brand email your clients will receive before anything is sent.</p></div>
+        </div>
+        <div class="wn-item">
+          <div class="wn-num">03</div>
+          <div><h3>Google reviews and Business Profile tools</h3><p>Monitor reviews, prepare responses, and manage each location's online presence.</p></div>
+        </div>
+      </div>
+      <div class="wn-col">
+        <div class="wn-col-label">On the roadmap</div>
+        <div class="wn-item">
+          <div class="wn-num">04</div>
+          <div><h3>Missed-call follow-up</h3><p>Respond to new leads while you are with a client&mdash;before the opportunity goes cold.</p></div>
+        </div>
+        <div class="wn-item">
+          <div class="wn-num">05</div>
+          <div><h3>Your daily briefing by text</h3><p>Receive the priorities, numbers, and approvals that need you directly on your phone.</p></div>
+        </div>
+        <div class="wn-item">
+          <div class="wn-num">06</div>
+          <div><h3>Social content and scheduling</h3><p>Create and schedule on-brand content without starting from a blank page.</p></div>
+        </div>
+      </div>
+    </div>
+    <p class="wn-note">Also planned: call-and-message attribution, expanded booking integrations, and more ways to connect marketing activity to appointments and revenue.</p>
   </div>
 </section>
 
@@ -495,7 +553,7 @@
     <div class="foot-grid">
       <div>
         <div class="foot-logo">Happli.</div>
-        <p class="foot-tag">Your AI back-office COO for spray tan studios, salons, and aesthetic businesses.</p>
+        <p class="foot-tag">Your AI operating partner for spray tan studios, salons, and aesthetic businesses.</p>
       </div>
       <div class="foot-links">
         <div class="foot-col">
