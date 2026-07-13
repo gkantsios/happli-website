@@ -75,38 +75,48 @@
   .hero-actions{display:flex;gap:16px;align-items:center;flex-wrap:wrap;margin:26px 0 22px;}
   .fineprint{font-size:14px;color:var(--muted);}
 
-  /* Hero dashboard card */
+  /* Hero dashboard card — mirrors the Happli app UI */
   .dash{background:#fff;border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);overflow:hidden;font-size:12px;}
-  .dash-top{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--line-soft);}
-  .dash-brand{font-family:'Fraunces',serif;font-weight:600;font-size:17px;color:var(--ink);}
-  .dash-acct{display:flex;align-items:center;gap:8px;color:var(--muted);}
-  .dash-acct .who{font-weight:600;color:var(--ink);font-size:12px;line-height:1.2;}
-  .dash-acct .sub{font-size:10.5px;color:var(--muted);}
-  .avatar{width:24px;height:24px;border-radius:50%;background:var(--cream-2);display:flex;align-items:center;justify-content:center;color:var(--green-soft);}
-  .dash-body{display:grid;grid-template-columns:150px 1fr;}
-  .dash-side{border-right:1px solid var(--line-soft);padding:16px 12px;display:flex;flex-direction:column;gap:4px;min-height:340px;}
-  .side-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:10px;color:var(--muted);font-weight:500;font-size:12.5px;}
-  .side-item.active{background:var(--cream);color:var(--ink);font-weight:600;}
+  .dash-body{display:grid;grid-template-columns:160px 1fr;}
+  .dash-side{border-right:1px solid var(--line-soft);padding:16px 12px;display:flex;flex-direction:column;gap:3px;background:#fff;}
+  .dash-logo{font-family:'Fraunces',serif;font-weight:600;font-size:18px;color:var(--ink);padding:4px 10px 2px;}
+  .dash-logo span{color:var(--sage-deep);}
+  .dash-biz{padding:12px 10px 16px;}
+  .biz-label{font-size:8.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:700;}
+  .biz-name{font-weight:700;font-size:12.5px;color:var(--ink);margin-top:3px;}
+  .side-item{display:flex;align-items:center;gap:10px;padding:9px 11px;border-radius:9px;color:#5c5850;font-weight:500;font-size:12.5px;}
+  .side-item.active{background:#e8efe4;color:var(--ink);font-weight:600;}
   .side-item svg{width:15px;height:15px;}
+  .nbadge{margin-left:auto;background:#dbe7d6;color:#4a5a44;font-size:10px;font-weight:600;border-radius:999px;padding:1px 8px;}
+  .side-foot{margin-top:auto;color:var(--muted);font-size:12px;padding:12px 11px 2px;border-top:1px solid var(--line-soft);}
+  .dash-main{background:#f7f6f3;min-height:430px;}
+  .dash-topbar{display:flex;justify-content:flex-end;padding:12px 20px;border-bottom:1px solid var(--line-soft);}
+  .acct{display:flex;align-items:center;gap:9px;}
+  .acct-av{width:26px;height:26px;border-radius:50%;background:#fff;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;color:var(--muted);}
+  .acct-name{font-weight:600;color:var(--ink);font-size:11.5px;line-height:1.15;display:block;}
+  .acct-sub{font-size:8.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);}
+  .dash-content{padding:20px 22px 22px;}
+  .brief-title{font-family:'Inter',sans-serif;font-size:20px;font-weight:700;letter-spacing:-.015em;color:var(--ink);}
+  .brief-sub{color:var(--muted);font-size:11.5px;margin:5px 0 16px;}
+  .brief-card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin-bottom:14px;box-shadow:var(--shadow-sm);}
+  .brief-card-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;}
+  .fo-label{font-size:9px;letter-spacing:.11em;text-transform:uppercase;color:var(--muted);font-weight:700;}
+  .fo-count{font-size:10.5px;color:var(--muted);}
+  .fo-row{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:9px 0;}
+  .fo-t{font-weight:600;font-size:12.5px;color:var(--ink);}
+  .fo-s{color:var(--muted);font-size:11px;margin-top:2px;}
+  .fo-link{color:var(--sage-deep);font-weight:600;font-size:11.5px;white-space:nowrap;}
+  .fo-divider{border-top:1px solid var(--line-soft);margin-top:4px;}
+  .fo-foot{padding-top:12px;color:var(--muted);font-size:11.5px;display:flex;gap:8px;align-items:center;}
+  .in-label{font-size:9px;letter-spacing:.11em;text-transform:uppercase;color:var(--sage-deep);font-weight:700;margin-top:13px;}
+  .in-label.first{margin-top:0;}
+  .in-title{font-weight:700;font-size:14.5px;color:var(--ink);margin:6px 0;}
+  .in-text{color:#514d45;font-size:11.5px;line-height:1.5;margin-top:4px;}
+  .in-why{color:var(--muted);font-size:11px;margin-top:13px;}
+  .in-actions{display:flex;align-items:center;gap:14px;margin-top:14px;}
+  .in-btn{background:var(--sage);color:var(--charcoal);font-weight:600;font-size:11.5px;padding:8px 16px;border-radius:8px;}
+  .in-dismiss{color:var(--muted);font-size:11.5px;font-weight:600;}
   .badge{margin-left:auto;background:var(--sage-deep);color:#fff;font-size:10px;font-weight:600;border-radius:999px;padding:1px 7px;}
-  .side-foot{margin-top:auto;color:var(--muted);font-size:12px;padding:8px 12px;}
-  .dash-main{padding:18px 20px;}
-  .dash-main h4{font-family:'Fraunces',serif;font-size:16px;font-weight:600;}
-  .dash-main .desc{color:var(--muted);font-size:11.5px;margin:4px 0 14px;}
-  .prio{border:1px solid var(--line-soft);border-radius:12px;padding:13px 15px;margin-bottom:10px;display:flex;justify-content:space-between;gap:12px;}
-  .prio-tag{font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--tan);font-weight:700;}
-  .prio-title{font-weight:600;font-size:12.5px;margin:5px 0 3px;color:var(--ink);}
-  .prio-sub{color:var(--muted);font-size:11px;line-height:1.4;}
-  .prio-btn{display:inline-block;margin-top:9px;border:1px solid var(--line);border-radius:8px;padding:5px 11px;font-size:11px;font-weight:600;color:var(--ink);}
-  .prio-right{text-align:right;min-width:96px;display:flex;flex-direction:column;align-items:flex-end;gap:4px;}
-  .prio-right .lbl{font-size:9px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);}
-  .prio-right .val{font-family:'Fraunces',serif;font-weight:600;font-size:16px;color:var(--ink);}
-  .prio-right .val small{display:block;font-family:'Inter';font-weight:500;font-size:9.5px;color:var(--muted);}
-  .prio-ic{width:26px;height:26px;border-radius:8px;background:var(--cream);display:flex;align-items:center;justify-content:center;color:var(--green-soft);margin-top:2px;}
-  .prio-ic svg{width:14px;height:14px;}
-  .recent{border-top:1px solid var(--line-soft);margin-top:8px;padding-top:12px;}
-  .recent h5{font-family:'Fraunces',serif;font-size:12.5px;font-weight:600;margin-bottom:8px;}
-  .recent-row{display:flex;justify-content:space-between;color:var(--muted);font-size:11px;}
 
   /* Section shells */
   section{padding:88px 0;}
@@ -253,73 +263,67 @@
 
     <!-- Hero dashboard -->
     <div class="dash">
-      <div class="dash-top">
-        <div class="dash-brand">Happli.</div>
-        <div class="dash-acct">
-          <div style="text-align:right;">
-            <div class="who">A Spray of Sunshine</div>
-            <div class="sub">2 locations</div>
-          </div>
-          <div class="avatar"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6"/></svg></div>
-        </div>
-      </div>
       <div class="dash-body">
         <aside class="dash-side">
+          <div class="dash-logo">Happli<span>.</span></div>
+          <div class="dash-biz">
+            <div class="biz-label">Business</div>
+            <div class="biz-name">BWB Spray Tan Bar</div>
+          </div>
           <div class="side-item active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>Home</div>
           <div class="side-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>Analytics</div>
-          <div class="side-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Messages<span class="badge">7</span></div>
+          <div class="side-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Messages<span class="nbadge">3</span></div>
           <div class="side-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 0 0-.1-1l2-1.5-2-3.4-2.3 1a7 7 0 0 0-1.7-1l-.3-2.5H9.4l-.3 2.5a7 7 0 0 0-1.7 1l-2.3-1-2 3.4 2 1.5a7 7 0 0 0 0 2l-2 1.5 2 3.4 2.3-1a7 7 0 0 0 1.7 1l.3 2.5h5.2l.3-2.5a7 7 0 0 0 1.7-1l2.3 1 2-3.4-2-1.5a7 7 0 0 0 .1-1z"/></svg>Settings</div>
           <div class="side-foot">Sign out</div>
         </aside>
+
         <main class="dash-main">
-          <h4>Here's what I'd focus on today</h4>
-          <div class="desc">Based on your data, here are 3 priorities that will have the biggest impact.</div>
-
-          <div class="prio">
-            <div>
-              <div class="prio-tag">Fill Slow Days</div>
-              <div class="prio-title">Wednesday is trending slow</div>
-              <div class="prio-sub">Only 18% booked. Send a rebooking offer to fill open slots.</div>
-              <span class="prio-btn">View details</span>
-            </div>
-            <div class="prio-right">
-              <div class="lbl">Potential impact</div>
-              <div class="val">$1,450<small>revenue</small></div>
-              <div class="prio-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></div>
+          <div class="dash-topbar">
+            <div class="acct">
+              <span class="acct-av"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6"/></svg></span>
+              <span><span class="acct-name">BWB Spray Tan Bar</span><span class="acct-sub">Business</span></span>
             </div>
           </div>
 
-          <div class="prio">
-            <div>
-              <div class="prio-tag">Get More Reviews</div>
-              <div class="prio-title">7 review requests ready</div>
-              <div class="prio-sub">Clients had a great experience and haven't left a review.</div>
-              <span class="prio-btn">Review requests</span>
-            </div>
-            <div class="prio-right">
-              <div class="lbl">Potential impact</div>
-              <div class="val">+7<small>new reviews</small></div>
-              <div class="prio-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2l2.9 6.3 6.9.7-5.2 4.6 1.5 6.8L12 17.8 5.9 20.4l1.5-6.8L2.2 9l6.9-.7z"/></svg></div>
-            </div>
-          </div>
+          <div class="dash-content">
+            <h4 class="brief-title">Today's COO Briefing</h4>
+            <p class="brief-sub">The most important things Happli found for your business today.</p>
 
-          <div class="prio">
-            <div>
-              <div class="prio-tag">Reconnect Clients</div>
-              <div class="prio-title">307 clients due to return</div>
-              <div class="prio-sub">It's been 45+ days since their last visit.</div>
-              <span class="prio-btn">View clients</span>
+            <div class="brief-card">
+              <div class="brief-card-head">
+                <span class="fo-label">Here's what I'd focus on today</span>
+                <span class="fo-count">3 priorities</span>
+              </div>
+              <div class="fo-row">
+                <div><div class="fo-t">Rebook overdue clients</div><div class="fo-s">200 clients are due to return</div></div>
+                <a href="#" class="fo-link">Review plan &rarr;</a>
+              </div>
+              <div class="fo-row">
+                <div><div class="fo-t">Reconnect with lapsed members</div><div class="fo-s">28 members haven't visited in 4 weeks</div></div>
+                <a href="#" class="fo-link">Review plan &rarr;</a>
+              </div>
+              <div class="fo-row">
+                <div><div class="fo-t">Review new-client momentum</div><div class="fo-s">22 new clients this week vs 82 typical</div></div>
+                <a href="#" class="fo-link">Review plan &rarr;</a>
+              </div>
+              <div class="fo-divider"></div>
+              <div class="fo-foot">3 approvals waiting <a href="#" class="fo-link">Go to approvals &rarr;</a></div>
             </div>
-            <div class="prio-right">
-              <div class="lbl">Potential impact</div>
-              <div class="val">$2,890<small>revenue</small></div>
-              <div class="prio-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8"/></svg></div>
-            </div>
-          </div>
 
-          <div class="recent">
-            <h5>Recent activity</h5>
-            <div class="recent-row"><span>Review campaign approved for 7 clients</span><span>2h ago</span></div>
+            <div class="brief-card">
+              <div class="in-label first">What I noticed</div>
+              <div class="in-title">200 Clients Ready for a Welcome-Back</div>
+              <p class="in-text">You have 200 wonderful clients who've stepped away over the past four weeks and don't have anything booked yet &mdash; they're the perfect crew for a warm reactivation message. A timely, personal nudge can turn them into regulars again without the cost of finding brand-new clients.</p>
+              <div class="in-label">Why it matters</div>
+              <p class="in-text">Clients past their usual rebooking window slip away without a reminder.</p>
+              <div class="in-label">What I'd do</div>
+              <p class="in-text">Invite the due-to-rebook group to book their next visit.</p>
+              <div class="in-why">&#9656; Why am I seeing this?</div>
+              <div class="in-actions">
+                <span class="in-btn">Draft it for me</span>
+                <span class="in-dismiss">Dismiss</span>
+              </div>
+            </div>
           </div>
         </main>
       </div>
