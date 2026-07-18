@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Happli — Privacy Policy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --sage:#B2C4B2; --sage-deep:#556b55; --sage-mist:#eef2ec; --sage-line:#e6e9e4;
+    --char:#353535; --ink-soft:#5c5c5c; --ink-mute:#8a8a8a; --field:#fafaf8;
+    --display:'Fraunces',serif; --body:'Hanken Grotesk',sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:var(--field);color:var(--char);font-family:var(--body);line-height:1.7;font-size:16px}
+  .wrap{max-width:760px;margin:0 auto;padding:56px 24px 96px}
+  .topnav{position:sticky;top:0;background:var(--field);border-bottom:1px solid var(--sage-line);padding:14px 0;margin-bottom:48px;display:flex;gap:22px;z-index:5}
+  .topnav a{font-size:14px;font-weight:600;color:var(--ink-soft);text-decoration:none}
+  .topnav a:hover{color:var(--sage-deep)}
+  .topnav a.active{color:var(--sage-deep)}
+  .topnav .home{margin-right:auto}
+  h1{font-family:var(--display);font-weight:600;font-size:34px;line-height:1.15;margin:0 0 6px;letter-spacing:-.01em}
+  .updated{font-size:13.5px;color:var(--ink-mute);margin-bottom:28px}
+  h2{font-family:var(--display);font-weight:600;font-size:21px;margin:36px 0 10px}
+  p{margin:0 0 14px;color:var(--ink-soft)}
+  p strong,li strong{color:var(--char)}
+  ul{margin:0 0 14px 22px;color:var(--ink-soft)}
+  li{margin-bottom:8px}
+  .callout{background:var(--sage-mist);border-left:4px solid var(--sage);border-radius:0 10px 10px 0;padding:16px 20px;margin:18px 0 22px;color:var(--char);font-size:15px}
+  a{color:var(--sage-deep)}
+  table{width:100%;border-collapse:collapse;margin:0 0 18px;font-size:14.5px}
+  th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--sage-line);color:var(--ink-soft);vertical-align:top}
+  th{color:var(--char);font-weight:600}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <nav class="topnav">
+    <a href="index.html" class="home">&larr; Home</a>
+    <a href="terms.html">Terms of Service</a>
+    <a href="privacy.html" class="active">Privacy Policy</a>
+    <a href="security.html">Security</a>
+  </nav>
+
+  <h1>Privacy Policy</h1>
+  <p class="updated">Last updated: July 2026 · Beta program</p>
+
+  <p>This policy explains what Happli collects, how we use it, and the choices you have. Happli handles two different kinds of data, and it's worth naming the difference up front:</p>
+  <ul>
+    <li><strong>Account data</strong> — information about you and your business (your email, business profile, settings). We're the ones deciding how this is used, as described here.</li>
+    <li><strong>Client data</strong> — your business's client information (names, contact details, appointment history) that syncs from your booking tools or arrives through Happli features like the website chat. <strong>This data belongs to your business; we process it on your behalf</strong> to operate the Service, and we don't use it for anything else.</li>
+  </ul>
+
+  <h2>1. What we collect</h2>
+  <ul>
+    <li><strong>Account &amp; business information:</strong> your name and email, business name, locations, hours, services and pricing, brand voice preferences, and settings you configure.</li>
+    <li><strong>Synced business data:</strong> appointments, client records, and related activity from the booking platforms you connect (for example, Square via its API, or Vagaro via booking notifications you route to Happli).</li>
+    <li><strong>Website chat &amp; leads:</strong> if you install Happli's chat widget on your website, visitor conversations and any contact details visitors choose to share are stored so you can follow up.</li>
+    <li><strong>Messages &amp; approvals:</strong> drafts, your edits and approval decisions, and delivery records for messages sent through the Service.</li>
+    <li><strong>Payment information:</strong> handled by Stripe. We never see or store full card numbers.</li>
+    <li><strong>Usage &amp; logs:</strong> standard technical logs (for reliability and security) and an audit trail of actions taken in your account.</li>
+  </ul>
+
+  <h2>2. How we use it</h2>
+  <ul>
+    <li>To operate the Service: sync your business data, compute your metrics and daily priorities, and draft communications for your review.</li>
+    <li>To send messages <strong>you approve</strong> to your clients, and platform emails to you (like sign-in links).</li>
+    <li>To generate AI drafts and answers: relevant business context is sent to our AI provider (Anthropic) to produce drafts and responses. <strong>Per our API agreement, this content is not used to train their models.</strong></li>
+    <li>To improve the Service, in aggregate and with care — we don't sell data, and we don't use your clients' information for advertising, ever.</li>
+  </ul>
+
+  <h2>3. What we never do</h2>
+  <ul>
+    <li>We never sell personal information — yours or your clients'.</li>
+    <li>We never use your client list to market other businesses or products.</li>
+    <li>We never send a client-facing message without your approval.</li>
+  </ul>
+
+  <h2>4. Service providers (subprocessors)</h2>
+  <p>We use a small set of infrastructure providers to run Happli:</p>
+  <table>
+    <tr><th>Provider</th><th>Purpose</th></tr>
+    <tr><td>Anthropic</td><td>AI drafting and analysis (API; not used for model training)</td></tr>
+    <tr><td>Twilio</td><td>Text-message delivery</td></tr>
+    <tr><td>Postmark (ActiveCampaign)</td><td>Platform email delivery (e.g., sign-in links)</td></tr>
+    <tr><td>Stripe</td><td>Payments and subscription billing</td></tr>
+    <tr><td>Neon</td><td>Encrypted database hosting</td></tr>
+    <tr><td>Replit</td><td>Application hosting</td></tr>
+    <tr><td>Google</td><td>Maps/Places and Business Profile features you enable</td></tr>
+  </table>
+
+  <h2>5. Website-chat visitors</h2>
+  <p>If you're a visitor chatting on a business's website through Happli's widget: your conversation and any contact details you share are stored and made available to that business so they can respond to you. The business is responsible for how it uses your information; this policy governs how Happli stores and protects it.</p>
+
+  <h2>6. Retention</h2>
+  <p>We keep data for as long as your account is active and as needed to operate the Service. Opt-out records (like STOP requests) are retained so they stay honored. Logs and audit records are retained for security and reliability purposes.</p>
+
+  <h2>7. Deletion &amp; your choices</h2>
+  <p>You can request deletion of your account and your business's data by emailing <a href="mailto:hello@gohappli.com">hello@gohappli.com</a>. If you're a client of a business that uses Happli and want your information corrected or removed, you can contact the business directly or email us and we'll coordinate with them. We'll respond to verified requests within 30 days.</p>
+
+  <h2>8. Cookies</h2>
+  <p>The app uses essential cookies only — to keep you signed in. No advertising trackers, no third-party analytics cookies on the app.</p>
+
+  <h2>9. Children</h2>
+  <p>The Service is for businesses and isn't directed to children. We don't knowingly collect information from anyone under 18 as a user of the Service.</p>
+
+  <h2>10. Changes &amp; contact</h2>
+  <p>We'll update this policy as the Service evolves and note the date above; material changes will be announced by email or in the product. Questions: <a href="mailto:hello@gohappli.com">hello@gohappli.com</a>.</p>
+
+</div>
+</body>
+</html>

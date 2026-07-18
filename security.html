@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Happli — Security</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --sage:#B2C4B2; --sage-deep:#556b55; --sage-mist:#eef2ec; --sage-line:#e6e9e4;
+    --char:#353535; --ink-soft:#5c5c5c; --ink-mute:#8a8a8a; --field:#fafaf8;
+    --display:'Fraunces',serif; --body:'Hanken Grotesk',sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:var(--field);color:var(--char);font-family:var(--body);line-height:1.7;font-size:16px}
+  .wrap{max-width:760px;margin:0 auto;padding:56px 24px 96px}
+  .topnav{position:sticky;top:0;background:var(--field);border-bottom:1px solid var(--sage-line);padding:14px 0;margin-bottom:48px;display:flex;gap:22px;z-index:5}
+  .topnav a{font-size:14px;font-weight:600;color:var(--ink-soft);text-decoration:none}
+  .topnav a:hover{color:var(--sage-deep)}
+  .topnav a.active{color:var(--sage-deep)}
+  .topnav .home{margin-right:auto}
+  h1{font-family:var(--display);font-weight:600;font-size:34px;line-height:1.15;margin:0 0 6px;letter-spacing:-.01em}
+  .updated{font-size:13.5px;color:var(--ink-mute);margin-bottom:28px}
+  h2{font-family:var(--display);font-weight:600;font-size:21px;margin:36px 0 10px}
+  p{margin:0 0 14px;color:var(--ink-soft)}
+  p strong,li strong{color:var(--char)}
+  ul{margin:0 0 14px 22px;color:var(--ink-soft)}
+  li{margin-bottom:8px}
+  .callout{background:var(--sage-mist);border-left:4px solid var(--sage);border-radius:0 10px 10px 0;padding:16px 20px;margin:18px 0 22px;color:var(--char);font-size:15px}
+  a{color:var(--sage-deep)}
+  table{width:100%;border-collapse:collapse;margin:0 0 18px;font-size:14.5px}
+  th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--sage-line);color:var(--ink-soft);vertical-align:top}
+  th{color:var(--char);font-weight:600}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <nav class="topnav">
+    <a href="index.html" class="home">&larr; Home</a>
+    <a href="terms.html">Terms of Service</a>
+    <a href="privacy.html">Privacy Policy</a>
+    <a href="security.html" class="active">Security</a>
+  </nav>
+
+  <h1>Security</h1>
+  <p class="updated">Last updated: July 2026 · Beta program</p>
+
+  <p>Happli holds business data on behalf of working businesses, and we treat that as the core responsibility of the product. Here's how the Service is protected today — stated plainly, without badges we haven't earned yet.</p>
+
+  <h2>Data isolation by design</h2>
+  <p>Every business's data is separated at the <strong>database layer</strong> using row-level security — isolation is enforced by the database itself on every query, not just by application code. The application connects with least-privilege database roles: the app role cannot read across tenants and cannot delete records in append-only tables like the audit log.</p>
+
+  <h2>Encryption</h2>
+  <p>Data is encrypted in transit (TLS) and at rest (our database provider encrypts storage). Payment details are handled entirely by Stripe — full card numbers never touch our systems.</p>
+
+  <h2>The approval gate as a safety control</h2>
+  <p>No client-facing message leaves the Service without the business operator's explicit approval. This is a permanent architectural decision, not a setting — it means an AI mistake can't reach your clients on its own, and every outbound message has a human decision attached to it in the audit trail.</p>
+
+  <h2>Auditability</h2>
+  <p>Actions in the Service — syncs, drafts, approvals, sends, opt-outs — are recorded in an append-only audit log scoped to your business.</p>
+
+  <h2>Access &amp; authentication</h2>
+  <p>Sign-in uses secure, expiring email links — there are no passwords to steal or reuse. Sessions are cookie-based and can be ended by signing out.</p>
+
+  <h2>AI &amp; your data</h2>
+  <p>AI drafting runs through Anthropic's API under commercial terms: content sent for drafting is <strong>not used to train models</strong>. The public website chat widget answers only from a business's public-appropriate information (services, prices the business has confirmed, hours, profile) — it has no access to client records, metrics, or internal data.</p>
+
+  <h2>Messaging safeguards</h2>
+  <p>Opt-outs (STOP, unsubscribe) are honored immediately and permanently per channel. Quiet hours are enforced for text messages. Outbound links in messages are validated before send.</p>
+
+  <h2>What we haven't done yet — honestly</h2>
+  <p>We're a beta-stage product. We don't yet hold formal certifications (such as SOC 2), and we don't yet offer HIPAA business associate agreements — those are on our roadmap as the Service matures. If your compliance needs are ahead of where we are, tell us; it directly shapes what we build next.</p>
+
+  <h2>Reporting a vulnerability</h2>
+  <p>If you believe you've found a security issue, email <a href="mailto:hello@gohappli.com">hello@gohappli.com</a> with details. We'll acknowledge within 2 business days, and we ask that you give us a reasonable window to fix the issue before public disclosure. We're grateful to people who report responsibly.</p>
+
+</div>
+</body>
+</html>
