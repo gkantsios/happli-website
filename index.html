@@ -203,7 +203,8 @@
   .check{flex:none;width:22px;height:22px;border-radius:50%;background:var(--sage);display:flex;align-items:center;justify-content:center;margin-top:1px;}
   .check svg{width:12px;height:12px;color:var(--charcoal);}
   .tiers{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px;}
-  .tier{background:#fff;border:1px solid var(--line);border-radius:14px;padding:22px 14px;text-align:center;}
+  .tier{background:#fff;border:1px solid var(--line);border-radius:14px;padding:22px 14px;text-align:center;display:block;text-decoration:none;color:inherit;cursor:pointer;transition:border-color .18s ease,box-shadow .18s ease,transform .18s ease;}
+  .tier:hover{border-color:var(--ink);box-shadow:0 8px 24px rgba(0,0,0,.08);transform:translateY(-2px);}
   .tier .loc{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:14px;}
   .tier .amt{font-family:'Fraunces',serif;font-size:34px;font-weight:600;color:var(--ink);}
   .tier .per{font-size:12px;color:var(--muted);}
@@ -215,6 +216,7 @@
   footer{background:var(--charcoal);color:#e9ecdf;padding:56px 0 40px;}
   .foot-grid{display:flex;justify-content:space-between;align-items:flex-start;gap:40px;flex-wrap:wrap;}
   .foot-logo{font-family:'Fraunces',serif;font-weight:600;font-size:24px;color:#fff;}
+  .foot-logo img{height:34px;width:auto;display:block;}
   .foot-tag{color:#c7cdb6;font-size:14px;margin-top:8px;max-width:280px;}
   .foot-links{display:flex;gap:40px;flex-wrap:wrap;}
   .foot-col h5{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:#aab493;margin-bottom:14px;font-family:'Inter';font-weight:600;}
@@ -554,14 +556,11 @@
 
       <div class="price-right">
         <div class="tiers">
-          <div class="tier"><div class="loc">1 Location</div><div class="amt">$99</div><div class="per">/month</div></div>
-          <div class="tier"><div class="loc">2 Locations</div><div class="amt">$149</div><div class="per">/month</div></div>
-          <div class="tier"><div class="loc">3 Locations</div><div class="amt">$199</div><div class="per">/month</div></div>
+          <a class="tier" href="https://buy.stripe.com/00wbJ39T79NibA8cBr7Vm00"><div class="loc">1 Location</div><div class="amt">$99</div><div class="per">/month</div></a>
+          <a class="tier" href="https://buy.stripe.com/fZu9AV8P30cI33C1WN7Vm01"><div class="loc">2 Locations</div><div class="amt">$149</div><div class="per">/month</div></a>
+          <a class="tier" href="https://buy.stripe.com/9B6dRbaXb4sYeMk58Z7Vm02"><div class="loc">3 Locations</div><div class="amt">$199</div><div class="per">/month</div></a>
         </div>
         <p class="price-note">Normal email and SMS usage included during the founding phase. Unusually high messaging usage, dedicated phone numbers, or carrier fees may be priced separately in the future. Founding pricing applies to the locations enrolled when you join.</p>
-        <a href="#" class="btn btn-primary price-cta">Become a Founding Member
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M13 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </a>
       </div>
       <svg class="leaf" viewBox="0 0 200 200" fill="none"><path d="M180 20C120 30 40 70 20 180c90-10 150-70 160-160z" fill="#b2c4b2" opacity=".55"/><path d="M170 30C120 60 60 110 30 170" stroke="#9fb59f" stroke-width="1.5"/></svg>
     </div>
@@ -573,7 +572,7 @@
   <div class="wrap">
     <div class="foot-grid">
       <div>
-        <div class="foot-logo">Happli.</div>
+        <div class="foot-logo"><img src="logo-white.svg" alt="Happli" /></div>
         <p class="foot-tag">Your AI operating partner for spray tan studios, salons, and aesthetic businesses.</p>
       </div>
       <div class="foot-links">
@@ -583,12 +582,6 @@
           <a href="#what">What You Get</a>
           <a href="#pricing">Pricing</a>
           <a href="#roadmap">Roadmap</a>
-        </div>
-        <div class="foot-col">
-          <h5>Company</h5>
-          <a href="#">About</a>
-          <a href="#">Contact</a>
-          <a href="#">Careers</a>
         </div>
         <div class="foot-col">
           <h5>Legal</h5>
