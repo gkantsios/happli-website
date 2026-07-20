@@ -202,6 +202,9 @@
   .checklist li{display:flex;gap:12px;align-items:flex-start;font-size:15px;color:#3f3c34;}
   .check{flex:none;width:22px;height:22px;border-radius:50%;background:var(--sage);display:flex;align-items:center;justify-content:center;margin-top:1px;}
   .check svg{width:12px;height:12px;color:var(--charcoal);}
+  .spots-badge{display:inline-flex;align-items:center;gap:9px;background:#fff;border:1px solid var(--sage);border-radius:999px;padding:8px 15px;margin-bottom:16px;font-size:13px;font-weight:600;color:var(--ink);}
+  .spots-badge .dot{width:8px;height:8px;border-radius:50%;background:var(--tan);box-shadow:0 0 0 4px rgba(166,141,91,.18);flex:none;}
+  .spots-badge .left{color:var(--tan);}
   .tiers{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px;}
   .tier{background:#fff;border:1px solid var(--line);border-radius:14px;padding:22px 14px;text-align:center;display:block;text-decoration:none;color:inherit;cursor:pointer;transition:border-color .18s ease,box-shadow .18s ease,transform .18s ease;}
   .tier:hover{border-color:var(--ink);box-shadow:0 8px 24px rgba(0,0,0,.08);transform:translateY(-2px);}
@@ -555,6 +558,7 @@
       </div>
 
       <div class="price-right">
+        <div class="spots-badge"><span class="dot"></span>20 beta spots &middot; <span class="left">only 16 left</span></div>
         <div class="tiers">
           <a class="tier" href="https://buy.stripe.com/00wbJ39T79NibA8cBr7Vm00"><div class="loc">1 Location</div><div class="amt">$99</div><div class="per">/month</div></a>
           <a class="tier" href="https://buy.stripe.com/fZu9AV8P30cI33C1WN7Vm01"><div class="loc">2 Locations</div><div class="amt">$149</div><div class="per">/month</div></a>
