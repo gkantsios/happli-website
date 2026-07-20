@@ -86,8 +86,8 @@
   .dash::after{content:"";position:absolute;left:0;right:0;bottom:0;height:104px;background:linear-gradient(to bottom,rgba(255,255,255,0),#ffffff 92%);pointer-events:none;z-index:2;}
   .dash-body{display:grid;grid-template-columns:160px 1fr;}
   .dash-side{border-right:1px solid var(--line-soft);padding:16px 12px;display:flex;flex-direction:column;gap:3px;background:#fff;}
-  .dash-logo{font-family:'Fraunces',serif;font-weight:600;font-size:18px;color:var(--ink);padding:4px 10px 2px;}
-  .dash-logo span{color:var(--sage-deep);}
+  .dash-logo{padding:4px 10px 2px;}
+  .dash-logo img{height:22px;width:auto;display:block;}
   .dash-biz{padding:12px 10px 16px;}
   .biz-label{font-size:8.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:700;}
   .biz-name{font-weight:700;font-size:12.5px;color:var(--ink);margin-top:3px;}
@@ -294,7 +294,7 @@
     <div class="dash">
       <div class="dash-body">
         <aside class="dash-side">
-          <div class="dash-logo">Happli<span>.</span></div>
+          <div class="dash-logo"><img src="logo.png" alt="Happli" /></div>
           <div class="dash-biz">
             <div class="biz-label">Business</div>
             <div class="biz-name">Your Studio</div>
