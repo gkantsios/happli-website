@@ -33,7 +33,7 @@ const {
   modifiedTime,
 } = Astro.props;
 
-// Canonical URLs always use the trailing-slash form that GitHub Pages serves.
+// Canonical URLs always use the trailing-slash form the host serves (Cloudflare redirects /page to /page/).
 let path = Astro.url.pathname;
 if (!path.endsWith('/') && !/\.[a-z0-9]+$/i.test(path)) path += '/';
 const canonical = new URL(path, site.url).href;

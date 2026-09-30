@@ -1,0 +1,9 @@
+# Cloudflare Workers static assets: edge redirects (read by Cloudflare, not served as a file).
+# Legacy URLs from the old static site go straight to the canonical pages.
+/privacy.html /privacy/ 301
+/terms.html /terms/ 301
+/security.html /security/ 301
+# The stub pages in public/privacy.html etc. would otherwise be served at /privacy, /terms and /security.
+/privacy /privacy/ 301
+/terms /terms/ 301
+/security /security/ 301

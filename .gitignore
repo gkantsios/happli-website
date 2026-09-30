@@ -15,5 +15,8 @@ npm-debug.log*
 # OS
 .DS_Store
 
+# wrangler local state
+.wrangler/
+
 # local verification output
 lighthouse/
