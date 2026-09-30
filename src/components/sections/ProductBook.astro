@@ -1,4 +1,6 @@
 ---
+import Icon from '../Icon.astro';
+
 // An illustration of the Happli calendar, built in HTML/CSS with sample data.
 // Hidden from assistive tech; the paragraph below describes it.
 // Layout responds to the component's own width (container queries), so it also works
@@ -33,7 +35,8 @@ const aps: Ap[] = [
   <div class="screen" aria-hidden="true">
     <div class="screen-bar">
       <div class="dots"><i></i><i></i><i></i></div>
-      <div class="screen-tabs"><b>Calendar</b><span>Clients</span><span>Packages</span><span>Settings</span></div>
+      <div class="screen-tabs"><b>Calendar</b><span>Clients</span><span>Messages</span></div>
+      <span class="screen-gear"><Icon name="settings" size={16} strokeWidth={1.75} /></span>
     </div>
     <div class="screen-sub">
       <div class="view"><span class="on">Day</span><span>Week</span></div>
@@ -138,6 +141,12 @@ const aps: Ap[] = [
     height: 9px;
     border-radius: 50%;
     background: rgba(27, 22, 20, 0.12);
+  }
+  .screen-gear {
+    margin-left: auto;
+    display: grid;
+    place-items: center;
+    color: var(--muted);
   }
   .screen-tabs {
     display: flex;

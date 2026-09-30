@@ -3,27 +3,22 @@
 // Four steps, each with a scene. Auto-plays (7s per step) once the section is in view,
 // unless the visitor prefers reduced motion. Any click or key inside the section stops auto-play.
 // Service names and notes are adapted for spray tan studios (no salon services, no formula notes).
-//
-// TODO confirm: several scene interactions go beyond what the copy doc lists as built:
-//   - Needs you: "Deposit failed" and "Priya is out Thursday / Move them" rows (bulk move + texting 3 clients)
-//   - The book: offering one gap to 4 due clients at once, "opened" status, and the automatic
-//     "told the other three the slot is gone" follow-up (copy doc: pick a client, Happli drafts one offer)
-//   - Appointment: "receipt texted" after checkout
-//   - Rebook: the "usually comes back every 2 weeks" suggestion
+// Every interaction matches the app today: gap offers go to one client you pick, Happli drafts the
+// text, and nothing sends until you approve it. No read receipts, no booking by reply.
 import SectionHead from './SectionHead.astro';
 
 const steps = [
   { time: '8:40', title: 'Open the book', body: 'Everything that needs you, in one short list.' },
-  { time: '11:10', title: 'A gap opens', body: 'Happli drafts an offer to clients who are due.' },
+  { time: '11:10', title: 'A gap opens', body: 'Pick a client, and Happli drafts the offer.' },
   { time: '1:15', title: 'Maria arrives', body: 'Her notes and history are already on the appointment.' },
-  { time: '2:45', title: 'Before she leaves', body: 'Rebook before she goes, deposit paid.' },
+  { time: '2:45', title: 'Before she leaves', body: 'Book her next visit before she goes.' },
 ];
 const titles = ['Needs you', 'The book · Thursday', 'Appointment · Maria K.', 'Rebook'];
 ---
 
 <section class="walk section" data-walk aria-labelledby="walk-title">
   <div class="wrap">
-    <SectionHead eyebrow="How a Tuesday runs" title="Four moments. None of them at the front desk." id="walk-title" />
+    <SectionHead eyebrow="How a Thursday runs" title="Four moments. None of them at the front desk." id="walk-title" />
     <div class="walk-in">
       <ol class="steps" role="tablist" aria-label="Walkthrough steps" aria-orientation="vertical">
         {
@@ -57,19 +52,22 @@ const titles = ['Needs you', 'The book · Thursday', 'Appointment · Maria K.', 
           <div class="need" data-need>
             <div class="need-row">
               <div>
-                <b>Deposit failed · Hollis B.</b>
-                <span>Card declined for Thursday's rapid tan. Ask again?</span>
+                <b>Open gap · Thu 1:15 – 2:15</b>
+                <span>Dana has an hour free.</span>
               </div>
-              <button type="button" class="mini" data-act="need1">Text her</button>
-              <em class="done-tag">Sent</em>
+              <button type="button" class="mini" data-act="gap">Draft an offer</button>
+              <em class="done-tag">Offer drafted</em>
             </div>
             <div class="need-row">
               <div>
-                <b>Priya is out Thursday</b>
-                <span>3 appointments to move · Jules has room</span>
+                <b>Waitlist match · Rapid tan</b>
+                <span>Bea T. asked for Saturday morning · 10:00 is open.</span>
               </div>
-              <button type="button" class="mini" data-act="need2">Move them</button>
-              <em class="done-tag">Moved · 3 clients texted</em>
+              <div class="mini-pair">
+                <button type="button" class="mini" data-act="wl-book">Book</button>
+                <button type="button" class="mini" data-act="wl-dismiss">Dismiss</button>
+              </div>
+              <em class="done-tag" data-wl-tag>Booked</em>
             </div>
             <p class="need-empty">Nothing else needs you. Enjoy your coffee.</p>
           </div>
@@ -80,14 +78,23 @@ const titles = ['Needs you', 'The book · Thursday', 'Appointment · Maria K.', 
             <div class="gap-col">
               <div class="gap-head"><b>Dana</b><span>Thu 27</span></div>
               <div class="gap-ap rose"><b>Ana O.</b><span>Custom spray tan · 11:00</span></div>
-              <div class="gap-open" data-gap data-state="open"><b>Open · 1 hr</b><span>1:15 – 2:15</span></div>
+              <div class="gap-open"><b>Open · 1 hr</b><span>1:15 – 2:15</span></div>
               <div class="gap-ap grey"><b>Tess M.</b><span>Rapid tan · 2:30</span></div>
             </div>
             <div class="gap-side">
-              <p class="side-title">4 clients are due for this service</p>
-              <div class="side-list"><span>Maria K.</span><span>Junie P.</span><span>Rae L.</span><span>Bea T.</span></div>
-              <button type="button" class="btn btn-coral demo-cta" data-act="offer">Offer them the slot</button>
-              <div class="offer-log" data-log aria-live="polite"></div>
+              <p class="side-title">Pick a client for this gap</p>
+              <div class="side-list" data-picks>
+                <button type="button" class="pick" data-act="pick" data-first="Maria" aria-pressed="false">Maria K.</button>
+                <button type="button" class="pick" data-act="pick" data-first="Junie" aria-pressed="false">Junie P.</button>
+                <button type="button" class="pick" data-act="pick" data-first="Rae" aria-pressed="false">Rae L.</button>
+                <button type="button" class="pick" data-act="pick" data-first="Bea" aria-pressed="false">Bea T.</button>
+              </div>
+              <div class="draft" data-draft hidden>
+                <p class="draft-label">Happli's draft</p>
+                <p class="draft-text" data-draft-text></p>
+                <button type="button" class="btn btn-coral demo-cta" data-act="approve">Approve &amp; send</button>
+                <p class="sent-tag" data-sent aria-live="polite"></p>
+              </div>
             </div>
           </div>
         </div>
@@ -112,19 +119,19 @@ const titles = ['Needs you', 'The book · Thursday', 'Appointment · Maria K.', 
               <div class="total"><span>Due today</span><b>$50</b></div>
             </div>
             <button type="button" class="btn btn-primary demo-cta" data-act="checkout">Check out · $50</button>
-            <p class="paid-tag">Paid · receipt texted · tip $10</p>
+            <p class="paid-tag">Paid · tip $10</p>
           </div>
         </div>
 
         <div class="scene" data-scene="3" inert>
           <div class="rebook">
-            <p class="side-title">Maria usually comes back every 2 weeks. Book her now?</p>
+            <p class="side-title">Book her next visit</p>
             <div class="rebook-slots">
               <button type="button" class="slot-btn" data-act="rebook">Thu 10 Sep · 1:15 pm</button>
               <button type="button" class="slot-btn" data-act="rebook">Fri 11 Sep · 10:00 am</button>
               <button type="button" class="slot-btn" data-act="rebook">Sat 12 Sep · 9:30 am</button>
             </div>
-            <p class="rebook-done"><b>Booked.</b> Confirmation texted · $20 deposit paid · reminder the day before.</p>
+            <p class="rebook-done"><b>Booked</b> · confirmation sent</p>
           </div>
         </div>
       </div>
@@ -236,48 +243,51 @@ const titles = ['Needs you', 'The book · Thursday', 'Appointment · Maria K.', 
     }
 
     // Scene interactions
-    var offerLines = [
-      '11:12 · Texted Maria, Junie, Rae and Bea',
-      '11:13 · Junie opened',
-      '11:14 · Maria opened',
-      '11:15 · Maria K. booked 1:15 – 2:15',
-      '11:15 · Told the other three the slot is gone',
-    ];
+    var need = root.querySelector('[data-need]');
+    function needDone(row, tag) {
+      row.classList.add('done');
+      if (tag) row.querySelector('.done-tag').textContent = tag;
+      if (need.querySelectorAll('.need-row.done').length === 2) need.classList.add('all');
+    }
+    var picks = [].slice.call(root.querySelectorAll('[data-act="pick"]'));
+    var draft = root.querySelector('[data-draft]');
+    var draftText = root.querySelector('[data-draft-text]');
+    var sent = root.querySelector('[data-sent]');
+    var approve = root.querySelector('[data-act="approve"]');
+    var picked = '';
 
     root.querySelectorAll('[data-act]').forEach(function (btn) {
       btn.addEventListener('click', function () {
         stopAuto();
         var act = btn.getAttribute('data-act');
 
-        if (act === 'need1' || act === 'need2') {
-          btn.closest('.need-row').classList.add('done');
-          var need = btn.closest('[data-need]');
-          if (need.querySelectorAll('.need-row.done').length === 2) need.classList.add('all');
+        if (act === 'gap') {
+          // Drafting happens on the book: pick a client for the gap there.
+          needDone(btn.closest('.need-row'));
+          show(1, false);
+        }
+        if (act === 'wl-book') needDone(btn.closest('.need-row'), 'Booked');
+        if (act === 'wl-dismiss') needDone(btn.closest('.need-row'), 'Dismissed');
+
+        if (act === 'pick') {
+          picked = btn.getAttribute('data-first');
+          picks.forEach(function (b) {
+            var on = b === btn;
+            b.classList.toggle('picked', on);
+            b.setAttribute('aria-pressed', on ? 'true' : 'false');
+          });
+          draftText.textContent =
+            'Hi ' + picked + '! A 1:15 spot just opened Thursday with Dana. Book it here: goldenglow.gohappli.com';
+          draft.hidden = false;
         }
 
-        if (act === 'offer') {
-          btn.disabled = true;
-          btn.textContent = 'Offer sent to 4';
-          var log = root.querySelector('[data-log]');
-          log.textContent = '';
-          offerLines.forEach(function (line, k) {
-            var add = function () {
-              var d = document.createElement('div');
-              if (k === 3) {
-                var b = document.createElement('b');
-                b.textContent = line;
-                d.appendChild(b);
-                var gap = root.querySelector('[data-gap]');
-                gap.setAttribute('data-state', 'booked');
-                gap.innerHTML = '<b>Maria K.</b><span>Custom spray tan · 1:15</span>';
-              } else {
-                d.textContent = line;
-              }
-              log.appendChild(d);
-            };
-            if (reduced) add();
-            else setTimeout(add, 600 * k + 200);
+        if (act === 'approve' && picked) {
+          approve.hidden = true;
+          picks.forEach(function (b) {
+            b.disabled = true;
           });
+          sent.textContent = 'Sent to ' + picked;
+          draft.classList.add('is-sent');
         }
 
         if (act === 'checkout') btn.closest('.apt').classList.add('done');
@@ -470,6 +480,12 @@ const titles = ['Needs you', 'The book · Thursday', 'Appointment · Maria K.', 
     color: var(--muted);
     margin-top: 2px;
   }
+  .need-row > .mini-pair {
+    flex: none;
+    display: flex;
+    gap: 6px;
+  }
+  .need-row.done .mini-pair,
   .need-row.done .mini {
     display: none;
   }
@@ -546,17 +562,6 @@ const titles = ['Needs you', 'The book · Thursday', 'Appointment · Maria K.', 
   .gap-open :global(span) {
     color: var(--coral-ink);
   }
-  .gap-open[data-state='booked'] {
-    background: var(--ap-rose);
-    border: 0;
-    border-left: 3px solid var(--ap-rose-edge);
-  }
-  .gap-open[data-state='booked'] :global(b) {
-    color: var(--ink);
-  }
-  .gap-open[data-state='booked'] :global(span) {
-    color: var(--ink-2);
-  }
   .side-title {
     font-family: var(--serif);
     font-size: 22px;
@@ -568,41 +573,79 @@ const titles = ['Needs you', 'The book · Thursday', 'Appointment · Maria K.', 
     gap: 6px;
     margin-top: 12px;
   }
-  .side-list span {
-    font-size: 12px;
-    padding: 4px 10px;
+  .pick {
+    font: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 6px 12px;
     border-radius: var(--radius-pill);
     background: var(--blush-2);
-    border: 1px solid var(--line);
+    border: 1px solid var(--line-strong);
+    color: var(--ink);
+    cursor: pointer;
+  }
+  .pick:hover:not(:disabled) {
+    border-color: var(--ink);
+  }
+  .pick.picked {
+    background: var(--ink);
+    border-color: var(--ink);
+    color: #fff;
+  }
+  .pick:disabled {
+    cursor: default;
+  }
+  .pick:disabled:not(.picked) {
+    opacity: 0.55;
   }
   .demo-cta {
     margin-top: 18px;
     min-height: 42px;
     font-size: 14px;
   }
+  /* .btn sets display, which would otherwise override the hidden attribute */
+  .demo-cta[hidden] {
+    display: none;
+  }
   .demo-cta:disabled {
     cursor: default;
     transform: none;
   }
-  .offer-log {
-    margin-top: 14px;
-    display: grid;
-    gap: 6px;
-    font-size: 13px;
+  .draft {
+    margin-top: 16px;
+  }
+  .draft[hidden] {
+    display: none;
+  }
+  .draft-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
     color: var(--muted);
   }
-  .offer-log :global(div) {
-    animation: login 0.35s ease both;
-  }
-  .offer-log :global(b) {
+  .draft-text {
+    margin-top: 6px;
+    padding: 10px 12px;
+    border-radius: 12px 12px 12px 4px;
+    background: var(--blush-2);
+    border: 1px solid var(--line);
+    font-size: 13px;
+    line-height: 1.45;
     color: var(--ink);
-    font-weight: 600;
   }
-  @keyframes login {
-    from {
-      opacity: 0;
-      transform: translateY(4px);
-    }
+  .sent-tag:empty {
+    display: none;
+  }
+  .sent-tag {
+    display: inline-block;
+    margin-top: 14px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--sage-ink);
+    background: var(--sage);
+    padding: 5px 10px;
+    border-radius: var(--radius-pill);
   }
 
   /* scene 2: appointment */
@@ -738,9 +781,6 @@ const titles = ['Needs you', 'The book · Thursday', 'Appointment · Maria K.', 
     }
     .step i {
       display: none;
-    }
-    .offer-log :global(div) {
-      animation: none;
     }
   }
 
