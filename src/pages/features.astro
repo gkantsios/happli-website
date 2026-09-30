@@ -2,6 +2,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PageIntro from '../components/sections/PageIntro.astro';
 import FeatureList, { type FeatureItem } from '../components/sections/FeatureList.astro';
+import FeatureRows from '../components/sections/FeatureRows.astro';
 import CtaBand from '../components/sections/CtaBand.astro';
 import { breadcrumbs } from '../lib/jsonld';
 
@@ -162,6 +163,8 @@ const sections: Section[] = [
       {sections.map((s) => <a href={`#${s.id}`}>{s.title}</a>)}
     </nav>
   </PageIntro>
+
+  <FeatureRows />
 
   <div class="lists">
     {sections.map((s) => <FeatureList id={s.id} title={s.title} intro={s.intro} items={s.items} soon={s.soon} />)}
