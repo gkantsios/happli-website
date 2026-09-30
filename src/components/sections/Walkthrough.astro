@@ -1,0 +1,781 @@
+---
+// Interactive walkthrough, ported from the .walk section of site-mockup.html.
+// Four steps, each with a scene. Auto-plays (7s per step) once the section is in view,
+// unless the visitor prefers reduced motion. Any click or key inside the section stops auto-play.
+// Service names and notes are adapted for spray tan studios (no salon services, no formula notes).
+//
+// TODO confirm: several scene interactions go beyond what the copy doc lists as built:
+//   - Needs you: "Deposit failed" and "Priya is out Thursday / Move them" rows (bulk move + texting 3 clients)
+//   - The book: offering one gap to 4 due clients at once, "opened" status, and the automatic
+//     "told the other three the slot is gone" follow-up (copy doc: pick a client, Happli drafts one offer)
+//   - Appointment: "receipt texted" after checkout
+//   - Rebook: the "usually comes back every 2 weeks" suggestion
+import SectionHead from './SectionHead.astro';
+
+const steps = [
+  { time: '8:40', title: 'Open the book', body: 'Everything that needs you, in one short list.' },
+  { time: '11:10', title: 'A gap opens', body: 'Happli drafts an offer to clients who are due.' },
+  { time: '1:15', title: 'Maria arrives', body: 'Her notes and history are already on the appointment.' },
+  { time: '2:45', title: 'Before she leaves', body: 'Rebook before she goes, deposit paid.' },
+];
+const titles = ['Needs you', 'The book · Thursday', 'Appointment · Maria K.', 'Rebook'];
+---
+
+<section class="walk section" data-walk aria-labelledby="walk-title">
+  <div class="wrap">
+    <SectionHead eyebrow="How a Tuesday runs" title="Four moments. None of them at the front desk." id="walk-title" />
+    <div class="walk-in">
+      <ol class="steps" role="tablist" aria-label="Walkthrough steps" aria-orientation="vertical">
+        {
+          steps.map((s, i) => (
+            <li
+              class:list={['step', { on: i === 0 }]}
+              role="tab"
+              id={`walk-tab-${i}`}
+              aria-controls="walk-panel"
+              aria-selected={i === 0 ? 'true' : 'false'}
+              tabindex={i === 0 ? '0' : '-1'}
+              data-step={i}
+            >
+              <b>
+                {s.time} · {s.title}
+              </b>
+              <span>{s.body}</span>
+              <i aria-hidden="true" />
+            </li>
+          ))
+        }
+      </ol>
+
+      <div class="demo" role="tabpanel" id="walk-panel" aria-labelledby="walk-tab-0" data-titles={JSON.stringify(titles)}>
+        <div class="demo-bar">
+          <div class="dots" aria-hidden="true"><i></i><i></i><i></i></div>
+          <span class="demo-title" data-title>{titles[0]}</span>
+        </div>
+
+        <div class="scene on" data-scene="0">
+          <div class="need" data-need>
+            <div class="need-row">
+              <div>
+                <b>Deposit failed · Hollis B.</b>
+                <span>Card declined for Thursday's rapid tan. Ask again?</span>
+              </div>
+              <button type="button" class="mini" data-act="need1">Text her</button>
+              <em class="done-tag">Sent</em>
+            </div>
+            <div class="need-row">
+              <div>
+                <b>Priya is out Thursday</b>
+                <span>3 appointments to move · Jules has room</span>
+              </div>
+              <button type="button" class="mini" data-act="need2">Move them</button>
+              <em class="done-tag">Moved · 3 clients texted</em>
+            </div>
+            <p class="need-empty">Nothing else needs you. Enjoy your coffee.</p>
+          </div>
+        </div>
+
+        <div class="scene" data-scene="1" inert>
+          <div class="gapview">
+            <div class="gap-col">
+              <div class="gap-head"><b>Dana</b><span>Thu 27</span></div>
+              <div class="gap-ap rose"><b>Ana O.</b><span>Custom spray tan · 11:00</span></div>
+              <div class="gap-open" data-gap data-state="open"><b>Open · 1 hr</b><span>1:15 – 2:15</span></div>
+              <div class="gap-ap grey"><b>Tess M.</b><span>Rapid tan · 2:30</span></div>
+            </div>
+            <div class="gap-side">
+              <p class="side-title">4 clients are due for this service</p>
+              <div class="side-list"><span>Maria K.</span><span>Junie P.</span><span>Rae L.</span><span>Bea T.</span></div>
+              <button type="button" class="btn btn-coral demo-cta" data-act="offer">Offer them the slot</button>
+              <div class="offer-log" data-log aria-live="polite"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="scene" data-scene="2" inert>
+          <div class="apt">
+            <div class="client">
+              <i aria-hidden="true">MK</i>
+              <div><b>Maria K.</b><span>Custom spray tan + contour · with Dana · 1:15 pm</span></div>
+              <em class="pill-soft">Arrived</em>
+            </div>
+            <div class="chips">
+              <span class="ok">Deposit paid</span>
+              <span>6th visit · last one 2 weeks ago</span>
+              <span>Note: medium shade</span>
+              <span>Event on Saturday</span>
+            </div>
+            <div class="apt-lines">
+              <div><span>Custom spray tan</span><b>$55</b></div>
+              <div><span>Contour add-on</span><b>$15</b></div>
+              <div><span>Deposit paid</span><b>−$20</b></div>
+              <div class="total"><span>Due today</span><b>$50</b></div>
+            </div>
+            <button type="button" class="btn btn-primary demo-cta" data-act="checkout">Check out · $50</button>
+            <p class="paid-tag">Paid · receipt texted · tip $10</p>
+          </div>
+        </div>
+
+        <div class="scene" data-scene="3" inert>
+          <div class="rebook">
+            <p class="side-title">Maria usually comes back every 2 weeks. Book her now?</p>
+            <div class="rebook-slots">
+              <button type="button" class="slot-btn" data-act="rebook">Thu 10 Sep · 1:15 pm</button>
+              <button type="button" class="slot-btn" data-act="rebook">Fri 11 Sep · 10:00 am</button>
+              <button type="button" class="slot-btn" data-act="rebook">Sat 12 Sep · 9:30 am</button>
+            </div>
+            <p class="rebook-done"><b>Booked.</b> Confirmation texted · $20 deposit paid · reminder the day before.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script is:inline>
+  (function () {
+    var root = document.querySelector('[data-walk]');
+    if (!root) return;
+    var steps = [].slice.call(root.querySelectorAll('.step'));
+    var scenes = [].slice.call(root.querySelectorAll('.scene'));
+    var panel = root.querySelector('.demo');
+    var title = root.querySelector('[data-title]');
+    var titles = JSON.parse(panel.getAttribute('data-titles'));
+    var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var cur = 0;
+    var timer = null;
+    var auto = !reduced;
+
+    function show(i, play) {
+      cur = (i + steps.length) % steps.length;
+      steps.forEach(function (st, k) {
+        var on = k === cur;
+        st.classList.toggle('on', on);
+        st.classList.toggle('playing', on && play);
+        st.setAttribute('aria-selected', on ? 'true' : 'false');
+        st.tabIndex = on ? 0 : -1;
+        if (on) {
+          // restart the progress bar
+          var bar = st.querySelector('i');
+          bar.style.animation = 'none';
+          void st.offsetWidth;
+          bar.style.animation = '';
+        }
+      });
+      scenes.forEach(function (sc, k) {
+        var on = k === cur;
+        sc.classList.toggle('on', on);
+        sc.inert = !on;
+      });
+      panel.setAttribute('aria-labelledby', steps[cur].id);
+      title.textContent = titles[cur];
+      clearTimeout(timer);
+      if (play) {
+        timer = setTimeout(function () {
+          show(cur + 1, true);
+        }, 7000);
+      }
+    }
+
+    function stopAuto() {
+      auto = false;
+      clearTimeout(timer);
+      steps[cur].classList.remove('playing');
+    }
+
+    // Any click or key inside the section stops auto-play.
+    root.addEventListener('click', stopAuto);
+    root.addEventListener('keydown', stopAuto);
+
+    steps.forEach(function (st) {
+      st.addEventListener('click', function () {
+        show(+st.getAttribute('data-step'), false);
+      });
+      st.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          show(+st.getAttribute('data-step'), false);
+        } else if (e.key === 'ArrowDown' || e.key === 'ArrowRight') {
+          e.preventDefault();
+          show(cur + 1, false);
+          steps[cur].focus();
+        } else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
+          e.preventDefault();
+          show(cur - 1, false);
+          steps[cur].focus();
+        } else if (e.key === 'Home') {
+          e.preventDefault();
+          show(0, false);
+          steps[cur].focus();
+        } else if (e.key === 'End') {
+          e.preventDefault();
+          show(steps.length - 1, false);
+          steps[cur].focus();
+        }
+      });
+    });
+
+    // Start auto-play when the section scrolls into view.
+    var started = false;
+    if (!auto) {
+      show(0, false);
+    } else if ('IntersectionObserver' in window) {
+      var io = new IntersectionObserver(
+        function (entries) {
+          if (entries[0].isIntersecting && !started) {
+            started = true;
+            io.disconnect();
+            show(0, auto);
+          }
+        },
+        { threshold: 0.35 }
+      );
+      io.observe(root);
+    } else {
+      show(0, auto);
+    }
+
+    // Scene interactions
+    var offerLines = [
+      '11:12 · Texted Maria, Junie, Rae and Bea',
+      '11:13 · Junie opened',
+      '11:14 · Maria opened',
+      '11:15 · Maria K. booked 1:15 – 2:15',
+      '11:15 · Told the other three the slot is gone',
+    ];
+
+    root.querySelectorAll('[data-act]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        stopAuto();
+        var act = btn.getAttribute('data-act');
+
+        if (act === 'need1' || act === 'need2') {
+          btn.closest('.need-row').classList.add('done');
+          var need = btn.closest('[data-need]');
+          if (need.querySelectorAll('.need-row.done').length === 2) need.classList.add('all');
+        }
+
+        if (act === 'offer') {
+          btn.disabled = true;
+          btn.textContent = 'Offer sent to 4';
+          var log = root.querySelector('[data-log]');
+          log.textContent = '';
+          offerLines.forEach(function (line, k) {
+            var add = function () {
+              var d = document.createElement('div');
+              if (k === 3) {
+                var b = document.createElement('b');
+                b.textContent = line;
+                d.appendChild(b);
+                var gap = root.querySelector('[data-gap]');
+                gap.setAttribute('data-state', 'booked');
+                gap.innerHTML = '<b>Maria K.</b><span>Custom spray tan · 1:15</span>';
+              } else {
+                d.textContent = line;
+              }
+              log.appendChild(d);
+            };
+            if (reduced) add();
+            else setTimeout(add, 600 * k + 200);
+          });
+        }
+
+        if (act === 'checkout') btn.closest('.apt').classList.add('done');
+
+        if (act === 'rebook') {
+          root.querySelectorAll('.slot-btn').forEach(function (b) {
+            b.classList.toggle('picked', b === btn);
+          });
+          btn.closest('.rebook').classList.add('done');
+        }
+      });
+    });
+  })();
+</script>
+
+<style>
+  .walk-in {
+    display: grid;
+    grid-template-columns: 0.9fr 1.4fr;
+    gap: 56px;
+    margin-top: 56px;
+    align-items: start;
+  }
+
+  /* steps */
+  .steps {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 4px;
+  }
+  .step {
+    position: relative;
+    padding: 16px 18px 18px;
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .step:hover {
+    background: rgba(27, 22, 20, 0.04);
+  }
+  .step:focus-visible {
+    outline: 2px solid var(--ink);
+    outline-offset: 2px;
+  }
+  .step b {
+    display: block;
+    font-weight: 600;
+    font-size: 16px;
+  }
+  .step span {
+    display: block;
+    margin-top: 4px;
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+  .step i {
+    position: absolute;
+    left: 18px;
+    right: 18px;
+    bottom: 8px;
+    height: 2px;
+    background: var(--line);
+    border-radius: 2px;
+    overflow: hidden;
+    opacity: 0;
+  }
+  .step i::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--ink);
+    transform: scaleX(0);
+    transform-origin: 0 0;
+  }
+  .step.on {
+    background: var(--surface);
+    box-shadow: 0 1px 0 var(--line), 0 8px 24px -16px rgba(27, 22, 20, 0.25);
+  }
+  .step.on i {
+    opacity: 1;
+  }
+  .step.on.playing i::after {
+    animation: progress 7s linear forwards;
+  }
+  @keyframes progress {
+    to {
+      transform: scaleX(1);
+    }
+  }
+
+  /* demo window */
+  .demo {
+    position: relative;
+    background: var(--surface);
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius-lg);
+    box-shadow: 0 30px 80px -30px rgba(27, 22, 20, 0.22);
+    min-height: 480px;
+    overflow: hidden;
+  }
+  .demo-bar {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    height: 44px;
+    padding: 0 18px;
+    border-bottom: 1px solid var(--line);
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--muted);
+  }
+  .dots {
+    display: flex;
+    gap: 6px;
+  }
+  .dots i {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: rgba(27, 22, 20, 0.12);
+  }
+  .scene {
+    position: absolute;
+    inset: 44px 0 0;
+    padding: 24px;
+    opacity: 0;
+    transform: translateY(8px);
+    transition: opacity 0.35s ease, transform 0.35s ease;
+    pointer-events: none;
+    font-size: 14px;
+  }
+  .scene.on {
+    opacity: 1;
+    transform: none;
+    pointer-events: auto;
+  }
+
+  .mini {
+    font: inherit;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 7px 12px;
+    border-radius: var(--radius-pill);
+    border: 1px solid var(--line-strong);
+    background: var(--surface);
+    color: var(--ink);
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .mini:hover {
+    background: var(--ink);
+    color: #fff;
+    border-color: var(--ink);
+  }
+  .done-tag,
+  .paid-tag,
+  .rebook-done {
+    display: none;
+    font-style: normal;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--sage-ink);
+    background: var(--sage);
+    padding: 5px 10px;
+    border-radius: var(--radius-pill);
+  }
+
+  /* scene 0: needs you */
+  .need-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .need-row > div {
+    flex: 1;
+    min-width: 0;
+  }
+  .need-row b {
+    display: block;
+    font-weight: 600;
+  }
+  .need-row span {
+    display: block;
+    font-size: 13px;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+  .need-row.done .mini {
+    display: none;
+  }
+  .need-row.done .done-tag {
+    display: inline-block;
+    white-space: nowrap;
+  }
+  .need-empty {
+    padding-top: 18px;
+    color: var(--muted);
+    font-size: 13px;
+  }
+  .need.all .need-empty {
+    color: var(--ink);
+  }
+
+  /* scene 1: the book */
+  .gapview {
+    display: grid;
+    grid-template-columns: 1fr 1.2fr;
+    gap: 24px;
+  }
+  .gap-col {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 10px;
+    display: grid;
+    gap: 8px;
+    align-content: start;
+    font-size: 12px;
+  }
+  .gap-head {
+    display: flex;
+    justify-content: space-between;
+    padding: 4px 4px 8px;
+    border-bottom: 1px solid var(--line);
+  }
+  .gap-head b {
+    font-weight: 600;
+  }
+  .gap-head span {
+    color: var(--muted);
+  }
+  .gap-ap,
+  .gap-open {
+    border-radius: var(--radius-sm);
+    padding: 8px 10px;
+    line-height: 1.3;
+    border-left: 3px solid transparent;
+  }
+  .gap-col :global(b) {
+    display: block;
+    font-weight: 600;
+  }
+  .gap-col :global(span) {
+    color: var(--ink-2);
+    font-size: 11px;
+  }
+  .gap-ap.rose {
+    background: var(--ap-rose);
+    border-color: var(--ap-rose-edge);
+  }
+  .gap-ap.grey {
+    background: var(--ap-grey);
+    border-color: var(--ap-grey-edge);
+  }
+  .gap-open {
+    min-height: 64px;
+    border: 1px dashed var(--coral);
+    color: var(--coral-ink);
+    transition: background 0.4s, border-color 0.4s;
+  }
+  .gap-open :global(b),
+  .gap-open :global(span) {
+    color: var(--coral-ink);
+  }
+  .gap-open[data-state='booked'] {
+    background: var(--ap-rose);
+    border: 0;
+    border-left: 3px solid var(--ap-rose-edge);
+  }
+  .gap-open[data-state='booked'] :global(b) {
+    color: var(--ink);
+  }
+  .gap-open[data-state='booked'] :global(span) {
+    color: var(--ink-2);
+  }
+  .side-title {
+    font-family: var(--serif);
+    font-size: 22px;
+    line-height: 1.2;
+  }
+  .side-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 12px;
+  }
+  .side-list span {
+    font-size: 12px;
+    padding: 4px 10px;
+    border-radius: var(--radius-pill);
+    background: var(--blush-2);
+    border: 1px solid var(--line);
+  }
+  .demo-cta {
+    margin-top: 18px;
+    min-height: 42px;
+    font-size: 14px;
+  }
+  .demo-cta:disabled {
+    cursor: default;
+    transform: none;
+  }
+  .offer-log {
+    margin-top: 14px;
+    display: grid;
+    gap: 6px;
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .offer-log :global(div) {
+    animation: login 0.35s ease both;
+  }
+  .offer-log :global(b) {
+    color: var(--ink);
+    font-weight: 600;
+  }
+  @keyframes login {
+    from {
+      opacity: 0;
+      transform: translateY(4px);
+    }
+  }
+
+  /* scene 2: appointment */
+  .client {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .client > div {
+    flex: 1;
+    min-width: 0;
+    line-height: 1.3;
+  }
+  .client i {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--blush);
+    color: var(--coral-ink);
+    display: grid;
+    place-items: center;
+    font-style: normal;
+    font-size: 11px;
+    font-weight: 700;
+    flex: none;
+  }
+  .client b {
+    display: block;
+    font-weight: 600;
+  }
+  .client span {
+    color: var(--muted);
+    font-size: 12px;
+  }
+  .pill-soft {
+    font-style: normal;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 4px 9px;
+    border-radius: var(--radius-pill);
+    background: var(--sage);
+    color: var(--sage-ink);
+  }
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 14px;
+  }
+  .chips span {
+    font-size: 12px;
+    padding: 5px 10px;
+    border-radius: var(--radius-pill);
+    border: 1px solid var(--line-strong);
+    color: var(--ink-2);
+  }
+  .chips span.ok {
+    border-color: transparent;
+    background: var(--sage);
+    color: var(--sage-ink);
+  }
+  .apt-lines {
+    margin-top: 18px;
+    border-top: 1px solid var(--line);
+  }
+  .apt-lines div {
+    display: flex;
+    justify-content: space-between;
+    padding: 9px 0;
+    border-bottom: 1px solid var(--line);
+    font-variant-numeric: tabular-nums;
+  }
+  .apt-lines span {
+    color: var(--muted);
+  }
+  .apt-lines b {
+    font-weight: 600;
+  }
+  .apt-lines .total span,
+  .apt-lines .total b {
+    color: var(--ink);
+    font-weight: 600;
+  }
+  .apt.done .demo-cta {
+    display: none;
+  }
+  .apt.done .paid-tag {
+    display: inline-block;
+    margin-top: 18px;
+  }
+
+  /* scene 3: rebook */
+  .rebook-slots {
+    display: grid;
+    gap: 8px;
+    margin-top: 18px;
+    max-width: 22em;
+  }
+  .slot-btn {
+    font: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 12px 16px;
+    border-radius: var(--radius-pill);
+    border: 1px solid var(--line-strong);
+    background: var(--surface);
+    color: var(--ink);
+    cursor: pointer;
+    text-align: left;
+    font-variant-numeric: tabular-nums;
+  }
+  .slot-btn:hover {
+    border-color: var(--ink);
+  }
+  .slot-btn.picked {
+    background: var(--coral-strong);
+    border-color: var(--coral-strong);
+    color: #fff;
+  }
+  .rebook.done .rebook-done {
+    display: inline-block;
+    margin-top: 16px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .step,
+    .scene,
+    .gap-open {
+      transition: none;
+    }
+    .scene {
+      transform: none;
+    }
+    .step i {
+      display: none;
+    }
+    .offer-log :global(div) {
+      animation: none;
+    }
+  }
+
+  @media (max-width: 860px) {
+    .walk-in {
+      grid-template-columns: 1fr;
+      gap: 24px;
+    }
+    .gapview {
+      grid-template-columns: 1fr;
+    }
+    .demo {
+      min-height: 0;
+    }
+    .scene {
+      display: none;
+      position: relative;
+      inset: auto;
+      opacity: 1;
+      transform: none;
+      pointer-events: auto;
+    }
+    .scene.on {
+      display: block;
+    }
+  }
+  @media (max-width: 480px) {
+    .scene {
+      padding: 18px 16px;
+    }
+    .need-row {
+      flex-wrap: wrap;
+    }
+    .need-row.done .done-tag {
+      white-space: normal;
+    }
+  }
+</style>

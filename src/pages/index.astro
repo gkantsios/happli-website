@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Hero from '../components/sections/Hero.astro';
+import Walkthrough from '../components/sections/Walkthrough.astro';
 import Problem from '../components/sections/Problem.astro';
 import SectionHead from '../components/sections/SectionHead.astro';
 import FeatureGrid, { type Feature } from '../components/sections/FeatureGrid.astro';
@@ -87,6 +88,7 @@ const faq: FaqItem[] = [
 
 <BaseLayout title={title} description={description} jsonLd={[organization(), softwareApplication()]}>
   <Hero />
+  <Walkthrough />
   <Problem />
 
   <section class="section" aria-labelledby="solution-title">
