@@ -14,6 +14,15 @@ Everything below is marked in the source with `TODO confirm:` or `PLACEHOLDER` (
 - [ ] Stripe live mode: live card payments need the Stripe go-live checklist completed (deposits block on home, Payments section on /features).
 - [ ] Switch the repo's Pages source to **GitHub Actions** at launch (Settings → Pages). The workflow already exists; nothing was changed in the repo settings.
 
+## Walkthrough claims to confirm (home page, `src/components/sections/Walkthrough.astro`)
+
+The walkthrough was ported from the mockup on request. Service names, notes and deposits were adapted for spray tan studios, but these interactions still go beyond what the copy doc lists as built. Confirm each one or ask for the scene to be reworded before launch:
+
+- [ ] Needs you: a "Deposit failed" row with a one-click "Text her", and "Priya is out Thursday · 3 appointments to move" with a one-click "Move them" (bulk move + texting 3 clients).
+- [ ] The book: one gap offered to 4 due clients at once ("Offer sent to 4"), "opened" status for texts, and the automatic "Told the other three the slot is gone". The copy doc says you pick a client and Happli drafts one offer for you to approve.
+- [ ] Appointment: "receipt texted" after checkout.
+- [ ] Rebook: the "Maria usually comes back every 2 weeks. Book her now?" suggestion at checkout.
+
 ## Claims to confirm (copy doc `[confirm]` items)
 
 - [ ] Live texting to clients is switched on: home reminders block, home FAQ 6, "Reminders and client messages" on /features.
@@ -26,6 +35,7 @@ Everything below is marked in the source with `TODO confirm:` or `PLACEHOLDER` (
 
 - [ ] **Pricing plans** (`src/components/sections/PricingPlans.astro`): plan names, prices, billing unit, "best for", locations, team members, SMS allowance, whether the chat assistant is included, client import (included or fee), support level, and the per-plan CTA label. All are shown on the page as highlighted `[PLACEHOLDER]` text.
 - [ ] Pricing extras (commented out): founding member offer, free trial, annual discount.
+- [ ] Pricing fee list: the "Happli fee on payments: none." line was removed until Grant decides on the fee wording. Other "no fee" wording (hero trust line, payments section, FAQ, pricing subhead and meta description, /features Stripe Connect line) is unchanged for now.
 - [ ] Pricing FAQ answers (`src/pages/pricing.astro`): setup fee, contract/cancellation terms, SMS pricing, import pricing.
 - [ ] Pricing meta description: add "[PRICE] per [UNIT]." back once pricing is set (`src/pages/pricing.astro`).
 - [ ] Add `offers` to the SoftwareApplication JSON-LD once pricing is real (`src/lib/jsonld.ts`).
@@ -42,10 +52,11 @@ The copy doc has no headings for some sections, so these were added. Please revi
 - Solution heading: "Booking, payments, reminders and clients, in one place."
 - Home features heading: "Everything your front desk does, in one place." (reuses the /features headline)
 - Booking page section lede: "Clients book themselves on a phone-friendly booking page, any time of day."
+- Walkthrough section head (from the mockup): "How a Tuesday runs" / "Four moments. None of them at the front desk."
 - How it works eyebrow "3 steps"; payments section eyebrow "Payments and trust"; "Trust points" label
 - /blog heading "Notes for busy studio owners."; /compare heading "How Happli compares."
 - Footer tagline and "Made for spray tan studios and beauty pros."
-- Sample names in the calendar and phone illustrations (Jess, Maya, Tori, Golden Glow Studio)
+- Sample names in the calendar, phone and walkthrough illustrations (Jess, Maya, Tori, Golden Glow Studio; walkthrough client and team names are from the mockup; its prices ($55, $15, $20 deposit, $10 tip) are illustrative)
 
 ## After the first post
 
