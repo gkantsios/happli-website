@@ -1,0 +1,148 @@
+---
+// Client booking page on a phone (illustration). Used by the booking page feature card and /features.
+---
+
+<div class="phone">
+  <div class="top"><div class="bb">gg</div><span class="studio">Golden Glow Studio</span></div>
+  <p class="h">When suits <em>you?</em></p>
+  <p class="svc">Custom spray tan · 30 min</p>
+  <div class="days">
+    <div class="day"><span>WED</span><b>26</b></div>
+    <div class="day on"><span>THU</span><b>27</b></div>
+    <div class="day"><span>FRI</span><b>28</b></div>
+    <div class="day off"><span>SAT</span><b>29</b></div>
+  </div>
+  <p class="lbl">AFTERNOON</p>
+  <div class="slots">
+    <div class="slot on">1:15 pm</div>
+    <div class="slot">2:00 pm</div>
+    <div class="slot">3:30 pm</div>
+  </div>
+  <div class="foot"><span>Deposit due today</span><b>Pay &amp; confirm</b></div>
+</div>
+
+<style>
+  .phone {
+    width: 320px;
+    max-width: 100%;
+    background: #fff;
+    border-radius: 34px;
+    border: 1px solid var(--line-strong);
+    box-shadow: 0 40px 80px -40px rgba(27, 22, 20, 0.35), 0 12px 28px -16px rgba(27, 22, 20, 0.14);
+    padding: 22px 20px 18px;
+    font-size: 13px;
+  }
+  .top {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 22px;
+  }
+  .bb {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 16px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--blush);
+    display: grid;
+    place-items: center;
+  }
+  .studio {
+    font-weight: 600;
+  }
+  .h {
+    font-family: var(--serif);
+    font-size: 26px;
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+  }
+  .h em {
+    font-style: italic;
+    color: var(--coral-ink);
+  }
+  .svc {
+    color: var(--muted);
+    margin-top: 6px;
+    font-size: 12px;
+  }
+  .days {
+    display: flex;
+    gap: 8px;
+    margin-top: 20px;
+  }
+  .day {
+    flex: 1;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 8px 0;
+    text-align: center;
+    line-height: 1.2;
+  }
+  .day span {
+    display: block;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+  }
+  .day b {
+    display: block;
+    font-size: 16px;
+    font-weight: 600;
+    margin-top: 3px;
+  }
+  .day.on {
+    background: var(--ink);
+    border-color: var(--ink);
+    color: #fff;
+  }
+  .day.on span {
+    color: rgba(255, 255, 255, 0.75);
+  }
+  .day.off {
+    background: var(--bg);
+    color: var(--muted);
+  }
+  .day.off b {
+    text-decoration: line-through;
+  }
+  .lbl {
+    margin-top: 20px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    color: var(--muted);
+  }
+  .slots {
+    display: grid;
+    gap: 8px;
+    margin-top: 10px;
+  }
+  .slot {
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius-pill);
+    padding: 11px 0;
+    text-align: center;
+    font-weight: 600;
+  }
+  .slot.on {
+    background: var(--coral-strong);
+    border-color: var(--coral-strong);
+    color: #fff;
+  }
+  .foot {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 18px;
+    padding-top: 14px;
+    border-top: 1px solid var(--line);
+    font-weight: 600;
+  }
+  .foot span {
+    color: var(--muted);
+    font-weight: 500;
+  }
+</style>

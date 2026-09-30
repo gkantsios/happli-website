@@ -1,0 +1,137 @@
+---
+// Appointment checkout sheet (illustration): notes, balance, deposit, due today.
+// interactive: a real Check out button with the walkthrough's data-act hook.
+interface Props {
+  interactive?: boolean;
+}
+const { interactive = false } = Astro.props;
+const Btn = interactive ? 'button' : 'span';
+---
+
+<div class="apt">
+  <div class="client">
+    <i aria-hidden="true">MK</i>
+    <div><b>Maria K.</b><span>Custom spray tan + contour · with Dana · 1:15 pm</span></div>
+    <em class="pill-soft">Arrived</em>
+  </div>
+  <div class="chips">
+    <span class="ok">Deposit paid</span>
+    <span>6th visit · last one 2 weeks ago</span>
+    <span>Note: medium shade</span>
+    <span>Event on Saturday</span>
+  </div>
+  <div class="apt-lines">
+    <div><span>Custom spray tan</span><b>$55</b></div>
+    <div><span>Contour add-on</span><b>$15</b></div>
+    <div><span>Deposit paid</span><b>−$20</b></div>
+    <div class="total"><span>Due today</span><b>$50</b></div>
+  </div>
+  <Btn type={interactive ? 'button' : undefined} class="btn btn-primary demo-cta" data-act={interactive ? 'checkout' : undefined}>Check out · $50</Btn>
+  <p class="paid-tag">Paid · tip $10</p>
+</div>
+
+<style>
+  /* same as the walkthrough's .demo-cta */
+  .demo-cta {
+    margin-top: 18px;
+    min-height: 42px;
+    font-size: 14px;
+  }
+  .paid-tag {
+    display: none;
+    font-style: normal;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--sage-ink);
+    background: var(--sage);
+    padding: 5px 10px;
+    border-radius: var(--radius-pill);
+  }
+  .client {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .client > div {
+    flex: 1;
+    min-width: 0;
+    line-height: 1.3;
+  }
+  .client i {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--blush);
+    color: var(--coral-ink);
+    display: grid;
+    place-items: center;
+    font-style: normal;
+    font-size: 11px;
+    font-weight: 700;
+    flex: none;
+  }
+  .client b {
+    display: block;
+    font-weight: 600;
+  }
+  .client span {
+    color: var(--muted);
+    font-size: 12px;
+  }
+  .pill-soft {
+    font-style: normal;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 4px 9px;
+    border-radius: var(--radius-pill);
+    background: var(--sage);
+    color: var(--sage-ink);
+  }
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 14px;
+  }
+  .chips span {
+    font-size: 12px;
+    padding: 5px 10px;
+    border-radius: var(--radius-pill);
+    border: 1px solid var(--line-strong);
+    color: var(--ink-2);
+  }
+  .chips span.ok {
+    border-color: transparent;
+    background: var(--sage);
+    color: var(--sage-ink);
+  }
+  .apt-lines {
+    margin-top: 18px;
+    border-top: 1px solid var(--line);
+  }
+  .apt-lines div {
+    display: flex;
+    justify-content: space-between;
+    padding: 9px 0;
+    border-bottom: 1px solid var(--line);
+    font-variant-numeric: tabular-nums;
+  }
+  .apt-lines span {
+    color: var(--muted);
+  }
+  .apt-lines b {
+    font-weight: 600;
+  }
+  .apt-lines .total span,
+  .apt-lines .total b {
+    color: var(--ink);
+    font-weight: 600;
+  }
+  .apt.done .demo-cta {
+    display: none;
+  }
+  .apt.done .paid-tag {
+    display: inline-block;
+    margin-top: 18px;
+  }
+</style>

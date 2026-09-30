@@ -6,6 +6,8 @@
 // Every interaction matches the app today: gap offers go to one client you pick, Happli drafts the
 // text, and nothing sends until you approve it. No read receipts, no booking by reply.
 import SectionHead from './SectionHead.astro';
+import NeedsList from '../mocks/NeedsList.astro';
+import CheckoutSheet from '../mocks/CheckoutSheet.astro';
 
 const steps = [
   { time: '8:40', title: 'Open the book', body: 'Everything that needs you, in one short list.' },
@@ -49,28 +51,7 @@ const titles = ['Needs you', 'The book · Thursday', 'Appointment · Maria K.', 
         </div>
 
         <div class="scene on" data-scene="0">
-          <div class="need" data-need>
-            <div class="need-row">
-              <div>
-                <b>Open gap · Thu 1:15 – 2:15</b>
-                <span>Dana has an hour free.</span>
-              </div>
-              <button type="button" class="mini" data-act="gap">Draft an offer</button>
-              <em class="done-tag">Offer drafted</em>
-            </div>
-            <div class="need-row">
-              <div>
-                <b>Waitlist match · Rapid tan</b>
-                <span>Bea T. asked for Saturday morning · 10:00 is open.</span>
-              </div>
-              <div class="mini-pair">
-                <button type="button" class="mini" data-act="wl-book">Book</button>
-                <button type="button" class="mini" data-act="wl-dismiss">Dismiss</button>
-              </div>
-              <em class="done-tag" data-wl-tag>Booked</em>
-            </div>
-            <p class="need-empty">Nothing else needs you. Enjoy your coffee.</p>
-          </div>
+          <NeedsList interactive />
         </div>
 
         <div class="scene" data-scene="1" inert>
@@ -100,27 +81,7 @@ const titles = ['Needs you', 'The book · Thursday', 'Appointment · Maria K.', 
         </div>
 
         <div class="scene" data-scene="2" inert>
-          <div class="apt">
-            <div class="client">
-              <i aria-hidden="true">MK</i>
-              <div><b>Maria K.</b><span>Custom spray tan + contour · with Dana · 1:15 pm</span></div>
-              <em class="pill-soft">Arrived</em>
-            </div>
-            <div class="chips">
-              <span class="ok">Deposit paid</span>
-              <span>6th visit · last one 2 weeks ago</span>
-              <span>Note: medium shade</span>
-              <span>Event on Saturday</span>
-            </div>
-            <div class="apt-lines">
-              <div><span>Custom spray tan</span><b>$55</b></div>
-              <div><span>Contour add-on</span><b>$15</b></div>
-              <div><span>Deposit paid</span><b>−$20</b></div>
-              <div class="total"><span>Due today</span><b>$50</b></div>
-            </div>
-            <button type="button" class="btn btn-primary demo-cta" data-act="checkout">Check out · $50</button>
-            <p class="paid-tag">Paid · tip $10</p>
-          </div>
+          <CheckoutSheet interactive />
         </div>
 
         <div class="scene" data-scene="3" inert>
@@ -428,25 +389,6 @@ const titles = ['Needs you', 'The book · Thursday', 'Appointment · Maria K.', 
     pointer-events: auto;
   }
 
-  .mini {
-    font: inherit;
-    font-size: 12px;
-    font-weight: 600;
-    padding: 7px 12px;
-    border-radius: var(--radius-pill);
-    border: 1px solid var(--line-strong);
-    background: var(--surface);
-    color: var(--ink);
-    cursor: pointer;
-    white-space: nowrap;
-  }
-  .mini:hover {
-    background: var(--ink);
-    color: #fff;
-    border-color: var(--ink);
-  }
-  .done-tag,
-  .paid-tag,
   .rebook-done {
     display: none;
     font-style: normal;
@@ -456,50 +398,6 @@ const titles = ['Needs you', 'The book · Thursday', 'Appointment · Maria K.', 
     background: var(--sage);
     padding: 5px 10px;
     border-radius: var(--radius-pill);
-  }
-
-  /* scene 0: needs you */
-  .need-row {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    padding: 14px 0;
-    border-bottom: 1px solid var(--line);
-  }
-  .need-row > div {
-    flex: 1;
-    min-width: 0;
-  }
-  .need-row b {
-    display: block;
-    font-weight: 600;
-  }
-  .need-row span {
-    display: block;
-    font-size: 13px;
-    color: var(--muted);
-    margin-top: 2px;
-  }
-  .need-row > .mini-pair {
-    flex: none;
-    display: flex;
-    gap: 6px;
-  }
-  .need-row.done .mini-pair,
-  .need-row.done .mini {
-    display: none;
-  }
-  .need-row.done .done-tag {
-    display: inline-block;
-    white-space: nowrap;
-  }
-  .need-empty {
-    padding-top: 18px;
-    color: var(--muted);
-    font-size: 13px;
-  }
-  .need.all .need-empty {
-    color: var(--ink);
   }
 
   /* scene 1: the book */
@@ -648,95 +546,6 @@ const titles = ['Needs you', 'The book · Thursday', 'Appointment · Maria K.', 
     border-radius: var(--radius-pill);
   }
 
-  /* scene 2: appointment */
-  .client {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-  .client > div {
-    flex: 1;
-    min-width: 0;
-    line-height: 1.3;
-  }
-  .client i {
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    background: var(--blush);
-    color: var(--coral-ink);
-    display: grid;
-    place-items: center;
-    font-style: normal;
-    font-size: 11px;
-    font-weight: 700;
-    flex: none;
-  }
-  .client b {
-    display: block;
-    font-weight: 600;
-  }
-  .client span {
-    color: var(--muted);
-    font-size: 12px;
-  }
-  .pill-soft {
-    font-style: normal;
-    font-size: 11px;
-    font-weight: 600;
-    padding: 4px 9px;
-    border-radius: var(--radius-pill);
-    background: var(--sage);
-    color: var(--sage-ink);
-  }
-  .chips {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    margin-top: 14px;
-  }
-  .chips span {
-    font-size: 12px;
-    padding: 5px 10px;
-    border-radius: var(--radius-pill);
-    border: 1px solid var(--line-strong);
-    color: var(--ink-2);
-  }
-  .chips span.ok {
-    border-color: transparent;
-    background: var(--sage);
-    color: var(--sage-ink);
-  }
-  .apt-lines {
-    margin-top: 18px;
-    border-top: 1px solid var(--line);
-  }
-  .apt-lines div {
-    display: flex;
-    justify-content: space-between;
-    padding: 9px 0;
-    border-bottom: 1px solid var(--line);
-    font-variant-numeric: tabular-nums;
-  }
-  .apt-lines span {
-    color: var(--muted);
-  }
-  .apt-lines b {
-    font-weight: 600;
-  }
-  .apt-lines .total span,
-  .apt-lines .total b {
-    color: var(--ink);
-    font-weight: 600;
-  }
-  .apt.done .demo-cta {
-    display: none;
-  }
-  .apt.done .paid-tag {
-    display: inline-block;
-    margin-top: 18px;
-  }
-
   /* scene 3: rebook */
   .rebook-slots {
     display: grid;
@@ -810,12 +619,6 @@ const titles = ['Needs you', 'The book · Thursday', 'Appointment · Maria K.', 
   @media (max-width: 480px) {
     .scene {
       padding: 18px 16px;
-    }
-    .need-row {
-      flex-wrap: wrap;
-    }
-    .need-row.done .done-tag {
-      white-space: normal;
     }
   }
 </style>
