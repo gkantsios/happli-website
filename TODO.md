@@ -4,7 +4,7 @@ Everything below is marked in the source with `TODO confirm:` or `PLACEHOLDER` (
 
 ## Launch blockers
 
-- [ ] **happli-coo PR #297 (direct charges on the studio's own Stripe account) must merge before launch.** It backs the hero headline ("Your money, yours."), the hero subhead, the home meta description, the whole "Your money goes to you" section, the home final CTA body, FAQ 1 and 2, the Stripe Connect line on /features, and the /pricing subhead, meta description and fee list. Files: `src/components/sections/Hero.astro`, `src/components/sections/PaymentsTrust.astro`, `src/pages/index.astro`, `src/pages/features.astro`, `src/pages/pricing.astro`.
+- [ ] **happli-coo PR #297 (direct charges on the studio's own Stripe account) must merge before launch.** It backs the hero headline ("Your money, yours."), the hero subhead, the home meta description, the whole "Your money goes to you" section, the home final CTA body, FAQ 1 and 2, the Stripe Connect line on /features, and the /pricing subhead, meta description and fee list. Files: `src/components/sections/HeroZoom.astro`, `src/components/sections/HeroStatic.astro`, `src/components/sections/PaymentsTrust.astro`, `src/pages/index.astro`, `src/pages/features.astro`, `src/pages/pricing.astro`.
 - [ ] **The legal pages contradict the new product copy on message approval.** They were ported word-for-word (as required), but the new copy says confirmations and reminders send automatically once turned on. The legal pages say:
   - security.html, "The approval gate as a safety control": "No client-facing message leaves the Service without the business operator's explicit approval. This is a permanent architectural decision, not a setting…"
   - terms.html §2, "Your approval controls outbound communication".
@@ -18,6 +18,13 @@ Everything below is marked in the source with `TODO confirm:` or `PLACEHOLDER` (
   3. On the `happli-website` Worker: Settings → Domains & Routes → Add → Custom Domain → `gohappli.com` (and `www.gohappli.com` if wanted).
   4. Check the live domain: pages load, `/privacy.html` 301s to `/privacy/`, and an unknown path shows the 404 page.
   5. Turn off GitHub Pages for this repo (Settings → Pages) so the old site stops serving.
+
+- [ ] **Replace the zoom hero's studio photo** (`src/assets/hero-studio.jpg`). It's the design mockup's photo of a hair salon (styling chairs, mirrors, "Good hair happier people" signage), used as a placeholder. Swap in a spray tan studio photo with a monitor on the front desk, then update `MONITOR` in `src/components/sections/HeroZoom.astro` to the screen's pixel box (left, top, right, bottom) in the new photo.
+
+## Zoom hero claims to confirm (`src/components/sections/HeroZoom.astro`)
+
+- [ ] Panel "Gaps get noticed": one open hour offered to 4 due clients at once ("Offered" on each), then "You approved the offer at 11:12 · Maria K. booked 1:15". Same claim as the walkthrough's "Offer sent to 4".
+- [ ] Panel "On the appointment": visit count ("6th visit") and past visits with prices shown on the appointment.
 
 ## Walkthrough claims to confirm (home page, `src/components/sections/Walkthrough.astro`)
 
@@ -54,6 +61,7 @@ The walkthrough was ported from the mockup on request. Service names, notes and 
 The copy doc has no headings for some sections, so these were added. Please review:
 
 - Hero eyebrow: "For spray tan studios and beauty pros"
+- Zoom hero panel titles (adapted from the mockup): "An hour opens up. Four clients are due.", "Three taps, from any phone.", "Notes and history, right where you need them."
 - Solution heading: "Booking, payments, reminders and clients, in one place."
 - Home features heading: "Everything your front desk does, in one place." (reuses the /features headline)
 - Booking page section lede: "Clients book themselves on a phone-friendly booking page, any time of day."

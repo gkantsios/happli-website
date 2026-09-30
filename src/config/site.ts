@@ -11,6 +11,9 @@ export const site = {
   defaultOgImage: '/og-default.png',
   locale: 'en_US',
 
+  // Homepage hero: 'zoom' = scroll-zoom hero (HeroZoom), 'static' = the simpler hero (HeroStatic).
+  heroVariant: 'zoom' as 'zoom' | 'static',
+
   cta: {
     label: 'Book a demo',
     // Primary CTA for every "Book a demo" button on the site.

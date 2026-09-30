@@ -27,7 +27,7 @@ npm run build && npx wrangler deploy --dry-run
 | `src/styles/tokens.css` | Colors, fonts, spacing and radii |
 | `src/styles/global.css` | Base styles, buttons, section rhythm, long-form (`.prose`) styles |
 | `src/layouts/` | `BaseLayout` (head, SEO, header, footer), `ProseLayout` (legal pages), `PostLayout` (blog and compare posts) |
-| `src/components/sections/` | One component per page section (Hero, FeatureGrid, Faq, CtaBand, PricingPlans, …) |
+| `src/components/sections/` | One component per page section (HeroZoom, HeroStatic, Walkthrough, FeatureGrid, Faq, CtaBand, PricingPlans, …) |
 | `src/pages/` | One file per route |
 | `src/legal/` | Privacy, terms and security page bodies (HTML, ported word-for-word from the old site) |
 | `src/content/blog/`, `src/content/compare/` | Markdown posts |
@@ -35,7 +35,16 @@ npm run build && npx wrangler deploy --dry-run
 | `wrangler.jsonc` | Cloudflare Worker config: a static-assets-only Worker named `happli-website` that serves `dist/` |
 | `TODO.md` | Launch blockers, claims to confirm and placeholders to fill |
 
-## Add a blog post or a comparison page
+## Homepage hero
+
+The homepage has two heroes. Pick one with `heroVariant` in `src/config/site.ts`:
+
+- `'zoom'` (default): `HeroZoom.astro`, the scroll-zoom hero from the design mockup. As you scroll, the studio photo zooms into the monitor on the front desk, the calendar lands full size, and three panels slide in. Visitors who prefer reduced motion get the final frame laid out statically, and visitors without JavaScript get a one-screen hero.
+- `'static'`: `HeroStatic.astro`, a simpler hero with the calendar illustration below the copy.
+
+The zoom hero's photo is `src/assets/hero-studio.jpg`. Astro serves it as WebP in four widths with a JPEG fallback. To swap in a new photo, replace that file and update `MONITOR` at the top of `HeroZoom.astro` to the monitor screen's pixel box in the new photo (left, top, right, bottom).
+
+
 
 1. Create a Markdown file (`.md` or `.mdx`):
    - blog post: `src/content/blog/my-post.md` → published at `/blog/my-post/`

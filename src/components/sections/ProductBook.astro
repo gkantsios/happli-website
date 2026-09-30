@@ -1,6 +1,13 @@
 ---
 // An illustration of the Happli calendar, built in HTML/CSS with sample data.
 // Hidden from assistive tech; the paragraph below describes it.
+// Layout responds to the component's own width (container queries), so it also works
+// inside the zoom hero's monitor. `bare` drops the outer margin, border and shadow and
+// fills its parent's height.
+interface Props {
+  bare?: boolean;
+}
+const { bare = false } = Astro.props;
 type Ap = { col: number; start: number; len: number; tone: 'rose' | 'sand' | 'sage' | 'grey' | 'open'; title: string; meta: string };
 
 const team = [
@@ -22,7 +29,7 @@ const aps: Ap[] = [
 ];
 ---
 
-<figure class="book-figure">
+<figure class:list={['book-figure', { bare }]}>
   <div class="screen" aria-hidden="true">
     <div class="screen-bar">
       <div class="dots"><i></i><i></i><i></i></div>
@@ -84,6 +91,26 @@ const aps: Ap[] = [
   .book-figure {
     margin: 64px auto 0;
     max-width: 1040px;
+    container-type: inline-size;
+  }
+  .bare {
+    margin: 0;
+    max-width: none;
+    height: 100%;
+  }
+  .bare .screen {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+  }
+  .bare .screen-body {
+    flex: 1;
+  }
+  .bare .book {
+    grid-template-rows: auto 1fr;
   }
   .screen {
     border-radius: var(--radius-lg);
@@ -348,7 +375,7 @@ const aps: Ap[] = [
       transform: none;
     }
   }
-  @media (max-width: 860px) {
+  @container (max-width: 800px) {
     .screen-body {
       grid-template-columns: 1fr;
     }
@@ -361,7 +388,7 @@ const aps: Ap[] = [
       grid-column: 1 / -1;
     }
   }
-  @media (max-width: 600px) {
+  @container (max-width: 552px) {
     .screen-tabs {
       display: none;
     }
