@@ -1,0 +1,68 @@
+/* Design tokens: colors, fonts, spacing. Based on site-mockup.html, with text colors
+   adjusted so every text/background pair passes WCAG AA (4.5:1). */
+:root {
+  /* surfaces */
+  --bg: #fbfaf8;
+  --surface: #ffffff;
+  --blush: #f6e9e4;
+  --blush-2: #fbf1ec;
+  --sage: #e4e8da;
+  --sand: #f3e7d6;
+
+  /* text */
+  --ink: #1b1614;
+  --ink-2: #4a423e;
+  --muted: #6f6660; /* 5.4:1 on --bg, 4.7:1 on --blush */
+  --faint: #a39a94; /* decorative only (rules, dots), never body text */
+  --sage-ink: #4e5a34;
+
+  /* accent */
+  --coral: #f4707a; /* accents, lines and dots only */
+  --coral-strong: #bf4450; /* button background, white text 5.0:1 */
+  --coral-strong-hover: #a83a45;
+  --coral-ink: #a93f49; /* coral text, 5.7:1 on --bg */
+  --coral-soft: #ffe1e3;
+
+  /* lines */
+  --line: rgba(27, 22, 20, 0.09);
+  --line-strong: rgba(27, 22, 20, 0.16);
+
+  /* appointment tints (product illustrations) */
+  --ap-rose: #fbe8e8;
+  --ap-rose-edge: #e8a3a8;
+  --ap-sand: #f7eddc;
+  --ap-sand-edge: #d8b77e;
+  --ap-sage: #e9eddf;
+  --ap-sage-edge: #a9b58b;
+  --ap-grey: #f0eeeb;
+  --ap-grey-edge: #c9c2bc;
+
+  /* type */
+  --serif: 'Newsreader Variable', Georgia, 'Times New Roman', serif;
+  --sans: 'Manrope Variable', system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+  --fs-body: 16px;
+  --fs-lede: 18px;
+  --fs-h1: clamp(40px, 5.6vw, 72px);
+  --fs-h2: clamp(32px, 4.2vw, 52px);
+  --fs-h3: 24px;
+  --fs-eyebrow: 12px;
+
+  /* layout and spacing */
+  --w: 1160px;
+  --w-prose: 720px;
+  --gutter: clamp(16px, 4vw, 40px);
+  --nav-h: 68px;
+  --space-section: clamp(88px, 11vw, 140px);
+  --space-block: clamp(40px, 5vw, 64px);
+
+  /* shape */
+  --radius-sm: 6px;
+  --radius: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-pill: 999px;
+  --shadow-card: 0 1px 0 rgba(27, 22, 20, 0.02), 0 30px 80px -30px rgba(27, 22, 20, 0.28),
+    0 12px 30px -16px rgba(27, 22, 20, 0.14);
+
+  color-scheme: light;
+}
