@@ -23,7 +23,8 @@ npm run build && npx wrangler deploy --dry-run
 
 | Path | What it is |
 |---|---|
-| `src/config/site.ts` | Site name, URLs, the **"Book a demo" link**, sign-in URL, contact email, header and footer links |
+| `src/config/site.ts` | Site name, URLs, the **"Book a demo" link**, sign-in URL, contact email, header and footer links, which homepage hero to use, and whether /blog and /compare are switched on |
+| `src/config/hero.ts` | The zoom hero's studio photo and where its monitor screen is (the one place to swap the photo) |
 | `src/styles/tokens.css` | Colors, fonts, spacing and radii |
 | `src/styles/global.css` | Base styles, buttons, section rhythm, long-form (`.prose`) styles |
 | `src/layouts/` | `BaseLayout` (head, SEO, header, footer), `ProseLayout` (legal pages), `PostLayout` (blog and compare posts) |
@@ -31,7 +32,7 @@ npm run build && npx wrangler deploy --dry-run
 | `src/pages/` | One file per route |
 | `src/legal/` | Privacy, terms and security page bodies (HTML, ported word-for-word from the old site) |
 | `src/content/blog/`, `src/content/compare/` | Markdown posts |
-| `public/` | Files served as-is: logos, favicons, `robots.txt`, the default social image, `_redirects` (Cloudflare edge redirects) and fallback redirect pages for the old `privacy.html` / `terms.html` / `security.html` URLs |
+| `public/` | Files served as-is: logos, favicons (`favicon.ico` is made by `node scripts/generate-favicon.mjs`), `robots.txt`, the default social image, `_redirects` (Cloudflare edge redirects) and fallback redirect pages for the old `privacy.html` / `terms.html` / `security.html` URLs |
 | `wrangler.jsonc` | Cloudflare Worker config: a static-assets-only Worker named `happli-website` that serves `dist/` |
 | `TODO.md` | Launch blockers, claims to confirm and placeholders to fill |
 
@@ -42,9 +43,24 @@ The homepage has two heroes. Pick one with `heroVariant` in `src/config/site.ts`
 - `'zoom'` (default): `HeroZoom.astro`, the scroll-zoom hero from the design mockup. As you scroll, the studio photo zooms into the monitor on the front desk, the calendar lands full size, and three panels slide in. Visitors who prefer reduced motion get the final frame laid out statically, and visitors without JavaScript get a one-screen hero.
 - `'static'`: `HeroStatic.astro`, a simpler hero with the calendar illustration below the copy.
 
-The zoom hero's photo is `src/assets/hero-studio.jpg`. Astro serves it as WebP in four widths with a JPEG fallback. To swap in a new photo, replace that file and update `MONITOR` at the top of `HeroZoom.astro` to the monitor screen's pixel box in the new photo (left, top, right, bottom).
+### Swapping the hero photo
 
+The photo and the monitor's position in it are set in one place, `src/config/hero.ts`:
 
+1. Put the new photo in `src/assets/` and point the import in `src/config/hero.ts` at it.
+2. Set `monitor` to the monitor screen's box in the new photo, in the photo's own pixels: `x0` left edge, `y0` top edge, `x1` right edge, `y1` bottom edge.
+
+Astro serves the photo as WebP at several widths (up to the photo's own width) with a JPEG fallback.
+
+What the photo needs:
+
+- **Shape and size:** landscape **16:9**, at least **1920×1080**, ideally **2560×1440**. On phones the photo is drawn about 1550 CSS px wide and then zoomed 3–4×, so extra pixels keep it sharp. A high-quality JPEG is fine.
+- **Monitor:** shot **straight on** (not at an angle), because the app is drawn over the screen as a flat rectangle. Screen shape about **16:10** (1.6–1.65), about **15–25% of the photo's width**.
+- **Position:** the monitor **near the horizontal center** (phones in portrait only see roughly the middle quarter of the photo's width) and about **40–60% of the way down**.
+- **Top third:** calm, with **no signage or text**. The headline sits over it behind a light gradient.
+- The screen itself can be blank; it gets covered.
+
+## Add a blog post or a comparison page
 
 1. Create a Markdown file (`.md` or `.mdx`):
    - blog post: `src/content/blog/my-post.md` → published at `/blog/my-post/`
@@ -70,9 +86,9 @@ competitor: 'Other Booking App'     # required for compare pages only
 
 **Drafts:** `draft: true` posts show in `npm run dev` (with a "Draft preview" badge) so you can review them. They are left out of the production build, the sitemap and the RSS feed. Set `draft: false` to publish.
 
-Each post gets its canonical URL, Open Graph and Twitter tags, `BlogPosting` and `BreadcrumbList` structured data, and an entry in the sitemap. Blog posts also go into `/rss.xml`.
+Each post gets Open Graph and Twitter tags and `BlogPosting` and `BreadcrumbList` structured data. Once its section is switched on (below), it also gets a canonical URL and an entry in the sitemap. Published blog posts go into `/rss.xml`.
 
-After the first blog post is published, add Blog to the header in `src/config/site.ts`.
+**Switching a section on.** /blog and /compare are off in `src/config/site.ts` (`sections`) until they have published posts. While a section is off, its pages still build and work by URL, but they're marked noindex, left out of the sitemap and the footer, and (for the blog) the RSS link is left out of the page head. After the first post is published, set `sections.blog` (or `sections.compare`) to `true`, and add Blog to the header `nav` if you want it there.
 
 ## SEO
 

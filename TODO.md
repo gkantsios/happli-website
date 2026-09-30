@@ -19,21 +19,13 @@ Everything below is marked in the source with `TODO confirm:` or `PLACEHOLDER` (
   4. Check the live domain: pages load, `/privacy.html` 301s to `/privacy/`, and an unknown path shows the 404 page.
   5. Turn off GitHub Pages for this repo (Settings → Pages) so the old site stops serving.
 
-- [ ] **Replace the zoom hero's studio photo** (`src/assets/hero-studio.jpg`). It's the design mockup's photo of a hair salon (styling chairs, mirrors, "Good hair happier people" signage), used as a placeholder. Swap in a spray tan studio photo with a monitor on the front desk, then update `MONITOR` in `src/components/sections/HeroZoom.astro` to the screen's pixel box (left, top, right, bottom) in the new photo.
+- [ ] **Replace the zoom hero's studio photo.** The current `src/assets/hero-studio.jpg` is the design mockup's hair-salon placeholder (styling chairs, mirrors, "Good hair happier people" signage). Swap in a spray tan studio photo in one place, `src/config/hero.ts`: point the import at the new file and set `monitor` to the screen's pixel box. Photo spec (also in the README): landscape 16:9, at least 1920×1080 (2560×1440 is better); monitor shot straight on, screen about 16:10 and 15–25% of the photo's width, near the horizontal center and 40–60% down; calm top third with no signage.
 
-## Zoom hero claims to confirm (`src/components/sections/HeroZoom.astro`)
+## Walkthrough and hero panels
 
-- [ ] Panel "Gaps get noticed": one open hour offered to 4 due clients at once ("Offered" on each), then "You approved the offer at 11:12 · Maria K. booked 1:15". Same claim as the walkthrough's "Offer sent to 4".
-- [ ] Panel "On the appointment": visit count ("6th visit") and past visits with prices shown on the appointment.
+These now match the app: Needs you shows an open gap ("Draft an offer") and a waitlist match (Book or Dismiss); a gap offer goes to one client you pick, Happli drafts the text, and it sends only after you approve ("Sent to Maria"), with no read receipts or booking by reply; checkout shows "Paid · tip $10"; rebooking is "Book her next visit" with time slots; the mock app's tabs are Calendar, Clients and Messages with a Settings gear.
 
-## Walkthrough claims to confirm (home page, `src/components/sections/Walkthrough.astro`)
-
-The walkthrough was ported from the mockup on request. Service names, notes and deposits were adapted for spray tan studios, but these interactions still go beyond what the copy doc lists as built. Confirm each one or ask for the scene to be reworded before launch:
-
-- [ ] Needs you: a "Deposit failed" row with a one-click "Text her", and "Priya is out Thursday · 3 appointments to move" with a one-click "Move them" (bulk move + texting 3 clients).
-- [ ] The book: one gap offered to 4 due clients at once ("Offer sent to 4"), "opened" status for texts, and the automatic "Told the other three the slot is gone". The copy doc says you pick a client and Happli drafts one offer for you to approve.
-- [ ] Appointment: "receipt texted" after checkout.
-- [ ] Rebook: the "Maria usually comes back every 2 weeks. Book her now?" suggestion at checkout.
+- [ ] Confirm the booking link format in the drafted offer text: "Book it here: goldenglow.gohappli.com" (`src/components/sections/Walkthrough.astro`, `src/components/sections/HeroZoom.astro`).
 
 ## Claims to confirm (copy doc `[confirm]` items)
 
@@ -61,11 +53,11 @@ The walkthrough was ported from the mockup on request. Service names, notes and 
 The copy doc has no headings for some sections, so these were added. Please review:
 
 - Hero eyebrow: "For spray tan studios and beauty pros"
-- Zoom hero panel titles (adapted from the mockup): "An hour opens up. Four clients are due.", "Three taps, from any phone.", "Notes and history, right where you need them."
+- Zoom hero panel titles (adapted from the mockup): "An hour opens up. Pick who gets the offer.", "Three taps, from any phone.", "Notes and history, right where you need them."
 - Solution heading: "Booking, payments, reminders and clients, in one place."
 - Home features heading: "Everything your front desk does, in one place." (reuses the /features headline)
 - Booking page section lede: "Clients book themselves on a phone-friendly booking page, any time of day."
-- Walkthrough section head (from the mockup): "How a Tuesday runs" / "Four moments. None of them at the front desk."
+- Walkthrough section head: "How a Thursday runs" / "Four moments. None of them at the front desk." (from the mockup)
 - How it works eyebrow "3 steps"; payments section eyebrow "Payments and trust"; "Trust points" label
 - /blog heading "Notes for busy studio owners."; /compare heading "How Happli compares."
 - Footer tagline and "Made for spray tan studios and beauty pros."
@@ -73,5 +65,7 @@ The copy doc has no headings for some sections, so these were added. Please revi
 
 ## After the first post
 
-- [ ] Add `{ label: 'Blog', href: '/blog/' }` to `nav` in `src/config/site.ts`.
+/blog and /compare are switched off in `src/config/site.ts` (`sections`): the pages build and work by URL, but they're noindex, left out of the sitemap and footer, and the RSS link is left out of the page head.
+
+- [ ] Set `sections.blog` (or `sections.compare`) to `true` in `src/config/site.ts`, and add `{ label: 'Blog', href: '/blog/' }` to `nav` if it should be in the header.
 - [ ] Delete the two draft samples in `src/content/blog/` and `src/content/compare/`.
