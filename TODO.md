@@ -4,7 +4,7 @@ Everything below is marked in the source with `TODO confirm:` or `PLACEHOLDER` (
 
 ## Launch blockers
 
-- [ ] **happli-coo PR #297 (direct charges on the studio's own Stripe account) must merge before launch.** It backs the hero headline ("Your money, yours."), the hero subhead, the home meta description, the whole "Your money goes to you" section, the home final CTA body, FAQ 1 and 2, the Stripe Connect line on /features, and the /pricing subhead, meta description and fee list. Files: `src/components/sections/HeroZoom.astro`, `src/components/sections/HeroStatic.astro`, `src/components/sections/PaymentsTrust.astro`, `src/pages/index.astro`, `src/pages/features.astro`, `src/pages/pricing.astro`.
+- [ ] **happli-coo PR #297 (direct charges on the studio's own Stripe account) must merge before launch.** It backs the "Your money goes to you" payments section on home, the Stripe Connect line on /features, and the /pricing subhead, meta description and fee list. Files: `src/components/sections/PaymentsTrust.astro`, `src/pages/features.astro`, `src/pages/pricing.astro`. (The hero, home meta description and final CTA no longer mention payments. The home FAQ says only that Happli never takes a cut and that card processing fees go to Stripe.)
 - [ ] **The legal pages contradict the new product copy on message approval.** They were ported word-for-word (as required), but the new copy says confirmations and reminders send automatically once turned on. The legal pages say:
   - security.html, "The approval gate as a safety control": "No client-facing message leaves the Service without the business operator's explicit approval. This is a permanent architectural decision, not a setting…"
   - terms.html §2, "Your approval controls outbound communication".
@@ -29,8 +29,8 @@ These now match the app: Needs you shows an open gap ("Draft an offer") and a wa
 
 ## Claims to confirm (copy doc `[confirm]` items)
 
-- [ ] Live texting to clients is switched on: home reminders block, home FAQ 6, "Reminders and client messages" on /features.
-- [ ] CSV import is run by the Happli team (not self-serve): home "Switch without starting over", "Switching from another system" on /features.
+- [ ] Live texting to clients is switched on (texting, email and Stripe are still in test mode): home "Reminders in your own words" card, home FAQ "Does Happli text my clients without asking me?", the "Reminders in your own words" row and "Reminders and client messages" on /features.
+- [ ] CSV import is run by the Happli team (not self-serve): home FAQ "Is switching hard?", "How it works" step 1, and "Switching from another system" on /features.
 - [ ] The owner phone view is ready to advertise: "Check your day from your phone" on /features.
 - [ ] Advertise the online waitlist join: "Online waitlist" on /features.
 - [ ] The chat widget is available to studios on the Happli booking system: "Website chat assistant" on /features.
@@ -54,9 +54,9 @@ The copy doc has no headings for some sections, so these were added. Please revi
 
 - Hero eyebrow: "For spray tan studios and beauty pros"
 - Zoom hero panel titles (adapted from the mockup): "An hour opens up. Pick who gets the offer.", "Three taps, from any phone.", "Notes and history, right where you need them."
-- Solution heading: "Booking, payments, reminders and clients, in one place."
-- Home features heading: "Everything your front desk does, in one place." (reuses the /features headline)
-- Booking page section lede: "Clients book themselves on a phone-friendly booking page, any time of day."
+- Hero lead message: "Your front desk, down to one short list." (also in the social image, `public/og-default.png`, made by `node scripts/generate-og.mjs`)
+- Home feature cards: eyebrow "What it does", heading "What Happli takes off your plate.", card titles and captions (`src/components/sections/FeatureCards.astro`)
+- /features rows: eyebrows, headings and text (`src/components/sections/FeatureRows.astro`)
 - Walkthrough section head: "How a Thursday runs" / "Four moments. None of them at the front desk." (from the mockup)
 - How it works eyebrow "3 steps"; payments section eyebrow "Payments and trust"; "Trust points" label
 - /blog heading "Notes for busy studio owners."; /compare heading "How Happli compares."

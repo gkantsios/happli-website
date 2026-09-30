@@ -28,7 +28,9 @@ npm run build && npx wrangler deploy --dry-run
 | `src/styles/tokens.css` | Colors, fonts, spacing and radii |
 | `src/styles/global.css` | Base styles, buttons, section rhythm, long-form (`.prose`) styles |
 | `src/layouts/` | `BaseLayout` (head, SEO, header, footer), `ProseLayout` (legal pages), `PostLayout` (blog and compare posts) |
-| `src/components/sections/` | One component per page section (HeroZoom, HeroStatic, Walkthrough, FeatureGrid, Faq, CtaBand, PricingPlans, …) |
+| `src/components/sections/` | One component per page section (HeroZoom, HeroStatic, Walkthrough, FeatureCards, FeatureRows, Faq, CtaBand, PricingPlans, …) |
+| `src/components/mocks/` | Product illustrations shared by the walkthrough, the home feature cards and the /features rows (NeedsList, CheckoutSheet, PhoneBooking, ReminderPreview) |
+| `src/components/StickyCta.astro` | The phone-only "Book a demo" bar (below 700px): it shows after the hero or page intro, hides at the footer, and hides the header's button while it's on screen |
 | `src/pages/` | One file per route |
 | `src/legal/` | Privacy, terms and security page bodies (HTML, ported word-for-word from the old site) |
 | `src/content/blog/`, `src/content/compare/` | Markdown posts |
