@@ -28,7 +28,7 @@ const ogImage = heroImage ? heroImage.src : site.defaultOgImage;
   type="article"
   publishedTime={pubDate}
   modifiedTime={updatedDate}
-  noindex={draft}
+  noindex={draft || !site.sections[entry.collection]}
   jsonLd={[
     blogPosting({ title, description, url, pubDate, updatedDate, author, image: ogImage, tags }),
     breadcrumbs(crumbs),

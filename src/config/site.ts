@@ -2,6 +2,11 @@
 
 export type NavLink = { label: string; href: string };
 
+// Blog and compare sections. While a section is off, its pages still build and work by URL,
+// but they're marked noindex, left out of the sitemap, and not linked from the footer.
+// Turn one on once it has published posts.
+const sections = { blog: false, compare: false };
+
 export const site = {
   name: 'Happli',
   url: 'https://gohappli.com',
@@ -10,6 +15,8 @@ export const site = {
   contactEmail: 'hello@gohappli.com',
   defaultOgImage: '/og-default.png',
   locale: 'en_US',
+
+  sections,
 
   // Homepage hero: 'zoom' = scroll-zoom hero (HeroZoom), 'static' = the simpler hero (HeroStatic).
   heroVariant: 'zoom' as 'zoom' | 'static',
@@ -30,8 +37,8 @@ export const site = {
     product: [
       { label: 'Features', href: '/features/' },
       { label: 'Pricing', href: '/pricing/' },
-      { label: 'Blog', href: '/blog/' },
-      { label: 'Compare', href: '/compare/' },
+      ...(sections.blog ? [{ label: 'Blog', href: '/blog/' }] : []),
+      ...(sections.compare ? [{ label: 'Compare', href: '/compare/' }] : []),
     ] satisfies NavLink[],
     legal: [
       { label: 'Privacy', href: '/privacy/' },

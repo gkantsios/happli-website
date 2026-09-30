@@ -4,6 +4,7 @@ import PageIntro from '../../components/sections/PageIntro.astro';
 import PostList from '../../components/PostList.astro';
 import { getPublished } from '../../lib/posts';
 import { breadcrumbs } from '../../lib/jsonld';
+import { site } from '../../config/site';
 
 const pages = await getPublished('compare');
 ---
@@ -12,6 +13,7 @@ const pages = await getPublished('compare');
   title="Compare Happli | Booking Software Alternatives for Spray Tan Studios"
   description="Honest comparisons between Happli and other booking systems for spray tan studios and beauty pros."
   jsonLd={[breadcrumbs([{ name: 'Home', href: '/' }, { name: 'Compare', href: '/compare/' }])]}
+  noindex={!site.sections.compare}
 >
   <PageIntro eyebrow="Compare" title="How Happli compares." cta={false} />
   <div class="wrap">
