@@ -29,6 +29,7 @@ const appHeight = Math.round((APP_WIDTH * (MONITOR.y1 - MONITOR.y0)) / (MONITOR.
 
 <section
   class="zoom"
+  data-cta-after
   data-zoom
   data-iw={photo.width}
   data-ih={photo.height}
@@ -64,20 +65,18 @@ const appHeight = Math.round((APP_WIDTH * (MONITOR.y1 - MONITOR.y0)) / (MONITOR.
     <div class="hero-copy">
       <div class="wrap">
         <p class="eyebrow">For spray tan studios and beauty pros</p>
-        <h1 id="hero-title">Your front desk, handled. <em>Your money, yours.</em></h1>
-        {/* TODO confirm: "Your money, yours" and "your own Stripe account" ship with happli-coo PR #297 (direct charges). */}
+        <h1 id="hero-title">Your front desk, <em>down to one short list.</em></h1>
         <p class="lede">
-          Happli is the booking and front-desk partner for spray tan studios and beauty businesses. Clients book online
-          from their phone, pay a deposit, and get reminders automatically. You run the day from one clear calendar, and
-          every payment goes to your own Stripe account.
+          Clients book, pay deposits and get reminders on their own. Anything that needs you (gaps, waitlist matches,
+          texts to approve) lands in Needs you.
         </p>
         <div class="btn-row hero-actions">
           <a class="btn btn-coral" href={site.cta.href}>{site.cta.label}</a>
-          <a class="btn btn-ghost" href="#how">See how it works</a>
+          <a class="btn btn-ghost" href="#walkthrough">See a day in Happli</a>
         </div>
         <p class="hero-note">
           <Icon name="check" size={12} strokeWidth={2.2} />
-          Happli takes no fee on your payments. Drafted texts wait for your approval.
+          Drafted texts wait for your approval.
         </p>
       </div>
     </div>
@@ -250,8 +249,10 @@ const appHeight = Math.round((APP_WIDTH * (MONITOR.y1 - MONITOR.y0)) / (MONITOR.
       var rect = zoom.getBoundingClientRect();
       var range = zoom.offsetHeight - stage.clientHeight;
       var P = range > 0 ? clamp(-rect.top / range, 0, 1) : 0;
-      var p = clamp(P / 0.5, 0, 1); // zoom-in
-      var sp = ease(clamp((P - 0.56) / 0.44, 0, 1)); // panel slide
+      // Tuned for the shorter 320vh / 360vh section: the zoom lands at 55% of the scroll and the
+      // panels slide in over the last 40%, so the final frame still lands fully.
+      var p = clamp(P / 0.55, 0, 1); // zoom-in
+      var sp = ease(clamp((P - 0.6) / 0.4, 0, 1)); // panel slide
       // copy fades (0 -> .22), zoom (.15 -> .9), veil (.7 -> .95)
       var cp = clamp(p / 0.22, 0, 1);
       copy.style.opacity = (1 - cp).toFixed(3);
@@ -355,7 +356,12 @@ const appHeight = Math.round((APP_WIDTH * (MONITOR.y1 - MONITOR.y0)) / (MONITOR.
     background: var(--blush);
   }
   .is-zoom {
-    height: 560vh;
+    height: 320vh;
+  }
+  @media (max-width: 699px) {
+    .is-zoom {
+      height: 360vh;
+    }
   }
   .is-zoom .stage {
     position: sticky;
@@ -420,7 +426,7 @@ const appHeight = Math.round((APP_WIDTH * (MONITOR.y1 - MONITOR.y0)) / (MONITOR.
     pointer-events: auto;
   }
   h1 {
-    font-size: clamp(38px, 5.6vw, 74px);
+    font-size: clamp(38px, 4.6vw, 60px);
     line-height: 1;
     letter-spacing: -0.025em;
     margin: 18px auto 0;
@@ -433,8 +439,8 @@ const appHeight = Math.round((APP_WIDTH * (MONITOR.y1 - MONITOR.y0)) / (MONITOR.
   }
   .lede {
     margin: 22px auto 0;
-    font-size: clamp(16px, 1.5vw, 19px);
-    max-width: 36em;
+    font-size: clamp(16px, 1.3vw, 18px);
+    max-width: 60ch;
   }
   .hero-actions {
     justify-content: center;

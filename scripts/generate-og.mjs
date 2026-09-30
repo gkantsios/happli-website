@@ -15,8 +15,8 @@ const svg = `
   </defs>
   <rect width="100%" height="100%" fill="#F6E9E4"/>
   <rect width="100%" height="100%" fill="url(#glow)"/>
-  <text x="80" y="300" font-family="Georgia, 'Times New Roman', serif" font-size="76" fill="#1B1614" letter-spacing="-1.5">Your front desk, handled.</text>
-  <text x="80" y="392" font-family="Georgia, 'Times New Roman', serif" font-style="italic" font-size="76" fill="#1B1614" letter-spacing="-1.5">Your money, yours.</text>
+  <text x="80" y="300" font-family="Georgia, 'Times New Roman', serif" font-size="76" fill="#1B1614" letter-spacing="-1.5">Your front desk,</text>
+  <text x="80" y="392" font-family="Georgia, 'Times New Roman', serif" font-style="italic" font-size="76" fill="#1B1614" letter-spacing="-1.5">down to one short list.</text>
   <text x="82" y="480" font-family="Helvetica, Arial, sans-serif" font-size="28" fill="#4A423E">Online booking, deposits and reminders for spray tan studios</text>
 </svg>`;
 

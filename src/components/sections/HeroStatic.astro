@@ -4,23 +4,21 @@ import ProductBook from './ProductBook.astro';
 import { site } from '../../config/site';
 ---
 
-<section class="hero" aria-labelledby="hero-title">
+<section class="hero" data-cta-after aria-labelledby="hero-title">
   <div class="wrap hero-copy">
     <p class="eyebrow">For spray tan studios and beauty pros</p>
-    <h1 id="hero-title">Your front desk, handled. <em>Your money, yours.</em></h1>
-    {/* TODO confirm: "Your money, yours" and "your own Stripe account" ship with happli-coo PR #297 (direct charges). */}
+    <h1 id="hero-title">Your front desk, <em>down to one short list.</em></h1>
     <p class="lede">
-      Happli is the booking and front-desk partner for spray tan studios and beauty businesses. Clients book online
-      from their phone, pay a deposit, and get reminders automatically. You run the day from one clear calendar, and
-      every payment goes to your own Stripe account.
+      Clients book, pay deposits and get reminders on their own. Anything that needs you (gaps, waitlist matches,
+      texts to approve) lands in Needs you.
     </p>
     <div class="btn-row hero-actions">
       <a class="btn btn-coral" href={site.cta.href}>{site.cta.label}</a>
-      <a class="btn btn-ghost" href="#how">See how it works</a>
+      <a class="btn btn-ghost" href="#walkthrough">See a day in Happli</a>
     </div>
     <p class="hero-note">
       <Icon name="check" size={13} strokeWidth={2.2} />
-      Happli takes no fee on your payments. Drafted texts wait for your approval.
+      Drafted texts wait for your approval.
     </p>
   </div>
   <div class="wrap">
@@ -54,8 +52,8 @@ import { site } from '../../config/site';
   }
   .lede {
     margin: 24px auto 0;
-    font-size: clamp(16px, 1.5vw, 19px);
-    max-width: 36em;
+    font-size: clamp(16px, 1.3vw, 18px);
+    max-width: 60ch;
   }
   .hero-actions {
     justify-content: center;
