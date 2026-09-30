@@ -155,9 +155,12 @@ for (const k of Object.keys(expected) as (keyof typeof expected)[]) {
 if (/chair/i.test(`${utilizationHeading} ${summaryNote}`)) throw new Error('AppScreen: no "chair" wording');
 
 // ---------- rendering helpers ----------
-const HOUR_PX = 60;
-const top = (t: string) => ((toMin(t) - AXIS_START) / 60) * HOUR_PX;
-const height = (b: Block) => (dur(b) / 60) * HOUR_PX;
+// Positions are percentages of the day axis, so the calendar fills its card at any height
+// (the card grows to the bottom of the screen).
+const AXIS_MIN = AXIS_END - AXIS_START;
+const pct = (min: number) => `${+((min / AXIS_MIN) * 100).toFixed(4)}%`;
+const top = (t: string) => pct(toMin(t) - AXIS_START);
+const height = (b: Block) => pct(dur(b));
 const hours = Array.from({ length: (AXIS_END - AXIS_START) / 60 }, (_, i) => AXIS_START + i * 60);
 const hourLabel = (min: number) => `${((Math.floor(min / 60) + 11) % 12) + 1}${Math.floor(min / 60) >= 12 ? 'p' : 'a'}`;
 const tint = (service: string) => (/rapid tan/i.test(service) ? 'cut' : /spray tan/i.test(service) ? 'skin' : 'neutral');
@@ -198,7 +201,7 @@ const needsCount = 3;
       <span class="on">Calendar</span><span>Clients</span><span>Messages</span><span>Reports</span>
     </span>
     <span class="od-tools">
-      <span class="od-settings"><Icon name="settings" size={17} />Settings</span>
+      <span class="od-settings"><Icon name="settings" size={17} /><span class="od-settings-l">Settings</span></span>
       <Icon name="search" size={17} />
       <Icon name="bell" size={17} />
       <span class="od-avatar">DK</span>
@@ -247,7 +250,7 @@ const needsCount = 3;
         }
       </div>
 
-      <div class="od-cal" data-od-cal>
+      <div class="od-cal" data-od-cal style={`--hours:${hours.length}`}>
         <div class="od-grid od-head">
           <div class="od-corner" />
           {
@@ -264,12 +267,12 @@ const needsCount = 3;
             <div class="od-grid od-grid-body" data-od-set={set.key} hidden={set.key !== 'thu'}>
               <div class="od-gutter">
                 {hours.map((h) => (
-                  <span class="od-hour" style={`top:${((h - AXIS_START) / 60) * HOUR_PX}px`}>
+                  <span class="od-hour" style={`top:${pct(h - AXIS_START)}`}>
                     {hourLabel(h)}
                   </span>
                 ))}
                 {set.today && (
-                  <span class="od-now-pill" style={`top:${nowTop}px`}>
+                  <span class="od-now-pill" style={`top:${nowTop}`}>
                     {fmt(toMin(NOW))}
                   </span>
                 )}
@@ -277,7 +280,7 @@ const needsCount = 3;
               {set.staff.map((s) => (
                 <div class="od-col" data-od-col={s.id}>
                   {s.blocks.map((b) => {
-                    const style = `top:${top(b.start) + 1}px;height:${height(b) - 2}px`;
+                    const style = `top:calc(${top(b.start)} + 1px);height:calc(${height(b)} - 2px)`;
                     const size = dur(b) <= 15 ? 'tiny' : dur(b) <= 30 ? 'short' : '';
                     if (b.kind === 'appt')
                       return (
@@ -319,7 +322,7 @@ const needsCount = 3;
                   })}
                 </div>
               ))}
-              {set.today && <div class="od-now" style={`top:${nowTop}px`} />}
+              {set.today && <div class="od-now" style={`top:${nowTop}`} />}
             </div>
           ))
         }
@@ -463,7 +466,7 @@ const needsCount = 3;
   </template>
 
   <template data-od-tpl="draft">
-    <section class="pnl" aria-label="Gap offer draft">
+    <section class="pnl pnl-fit" aria-label="Gap offer draft">
       <div class="pnl-head">
         <button type="button" class="pnl-x" data-od-act="close" aria-label="Close panel"><Icon name="close" size={16} strokeWidth={2} /></button>
         <p class="pnl-eyebrow">Gap offer</p>
@@ -1055,6 +1058,10 @@ const needsCount = 3;
 
   /* calendar card */
   .od-cal {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
     background: #fff;
     border: 1px solid rgba(43, 27, 26, 0.14);
     border-radius: 12px;
@@ -1096,7 +1103,8 @@ const needsCount = 3;
   }
   .od-grid-body {
     position: relative;
-    height: 360px;
+    flex: 1;
+    min-height: 0;
   }
   .od-gutter {
     position: relative;
@@ -1132,7 +1140,7 @@ const needsCount = 3;
     position: relative;
     border-right: 1px solid rgba(43, 27, 26, 0.08);
     background-image: linear-gradient(rgba(43, 27, 26, 0.09) 1px, transparent 1px);
-    background-size: 100% 60px;
+    background-size: 100% calc(100% / var(--hours));
   }
   .od-col:last-child {
     border-right: 0;
@@ -1560,6 +1568,13 @@ const needsCount = 3;
     background: rgba(247, 228, 218, 0.45);
     padding: 18px 28px 22px;
   }
+  /* short panels: the actions follow the content instead of sitting at the bottom of the rail */
+  .pnl-fit .pnl-foot {
+    margin-top: 0;
+    padding-top: 0;
+    border-top: 0;
+    background: none;
+  }
   .pnl-foot [hidden] {
     display: none;
   }
@@ -1853,6 +1868,33 @@ const needsCount = 3;
     }
     .od-book {
       padding-right: 20px;
+    }
+    /* the zoom hero lays the app out 640px wide on phones */
+    .od-nav {
+      padding: 0 20px;
+      gap: 22px;
+    }
+    .od-links {
+      gap: 18px;
+    }
+    .od-tools {
+      gap: 12px;
+    }
+    .od-settings-l {
+      display: none;
+    }
+    .od-band {
+      padding: 0 20px;
+      gap: 14px;
+    }
+    .od-stats {
+      gap: 16px;
+    }
+    .od-date {
+      min-width: 0;
+    }
+    .od-daterow {
+      gap: 8px;
     }
   }
 

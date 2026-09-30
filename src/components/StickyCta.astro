@@ -1,8 +1,8 @@
 ---
 // Phones only (below 700px): a bottom bar with the site's "Book a demo" button.
-// It appears once the visitor scrolls past the hero (or the page intro, or the page's h1),
-// hides while the footer is on screen, and while it shows the header's button is hidden
-// so only one "Book a demo" is ever visible. Without JavaScript it never appears.
+// It appears once the visitor scrolls past the hero (or the page intro, or the page's h1), and
+// hides while the footer or any of the page's own "Book a demo" buttons is on screen, so only one
+// is ever visible (the header's button is hidden on phones). Without JavaScript it never appears.
 import { site } from '../config/site';
 ---
 
@@ -18,8 +18,9 @@ import { site } from '../config/site';
     var footer = document.querySelector('footer');
     var past = !start;
     var footerIn = false;
+    var ctasIn = 0;
     function sync() {
-      var show = past && !footerIn;
+      var show = past && !footerIn && ctasIn === 0;
       bar.classList.toggle('is-shown', show);
       bar.setAttribute('aria-hidden', show ? 'false' : 'true');
       bar.inert = !show;
@@ -37,6 +38,26 @@ import { site } from '../config/site';
         footerIn = entries[entries.length - 1].isIntersecting;
         sync();
       }).observe(footer);
+    }
+    // the page's own buttons to the same link (hero, page intro, plan cards, final CTA band)
+    var ctas = [].filter.call(document.querySelectorAll('main a.btn'), function (a) {
+      return a.getAttribute('href') === bar.firstElementChild.getAttribute('href');
+    });
+    if (ctas.length) {
+      var seen = new Map();
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          seen.set(e.target, e.isIntersecting);
+        });
+        ctasIn = 0;
+        seen.forEach(function (v) {
+          if (v) ctasIn++;
+        });
+        sync();
+      });
+      ctas.forEach(function (a) {
+        io.observe(a);
+      });
     }
     sync();
   })();

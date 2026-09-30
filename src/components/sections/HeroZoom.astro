@@ -187,6 +187,8 @@ const appHeight = Math.round((APP_WIDTH * (MONITOR.y1 - MONITOR.y0)) / (MONITOR.
     var M = JSON.parse(zoom.getAttribute('data-monitor'));
     var R = { x0: M.x0 / IW, y0: M.y0 / IH, x1: M.x1 / IW, y1: M.y1 / IH };
     var APP_W = +zoom.getAttribute('data-app-width');
+    // Phones lay the app out narrower (its rail is hidden there), so it reads larger.
+    var APP_W_PHONE = 640;
     var NAV = 68;
 
     // Reduced motion: no scroll zoom. Show the final frame statically; only the screen's
@@ -209,6 +211,8 @@ const appHeight = Math.round((APP_WIDTH * (MONITOR.y1 - MONITOR.y0)) / (MONITOR.
     var ticking = false;
     var end = { dx: 0, dy: 0 };
     var m0 = { x: 0, y: 0 };
+    var baseMH = 0; // the screen's landed height at the photo's proportions
+    var grow = 0; // phones: extra height the screen grows by as it lands
     var landed = false;
 
     // The demo inside the screen is usable only while the screen sits still, full size.
@@ -258,7 +262,19 @@ const appHeight = Math.round((APP_WIDTH * (MONITOR.y1 - MONITOR.y0)) / (MONITOR.
       monitor.style.height = mh * S + 'px';
       monitor.style.transformOrigin = '0 0';
       monitor.style.transform = 'scale(' + 1 / S + ')';
-      app.style.transform = 'scale(' + (mw * S) / APP_W + ')';
+      var appW = w < 700 ? APP_W_PHONE : APP_W;
+      var k = (mw * S) / appW;
+      baseMH = mh * S;
+      grow = 0;
+      if (w < 700) {
+        // Grow the landed screen so the demo buttons sit near the bottom of the screen
+        // (the screen lands just under the header, see endCy below).
+        chips.style.width = mw * S + 'px';
+        grow = Math.max(0, h - (NAV + 16) - baseMH - 12 - chips.offsetHeight - 20);
+      }
+      app.style.width = appW + 'px';
+      app.style.height = (baseMH + grow) / k + 'px';
+      app.style.transform = 'scale(' + k + ')';
       // Where the screen's center lands at the end: slightly below the vertical middle.
       var endCx = w / 2;
       // Phones: land the screen just under the header so there's no empty band above it.
@@ -301,6 +317,7 @@ const appHeight = Math.round((APP_WIDTH * (MONITOR.y1 - MONITOR.y0)) / (MONITOR.
       var t = 'translate(' + dx.toFixed(2) + 'px,' + dy.toFixed(2) + 'px) scale(' + s.toFixed(4) + ')';
       layers[0].style.transform = t;
       var j;
+      monitor.style.height = baseMH + grow * vp + 'px';
       if (zp >= 1) {
         // Landed: drop the transforms so the screen is laid out 1:1 and stays sharp.
         var ML = m0.x + end.dx - (cx - m0.x) * (S - 1);
@@ -583,7 +600,7 @@ const appHeight = Math.round((APP_WIDTH * (MONITOR.y1 - MONITOR.y0)) / (MONITOR.
     pointer-events: auto;
   }
 
-  /* phones: page-scale shortcuts under the landed screen, since the screen itself is tiny */
+  /* phones: page-scale shortcuts under the landed screen, since the screen itself is small */
   .demo-chips {
     display: none;
     position: absolute;
@@ -609,9 +626,14 @@ const appHeight = Math.round((APP_WIDTH * (MONITOR.y1 - MONITOR.y0)) / (MONITOR.
     outline: 2px solid #f9727c;
     outline-offset: 2px;
   }
+  /* laid out (and measured) all along on phones, shown once the screen has landed */
   @media (max-width: 699px) {
-    .is-landed .demo-chips {
+    .demo-chips {
       display: flex;
+      visibility: hidden;
+    }
+    .is-landed .demo-chips {
+      visibility: visible;
     }
   }
 

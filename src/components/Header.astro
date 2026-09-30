@@ -26,6 +26,7 @@ const isCurrent = (href: string) => current === href;
         <nav class="menu-panel" aria-label="Mobile">
           {site.nav.map((link) => <a href={link.href}>{link.label}</a>)}
           <a href={site.signInUrl}>Sign in</a>
+          <a class="menu-cta" href={site.cta.href}>{site.cta.label}</a>
         </nav>
       </details>
     </div>
@@ -122,6 +123,10 @@ const isCurrent = (href: string) => current === href;
     border-radius: 8px;
     font-weight: 500;
   }
+  .menu-panel .menu-cta {
+    color: var(--coral-ink);
+    font-weight: 700;
+  }
   .menu-panel a:hover {
     background: var(--blush-2);
   }
@@ -149,9 +154,10 @@ const isCurrent = (href: string) => current === href;
       padding: 0 12px;
     }
   }
-  /* phones: while the bottom "Book a demo" bar is showing, it replaces this button */
+  /* phones: the page's own "Book a demo" buttons and the bottom bar cover it, so the header
+     never adds a second one (it stays in the menu) */
   @media (max-width: 699.98px) {
-    :global(html.sticky-cta-on) .nav-cta .btn {
+    .nav-cta .btn {
       display: none;
     }
   }

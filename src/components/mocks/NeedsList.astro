@@ -1,13 +1,39 @@
 ---
 // Needs you list (illustration): an open gap and a waitlist match.
 // interactive: real buttons and the data-* hooks for the walkthrough's script.
-// Otherwise the buttons are drawn as plain labels (feature cards, /features).
+// Otherwise the buttons are drawn as plain labels (home feature card).
+// app: the Needs you rail as the owner app draws it (cards with no buttons, same style as the
+// hero's app screen), for /features.
 interface Props {
   interactive?: boolean;
+  app?: boolean;
 }
-const { interactive = false } = Astro.props;
+const { interactive = false, app = false } = Astro.props;
 const Btn = interactive ? 'button' : 'span';
 ---
+
+{
+  app && (
+    <div class="app-needs">
+      <p class="app-h">Needs you</p>
+      <div class="app-card">
+        <b>Gap offer · waiting for your approval</b>
+        <span>Maria K. for Dana's 1:15 pm opening on Thursday.</span>
+        <em>Review draft →</em>
+      </div>
+      <div class="app-card">
+        <b>Dana · 1h gap</b>
+        <span>1:15 pm – 2:15 pm is open.</span>
+      </div>
+      <div class="app-card">
+        <b>Waitlist · Emma J. joined online</b>
+        <span>Rapid tan on Sat, Aug 29, from the booking page. Book them when a time opens, or cancel the entry.</span>
+        <em>Open in Waitlist →</em>
+      </div>
+    </div>
+  )
+}
+{!app && (
 
 <div class:list={['need', { static: !interactive }]} data-need={interactive ? '' : undefined}>
   <div class="need-row">
@@ -31,8 +57,55 @@ const Btn = interactive ? 'button' : 'span';
   </div>
   <p class="need-empty">Nothing else needs you. Enjoy your coffee.</p>
 </div>
+)}
 
 <style>
+  /* app variant: the owner app's Needs you cards (owner-desktop.css values) */
+  .app-needs {
+    display: flex;
+    flex-direction: column;
+    gap: 11px;
+    margin: 12px 0 0;
+    padding: 18px;
+    border-radius: 12px;
+    background: rgba(247, 228, 218, 0.35);
+    text-align: left;
+  }
+  .app-h {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: #9b7a33;
+    margin-bottom: -1px;
+  }
+  .app-card {
+    display: flex;
+    flex-direction: column;
+    background: #fcf6f1;
+    border-radius: 14px;
+    padding: 16px;
+    box-shadow: 0 2px 8px rgba(43, 27, 26, 0.05);
+  }
+  .app-card b {
+    font-size: 13px;
+    font-weight: 700;
+    color: #2b1b1a;
+  }
+  .app-card span {
+    font-size: 12.5px;
+    font-weight: 500;
+    color: #6b6a45;
+    line-height: 1.5;
+    margin-top: 4px;
+  }
+  .app-card em {
+    font-style: normal;
+    font-size: 12px;
+    font-weight: 600;
+    color: #f9727c;
+    margin-top: 6px;
+  }
   .mini {
     font: inherit;
     font-size: 12px;

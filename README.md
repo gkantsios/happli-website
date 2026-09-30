@@ -30,7 +30,7 @@ npm run build && npx wrangler deploy --dry-run
 | `src/layouts/` | `BaseLayout` (head, SEO, header, footer), `ProseLayout` (legal pages), `PostLayout` (blog and compare posts) |
 | `src/components/sections/` | One component per page section (HeroZoom, HeroStatic, Walkthrough, FeatureCards, FeatureRows, Faq, CtaBand, PricingPlans, …) |
 | `src/components/mocks/` | Product illustrations shared by the walkthrough, the home feature cards and the /features rows (NeedsList, CheckoutSheet, PhoneBooking, ReminderPreview) |
-| `src/components/StickyCta.astro` | The phone-only "Book a demo" bar (below 700px): it shows after the hero or page intro, hides at the footer, and hides the header's button while it's on screen |
+| `src/components/StickyCta.astro` | The phone-only "Book a demo" bar (below 700px): it shows after the hero or page intro, and hides at the footer and while any of the page's own "Book a demo" buttons is on screen. On phones the header's button is always hidden (it's in the menu instead), so only one shows at a time |
 | `src/pages/` | One file per route |
 | `src/legal/` | Privacy, terms and security page bodies (HTML, ported word-for-word from the old site) |
 | `src/content/blog/`, `src/content/compare/` | Markdown posts |
@@ -51,7 +51,7 @@ The screen that lands in the monitor is `AppScreen.astro`: the owner app's Calen
 
 Once the zoom has landed (and before the panels slide in), the screen can be used: open an appointment and check out, open the gap to start a new booking, review and approve the gap offer draft, and switch days in the week strip. Nothing is sent or booked. Until then the screen is `inert`, so Tab and clicks pass it by, and scrolling on closes anything that's open. Nothing inside it scrolls or listens to wheel or touch events, so the page always scrolls normally.
 
-On phones the in-app rail is hidden: two buttons under the screen ("Open an appointment", "See what needs you") and the "Needs you" pill open the panels as a bottom sheet at normal page size. With reduced motion, the screen is usable right away.
+On phones the app is laid out 640px wide with its rail hidden, and the landed screen grows taller so it fills the screen down to two buttons ("Open an appointment", "See what needs you"). Those buttons and the "Needs you" pill open the panels as a bottom sheet at normal page size. With reduced motion, the screen is usable right away.
 
 ### Swapping the hero photo
 

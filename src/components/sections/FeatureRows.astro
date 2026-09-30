@@ -49,7 +49,7 @@ const rows = [
               <PhoneBooking />
             ) : (
               <div class="win">
-                {r.mock === 'needs' && <NeedsList />}
+                {r.mock === 'needs' && <NeedsList app />}
                 {r.mock === 'checkout' && <CheckoutSheet />}
                 {r.mock === 'reminder' && <ReminderPreview />}
               </div>

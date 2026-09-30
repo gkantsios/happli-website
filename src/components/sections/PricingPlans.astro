@@ -173,4 +173,11 @@ const rows: [string, Cell, Cell, Cell][] = [
       grid-template-columns: 1fr;
     }
   }
+  /* phones: the stacked cards would show three "Book a demo" buttons at once; the page intro's
+     button and the bottom bar cover it there */
+  @media (max-width: 699.98px) {
+    .plan .btn {
+      display: none;
+    }
+  }
 </style>
