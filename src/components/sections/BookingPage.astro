@@ -185,7 +185,8 @@ const points = [
   }
   @media (max-width: 860px) {
     .booking-in {
-      grid-template-columns: 1fr;
+      /* minmax(0, …) so the 320px phone can shrink on narrow screens */
+      grid-template-columns: minmax(0, 1fr);
       gap: 40px;
     }
     .phone-stage {

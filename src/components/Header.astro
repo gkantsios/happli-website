@@ -134,12 +134,33 @@ const isCurrent = (href: string) => current === href;
       display: block;
     }
   }
+  .nav-cta .btn,
+  .menu summary {
+    white-space: nowrap;
+  }
   @media (max-width: 400px) {
+    .nav-in {
+      gap: 12px;
+    }
     .nav-cta {
       gap: 8px;
     }
     .nav-cta .btn {
       padding: 0 12px;
+    }
+  }
+  @media (max-width: 359px) {
+    .logo :global(img) {
+      height: 22px;
+      width: auto;
+    }
+    .nav-cta {
+      gap: 6px;
+    }
+    .nav-cta .btn,
+    .menu summary {
+      padding: 0 10px;
+      font-size: 13px;
     }
   }
 </style>
