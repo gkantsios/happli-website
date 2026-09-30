@@ -94,6 +94,12 @@ const year = new Date().getFullYear();
     color: var(--muted);
     font-size: 13px;
   }
+  /* phones: room for the sticky "Book a demo" bar (StickyCta) so it never covers footer content */
+  @media (max-width: 699.98px) {
+    .footer {
+      padding-bottom: calc(40px + 72px + env(safe-area-inset-bottom, 0px));
+    }
+  }
   @media (max-width: 860px) {
     .footer-in {
       grid-template-columns: 1fr 1fr;

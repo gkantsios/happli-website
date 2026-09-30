@@ -149,6 +149,12 @@ const isCurrent = (href: string) => current === href;
       padding: 0 12px;
     }
   }
+  /* phones: while the bottom "Book a demo" bar is showing, it replaces this button */
+  @media (max-width: 699.98px) {
+    :global(html.sticky-cta-on) .nav-cta .btn {
+      display: none;
+    }
+  }
   @media (max-width: 359px) {
     .logo :global(img) {
       height: 22px;

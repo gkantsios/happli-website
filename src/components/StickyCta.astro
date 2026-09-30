@@ -1,0 +1,78 @@
+---
+// Phones only (below 700px): a bottom bar with the site's "Book a demo" button.
+// It appears once the visitor scrolls past the hero (or the page intro, or the page's h1),
+// hides while the footer is on screen, and while it shows the header's button is hidden
+// so only one "Book a demo" is ever visible. Without JavaScript it never appears.
+import { site } from '../config/site';
+---
+
+<div class="sticky-cta" data-sticky-cta aria-hidden="true" inert>
+  <a class="btn btn-coral" href={site.cta.href}>{site.cta.label}</a>
+</div>
+
+<script is:inline>
+  (function () {
+    var bar = document.querySelector('[data-sticky-cta]');
+    if (!bar || !('IntersectionObserver' in window)) return;
+    var start = document.querySelector('[data-cta-after]') || document.querySelector('main h1');
+    var footer = document.querySelector('footer');
+    var past = !start;
+    var footerIn = false;
+    function sync() {
+      var show = past && !footerIn;
+      bar.classList.toggle('is-shown', show);
+      bar.setAttribute('aria-hidden', show ? 'false' : 'true');
+      bar.inert = !show;
+      document.documentElement.classList.toggle('sticky-cta-on', show);
+    }
+    if (start) {
+      new IntersectionObserver(function (entries) {
+        var e = entries[entries.length - 1];
+        past = !e.isIntersecting && e.boundingClientRect.top < 0;
+        sync();
+      }).observe(start);
+    }
+    if (footer) {
+      new IntersectionObserver(function (entries) {
+        footerIn = entries[entries.length - 1].isIntersecting;
+        sync();
+      }).observe(footer);
+    }
+    sync();
+  })();
+</script>
+
+<style>
+  .sticky-cta {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 30;
+    padding: 12px 16px calc(12px + env(safe-area-inset-bottom, 0px));
+    background: rgba(251, 250, 248, 0.92);
+    backdrop-filter: saturate(1.4) blur(14px);
+    -webkit-backdrop-filter: saturate(1.4) blur(14px);
+    border-top: 1px solid var(--line);
+    transform: translateY(110%);
+    visibility: hidden;
+    transition: transform 0.25s ease, visibility 0.25s;
+  }
+  .sticky-cta.is-shown {
+    transform: none;
+    visibility: visible;
+  }
+  .sticky-cta .btn {
+    width: 100%;
+  }
+  @media (min-width: 700px) {
+    .sticky-cta {
+      display: none;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .sticky-cta {
+      transition: none;
+    }
+  }
+</style>
