@@ -10,7 +10,7 @@ interface Props {
 const { eyebrow, title, lede, cta = true } = Astro.props;
 ---
 
-<section class="intro">
+<section class="intro" data-cta-after>
   <div class="wrap">
     {eyebrow && <p class="eyebrow">{eyebrow}</p>}
     <h1>{title}</h1>
@@ -32,7 +32,7 @@ const { eyebrow, title, lede, cta = true } = Astro.props;
     background: radial-gradient(55% 60% at 20% 0%, rgba(246, 233, 228, 0.95) 0%, rgba(246, 233, 228, 0) 70%), var(--bg);
   }
   h1 {
-    font-size: clamp(38px, 5vw, 64px);
+    font-size: clamp(38px, 4.6vw, 60px);
     line-height: 1.04;
     letter-spacing: -0.025em;
     margin-top: 18px;

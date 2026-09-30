@@ -96,7 +96,7 @@ p {
   font-size: var(--fs-lede);
   line-height: 1.6;
   color: var(--ink-2);
-  max-width: 34em;
+  max-width: 60ch;
 }
 
 /* buttons */

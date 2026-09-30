@@ -42,8 +42,8 @@
   --sans: 'Manrope Variable', system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
   --fs-body: 16px;
   --fs-lede: 18px;
-  --fs-h1: clamp(40px, 5.6vw, 72px);
-  --fs-h2: clamp(32px, 4.2vw, 52px);
+  --fs-h1: clamp(40px, 4.6vw, 60px);
+  --fs-h2: clamp(32px, 3.4vw, 42px);
   --fs-h3: 24px;
   --fs-eyebrow: 12px;
 
