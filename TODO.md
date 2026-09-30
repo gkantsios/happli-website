@@ -12,7 +12,12 @@ Everything below is marked in the source with `TODO confirm:` or `PLACEHOLDER` (
   These need a legal/wording pass before launch. Files: `src/legal/security.html`, `src/legal/terms.html`, `src/legal/privacy.html`.
 - [ ] The legal pages also describe older product details (syncing from Square/Vagaro, Google Business Profile features, "Beta program", "Last updated: July 2026"). Review them together with the item above.
 - [ ] Stripe live mode: live card payments need the Stripe go-live checklist completed (deposits block on home, Payments section on /features).
-- [ ] Switch the repo's Pages source to **GitHub Actions** at launch (Settings → Pages). The workflow already exists; nothing was changed in the repo settings.
+- [ ] **Point gohappli.com at the Worker in Cloudflare** at launch:
+  1. Connect Workers Builds to this repo with the build settings in the README (build `npm run build`, deploy `npx wrangler deploy`, root `/`, Node 22 from `.node-version`), and confirm a deploy of `main` succeeds on the `*.workers.dev` URL.
+  2. Delete the old GitHub Pages DNS records for `gohappli.com` / `www` (Cloudflare can't add a Custom Domain on a hostname that has a CNAME record).
+  3. On the `happli-website` Worker: Settings → Domains & Routes → Add → Custom Domain → `gohappli.com` (and `www.gohappli.com` if wanted).
+  4. Check the live domain: pages load, `/privacy.html` 301s to `/privacy/`, and an unknown path shows the 404 page.
+  5. Turn off GitHub Pages for this repo (Settings → Pages) so the old site stops serving.
 
 ## Walkthrough claims to confirm (home page, `src/components/sections/Walkthrough.astro`)
 

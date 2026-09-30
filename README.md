@@ -1,10 +1,10 @@
 # happli-website
 
-The marketing site for Happli, at [gohappli.com](https://gohappli.com). It's built with [Astro](https://astro.build) as a static site and deployed to GitHub Pages.
+The marketing site for Happli, at [gohappli.com](https://gohappli.com). It's built with [Astro](https://astro.build) as a static site and deployed to Cloudflare Workers as static assets.
 
 ## Run it locally
 
-You need Node.js 22.12 or newer.
+You need Node.js 22.12 or newer (`.node-version` pins 22, which Cloudflare's build also uses).
 
 ```sh
 npm install
@@ -12,6 +12,11 @@ npm run dev       # http://localhost:4321, reloads as you edit
 npm run build     # production build into dist/
 npm run preview   # serve the production build locally
 npm run check     # type-check .astro and .ts files
+
+# Serve dist/ the way Cloudflare will (routing, redirects, 404 page):
+npm run build && npx wrangler dev
+# Check the deploy without uploading anything:
+npm run build && npx wrangler deploy --dry-run
 ```
 
 ## Where things live
@@ -26,7 +31,8 @@ npm run check     # type-check .astro and .ts files
 | `src/pages/` | One file per route |
 | `src/legal/` | Privacy, terms and security page bodies (HTML, ported word-for-word from the old site) |
 | `src/content/blog/`, `src/content/compare/` | Markdown posts |
-| `public/` | Files served as-is: logos, favicons, `robots.txt`, `CNAME`, the default social image, and redirects from the old `privacy.html` / `terms.html` / `security.html` URLs |
+| `public/` | Files served as-is: logos, favicons, `robots.txt`, the default social image, `_redirects` (Cloudflare edge redirects) and fallback redirect pages for the old `privacy.html` / `terms.html` / `security.html` URLs |
+| `wrangler.jsonc` | Cloudflare Worker config: a static-assets-only Worker named `happli-website` that serves `dist/` |
 | `TODO.md` | Launch blockers, claims to confirm and placeholders to fill |
 
 ## Add a blog post or a comparison page
@@ -67,8 +73,20 @@ After the first blog post is published, add Blog to the header in `src/config/si
 
 ## Deploy
 
-`.github/workflows/deploy.yml` builds the site with `withastro/action` and publishes it with `actions/deploy-pages`. It runs on every push to `main`, and you can also start it by hand from the Actions tab (**Run workflow**).
+The site runs on **Cloudflare Workers** as a static-assets-only Worker (no Worker script). `wrangler.jsonc` names the Worker `happli-website` (it must match the Cloudflare project name), serves `./dist`, and uses `dist/404.html` for unknown paths.
 
-One-time setup: in the repo's **Settings → Pages**, set **Source** to **GitHub Actions**. `public/CNAME` keeps the custom domain `gohappli.com`.
+Cloudflare Workers Builds is connected to this GitHub repo and deploys on every push to the production branch (`main`). Build settings in the Cloudflare dashboard (**Workers & Pages → happli-website → Settings → Build**):
 
-The old URLs `/privacy.html`, `/terms.html` and `/security.html` redirect to `/privacy/`, `/terms/` and `/security/`.
+| Setting | Value |
+|---|---|
+| Build command | `npm run build` |
+| Deploy command | `npx wrangler deploy` |
+| Preview command (non-production branches, if preview builds are on) | leave the default, `npx wrangler preview` |
+| Root directory | `/` (the repo root; leave blank) |
+| Node version | 22, from `.node-version` (no `NODE_VERSION` variable needed) |
+
+Workers Builds installs dependencies with `npm` (from `package-lock.json`) and uses the Wrangler version in `package.json`.
+
+One-time launch step: point gohappli.com at the Worker. In Cloudflare, open the `happli-website` Worker and go to **Settings → Domains & Routes → Add → Custom Domain**, then add `gohappli.com` (and `www.gohappli.com` if wanted). The gohappli.com zone must be on Cloudflare, and Cloudflare won't create a Custom Domain on a hostname that already has a CNAME record, so delete the old GitHub Pages DNS records for those hostnames first. Cloudflare then creates the DNS records and certificate.
+
+**URLs and redirects.** Pages live at trailing-slash URLs (`/features/`), and Cloudflare redirects `/features` to `/features/`. `public/_redirects` sends the old `/privacy.html`, `/terms.html` and `/security.html` URLs (and `/privacy`, `/terms`, `/security`) straight to `/privacy/`, `/terms/` and `/security/` with a 301. The `public/*.html` redirect pages stay as a fallback for any host that doesn't read `_redirects`.
