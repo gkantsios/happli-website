@@ -10,18 +10,18 @@
 //              (landed screen + panels) laid out statically
 //   neither    no JavaScript: a one-screen hero with the photo and copy
 //
-// TODO confirm: the studio photo is the mockup's hair-salon photo (styling chairs, mirrors,
-// "Good hair happier people" signage). Replace it with a spray tan studio photo before launch.
-// When you do, update MONITOR below to the screen's pixel box in the new photo.
-// TODO confirm: panel 1 shows one gap offered to 4 due clients at once (same claim as the walkthrough).
+// The photo and the monitor's position in it live in src/config/hero.ts (the one place to swap them).
 import { Picture } from 'astro:assets';
 import Icon from '../Icon.astro';
 import ProductBook from './ProductBook.astro';
-import photo from '../../assets/hero-studio.jpg';
+import { heroPhoto } from '../../config/hero';
 import { site } from '../../config/site';
 
-// The monitor's screen, in pixels of the source photo.
-const MONITOR = { x0: 673, y0: 334, x1: 970, y1: 516 };
+const photo = heroPhoto.src;
+const MONITOR = heroPhoto.monitor;
+// Responsive widths up to the photo's own width, so a larger replacement photo gets larger sizes.
+const photoWidths = [...[640, 960, 1280, 1672, 1920, 2560].filter((w) => w < photo.width), photo.width];
+const monitorRatio = `${MONITOR.x1 - MONITOR.x0} / ${MONITOR.y1 - MONITOR.y0}`;
 // ProductBook is laid out at this width and scaled to fit the monitor (like a screenshot).
 const APP_WIDTH = 1040;
 const appHeight = Math.round((APP_WIDTH * (MONITOR.y1 - MONITOR.y0)) / (MONITOR.x1 - MONITOR.x0));
@@ -34,6 +34,7 @@ const appHeight = Math.round((APP_WIDTH * (MONITOR.y1 - MONITOR.y0)) / (MONITOR.
   data-ih={photo.height}
   data-monitor={JSON.stringify(MONITOR)}
   data-app-width={APP_WIDTH}
+  style={`--monitor-ratio: ${monitorRatio}`}
   aria-labelledby="hero-title"
 >
   <script is:inline>
@@ -49,7 +50,7 @@ const appHeight = Math.round((APP_WIDTH * (MONITOR.y1 - MONITOR.y0)) / (MONITOR.
         alt=""
         formats={['webp']}
         fallbackFormat="jpg"
-        widths={[640, 960, 1280, 1672]}
+        widths={photoWidths}
         sizes="(max-width: 700px) 730px, max(106vw, 188svh)"
         quality={72}
         loading="eager"
@@ -85,17 +86,16 @@ const appHeight = Math.round((APP_WIDTH * (MONITOR.y1 - MONITOR.y0)) / (MONITOR.
       <div class="panel p-gap">
         <div class="panel-head">
           <p class="eyebrow">Gaps get noticed</p>
-          <p class="panel-title">An hour opens up. Four clients are due.</p>
+          <p class="panel-title">An hour opens up. Pick who gets the offer.</p>
         </div>
         <div class="mock">
           <div class="mock-bar"><b>Thu 27 · 1:15 – 2:15 pm</b><span>Dana · open</span></div>
           <div class="due">
-            <div class="due-row"><i>MK</i><div><b>Maria K.</b><span>Custom spray tan · due 2 wks ago</span></div><em>Offered</em></div>
-            <div class="due-row"><i>JP</i><div><b>Junie P.</b><span>Rapid tan · due last week</span></div><em>Offered</em></div>
-            <div class="due-row"><i>RL</i><div><b>Rae L.</b><span>Custom spray tan · due this week</span></div><em>Offered</em></div>
-            <div class="due-row"><i>BT</i><div><b>Bea T.</b><span>Spray tan + contour · due this week</span></div><em>Offered</em></div>
+            <div class="due-row"><i>MK</i><div><b>Maria K.</b><span>Custom spray tan · last visit 2 weeks ago</span></div><em>Picked</em></div>
           </div>
-          <p class="mock-status"><span class="dot"></span>You approved the offer at 11:12 · <b>Maria K. booked 1:15</b></p>
+          <p class="draft-label">Happli's draft</p>
+          <p class="draft-text">Hi Maria! A 1:15 spot just opened Thursday with Dana. Book it here: goldenglow.gohappli.com</p>
+          <p class="mock-status"><span class="dot"></span>Approved · <b>Sent to Maria</b></p>
         </div>
       </div>
 
@@ -230,7 +230,8 @@ const appHeight = Math.round((APP_WIDTH * (MONITOR.y1 - MONITOR.y0)) / (MONITOR.
       app.style.transform = 'scale(' + (mw * S) / APP_W + ')';
       // Where the screen's center lands at the end: slightly below the vertical middle.
       var endCx = w / 2;
-      var endCy = Math.max(h * 0.5, (mh * S) / 2 + NAV + 24);
+      // Phones: land the screen just under the header so there's no empty band above it.
+      var endCy = w < 700 ? (mh * S) / 2 + NAV + 16 : Math.max(h * 0.5, (mh * S) / 2 + NAV + 24);
       for (var i = 0; i < layers.length; i++) layers[i].style.transformOrigin = cx + 'px ' + cy + 'px';
       end = { dx: endCx - cx, dy: endCy - cy };
       m0 = { x: mx, y: my };
@@ -281,13 +282,15 @@ const appHeight = Math.round((APP_WIDTH * (MONITOR.y1 - MONITOR.y0)) / (MONITOR.
         var MH = monitor.offsetHeight;
         var gap = w < 700 ? 14 : 24;
         var PW = w < 700 ? Math.round(MW * 0.86) : Math.round(Math.min(MW * 0.5, 520));
-        var PH = w < 700 ? Math.min(h - MT - 40, 460) : MH;
+        // Panels size to their content, capped at the space available (desktop: the screen's height).
+        var PH = w < 700 ? h - MT - 16 : MH;
         for (j = 0; j < panels.length; j++) {
           var pl = panels[j];
           pl.style.left = ML + MW + gap + j * (PW + gap) + 'px';
           pl.style.top = MT + 'px';
           pl.style.width = PW + 'px';
-          pl.style.height = PH + 'px';
+          pl.style.height = 'auto';
+          pl.style.maxHeight = PH + 'px';
           pl.style.opacity = vp.toFixed(3);
         }
         var shift = ML + MW + gap + panels.length * (PW + gap) - gap - (w - ML);
@@ -555,8 +558,25 @@ const appHeight = Math.round((APP_WIDTH * (MONITOR.y1 - MONITOR.y0)) / (MONITOR.
     text-wrap: balance;
   }
   .mock {
-    margin-top: auto;
+    margin-top: 20px;
     font-size: 13px;
+  }
+  .draft-label {
+    margin-top: 14px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .draft-text {
+    margin-top: 6px;
+    padding: 10px 12px;
+    border-radius: 12px 12px 12px 4px;
+    background: var(--blush-2);
+    border: 1px solid var(--line);
+    font-size: 12px;
+    line-height: 1.45;
   }
   .mock-bar {
     display: flex;
@@ -677,7 +697,7 @@ const appHeight = Math.round((APP_WIDTH * (MONITOR.y1 - MONITOR.y0)) / (MONITOR.
     background: linear-gradient(180deg, #fff 0%, var(--blush-2) 100%);
   }
   .phone {
-    margin: auto auto 0;
+    margin: 20px auto 0;
     width: 250px;
     max-width: 100%;
     background: #fff;
@@ -861,7 +881,7 @@ const appHeight = Math.round((APP_WIDTH * (MONITOR.y1 - MONITOR.y0)) / (MONITOR.
     position: relative;
     grid-column: 1 / -1;
     grid-row: 1;
-    aspect-ratio: 297 / 182;
+    aspect-ratio: var(--monitor-ratio);
     border-radius: var(--radius-lg);
     border: 1px solid var(--line-strong);
     box-shadow: var(--shadow-card);
@@ -870,7 +890,6 @@ const appHeight = Math.round((APP_WIDTH * (MONITOR.y1 - MONITOR.y0)) / (MONITOR.
   .is-static .panel {
     position: relative;
     opacity: 1;
-    min-height: 380px;
   }
   @media (max-width: 860px) {
     .is-static .ui-layer {
