@@ -25,7 +25,10 @@ Everything below is marked in the source with `TODO confirm:` or `PLACEHOLDER` (
 
 These now match the app: Needs you shows an open gap ("Draft an offer") and a waitlist match (Book or Dismiss); a gap offer goes to one client you pick, Happli drafts the text, and it sends only after you approve ("Sent to Maria"), with no read receipts or booking by reply; checkout shows "Paid · tip $10"; rebooking is "Book her next visit" with time slots; the mock app's tabs are Calendar, Clients and Messages with a Settings gear.
 
-- [ ] Confirm the booking link format in the drafted offer text: "Book it here: goldenglow.gohappli.com" (`src/components/sections/Walkthrough.astro`, `src/components/sections/HeroZoom.astro`).
+The zoom hero's landed screen (`src/components/sections/AppScreen.astro`) is modeled on the real owner app's Calendar day view, with sample data. It shows only what the app does today: the gap offer draft waits for approval (Approve shows "Approved · sent to Maria"), New booking can't book, Check out ends on "Paid", and the Card button is labeled as demo only. The in-app "UTILIZATION" heading and summary note ("Maya is at 75% — your busiest schedule today.") avoid "chair" wording.
+
+- [ ] Confirm the booking link format in the drafted offer text: "Book it here: goldenglow.gohappli.com" (`src/components/sections/Walkthrough.astro`, `src/components/sections/HeroZoom.astro`, `src/components/sections/AppScreen.astro`).
+- [ ] If the app's look changes (nav, colors, the rail), update `AppScreen.astro` to match. Its demo numbers (8 / 12 booked, $600 projected, Dana 67%, Jess 42%, Maya 75%) are computed from the sample data and checked at build time.
 
 ## Claims to confirm (copy doc `[confirm]` items)
 
@@ -61,7 +64,7 @@ The copy doc has no headings for some sections, so these were added. Please revi
 - How it works eyebrow "3 steps"; payments section eyebrow "Payments and trust"; "Trust points" label
 - /blog heading "Notes for busy studio owners."; /compare heading "How Happli compares."
 - Footer tagline and "Made for spray tan studios and beauty pros."
-- Sample names in the calendar, phone and walkthrough illustrations (Jess, Maya, Tori, Golden Glow Studio; walkthrough client and team names are from the mockup; its prices ($55, $15, $20 deposit, $10 tip) are illustrative)
+- Sample names in the calendar, phone and walkthrough illustrations (Dana, Jess, Maya, Golden Glow; the static hero's calendar still uses Tori; walkthrough client and team names are from the mockup; its prices ($55, $15, $20 deposit, $10 tip) are illustrative)
 
 ## After the first post
 

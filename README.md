@@ -42,8 +42,16 @@ npm run build && npx wrangler deploy --dry-run
 
 The homepage has two heroes. Pick one with `heroVariant` in `src/config/site.ts`:
 
-- `'zoom'` (default): `HeroZoom.astro`, the scroll-zoom hero from the design mockup. As you scroll, the studio photo zooms into the monitor on the front desk, the calendar lands full size, and three panels slide in. Visitors who prefer reduced motion get the final frame laid out statically, and visitors without JavaScript get a one-screen hero.
+- `'zoom'` (default): `HeroZoom.astro`, the scroll-zoom hero from the design mockup. As you scroll, the studio photo zooms into the monitor on the front desk, the app screen lands full size, and three panels slide in. Visitors who prefer reduced motion get the final frame laid out statically, and visitors without JavaScript get a one-screen hero.
 - `'static'`: `HeroStatic.astro`, a simpler hero with the calendar illustration below the copy.
+
+### The app screen in the zoom hero
+
+The screen that lands in the monitor is `AppScreen.astro`: the owner app's Calendar day view for a sample studio (Golden Glow, Thursday, Aug 27), laid out at 1280×784 and scaled to fit. Its sample data lives in the component's frontmatter, and the header stats, utilization and summary are computed from it; the build fails if they drift from the agreed numbers.
+
+Once the zoom has landed (and before the panels slide in), the screen can be used: open an appointment and check out, open the gap to start a new booking, review and approve the gap offer draft, and switch days in the week strip. Nothing is sent or booked. Until then the screen is `inert`, so Tab and clicks pass it by, and scrolling on closes anything that's open. Nothing inside it scrolls or listens to wheel or touch events, so the page always scrolls normally.
+
+On phones the in-app rail is hidden: two buttons under the screen ("Open an appointment", "See what needs you") and the "Needs you" pill open the panels as a bottom sheet at normal page size. With reduced motion, the screen is usable right away.
 
 ### Swapping the hero photo
 
