@@ -13,7 +13,7 @@
 // The photo and the monitor's position in it live in src/config/hero.ts (the one place to swap them).
 import { Picture } from 'astro:assets';
 import Icon from '../Icon.astro';
-import ProductBook from './ProductBook.astro';
+import AppScreen from './AppScreen.astro';
 import { heroPhoto } from '../../config/hero';
 import { site } from '../../config/site';
 
@@ -22,8 +22,8 @@ const MONITOR = heroPhoto.monitor;
 // Responsive widths up to the photo's own width, so a larger replacement photo gets larger sizes.
 const photoWidths = [...[640, 960, 1280, 1672, 1920, 2560].filter((w) => w < photo.width), photo.width];
 const monitorRatio = `${MONITOR.x1 - MONITOR.x0} / ${MONITOR.y1 - MONITOR.y0}`;
-// ProductBook is laid out at this width and scaled to fit the monitor (like a screenshot).
-const APP_WIDTH = 1040;
+// AppScreen is laid out at this width (its px values apply 1:1) and scaled to fit the monitor.
+const APP_WIDTH = 1280;
 const appHeight = Math.round((APP_WIDTH * (MONITOR.y1 - MONITOR.y0)) / (MONITOR.x1 - MONITOR.x0));
 ---
 
@@ -81,68 +81,85 @@ const appHeight = Math.round((APP_WIDTH * (MONITOR.y1 - MONITOR.y0)) / (MONITOR.
       </div>
     </div>
 
-    <div class="layer ui-layer" aria-hidden="true">
-      <div class="panel p-gap">
+    <div class="layer ui-layer">
+      <div class="panel p-gap" aria-hidden="true">
         <div class="panel-head">
-          <p class="eyebrow">Gaps get noticed</p>
+          <p class="panel-eyebrow">Gaps get noticed</p>
           <p class="panel-title">An hour opens up. Pick who gets the offer.</p>
         </div>
-        <div class="mock">
-          <div class="mock-bar"><b>Thu 27 · 1:15 – 2:15 pm</b><span>Dana · open</span></div>
-          <div class="due">
-            <div class="due-row"><i>MK</i><div><b>Maria K.</b><span>Custom spray tan · last visit 2 weeks ago</span></div><em>Picked</em></div>
+        <div class="mock need-card">
+          <p class="need-t">Gap offer · waiting for your approval</p>
+          <p class="need-b">Maria K. for Dana's 1:15 pm opening on Thursday.</p>
+          <div class="client-row">
+            <i style="background:#a85d58">MK</i>
+            <div><b>Maria K.</b><span>Custom spray tan · last visit 2 weeks ago</span></div>
           </div>
-          <p class="draft-label">Happli's draft</p>
-          <p class="draft-text">Hi Maria! A 1:15 spot just opened Thursday with Dana. Book it here: goldenglow.gohappli.com</p>
-          <p class="mock-status"><span class="dot"></span>Approved · <b>Sent to Maria</b></p>
+          <p class="bubble">Hi Maria! A 1:15 spot just opened Thursday with Dana. Book it here: goldenglow.gohappli.com</p>
+          <p class="status"><span class="dot"></span>Approved · sent to Maria</p>
         </div>
       </div>
 
-      <div class="panel p-page">
+      <div class="panel p-page" aria-hidden="true">
         <div class="panel-head">
-          <p class="eyebrow">Your booking page</p>
+          <p class="panel-eyebrow">Your booking page</p>
           <p class="panel-title">Three taps, from any phone.</p>
         </div>
         <div class="phone phone-sm">
-          <div class="top"><div class="bb">gg</div></div>
-          <p class="ph-h">When suits <em>you?</em></p>
-          <p class="svc">Custom spray tan · 30 min with Dana</p>
+          <p class="ph-svc">Custom spray tan · 30 min</p>
+          <p class="lbl lbl-day">Day</p>
           <div class="days">
-            <div class="day"><span>WED</span><b>26</b></div>
-            <div class="day on"><span>THU</span><b>27</b></div>
-            <div class="day"><span>FRI</span><b>28</b></div>
-            <div class="day off"><span>SAT</span><b>29</b></div>
+            <div class="day"><span>Wed</span><b>26</b></div>
+            <div class="day on"><span>Thu</span><b>27</b></div>
+            <div class="day"><span>Fri</span><b>28</b></div>
+            <div class="day"><span>Sat</span><b>29</b></div>
           </div>
-          <p class="lbl">AFTERNOON</p>
-          <div class="slots"><div class="slot on">1:15 pm</div><div class="slot">2:00 pm</div><div class="slot">3:30 pm</div></div>
+          <p class="lbl lbl-row">Time <span>Afternoon · 3</span></p>
+          <div class="slots">
+            <div class="slot on"><b>1:15 pm</b><span>with Dana</span></div>
+            <div class="slot"><b>1:30 pm</b><span>with Dana</span></div>
+            <div class="slot"><b>1:45 pm</b><span>with Dana</span></div>
+          </div>
         </div>
       </div>
 
-      <div class="panel p-notes">
+      <div class="panel p-notes" aria-hidden="true">
         <div class="panel-head">
-          <p class="eyebrow">On the appointment</p>
+          <p class="panel-eyebrow">On the appointment</p>
           <p class="panel-title">Notes and history, right where you need them.</p>
         </div>
-        <div class="mock">
-          <div class="client"><i>MK</i><div><b>Maria K.</b><span>Custom spray tan + contour · with Dana · 1:15 pm</span></div></div>
+        <div class="mock drawer">
+          <p class="drawer-e">Appointment</p>
+          <p class="drawer-name">Maria K.</p>
+          <p class="drawer-meta">Custom spray tan + contour · with Dana · 1:15 pm</p>
           <div class="chips">
-            <span class="ok">Deposit paid</span>
+            <span class="ok">Confirmed</span>
+            <span>Deposit paid</span>
             <span>6th visit</span>
             <span>Note: medium shade</span>
             <span>Event on Saturday</span>
           </div>
           <div class="visits">
-            <div><b>13 Aug</b><span>Custom spray tan · Dana · $55</span></div>
-            <div><b>30 Jul</b><span>Rapid tan · Dana · $45</span></div>
-            <div><b>16 Jul</b><span>Custom spray tan · Jess · $55</span></div>
+            <div><b>Aug 13</b><span>Custom spray tan · Dana · $55</span></div>
+            <div><b>Jul 30</b><span>Rapid tan · Dana · $45</span></div>
+            <div><b>Jul 16</b><span>Custom spray tan · Jess · $55</span></div>
           </div>
         </div>
       </div>
 
-      <div class="monitor">
-        <div class="app" style={`width:${APP_WIDTH}px;height:${appHeight}px`}>
-          <ProductBook bare />
+      <div class="monitor" role="group" aria-label="Interactive demo of the Happli calendar (sample data)" aria-describedby="hero-demo-desc">
+        <p class="visually-hidden" id="hero-demo-desc">
+          A day view of the Happli calendar for a sample studio, with a column for each team member, an open one-hour
+          gap, and a Needs you list with a drafted gap offer waiting for approval. Open an appointment, the gap or the
+          draft to see what Happli shows. Nothing is sent or booked.
+        </p>
+        <div class="app" style={`width:${APP_WIDTH}px;height:${appHeight}px`} inert>
+          <AppScreen />
         </div>
+      </div>
+
+      <div class="demo-chips" data-od-chips>
+        <button type="button" class="demo-chip" data-od-open="ana">Open an appointment</button>
+        <button type="button" class="demo-chip" data-od-open="draft">See what needs you</button>
       </div>
     </div>
 
@@ -163,6 +180,8 @@ const appHeight = Math.round((APP_WIDTH * (MONITOR.y1 - MONITOR.y0)) / (MONITOR.
     var copy = stage.querySelector('.hero-copy');
     var hint = stage.querySelector('.scroll-hint');
     var panels = stage.querySelectorAll('.panel');
+    var chips = stage.querySelector('[data-od-chips]');
+    var od = app.querySelector('[data-od]');
     var IW = +zoom.getAttribute('data-iw');
     var IH = +zoom.getAttribute('data-ih');
     var M = JSON.parse(zoom.getAttribute('data-monitor'));
@@ -173,6 +192,9 @@ const appHeight = Math.round((APP_WIDTH * (MONITOR.y1 - MONITOR.y0)) / (MONITOR.
     // Reduced motion: no scroll zoom. Show the final frame statically; only the screen's
     // content needs scaling to its width.
     if (zoom.classList.contains('is-static')) {
+      // The final frame is always there, so the demo is always usable.
+      app.inert = false;
+      stage.classList.add('is-landed');
       var fit = function () {
         app.style.transform = 'scale(' + monitor.clientWidth / APP_W + ')';
       };
@@ -187,6 +209,16 @@ const appHeight = Math.round((APP_WIDTH * (MONITOR.y1 - MONITOR.y0)) / (MONITOR.
     var ticking = false;
     var end = { dx: 0, dy: 0 };
     var m0 = { x: 0, y: 0 };
+    var landed = false;
+
+    // The demo inside the screen is usable only while the screen sits still, full size.
+    function setLanded(v) {
+      if (v === landed) return;
+      landed = v;
+      stage.classList.toggle('is-landed', v);
+      app.inert = !v;
+      if (od) od.dispatchEvent(new CustomEvent('od:landed', { detail: v }));
+    }
 
     function layout() {
       var w = stage.clientWidth;
@@ -249,10 +281,10 @@ const appHeight = Math.round((APP_WIDTH * (MONITOR.y1 - MONITOR.y0)) / (MONITOR.
       var rect = zoom.getBoundingClientRect();
       var range = zoom.offsetHeight - stage.clientHeight;
       var P = range > 0 ? clamp(-rect.top / range, 0, 1) : 0;
-      // Tuned for the shorter 320vh / 360vh section: the zoom lands at 55% of the scroll and the
-      // panels slide in over the last 40%, so the final frame still lands fully.
-      var p = clamp(P / 0.55, 0, 1); // zoom-in
-      var sp = ease(clamp((P - 0.6) / 0.4, 0, 1)); // panel slide
+      // Tuned for the 420vh / 460vh section: the zoom lands by 42% of the scroll, the screen then
+      // holds still (and is usable) for about a viewport, and the panels slide in over the last 36%.
+      var p = clamp(P / 0.4667, 0, 1); // zoom-in
+      var sp = ease(clamp((P - 0.64) / 0.36, 0, 1)); // panel slide
       // copy fades (0 -> .22), zoom (.15 -> .9), veil (.7 -> .95)
       var cp = clamp(p / 0.22, 0, 1);
       copy.style.opacity = (1 - cp).toFixed(3);
@@ -294,6 +326,9 @@ const appHeight = Math.round((APP_WIDTH * (MONITOR.y1 - MONITOR.y0)) / (MONITOR.
           pl.style.maxHeight = PH + 'px';
           pl.style.opacity = vp.toFixed(3);
         }
+        chips.style.left = ML + 'px';
+        chips.style.top = MT + MH + 12 + 'px';
+        chips.style.width = MW + 'px';
         var shift = ML + MW + gap + panels.length * (PW + gap) - gap - (w - ML);
         layers[1].style.transform = 'translateX(' + (-shift * sp).toFixed(2) + 'px)';
       } else {
@@ -313,6 +348,7 @@ const appHeight = Math.round((APP_WIDTH * (MONITOR.y1 - MONITOR.y0)) / (MONITOR.
           : 'none';
       monitor.style.outline = vp > 0 ? S / s + 'px solid rgba(27,22,20,' + 0.16 * vp + ')' : 'none';
       stage.classList.toggle('end', P >= 1);
+      setLanded(zp >= 1 && sp < 0.25);
     }
 
     function onScroll() {
@@ -356,11 +392,11 @@ const appHeight = Math.round((APP_WIDTH * (MONITOR.y1 - MONITOR.y0)) / (MONITOR.
     background: var(--blush);
   }
   .is-zoom {
-    height: 320vh;
+    height: 420vh;
   }
   @media (max-width: 699px) {
     .is-zoom {
-      height: 360vh;
+      height: 460vh;
     }
   }
   .is-zoom .stage {
@@ -542,21 +578,79 @@ const appHeight = Math.round((APP_WIDTH * (MONITOR.y1 - MONITOR.y0)) / (MONITOR.
       inset 0 0 calc(18px * var(--k, 1)) rgba(0, 0, 0, 0.35),
       inset 0 calc(1px * var(--k, 1)) calc(2px * var(--k, 1)) rgba(0, 0, 0, 0.35);
   }
+  /* the screen takes clicks only once it has landed (the script also toggles `inert`) */
+  .is-landed .monitor {
+    pointer-events: auto;
+  }
+
+  /* phones: page-scale shortcuts under the landed screen, since the screen itself is tiny */
+  .demo-chips {
+    display: none;
+    position: absolute;
+    gap: 8px;
+    flex-wrap: wrap;
+    pointer-events: auto;
+  }
+  .demo-chip {
+    min-height: 44px;
+    padding: 0 16px;
+    border-radius: var(--radius-pill);
+    border: 1px solid rgba(43, 27, 26, 0.14);
+    background: #fcf6f1;
+    color: #5e3a38;
+    font: inherit;
+    font-size: 13.5px;
+    font-weight: 700;
+    cursor: pointer;
+    touch-action: manipulation;
+    box-shadow: 0 2px 8px rgba(43, 27, 26, 0.06);
+  }
+  .demo-chip:focus-visible {
+    outline: 2px solid #f9727c;
+    outline-offset: 2px;
+  }
+  @media (max-width: 699px) {
+    .is-landed .demo-chips {
+      display: flex;
+    }
+  }
+
+  /* ---------- side panels, in the app's look ---------- */
   .panel {
+    --paper: #fcf6f1;
+    --gold: #9b7a33;
+    --olive: #6b6a45;
+    --maroon: #5e3a38;
+    --espresso: #2b1b1a;
+    --cream: #f7e4da;
+    --guava: #f9727c;
     position: absolute;
     opacity: 0;
-    background: var(--surface);
-    border: 1px solid var(--line-strong);
-    border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-card);
+    background: var(--paper);
+    border: 0;
+    border-radius: 14px;
+    box-shadow:
+      0 2px 8px rgba(43, 27, 26, 0.05),
+      var(--shadow-card);
     overflow: hidden;
     display: flex;
     flex-direction: column;
     padding: 28px;
     text-align: left;
+    color: var(--espresso);
+  }
+  .panel-eyebrow,
+  .lbl,
+  .drawer-e {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--gold);
   }
   .panel-title {
     font-family: var(--serif);
+    font-optical-sizing: auto;
     font-size: clamp(20px, 2vw, 28px);
     line-height: 1.15;
     margin-top: 10px;
@@ -567,99 +661,191 @@ const appHeight = Math.round((APP_WIDTH * (MONITOR.y1 - MONITOR.y0)) / (MONITOR.
     margin-top: 20px;
     font-size: 13px;
   }
-  .draft-label {
-    margin-top: 14px;
-    font-size: 10px;
+
+  /* panel 1: the Needs you draft card */
+  .need-card {
+    background: #fff;
+    border-radius: 14px;
+    padding: 16px;
+    box-shadow: 0 2px 8px rgba(43, 27, 26, 0.05);
+  }
+  .need-t {
+    font-size: 12.5px;
     font-weight: 700;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--muted);
   }
-  .draft-text {
-    margin-top: 6px;
-    padding: 10px 12px;
-    border-radius: 12px 12px 12px 4px;
-    background: var(--blush-2);
-    border: 1px solid var(--line);
-    font-size: 12px;
-    line-height: 1.45;
+  .need-b {
+    font-size: 11.5px;
+    font-weight: 500;
+    color: var(--olive);
+    line-height: 1.5;
+    margin-top: 4px;
   }
-  .mock-bar {
-    display: flex;
-    justify-content: space-between;
-    gap: 12px;
-    padding-bottom: 10px;
-    border-bottom: 1px solid var(--line);
-  }
-  .mock-bar span {
-    color: var(--muted);
-  }
-  .due-row {
+  .client-row {
     display: flex;
     align-items: center;
-    gap: 12px;
-    padding: 10px 0;
-    border-bottom: 1px solid var(--line);
+    gap: 10px;
+    margin-top: 14px;
   }
-  .due-row i,
-  .client i {
-    width: 32px;
-    height: 32px;
+  .client-row i {
+    width: 24px;
+    height: 24px;
     border-radius: 50%;
-    background: var(--blush);
-    color: var(--coral-ink);
+    color: #fff;
     display: grid;
     place-items: center;
     font-style: normal;
-    font-size: 11px;
-    font-weight: 700;
+    font-size: 8.5px;
+    font-weight: 600;
     flex: none;
   }
-  .due-row div,
-  .client div {
-    flex: 1;
+  .client-row div {
     min-width: 0;
     line-height: 1.3;
   }
-  .due-row b,
-  .client b {
+  .client-row b {
     display: block;
+    font-size: 12.5px;
     font-weight: 600;
   }
-  .due-row span,
-  .client span {
-    color: var(--muted);
-    font-size: 12px;
+  .client-row span {
+    font-size: 11.5px;
+    font-weight: 500;
+    color: var(--olive);
   }
-  .due-row em {
-    font-style: normal;
-    font-size: 11px;
-    font-weight: 600;
-    color: var(--coral-ink);
-    background: var(--coral-soft);
-    padding: 3px 8px;
-    border-radius: var(--radius-pill);
-  }
-  .mock-status {
+  .bubble {
     margin-top: 12px;
+    padding: 10px 12px;
+    border-radius: 14px 14px 14px 4px;
+    background: var(--paper);
+    border: 1px solid rgba(43, 27, 26, 0.07);
     font-size: 12px;
-    color: var(--muted);
+    line-height: 1.45;
   }
-  .mock-status .dot {
-    display: inline-block;
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    background: #7fa36b;
-    margin-right: 6px;
-  }
-  .mock-status b {
-    color: var(--ink);
-  }
-  .client {
+  .status {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 8px;
+    margin-top: 12px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #5a7a5e;
+  }
+  .status .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #5a7a5e;
+  }
+
+  /* panel 2: a phone showing the booking page */
+  .phone {
+    margin: 20px auto 0;
+    width: 250px;
+    max-width: 100%;
+    background: var(--paper);
+    border-radius: 34px;
+    border: 1px solid rgba(43, 27, 26, 0.14);
+    box-shadow: 0 20px 40px -24px rgba(27, 22, 20, 0.3);
+    padding: 20px 16px 16px;
+    font-size: 12px;
+  }
+  .ph-svc {
+    font-family: var(--serif);
+    font-optical-sizing: auto;
+    font-size: 17px;
+    line-height: 1.2;
+  }
+  .lbl {
+    margin-top: 16px;
+  }
+  .lbl-row {
+    display: flex;
+    justify-content: space-between;
+  }
+  .lbl-row span {
+    color: var(--olive);
+    letter-spacing: 0.04em;
+    text-transform: none;
+    font-size: 11px;
+    font-weight: 500;
+  }
+  .days {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 8px;
+  }
+  .day {
+    text-align: center;
+    line-height: 1.2;
+  }
+  .day span {
+    display: block;
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--olive);
+  }
+  .day b {
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    margin-top: 4px;
+    border-radius: 50%;
+    font-family: var(--serif);
+    font-optical-sizing: auto;
+    font-size: 17px;
+    font-weight: 400;
+  }
+  .day.on b {
+    background: var(--guava);
+    color: #fff;
+  }
+  .slots {
+    display: grid;
+    gap: 8px;
+    margin-top: 10px;
+  }
+  .slot {
+    border: 1px solid rgba(43, 27, 26, 0.14);
+    border-radius: var(--radius-pill);
+    background: #fff;
+    padding: 7px 0;
+    text-align: center;
+    line-height: 1.25;
+  }
+  .slot b {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+  }
+  .slot span {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--olive);
+  }
+  .slot.on {
+    background: var(--guava);
+    border-color: var(--guava);
+    color: #fff;
+  }
+  .slot.on span {
+    color: rgba(255, 255, 255, 0.85);
+  }
+
+  /* panel 3: the appointment drawer */
+  .drawer-name {
+    font-family: var(--serif);
+    font-optical-sizing: auto;
+    font-size: 26px;
+    letter-spacing: -0.01em;
+    line-height: 1.1;
+    margin-top: 6px;
+  }
+  .drawer-meta {
+    font-size: 12.5px;
+    font-weight: 500;
+    color: var(--olive);
+    margin-top: 6px;
   }
   .chips {
     display: flex;
@@ -668,26 +854,27 @@ const appHeight = Math.round((APP_WIDTH * (MONITOR.y1 - MONITOR.y0)) / (MONITOR.
     margin-top: 14px;
   }
   .chips span {
-    font-size: 12px;
-    padding: 5px 10px;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 6px 12px;
     border-radius: var(--radius-pill);
-    border: 1px solid var(--line-strong);
-    color: var(--ink-2);
+    background: var(--cream);
+    color: var(--maroon);
   }
   .chips span.ok {
-    border-color: transparent;
-    background: var(--sage);
-    color: var(--sage-ink);
+    background: #e6ede4;
+    color: #5a7a5e;
+    font-weight: 700;
   }
   .visits {
     margin-top: 16px;
-    border-top: 1px solid var(--line);
+    border-top: 1px solid rgba(43, 27, 26, 0.09);
   }
   .visits div {
     display: flex;
     gap: 14px;
     padding: 8px 0;
-    border-bottom: 1px solid var(--line);
+    border-bottom: 1px solid rgba(43, 27, 26, 0.09);
     font-size: 12px;
   }
   .visits b {
@@ -695,115 +882,7 @@ const appHeight = Math.round((APP_WIDTH * (MONITOR.y1 - MONITOR.y0)) / (MONITOR.
     min-width: 4em;
   }
   .visits span {
-    color: var(--muted);
-  }
-
-  /* small phone inside panel 2 */
-  .p-page {
-    background: linear-gradient(180deg, #fff 0%, var(--blush-2) 100%);
-  }
-  .phone {
-    margin: 20px auto 0;
-    width: 250px;
-    max-width: 100%;
-    background: #fff;
-    border-radius: 34px;
-    border: 1px solid var(--line-strong);
-    box-shadow: 0 20px 40px -24px rgba(27, 22, 20, 0.3);
-    padding: 18px 16px 14px;
-    font-size: 12px;
-  }
-  .top {
-    margin-bottom: 14px;
-  }
-  .bb {
-    font-family: var(--serif);
-    font-style: italic;
-    font-size: 13px;
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    background: var(--blush);
-    display: grid;
-    place-items: center;
-  }
-  .ph-h {
-    font-family: var(--serif);
-    font-size: 21px;
-    line-height: 1.1;
-  }
-  .ph-h em {
-    font-style: italic;
-    color: var(--coral-ink);
-  }
-  .svc {
-    color: var(--muted);
-    margin-top: 6px;
-  }
-  .days {
-    display: flex;
-    gap: 8px;
-    margin-top: 14px;
-  }
-  .day {
-    flex: 1;
-    border: 1px solid var(--line);
-    border-radius: 12px;
-    padding: 8px 0;
-    text-align: center;
-    line-height: 1.2;
-  }
-  .day span {
-    display: block;
-    font-size: 10px;
-    font-weight: 600;
-    letter-spacing: 0.08em;
-    color: var(--muted);
-  }
-  .day b {
-    display: block;
-    font-size: 14px;
-    font-weight: 600;
-    margin-top: 3px;
-  }
-  .day.on {
-    background: var(--ink);
-    border-color: var(--ink);
-    color: #fff;
-  }
-  .day.on span {
-    color: rgba(255, 255, 255, 0.75);
-  }
-  .day.off {
-    background: var(--bg);
-  }
-  .day.off b {
-    text-decoration: line-through;
-    color: var(--muted);
-  }
-  .lbl {
-    margin-top: 20px;
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 0.14em;
-    color: var(--muted);
-  }
-  .slots {
-    display: grid;
-    gap: 8px;
-    margin-top: 10px;
-  }
-  .slot {
-    border: 1px solid var(--line-strong);
-    border-radius: var(--radius-pill);
-    padding: 9px 0;
-    text-align: center;
-    font-weight: 600;
-  }
-  .slot.on {
-    background: var(--coral-strong);
-    border-color: var(--coral-strong);
-    color: #fff;
+    color: var(--olive);
   }
 
   /* ---------- small screens ---------- */
@@ -841,11 +920,8 @@ const appHeight = Math.round((APP_WIDTH * (MONITOR.y1 - MONITOR.y0)) / (MONITOR.
       width: 220px;
     }
     .phone .days,
-    .phone .lbl {
+    .phone .lbl-day {
       display: none;
-    }
-    .phone .slots {
-      margin-top: 16px;
     }
   }
   @media (max-width: 400px) {
@@ -892,6 +968,10 @@ const appHeight = Math.round((APP_WIDTH * (MONITOR.y1 - MONITOR.y0)) / (MONITOR.
     border: 1px solid var(--line-strong);
     box-shadow: var(--shadow-card);
     --real: 0;
+  }
+  .is-static .demo-chips {
+    position: relative;
+    grid-column: 1 / -1;
   }
   .is-static .panel {
     position: relative;
