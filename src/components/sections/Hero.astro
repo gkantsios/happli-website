@@ -1,0 +1,75 @@
+---
+import Icon from '../Icon.astro';
+import ProductBook from './ProductBook.astro';
+import { site } from '../../config/site';
+---
+
+<section class="hero" aria-labelledby="hero-title">
+  <div class="wrap hero-copy">
+    <p class="eyebrow">For spray tan studios and beauty pros</p>
+    <h1 id="hero-title">Your front desk, handled. <em>Your money, yours.</em></h1>
+    {/* TODO confirm: "Your money, yours" and "your own Stripe account" ship with happli-coo PR #297 (direct charges). */}
+    <p class="lede">
+      Happli is the booking and front-desk partner for spray tan studios and beauty businesses. Clients book online
+      from their phone, pay a deposit, and get reminders automatically. You run the day from one clear calendar, and
+      every payment goes to your own Stripe account.
+    </p>
+    <div class="btn-row hero-actions">
+      <a class="btn btn-coral" href={site.cta.href}>{site.cta.label}</a>
+      <a class="btn btn-ghost" href="#how">See how it works</a>
+    </div>
+    <p class="hero-note">
+      <Icon name="check" size={13} strokeWidth={2.2} />
+      Happli takes no fee on your payments. Drafted texts wait for your approval.
+    </p>
+  </div>
+  <div class="wrap">
+    <ProductBook />
+  </div>
+</section>
+
+<style>
+  .hero {
+    position: relative;
+    padding-top: clamp(56px, 8vw, 96px);
+    background:
+      radial-gradient(60% 50% at 50% 0%, rgba(246, 233, 228, 0.95) 0%, rgba(246, 233, 228, 0) 70%),
+      radial-gradient(40% 40% at 90% 30%, rgba(243, 231, 214, 0.7) 0%, rgba(243, 231, 214, 0) 70%),
+      var(--bg);
+  }
+  .hero-copy {
+    text-align: center;
+  }
+  h1 {
+    font-size: var(--fs-h1);
+    line-height: 1.02;
+    letter-spacing: -0.025em;
+    margin: 18px auto 0;
+    max-width: 13em;
+  }
+  h1 em {
+    display: block;
+    font-style: italic;
+    font-weight: 300;
+  }
+  .lede {
+    margin: 24px auto 0;
+    font-size: clamp(16px, 1.5vw, 19px);
+    max-width: 36em;
+  }
+  .hero-actions {
+    justify-content: center;
+    margin-top: 30px;
+  }
+  .hero-note {
+    margin-top: 18px;
+    font-size: 13px;
+    color: var(--muted);
+    text-wrap: balance;
+  }
+  .hero-note :global(svg) {
+    display: inline-block;
+    vertical-align: -2px;
+    margin-right: 6px;
+  }
+</style>

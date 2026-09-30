@@ -1,0 +1,198 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageIntro from '../components/sections/PageIntro.astro';
+import FeatureList, { type FeatureItem } from '../components/sections/FeatureList.astro';
+import CtaBand from '../components/sections/CtaBand.astro';
+import { breadcrumbs } from '../lib/jsonld';
+
+const title = 'Features | Happli Booking, Payments and Front Desk for Beauty Studios';
+const description =
+  'Online booking, deposits, card checkout, tips and tax, no-show fees, packages, waitlist, gap offers, reminders, client import and a website chat assistant. Built for spray tan studios.';
+
+type Section = { id: string; title: string; intro?: string; soon?: boolean; items: FeatureItem[] };
+
+const sections: Section[] = [
+  {
+    id: 'online-booking',
+    title: 'Online booking',
+    items: [
+      { title: 'Your booking page:', body: 'a public page for each location that you can share as a link or embed on your website.' },
+      { title: 'Phone-friendly calendar:', body: 'clients pick a day on a calendar sized for small screens, then choose an open time.' },
+      { title: 'Held while they book:', body: "a time is held while the client finishes booking, so two people can't grab the same slot." },
+      { title: 'Your rules:', body: 'set the minimum notice for online bookings, how far ahead clients can book, and your cancellation and reschedule window.' },
+      { title: 'Hours and closures:', body: "set each team member's working hours and add closed days or date ranges. Closed days disappear from the booking page, and Happli warns you if bookings already fall on one." },
+      { title: 'Deposits at booking:', body: 'require a deposit before an online booking is confirmed.' },
+    ],
+  },
+  {
+    id: 'calendar',
+    title: 'Calendar and front desk',
+    items: [
+      { title: 'Day and week views,', body: 'with a column for each team member, or everyone at once.' },
+      { title: 'One appointment panel', body: 'to confirm, check out, reschedule, cancel or mark a no-show, with notes.' },
+      { title: 'Reschedule with confidence:', body: 'drag to a new time or pick a new slot, then confirm before anything moves.' },
+      { title: 'Block time', body: 'for breaks, training or personal time.' },
+      { title: 'New or existing clients:', body: 'search by name or phone, add a new client, or book a walk-in.' },
+      { title: '"Needs you" list:', body: 'open gaps, waitlist matches and drafts waiting for your approval, all in one spot.' },
+      // TODO confirm: owner phone view is ready to advertise.
+      { title: 'Check your day from your phone', body: 'with a phone-sized view of the calendar and "Needs you."' },
+      { title: 'Quick search:', body: 'jump to any setting with Cmd+K on Mac or Ctrl+K on Windows.' },
+    ],
+  },
+  {
+    id: 'payments',
+    title: 'Payments',
+    // TODO confirm: live card payments need the Stripe go-live checklist completed.
+    items: [
+      // TODO confirm: PR #297 (charges on the studio's own account, no Happli fee).
+      { title: 'Stripe Connect:', body: 'connect your own Stripe account from Settings. Charges are made on your account, and Happli takes no fee.' },
+      { title: 'Deposits', body: 'as a percentage of the service, for online bookings, staff bookings or both.' },
+      { title: 'Card checkout', body: 'through secure Stripe checkout.' },
+      { title: 'Mark paid', body: 'to record cash or other payments.' },
+      { title: 'Tips', body: 'with three suggested amounts you choose.' },
+      { title: 'Sales tax', body: 'at your rate.' },
+      { title: 'No-show fees', body: 'as a percentage of the service, collected through a secure payment link.' },
+      { title: 'Refunds', body: 'issued from the appointment.' },
+      { title: 'Clear balance due', body: "at checkout, so you only collect what's owed." },
+    ],
+  },
+  {
+    id: 'packages',
+    title: 'Packages',
+    items: [
+      { title: 'Create packages', body: 'of prepaid sessions for the services you choose, with an optional expiry.' },
+      { title: 'Sell a package', body: 'by card or mark it paid.' },
+      { title: 'Client balances:', body: 'see how many sessions each client has left, and adjust, void or refund when needed.' },
+      { body: 'Redeem package sessions at checkout.', soon: true },
+    ],
+  },
+  {
+    id: 'waitlist',
+    title: 'Waitlist and gap offers',
+    items: [
+      { title: 'Waitlist:', body: 'add clients with their service, preferred team member (or anyone), day and time of day. Happli matches them to openings.' },
+      // TODO confirm: advertise online waitlist join.
+      { title: 'Online waitlist:', body: "when a day is full, you can let clients join the waitlist from your booking page. It's off until you turn it on." },
+      { title: 'Book in one tap', body: 'from a waitlist match, or dismiss it.' },
+      { title: 'Gap offers:', body: 'spot an open gap, pick a client, and Happli drafts a text offering the time. You approve it before it sends.' },
+    ],
+  },
+  {
+    id: 'reminders',
+    title: 'Reminders and client messages',
+    // TODO confirm: live texting to clients is switched on.
+    items: [
+      { title: 'Automatic messages:', body: 'booking confirmed, day-before reminder, two-hours-before reminder, moved or cancelled, thank-you after the visit, and time to come back.' },
+      { title: 'Text, email or both', body: 'for each message, and separate choices for online and staff bookings.' },
+      { title: 'Quiet hours:', body: 'reminder and follow-up texts wait until your texting window opens. Confirmations and change notices send right away.' },
+      { title: 'Edit the wording', body: "with fill-in fields like first name, service and time, preview it, send yourself a test, or go back to Happli's wording in one click." },
+      { title: 'Custom messages:', body: 'add up to three more, like prep instructions a few days before a spray tan.' },
+      { title: 'Messages you approve:', body: 'personal notes to a client, gap offers and "on my way" texts for mobile appointments are drafted for you and sent only after you approve them.' },
+      { title: 'Client history at a glance', body: 'when you review a message: visits, lifetime spend, no-shows and when they were last texted.' },
+    ],
+  },
+  {
+    id: 'clients',
+    title: 'Clients',
+    items: [
+      { title: 'One client list', body: 'with search, contact details and notes.' },
+      { title: 'History', body: 'of visits, no-shows and spend.' },
+      { title: 'Opt-outs respected:', body: "clients who reply STOP don't get texts." },
+    ],
+  },
+  {
+    id: 'switching',
+    title: 'Switching from another system',
+    // TODO confirm: import is run by the Happli team during onboarding.
+    items: [
+      { title: 'CSV import', body: 'of clients, services, team and appointments, with a preview before anything is saved and a list of any rows that need fixing.' },
+      { title: 'Reminder switch-over:', body: "reminders for imported bookings stay off until you pick a start date, so clients don't get messages from two systems." },
+    ],
+  },
+  {
+    id: 'chat',
+    title: 'Website chat assistant',
+    // TODO confirm: chat widget is available to studios on the Happli booking system.
+    items: [
+      { title: 'A chat bubble for your website', body: "that answers visitor questions using your studio's own information." },
+      { title: 'Never guesses prices:', body: "it only quotes prices you've confirmed." },
+      { title: 'Captures leads:', body: "visitors can leave their name and phone number, and you'll see them with the full conversation in Happli." },
+    ],
+  },
+  {
+    id: 'settings',
+    title: 'Settings',
+    items: [
+      { title: 'Profile and brand voice:', body: 'your business details and how your studio sounds, with a live preview.' },
+      { title: 'Locations:', body: 'studio or mobile locations, each with its own booking page.' },
+      { title: 'Hours and closures.', body: '' },
+      { title: 'Team:', body: 'who works where and which services each person offers.' },
+      { title: 'Booking rules:', body: 'notice, how far ahead, and cancellation window.' },
+      { title: 'Payments:', body: 'connect Stripe and see your connection status.' },
+      { title: 'Deposits and no-shows.', body: '' },
+      { title: 'Gratuity and tax.', body: '' },
+      { title: 'Packages.', body: '' },
+    ],
+  },
+  {
+    id: 'reports',
+    title: 'Reports',
+    soon: true,
+    intro: 'A clear view of how your studio is doing, built from real payments rather than estimates:',
+    items: [
+      { body: 'Money collected, split by card and marked paid.' },
+      { body: 'Deposits, tips, tax, no-show fees, package sales and refunds.' },
+      { body: 'Completed appointments, no-show and late-cancel rates, and new versus returning clients.' },
+      { body: 'Results by team member and by service, with CSV export.' },
+    ],
+  },
+];
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  jsonLd={[breadcrumbs([{ name: 'Home', href: '/' }, { name: 'Features', href: '/features/' }])]}
+>
+  <PageIntro
+    eyebrow="Features"
+    title="Everything your front desk does, in one place."
+    lede="Booking, payments, reminders and clients, built around how spray tan studios and beauty pros really work."
+  >
+    <nav class="jump" aria-label="Feature sections">
+      {sections.map((s) => <a href={`#${s.id}`}>{s.title}</a>)}
+    </nav>
+  </PageIntro>
+
+  <div class="lists">
+    {sections.map((s) => <FeatureList id={s.id} title={s.title} intro={s.intro} items={s.items} soon={s.soon} />)}
+  </div>
+
+  <CtaBand title="See it with your own schedule." />
+</BaseLayout>
+
+<style>
+  .jump {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 28px;
+    max-width: 52em;
+  }
+  .jump a {
+    font-size: 13px;
+    font-weight: 600;
+    padding: 6px 12px;
+    border-radius: var(--radius-pill);
+    border: 1px solid var(--line-strong);
+    background: rgba(255, 255, 255, 0.6);
+    color: var(--ink-2);
+  }
+  .jump a:hover {
+    border-color: var(--ink);
+    color: var(--ink);
+  }
+  .lists {
+    margin-top: var(--space-block);
+  }
+</style>

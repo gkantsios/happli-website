@@ -1,0 +1,59 @@
+---
+import SectionHead from './SectionHead.astro';
+
+const pains = [
+  'Texting back and forth to find a time that works.',
+  "Clients who book, forget and don't show up.",
+  "Empty spots you only notice once it's too late to fill them.",
+  'Chasing deposits, tips and balances across different apps.',
+  "Switching systems feels like it would take a month you don't have.",
+];
+---
+
+<section class="section" aria-labelledby="problem-title">
+  <div class="wrap problem">
+    <SectionHead eyebrow="The problem" title="You got into this work for the clients, not the admin." id="problem-title">
+      <p>But the day fills up with it anyway:</p>
+    </SectionHead>
+    <ul class="pains">
+      {pains.map((p, i) => <li><span aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>{p}</li>)}
+    </ul>
+  </div>
+</section>
+
+<style>
+  .problem {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 64px;
+    align-items: end;
+  }
+  .pains {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border-top: 1px solid var(--line);
+  }
+  .pains li {
+    display: flex;
+    gap: 18px;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--line);
+    font-size: 16px;
+    color: var(--ink-2);
+  }
+  .pains span {
+    font-family: var(--serif);
+    font-size: 15px;
+    color: var(--coral-ink);
+    font-variant-numeric: tabular-nums;
+    flex: none;
+    width: 1.6em;
+  }
+  @media (max-width: 860px) {
+    .problem {
+      grid-template-columns: 1fr;
+      gap: 40px;
+    }
+  }
+</style>

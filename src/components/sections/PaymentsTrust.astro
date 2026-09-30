@@ -1,0 +1,181 @@
+---
+import Icon from '../Icon.astro';
+import SectionHead from './SectionHead.astro';
+
+const payments = [
+  ['Happli takes no fee on your payments.', 'No percentage, no per-transaction cut.'],
+  ["You pay Stripe's standard processing fees directly", 'to Stripe, on your own account.'],
+  ['Payouts follow your Stripe settings,', 'straight to your bank.'],
+  ['Refunds come from your account,', 'issued right from the appointment or package.'],
+  ['Cash and other payments', 'can be recorded with Mark paid, so your records stay complete.'],
+];
+// TODO confirm: "your own account" / "no fee" / "Stripe's standard processing fees" depend on happli-coo PR #297.
+
+const trust = [
+  'Drafted texts, like gap offers, wait for your approval before they send.',
+  'Automatic reminders only go out for the messages you turn on, and texts wait for your quiet hours.',
+  "Each studio's data is kept separate and private.",
+  'Sign in with a secure email link. No password to forget.',
+];
+---
+
+<section class="section" id="payments" aria-labelledby="payments-title">
+  <div class="wrap pay-in">
+    <div>
+      <SectionHead eyebrow="Payments and trust" title="Your money goes to you. Not through us." id="payments-title">
+        <p>
+          Happli connects to your studio's own Stripe account. When a client pays a deposit, a balance, a tip, tax, a
+          no-show fee or a package, the charge is made on your Stripe account and the money settles there.
+        </p>
+      </SectionHead>
+      {/* TODO confirm: PR #297 (direct charges on the studio's own Stripe account). */}
+      <ul class="checks pay-list">
+        {payments.map(([lead, rest]) => <li><Icon name="check" size={16} strokeWidth={2} /><span><b>{lead}</b> {rest}</span></li>)}
+      </ul>
+    </div>
+    <div class="pay-art" aria-hidden="true">
+      <div class="card">
+        <div class="hd"><b>Checkout · Custom spray tan</b><span>Today</span></div>
+        <div class="row"><span>Deposit</span><b>Paid at booking</b></div>
+        <div class="row"><span>Balance</span><b>Card</b></div>
+        <div class="row"><span>Tip</span><b>Card</b></div>
+        <div class="row"><span>Sales tax</span><b>At your rate</b></div>
+        <p class="settle"><i></i>Settles in your Stripe account</p>
+        {/* TODO confirm: "Settles in your Stripe account" depends on happli-coo PR #297. */}
+        {/* PLACEHOLDER: a fee line ("Happli fee") is intentionally not shown until pricing is set. */}
+      </div>
+    </div>
+  </div>
+  <div class="wrap">
+    <h3 class="trust-title eyebrow">Trust points</h3>
+    <ul class="trust">
+      {trust.map((t) => <li><Icon name="shield" size={18} /><span>{t}</span></li>)}
+    </ul>
+  </div>
+</section>
+
+<style>
+  .pay-in {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 64px;
+    align-items: center;
+  }
+  .pay-list {
+    margin-top: 32px;
+  }
+  .pay-art {
+    position: relative;
+    aspect-ratio: 5 / 4;
+    border-radius: 14px;
+    overflow: hidden;
+    background:
+      radial-gradient(70% 60% at 30% 25%, #f8dad6 0%, rgba(248, 218, 214, 0) 70%),
+      radial-gradient(60% 60% at 85% 80%, #f3e7d6 0%, rgba(243, 231, 214, 0) 70%),
+      linear-gradient(160deg, #f6e9e4, #efe2da);
+  }
+  .card {
+    position: absolute;
+    left: 10%;
+    right: 10%;
+    top: 50%;
+    transform: translateY(-50%);
+    background: #fff;
+    border-radius: 12px;
+    border: 1px solid var(--line-strong);
+    box-shadow: 0 24px 50px -24px rgba(27, 22, 20, 0.3);
+    padding: 16px 18px;
+    font-size: 13px;
+  }
+  .hd {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 6px;
+  }
+  .hd span {
+    color: var(--muted);
+    font-size: 12px;
+  }
+  .row {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 9px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .row span {
+    color: var(--muted);
+  }
+  .row b {
+    font-weight: 600;
+  }
+  .settle {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 14px;
+    padding: 5px 10px;
+    border-radius: var(--radius-pill);
+    background: var(--sage);
+    color: var(--sage-ink);
+    font-weight: 600;
+    font-size: 12px;
+  }
+  .settle i {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #6f8f5c;
+  }
+  .trust-title {
+    margin-top: var(--space-block);
+    padding-top: 32px;
+    border-top: 1px solid var(--line);
+  }
+  .trust {
+    list-style: none;
+    margin: 20px 0 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+  }
+  .trust li {
+    display: grid;
+    align-content: start;
+    gap: 10px;
+    font-size: 15px;
+    color: var(--ink-2);
+  }
+  .trust :global(svg) {
+    color: var(--coral-ink);
+  }
+  @media (max-width: 960px) {
+    .trust {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  @media (max-width: 860px) {
+    .pay-in {
+      grid-template-columns: 1fr;
+      gap: 40px;
+    }
+  }
+  @media (max-width: 520px) {
+    .trust {
+      grid-template-columns: 1fr;
+    }
+    .pay-art {
+      aspect-ratio: auto;
+      padding: 32px 16px;
+    }
+    .card {
+      position: relative;
+      left: auto;
+      right: auto;
+      top: auto;
+      transform: none;
+    }
+  }
+</style>

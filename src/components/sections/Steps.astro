@@ -1,0 +1,79 @@
+---
+import SectionHead from './SectionHead.astro';
+
+const steps = [
+  {
+    title: 'Set up your studio',
+    body: "Add your services, team, locations, hours and closures. Set your booking rules and your studio's voice. Moving from another system? We bring your clients and bookings over from CSV.",
+  },
+  {
+    title: 'Connect Stripe and turn on booking',
+    body: 'Connect your own Stripe account from Settings, choose your deposit, tip, tax and no-show settings, and switch on your booking page. Share the link or embed it on your site.',
+  },
+  {
+    title: 'Run your day from one calendar',
+    body: 'Clients book, pay and get reminded automatically. You check people out, keep an eye on "Needs you," and approve any drafted texts before they go.',
+  },
+];
+---
+
+<section class="section" id="how" aria-labelledby="how-title">
+  <div class="wrap">
+    <SectionHead eyebrow="3 steps" title="How it works" id="how-title" />
+    <ol class="steps">
+      {
+        steps.map((s, i) => (
+          <li class="step">
+            <span class="num" aria-hidden="true">{i + 1}</span>
+            <h3>{s.title}</h3>
+            <p>{s.body}</p>
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+</section>
+
+<style>
+  .steps {
+    list-style: none;
+    margin: var(--space-block) 0 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+  .step {
+    padding: 28px 24px 30px;
+    border-radius: var(--radius);
+    background: var(--surface);
+    box-shadow: 0 1px 0 var(--line), 0 8px 24px -16px rgba(27, 22, 20, 0.25);
+    border: 1px solid var(--line);
+  }
+  .num {
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--blush);
+    color: var(--coral-ink);
+    font-family: var(--serif);
+    font-size: 18px;
+  }
+  h3 {
+    font-size: 22px;
+    line-height: 1.2;
+    margin-top: 20px;
+  }
+  p {
+    margin-top: 10px;
+    font-size: 15px;
+    color: var(--muted);
+  }
+  @media (max-width: 860px) {
+    .steps {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

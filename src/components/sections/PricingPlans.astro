@@ -1,0 +1,176 @@
+---
+// PLACEHOLDER pricing. Every plan name, price and limit below is a placeholder to replace
+// once pricing is decided. Do not reuse the old $99 / $149 / $199 prices.
+import { site } from '../../config/site';
+
+const plans = [
+  { name: '[PLAN NAME 1]', price: '[PRICE]', unit: '[MONTH]', bestFor: '[e.g. solo or mobile artist]' },
+  { name: '[PLAN NAME 2]', price: '[PRICE]', unit: '[MONTH]', bestFor: '[e.g. studio with a small team]' },
+  { name: '[PLAN NAME 3]', price: '[PRICE]', unit: '[MONTH]', bestFor: '[e.g. multiple locations]' },
+];
+
+type Cell = string | { placeholder: string };
+const P = (s: string): Cell => ({ placeholder: s });
+const rows: [string, Cell, Cell, Cell][] = [
+  ['Locations', P('[NUMBER]'), P('[NUMBER]'), P('[NUMBER]')],
+  ['Team members', P('[NUMBER]'), P('[NUMBER]'), P('[NUMBER]')],
+  ['Online booking page', 'Included', 'Included', 'Included'],
+  ['Deposits, checkout, tips and tax', 'Included', 'Included', 'Included'],
+  ['Packages', 'Included', 'Included', 'Included'],
+  ['Reminders and custom messages', 'Included', 'Included', 'Included'],
+  ['Text message usage', P('[SMS ALLOWANCE]'), P('[SMS ALLOWANCE]'), P('[SMS ALLOWANCE]')],
+  ['Waitlist and gap offers', 'Included', 'Included', 'Included'],
+  ['Website chat assistant', P('[INCLUDED?]'), P('[INCLUDED?]'), P('[INCLUDED?]')],
+  ['Client import', P('[INCLUDED / FEE]'), P('[INCLUDED / FEE]'), P('[INCLUDED / FEE]')],
+  ['Support', P('[SUPPORT LEVEL]'), P('[SUPPORT LEVEL]'), P('[SUPPORT LEVEL]')],
+];
+---
+
+<section class="plans-section" aria-labelledby="plans-title">
+  <div class="wrap">
+    <h2 id="plans-title" class="visually-hidden">Plans</h2>
+    <p class="notice"><span class="placeholder">PLACEHOLDER</span> Plan names, prices and limits are not final.</p>
+    <div class="plans">
+      {
+        plans.map((plan, i) => (
+          <article class:list={['plan', { featured: i === 1 }]}>
+            <h3><span class="placeholder">{plan.name}</span></h3>
+            <p class="price">
+              <span class="placeholder">{plan.price}</span>
+              <span class="unit">
+                / <span class="placeholder">{plan.unit}</span>
+              </span>
+            </p>
+            <p class="best">
+              Best for <span class="placeholder">{plan.bestFor}</span>
+            </p>
+            {/* PLACEHOLDER: per-plan CTA label ([CTA]); uses the site CTA until pricing is set. */}
+            <a class:list={['btn', i === 1 ? 'btn-coral' : 'btn-ghost']} href={site.cta.href}>
+              {site.cta.label}
+            </a>
+          </article>
+        ))
+      }
+    </div>
+
+    {/* PLACEHOLDER: FOUNDING MEMBER OFFER: [PRICE], [SPOTS] spots, [TERMS] */}
+    {/* PLACEHOLDER: FREE TRIAL: [LENGTH] or remove */}
+    {/* PLACEHOLDER: ANNUAL DISCOUNT: [PERCENT] or remove */}
+
+    <div class="table-wrap" role="region" aria-label="Plan comparison" tabindex="0">
+      <table>
+        <caption class="visually-hidden">What each plan includes</caption>
+        <thead>
+          <tr>
+            <th scope="col"><span class="visually-hidden">Feature</span></th>
+            {plans.map((p) => <th scope="col"><span class="placeholder">{p.name}</span></th>)}
+          </tr>
+        </thead>
+        <tbody>
+          {
+            rows.map(([label, ...cells]) => (
+              <tr>
+                <th scope="row">{label}</th>
+                {cells.map((c) => (
+                  <td>{typeof c === 'string' ? c : <span class="placeholder">{c.placeholder}</span>}</td>
+                ))}
+              </tr>
+            ))
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<style>
+  .plans-section {
+    padding-top: var(--space-block);
+  }
+  .notice {
+    font-size: 14px;
+    color: var(--muted);
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .plans {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-top: 20px;
+  }
+  .plan {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding: 28px 24px;
+    border-radius: var(--radius-lg);
+    background: var(--surface);
+    border: 1px solid var(--line-strong);
+  }
+  .plan.featured {
+    border-color: var(--coral);
+    box-shadow: var(--shadow-card);
+  }
+  h3 {
+    font-size: 22px;
+  }
+  .price {
+    font-family: var(--serif);
+    font-size: 36px;
+    line-height: 1.1;
+  }
+  .unit {
+    font-family: var(--sans);
+    font-size: 15px;
+    color: var(--muted);
+  }
+  .best {
+    color: var(--ink-2);
+    font-size: 15px;
+  }
+  .plan .btn {
+    margin-top: auto;
+  }
+  .table-wrap {
+    margin-top: 40px;
+    overflow-x: auto;
+    border-radius: var(--radius);
+    border: 1px solid var(--line);
+    background: var(--surface);
+  }
+  table {
+    width: 100%;
+    min-width: 640px;
+    border-collapse: collapse;
+    font-size: 14px;
+  }
+  th,
+  td {
+    text-align: left;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--line);
+    vertical-align: top;
+  }
+  tbody tr:last-child th,
+  tbody tr:last-child td {
+    border-bottom: 0;
+  }
+  thead th {
+    font-weight: 600;
+  }
+  tbody th {
+    font-weight: 500;
+    color: var(--ink);
+  }
+  td {
+    color: var(--ink-2);
+  }
+  @media (max-width: 860px) {
+    .plans {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
