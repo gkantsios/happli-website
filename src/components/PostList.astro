@@ -1,0 +1,80 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { formatDate } from '../lib/posts';
+
+interface Props {
+  entries: (CollectionEntry<'blog'> | CollectionEntry<'compare'>)[];
+  base: string;
+  empty: string;
+}
+const { entries, base, empty } = Astro.props;
+---
+
+{
+  entries.length === 0 ? (
+    <p class="empty">{empty}</p>
+  ) : (
+    <ul class="posts">
+      {entries.map((e) => (
+        <li>
+          <a href={`${base}${e.id}/`}>
+            <h2>
+              {e.data.title}
+              {e.data.draft && <span class="badge">Draft</span>}
+            </h2>
+            <p>{e.data.description}</p>
+            <time datetime={e.data.pubDate.toISOString()}>{formatDate(e.data.pubDate)}</time>
+          </a>
+        </li>
+      ))}
+    </ul>
+  )
+}
+
+<style>
+  .empty {
+    margin-top: 40px;
+    padding: 32px;
+    border-radius: var(--radius);
+    background: var(--blush-2);
+    color: var(--ink-2);
+    max-width: 40em;
+  }
+  .posts {
+    list-style: none;
+    margin: 40px 0 0;
+    padding: 0;
+    border-top: 1px solid var(--line);
+    max-width: 52em;
+  }
+  .posts li {
+    border-bottom: 1px solid var(--line);
+  }
+  .posts a {
+    display: block;
+    padding: 28px 0;
+  }
+  h2 {
+    font-size: 26px;
+    line-height: 1.2;
+  }
+  .posts a:hover h2 {
+    text-decoration: underline;
+    text-underline-offset: 4px;
+    text-decoration-thickness: 1px;
+  }
+  .badge {
+    margin-left: 8px;
+    font-family: var(--sans);
+  }
+  p {
+    margin-top: 8px;
+    color: var(--ink-2);
+  }
+  time {
+    display: block;
+    margin-top: 10px;
+    font-size: 13px;
+    color: var(--muted);
+  }
+</style>

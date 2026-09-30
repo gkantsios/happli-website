@@ -1,0 +1,82 @@
+---
+import { Image } from 'astro:assets';
+import BaseLayout from './BaseLayout.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import CtaBand from '../components/sections/CtaBand.astro';
+import { blogPosting, breadcrumbs, type Crumb } from '../lib/jsonld';
+import { formatDate } from '../lib/posts';
+import { site } from '../config/site';
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  entry: CollectionEntry<'blog'> | CollectionEntry<'compare'>;
+  section: Crumb;
+}
+const { entry, section } = Astro.props;
+const { title, description, pubDate, updatedDate, author, tags, heroImage, heroImageAlt, draft } = entry.data;
+
+const url = new URL(`${section.href}${entry.id}/`, site.url).href;
+const crumbs: Crumb[] = [{ name: 'Home', href: '/' }, section, { name: title, href: `${section.href}${entry.id}/` }];
+const ogImage = heroImage ? heroImage.src : site.defaultOgImage;
+---
+
+<BaseLayout
+  title={`${title} | Happli`}
+  description={description}
+  image={ogImage}
+  imageAlt={heroImageAlt ?? title}
+  type="article"
+  publishedTime={pubDate}
+  modifiedTime={updatedDate}
+  noindex={draft}
+  jsonLd={[
+    blogPosting({ title, description, url, pubDate, updatedDate, author, image: ogImage, tags }),
+    breadcrumbs(crumbs),
+  ]}
+>
+  <div class="wrap post">
+    <Breadcrumbs items={crumbs} />
+    <article class="prose">
+      <header>
+        {draft && <p class="badge">Draft preview (not published)</p>}
+        <h1>{title}</h1>
+        <p class="meta">
+          By {author} · <time datetime={pubDate.toISOString()}>{formatDate(pubDate)}</time>
+          {updatedDate && (
+            <>
+              {' '}
+              · Updated <time datetime={updatedDate.toISOString()}>{formatDate(updatedDate)}</time>
+            </>
+          )}
+        </p>
+        {heroImage && <Image src={heroImage} alt={heroImageAlt ?? ''} widths={[720, 1440]} sizes="(max-width: 760px) 100vw, 720px" loading="eager" />}
+      </header>
+      <slot />
+    </article>
+  </div>
+  <CtaBand title="See it with your own schedule." />
+</BaseLayout>
+
+<style>
+  .post {
+    padding-top: clamp(40px, 6vw, 72px);
+  }
+  .post > :global(*) {
+    max-width: var(--w-prose);
+    margin-inline: auto;
+  }
+  header {
+    margin: 24px 0 36px;
+  }
+  .meta {
+    margin-top: 14px;
+    font-size: 14px;
+    color: var(--muted);
+  }
+  header :global(img) {
+    margin-top: 28px;
+  }
+  .badge {
+    margin-bottom: 14px;
+  }
+</style>
