@@ -1,0 +1,116 @@
+---
+// A day-before reminder in the message editor (illustration): the wording with fill-in fields,
+// the channel choice, and preview / test actions.
+---
+
+<div class="rem">
+  <div class="rem-head">
+    <b>Day-before reminder</b>
+    <span class="chan"><em class="on">Text</em><em>Email</em></span>
+  </div>
+  <p class="rem-text">
+    Hi <span class="field">first name</span>! Your <span class="field">service</span> is tomorrow at
+    <span class="field">time</span>.
+  </p>
+  <div class="rem-fields">
+    <span class="lbl">Fill-in fields</span>
+    <span class="chip">First name</span>
+    <span class="chip">Service</span>
+    <span class="chip">Time</span>
+  </div>
+  <div class="rem-actions">
+    <span class="act">Preview</span>
+    <span class="act">Send me a test</span>
+  </div>
+</div>
+
+<style>
+  .rem {
+    font-size: 13px;
+  }
+  .rem-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+  }
+  .rem-head b {
+    font-weight: 600;
+    font-size: 14px;
+  }
+  .chan {
+    display: inline-flex;
+    padding: 3px;
+    border-radius: var(--radius-pill);
+    background: var(--blush-2);
+    border: 1px solid var(--line);
+  }
+  .chan em {
+    font-style: normal;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: var(--radius-pill);
+    color: var(--muted);
+  }
+  .chan em.on {
+    background: var(--ink);
+    color: #fff;
+  }
+  .rem-text {
+    margin-top: 14px;
+    padding: 12px 14px;
+    border-radius: 12px 12px 12px 4px;
+    background: var(--blush-2);
+    border: 1px solid var(--line);
+    line-height: 1.6;
+    color: var(--ink);
+  }
+  .field {
+    display: inline-block;
+    padding: 0 7px;
+    border-radius: 6px;
+    background: var(--coral-soft);
+    color: var(--coral-ink);
+    font-weight: 600;
+    font-size: 12px;
+    line-height: 1.7;
+  }
+  .rem-fields {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+    margin-top: 14px;
+  }
+  .lbl {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-right: 4px;
+  }
+  .chip {
+    font-size: 12px;
+    padding: 4px 10px;
+    border-radius: var(--radius-pill);
+    border: 1px solid var(--line-strong);
+    color: var(--ink-2);
+  }
+  .rem-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 16px;
+    padding-top: 14px;
+    border-top: 1px solid var(--line);
+  }
+  .act {
+    font-size: 12px;
+    font-weight: 600;
+    padding: 7px 12px;
+    border-radius: var(--radius-pill);
+    border: 1px solid var(--line-strong);
+    background: var(--surface);
+  }
+</style>

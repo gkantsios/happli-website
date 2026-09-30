@@ -1,0 +1,122 @@
+---
+// Home: four feature cards, each with a cropped product mock (shared with /features).
+import SectionHead from './SectionHead.astro';
+import NeedsList from '../mocks/NeedsList.astro';
+import PhoneBooking from '../mocks/PhoneBooking.astro';
+import CheckoutSheet from '../mocks/CheckoutSheet.astro';
+import ReminderPreview from '../mocks/ReminderPreview.astro';
+---
+
+<section class="section" id="features" aria-labelledby="features-title">
+  <div class="wrap">
+    <SectionHead eyebrow="What it does" title="What Happli takes off your plate." id="features-title">
+      <p><a class="more" href="/features/">See every feature</a></p>
+    </SectionHead>
+    <div class="cards">
+      <article class="card">
+        <div class="frame" aria-hidden="true"><div class="win"><NeedsList /></div></div>
+        <h3>Needs you, one short list</h3>
+        <p>Open gaps, waitlist matches and drafted texts wait in one list. Pick a client for a gap, and nothing sends until you approve it.</p>
+      </article>
+      <article class="card">
+        <div class="frame frame-phone" aria-hidden="true"><PhoneBooking /></div>
+        <h3>A booking page built for phones</h3>
+        <p>Clients pick a service, a day and an open time on their phone. You control notice, how far ahead they can book, and closed days.</p>
+      </article>
+      <article class="card">
+        <div class="frame" aria-hidden="true"><div class="win"><CheckoutSheet /></div></div>
+        <h3>Deposits and checkout on one sheet</h3>
+        {/* TODO confirm: live card payments need the Stripe go-live steps. */}
+        <p>Require a deposit when clients book online. At checkout, collect the balance, a suggested tip and sales tax by card, or mark it paid.</p>
+      </article>
+      <article class="card">
+        <div class="frame" aria-hidden="true"><div class="win"><ReminderPreview /></div></div>
+        <h3>Reminders in your own words</h3>
+        {/* TODO confirm: live texting to clients. */}
+        <p>Confirmations and reminders go out on their own, by text or email. Edit the wording with fill-in fields and send yourself a test.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<style>
+  .more {
+    font-weight: 600;
+    color: var(--ink);
+    border-bottom: 1px solid var(--line-strong);
+    padding-bottom: 2px;
+  }
+  .more:hover {
+    border-color: var(--ink);
+  }
+  .cards {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 20px;
+    margin-top: var(--space-block);
+  }
+  @media (min-width: 900px) {
+    .cards {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 24px;
+    }
+  }
+  .card {
+    display: flex;
+    flex-direction: column;
+    padding: 16px 16px 28px;
+    border-radius: var(--radius-lg);
+    background: var(--surface);
+    border: 1px solid var(--line);
+    box-shadow: 0 1px 0 var(--line), 0 12px 30px -22px rgba(27, 22, 20, 0.25);
+  }
+  /* cropped mock: fixed height, content fades out at the bottom */
+  .frame {
+    position: relative;
+    height: 250px;
+    overflow: hidden;
+    border-radius: var(--radius);
+    padding: 22px 22px 0;
+    background:
+      radial-gradient(70% 80% at 20% 0%, #f8dad6 0%, rgba(248, 218, 214, 0) 70%),
+      linear-gradient(160deg, var(--blush-2), var(--blush));
+    -webkit-mask-image: linear-gradient(to bottom, #000 78%, transparent 100%);
+    mask-image: linear-gradient(to bottom, #000 78%, transparent 100%);
+  }
+  .win {
+    background: var(--surface);
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius);
+    padding: 6px 18px 18px;
+    box-shadow: 0 20px 40px -28px rgba(27, 22, 20, 0.35);
+  }
+  .frame-phone {
+    display: flex;
+    justify-content: center;
+  }
+  .frame-phone :global(.phone) {
+    width: 300px;
+  }
+  @media (max-width: 599px) {
+    .card {
+      padding: 10px 10px 24px;
+    }
+    .frame {
+      padding: 14px 12px 0;
+    }
+    .win {
+      padding: 4px 14px 14px;
+    }
+  }
+  h3 {
+    font-size: 24px;
+    line-height: 1.2;
+    margin: 24px 8px 0;
+  }
+  .card p {
+    margin: 10px 8px 0;
+    font-size: 15px;
+    color: var(--muted);
+    max-width: 60ch;
+  }
+</style>

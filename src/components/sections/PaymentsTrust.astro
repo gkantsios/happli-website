@@ -32,6 +32,10 @@ const trust = [
       <ul class="checks pay-list">
         {payments.map(([lead, rest]) => <li><Icon name="check" size={16} strokeWidth={2} /><span><b>{lead}</b> {rest}</span></li>)}
       </ul>
+      <h3 class="trust-title eyebrow">Trust points</h3>
+      <ul class="trust">
+        {trust.map((t) => <li><Icon name="shield" size={16} /><span>{t}</span></li>)}
+      </ul>
     </div>
     <div class="pay-art" aria-hidden="true">
       <div class="card">
@@ -45,12 +49,6 @@ const trust = [
         {/* PLACEHOLDER: a fee line ("Happli fee") is intentionally not shown until pricing is set. */}
       </div>
     </div>
-  </div>
-  <div class="wrap">
-    <h3 class="trust-title eyebrow">Trust points</h3>
-    <ul class="trust">
-      {trust.map((t) => <li><Icon name="shield" size={18} /><span>{t}</span></li>)}
-    </ul>
   </div>
 </section>
 
@@ -129,32 +127,26 @@ const trust = [
     background: #6f8f5c;
   }
   .trust-title {
-    margin-top: var(--space-block);
-    padding-top: 32px;
-    border-top: 1px solid var(--line);
+    margin-top: 32px;
   }
   .trust {
     list-style: none;
-    margin: 20px 0 0;
+    margin: 12px 0 0;
     padding: 0;
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 24px;
+    gap: 10px;
   }
   .trust li {
-    display: grid;
-    align-content: start;
+    display: flex;
     gap: 10px;
-    font-size: 15px;
+    align-items: flex-start;
+    font-size: 14px;
     color: var(--ink-2);
   }
   .trust :global(svg) {
+    flex: none;
+    margin-top: 2px;
     color: var(--coral-ink);
-  }
-  @media (max-width: 960px) {
-    .trust {
-      grid-template-columns: 1fr 1fr;
-    }
   }
   @media (max-width: 860px) {
     .pay-in {
@@ -163,9 +155,6 @@ const trust = [
     }
   }
   @media (max-width: 520px) {
-    .trust {
-      grid-template-columns: 1fr;
-    }
     .pay-art {
       aspect-ratio: auto;
       padding: 32px 16px;

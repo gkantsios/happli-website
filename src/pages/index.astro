@@ -6,7 +6,7 @@ import Walkthrough from '../components/sections/Walkthrough.astro';
 import Problem from '../components/sections/Problem.astro';
 import SectionHead from '../components/sections/SectionHead.astro';
 import FeatureGrid, { type Feature } from '../components/sections/FeatureGrid.astro';
-import BookingPage from '../components/sections/BookingPage.astro';
+import FeatureCards from '../components/sections/FeatureCards.astro';
 import Steps from '../components/sections/Steps.astro';
 import PaymentsTrust from '../components/sections/PaymentsTrust.astro';
 import Testimonials from '../components/sections/Testimonials.astro';
@@ -17,53 +17,7 @@ import { site } from '../config/site';
 
 const title = 'Happli | Online Booking, Deposits and Front Desk for Spray Tan Studios';
 const description =
-  'Happli is the booking and front-desk partner for spray tan studios and beauty pros. Online booking, deposits, reminders, packages and checkout, with payments going to your own Stripe account.';
-// TODO confirm: "your own Stripe account" in the meta description depends on happli-coo PR #297.
-
-const solution: Feature[] = [
-  { icon: 'phone', title: 'Clients book themselves', body: 'on a phone-friendly booking page, any time of day.' },
-  { icon: 'card', title: 'Deposits protect your time', body: "because online bookings can require one before they're confirmed." },
-  { icon: 'bell', title: 'Reminders go out on their own', body: 'so fewer clients forget.' },
-  { icon: 'sparkle', title: 'Open spots get noticed.', body: 'Happli points out gaps and waitlist matches and drafts the offer for you to approve.' },
-  { icon: 'receipt', title: 'Checkout is one sheet:', body: 'balance, tip and tax, by card or marked paid.' },
-];
-
-// Feature blocks 2-7 (block 1, the booking page, has its own section).
-const features: Feature[] = [
-  {
-    icon: 'card',
-    title: 'Deposits that cut no-shows',
-    body: "Require a deposit on online bookings, staff bookings or both, set as a percentage of the service. When a deposit is required online, the booking is only confirmed after it's paid.",
-    // TODO confirm: live card payments need the Stripe go-live steps.
-  },
-  {
-    icon: 'calendar',
-    title: 'A calendar built for the front desk',
-    body: 'Day and week views with a column for each team member. Book, move, confirm, check out or mark a no-show from one panel. Drag an appointment to a new time and confirm before anything changes. Block off time when you need it.',
-  },
-  {
-    icon: 'bell',
-    title: 'Reminders and messages that sound like you',
-    body: 'Booking confirmations, a reminder the day before, a reminder two hours before, moved-or-cancelled notices, a thank-you after the visit, and a "time to come back" note. By text, email or both. Rewrite the wording, send yourself a test, and add your own messages, like prep instructions three days before a spray tan.',
-    // TODO confirm: live texting to clients.
-  },
-  {
-    icon: 'sparkle',
-    title: 'Fill the gaps and work the waitlist',
-    body: 'Happli shows open gaps and waitlist matches in your "Needs you" list. Pick a client and Happli drafts a text offering the time. Nothing sends until you approve it.',
-  },
-  {
-    icon: 'receipt',
-    title: 'Checkout, tips, tax and packages',
-    body: "Collect the balance by card or mark it paid for cash and other payments. Add a suggested tip and sales tax. Sell prepaid session packages and track each client's balance. Issue refunds from the appointment.",
-  },
-  {
-    icon: 'switch',
-    title: 'Switch without starting over',
-    body: "We bring your clients, services, team and upcoming appointments over from CSV for you. Reminders for imported bookings stay off until you choose the day to switch them on, so clients don't get double texts.",
-    // TODO confirm: import is run by the Happli team today, not self-serve.
-  },
-];
+  'Booking and front desk for spray tan studios and beauty pros. Clients book, pay deposits and get reminders on their own; what needs you lands in one list.';
 
 const audience: Feature[] = [
   { icon: 'sun', title: 'Spray tan studios', body: 'that want online booking, deposits and prep reminders without the phone tag.' },
@@ -73,16 +27,12 @@ const audience: Feature[] = [
 ];
 
 const faq: FaqItem[] = [
-  // TODO confirm: FAQ 1 and 2 depend on happli-coo PR #297.
-  { q: 'Does Happli take a cut of my payments?', a: "No. Happli takes no fee on payments. You pay Stripe's standard processing fees directly on your own Stripe account." },
-  { q: 'Where does my money go?', a: "To your studio's own Stripe account, then to your bank on your Stripe payout schedule." },
+  { q: 'Does Happli take a cut of my payments?', a: 'No. Happli never takes a cut of your payments. Card processing fees go to Stripe.' },
   { q: 'Can I require a deposit?', a: "Yes. Choose a percentage of the service, and whether it applies to online bookings, staff bookings or both. When a deposit is required online, the booking is confirmed once it's paid." },
   { q: "What happens when a client doesn't show?", a: "Mark the appointment as a no-show and, if you've turned on a no-show fee, collect it through a secure Stripe payment link. The fee is a percentage of the service price you set in Settings." },
-  { q: 'Can clients book from their phone?', a: 'Yes. The booking page was designed for phones first, with a calendar that fits small screens. It works on desktop too, and you can embed it on your website.' },
-  // TODO confirm: live texting (FAQ 6).
-  { q: 'What reminders does Happli send?', a: 'Booking confirmed, a day-before reminder, a two-hours-before reminder, moved or cancelled, a thank-you after the visit, and a "time to come back" message after a set number of days. You pick text, email or both for each, edit the wording, and can add up to three custom messages of your own.' },
   { q: 'I use another booking system. Is switching hard?', a: "We import your clients, services, team and appointments from CSV files exported from your current system. Reminders for imported bookings stay off until you pick a switch-over date, so clients don't hear from two systems at once." },
   { q: 'Can I sell packages?', a: "Yes. Create prepaid session packages, sell them by card or mark them paid, and see each client's balance. Redeeming sessions at checkout is coming soon." },
+  // TODO confirm: live texting to clients.
   { q: 'Does Happli text my clients without asking me?', a: "Drafted texts, like gap offers and waitlist offers, always wait for your approval. Automatic messages like confirmations and reminders only send if you've turned them on, and reminder texts wait for your quiet hours." },
   { q: 'Can I see reports on my business?', a: 'Yes. Reports show money collected (card and marked paid), tips, deposits, no-show fees, package sales and refunds, completed visits, no-shows, new vs returning clients, and results by team member, service and location, with CSV export.' },
 ];
@@ -93,28 +43,7 @@ const faq: FaqItem[] = [
   <Walkthrough />
   <Problem />
 
-  <section class="section" aria-labelledby="solution-title">
-    <div class="wrap">
-      <SectionHead eyebrow="The solution" title="Booking, payments, reminders and clients, in one place." id="solution-title">
-        <p>
-          Happli brings booking, payments, reminders and your client list into one place. It handles the repetitive
-          parts of the front desk and flags the moments that need you, so you can stay with the client in front of you.
-        </p>
-      </SectionHead>
-      <FeatureGrid items={solution} />
-    </div>
-  </section>
-
-  <BookingPage />
-
-  <section class="section" id="features" aria-labelledby="features-title">
-    <div class="wrap">
-      <SectionHead eyebrow="Features" title="Everything your front desk does, in one place." id="features-title">
-        <p><a class="more" href="/features/">See every feature</a></p>
-      </SectionHead>
-      <FeatureGrid items={features} />
-    </div>
-  </section>
+  <FeatureCards />
 
   <Steps />
   <PaymentsTrust />
@@ -129,23 +58,10 @@ const faq: FaqItem[] = [
   <Testimonials />
   <Faq items={faq} />
 
-  {/* TODO confirm: "your money stays in your own account" depends on happli-coo PR #297. */}
   <CtaBand
     title="Give your front desk a break."
-    body="See how Happli books, collects and reminds for you, while your money stays in your own account."
+    body="See how Happli books, collects and reminds for you."
   >
     {/* PLACEHOLDER: secondary CTA [JOIN THE FOUNDING MEMBER PROGRAM], only if the program is still open. */}
   </CtaBand>
 </BaseLayout>
-
-<style>
-  .more {
-    font-weight: 600;
-    color: var(--ink);
-    border-bottom: 1px solid var(--line-strong);
-    padding-bottom: 2px;
-  }
-  .more:hover {
-    border-color: var(--ink);
-  }
-</style>

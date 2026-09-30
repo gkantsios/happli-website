@@ -1,6 +1,6 @@
 ---
 // Needs you list (illustration): an open gap and a waitlist match.
-// interactive: real buttons with data-act hooks for the walkthrough's script.
+// interactive: real buttons and the data-* hooks for the walkthrough's script.
 // Otherwise the buttons are drawn as plain labels (feature cards, /features).
 interface Props {
   interactive?: boolean;
@@ -9,7 +9,7 @@ const { interactive = false } = Astro.props;
 const Btn = interactive ? 'button' : 'span';
 ---
 
-<div class:list={['need', { static: !interactive }]} data-need>
+<div class:list={['need', { static: !interactive }]} data-need={interactive ? '' : undefined}>
   <div class="need-row">
     <div>
       <b>Open gap · Thu 1:15 – 2:15</b>
@@ -27,7 +27,7 @@ const Btn = interactive ? 'button' : 'span';
       <Btn type={interactive ? 'button' : undefined} class="mini" data-act={interactive ? 'wl-book' : undefined}>Book</Btn>
       <Btn type={interactive ? 'button' : undefined} class="mini" data-act={interactive ? 'wl-dismiss' : undefined}>Dismiss</Btn>
     </div>
-    <em class="done-tag" data-wl-tag>Booked</em>
+    <em class="done-tag" data-wl-tag={interactive ? '' : undefined}>Booked</em>
   </div>
   <p class="need-empty">Nothing else needs you. Enjoy your coffee.</p>
 </div>
