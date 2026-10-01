@@ -1,7 +1,9 @@
 ---
 // Interactive walkthrough, ported from the .walk section of site-mockup.html.
-// Four steps, each with a scene. Auto-plays (7s per step) once the section is in view,
-// unless the visitor prefers reduced motion. Any click or key inside the section stops auto-play.
+// Four steps, each with a scene. Auto-plays (7s per step) once the section is in view, one pass
+// that stops on the last step, unless the visitor prefers reduced motion. Any click or key inside
+// the section stops auto-play. A scene's one-shot drop-in (data-play="manual", styled in
+// public/motion/motion.css) plays the first time the scene shows.
 // Service names and notes are adapted for spray tan studios (no salon services, no formula notes).
 // Every interaction matches the app today: gap offers go to one client you pick, Happli drafts the
 // text, and nothing sends until you approve it. No read receipts, no booking by reply.
@@ -55,7 +57,8 @@ const titles = ['Needs you', 'The book · Thursday', 'Appointment · Maria K.', 
         </div>
 
         <div class="scene" data-scene="1" inert>
-          <div class="gapview">
+          {/* the first time this scene shows, the day drops in and the open hour pulses once */}
+          <div class="gapview" data-play="manual">
             <div class="gap-col">
               <div class="gap-head"><b>Dana</b><span>Thu 27</span></div>
               <div class="gap-ap rose"><b>Ana O.</b><span>Custom spray tan · 11:00</span></div>
@@ -134,11 +137,13 @@ const titles = ['Needs you', 'The book · Thursday', 'Appointment · Maria K.', 
         var on = k === cur;
         sc.classList.toggle('on', on);
         sc.inert = !on;
+        var seq = on && sc.querySelector('[data-play="manual"]');
+        if (seq) seq.classList.add('is-playing');
       });
       panel.setAttribute('aria-labelledby', steps[cur].id);
       title.textContent = titles[cur];
       clearTimeout(timer);
-      if (play) {
+      if (play && cur < steps.length - 1) {
         timer = setTimeout(function () {
           show(cur + 1, true);
         }, 7000);

@@ -29,16 +29,17 @@ const trust = [
         </p>
       </SectionHead>
       {/* TODO confirm: PR #297 (direct charges on the studio's own Stripe account). */}
-      <ul class="checks pay-list">
+      <ul class="checks pay-list" data-reveal-stagger>
         {payments.map(([lead, rest]) => <li><Icon name="check" size={16} strokeWidth={2} /><span><b>{lead}</b> {rest}</span></li>)}
       </ul>
       <h3 class="trust-title eyebrow">Trust points</h3>
-      <ul class="trust">
+      <ul class="trust" data-reveal-stagger>
         {trust.map((t) => <li><Icon name="shield" size={16} /><span>{t}</span></li>)}
       </ul>
     </div>
     <div class="pay-art" aria-hidden="true">
-      <div class="card">
+      {/* scroll moment: the rows tick in, then the settle pill pops and its dot pulses once */}
+      <div class="card" data-play>
         <div class="hd"><b>Checkout · Custom spray tan</b><span>Today</span></div>
         <div class="row"><span>Deposit</span><b>Paid at booking</b></div>
         <div class="row"><span>Balance</span><b>Card</b></div>

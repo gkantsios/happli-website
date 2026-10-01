@@ -15,7 +15,7 @@ interface Props {
 const { items, columns = 3 } = Astro.props;
 ---
 
-<div class:list={['features', `cols-${columns}`]}>
+<div class:list={['features', `cols-${columns}`]} data-reveal-stagger>
   {
     items.map((f) => (
       <div class="feature">

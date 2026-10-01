@@ -85,5 +85,20 @@ const ogImage = new URL(image, site.url).href;
     </main>
     <Footer />
     <StickyCta />
+    {/* scroll motion below the hero (public/motion/reveal.js): loaded on the first scroll, or 3s after
+        the page has loaded, so it never competes with the first paint */}
+    <script is:inline>
+      (function (d) {
+        function l() {
+          if (d) return;
+          d = 1;
+          var s = document.createElement('script');
+          s.src = '/motion/reveal.js';
+          document.body.append(s);
+        }
+        addEventListener('scroll', l, { once: 1, passive: 1 });
+        addEventListener('load', function () { setTimeout(l, 3e3); });
+      })();
+    </script>
   </body>
 </html>

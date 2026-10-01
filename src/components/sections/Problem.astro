@@ -13,7 +13,7 @@ const pains = [
     <SectionHead eyebrow="The problem" title="You got into this work for the clients, not the admin." id="problem-title">
       <p>But the day fills up with it anyway:</p>
     </SectionHead>
-    <ul class="pains">
+    <ul class="pains" data-reveal-stagger>
       {pains.map((p, i) => <li><span aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>{p}</li>)}
     </ul>
   </div>

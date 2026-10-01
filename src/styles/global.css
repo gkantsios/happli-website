@@ -113,7 +113,7 @@ p {
   font-weight: 600;
   line-height: 1.2;
   text-align: center;
-  transition: background 0.18s ease, color 0.18s ease, transform 0.18s ease;
+  transition: background 0.18s ease, color 0.18s ease, transform 0.18s ease, box-shadow 0.18s ease;
   cursor: pointer;
   border: 1px solid transparent;
 }
@@ -145,8 +145,10 @@ p {
 }
 @media (prefers-reduced-motion: no-preference) {
   .btn-primary:hover,
-  .btn-coral:hover {
+  .btn-coral:hover,
+  .btn-ghost:hover {
     transform: translateY(-1px);
+    box-shadow: 0 8px 18px -10px rgba(27, 22, 20, 0.35);
   }
 }
 .btn-row {

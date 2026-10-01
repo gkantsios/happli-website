@@ -3,6 +3,11 @@
 // It shows whenever none of the page's own "Book a demo" buttons is visible (the header's is
 // hidden on phones), so exactly one is on screen at every scroll position, the footer included.
 // Without JavaScript it never appears.
+//
+// A page button counts as visible only when it's below the sticky header's bottom edge (measured
+// live) and, in the zoom hero, while its copy is at 40% opacity or more (the copy fades while its box
+// stays put). The bar publishes its height as --cta-bar-h so the hero's phone sheet sits above it.
+// (Comments live up here, not in the inline script, so they don't ship in every page.)
 import { site } from '../config/site';
 ---
 
@@ -16,14 +21,10 @@ import { site } from '../config/site';
     if (!bar) return;
     var phone = window.matchMedia('(max-width: 699.98px)');
     var href = bar.firstElementChild.getAttribute('href');
-    // The page's own buttons to the same link (hero, page intro, final CTA band).
     var ctas = [].filter.call(document.querySelectorAll('main a.btn'), function (a) {
       return a.getAttribute('href') === href;
     });
     var header = document.querySelector('header.nav');
-    // On screen and actually visible. A button counts as gone once its bottom edge is above the
-    // sticky header's bottom edge (measured live) or, in the zoom hero, once its copy has faded
-    // below 40% opacity (the copy fades while its box stays put).
     function seen(el) {
       var r = el.getBoundingClientRect();
       var top = header ? Math.max(0, header.getBoundingClientRect().bottom) : 0;
@@ -47,7 +48,6 @@ import { site } from '../config/site';
       bar.classList.toggle('is-shown', show);
       bar.setAttribute('aria-hidden', show ? 'false' : 'true');
       bar.inert = !show;
-      // lets the hero's phone sheet sit above the bar
       document.documentElement.style.setProperty('--cta-bar-h', show ? bar.offsetHeight + 'px' : '0px');
     }
     function queue() {
@@ -59,7 +59,6 @@ import { site } from '../config/site';
     window.addEventListener('scroll', queue, { passive: true });
     window.addEventListener('resize', queue);
     phone.addEventListener('change', queue);
-    // the zoom hero sets its copy's opacity in its own scroll handler; check again after it
     window.addEventListener('load', queue);
     sync();
   })();

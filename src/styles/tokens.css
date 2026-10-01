@@ -52,6 +52,7 @@
   --w-prose: 720px;
   --gutter: clamp(16px, 4vw, 40px);
   --nav-h: 68px;
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
   --space-section: clamp(88px, 11vw, 140px);
   --space-block: clamp(40px, 5vw, 64px);
 

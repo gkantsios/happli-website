@@ -13,9 +13,12 @@ const { eyebrow = site.cta.label, title, body, secondary } = Astro.props;
 <section class="cta" aria-labelledby="cta-title">
   <div class="wrap">
     <div class="cta-in">
-      <p class="eyebrow">{eyebrow}</p>
-      <h2 id="cta-title">{title}</h2>
-      {body && <p class="body">{body}</p>}
+      {/* the text rises in; the button stays put so the phone bar's one-Book-a-demo rule holds */}
+      <div data-reveal>
+        <p class="eyebrow">{eyebrow}</p>
+        <h2 id="cta-title">{title}</h2>
+        {body && <p class="body">{body}</p>}
+      </div>
       <div class="btn-row actions">
         <a class="btn btn-coral" href={site.cta.href}>{site.cta.label}</a>
         {secondary && <a class="btn btn-ghost" href={secondary.href}>{secondary.label}</a>}

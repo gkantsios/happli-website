@@ -16,7 +16,7 @@ const parts = (text: string) => text.split(/(\[[^\]]+\])/).filter(Boolean);
 <section class="section" aria-labelledby={`${id}-title`}>
   <div class="wrap faq-in">
     <SectionHead eyebrow="FAQ" title={title} id={`${id}-title`} />
-    <div class="faq">
+    <div class="faq" data-reveal-stagger>
       {
         items.map((item) => (
           <details>
