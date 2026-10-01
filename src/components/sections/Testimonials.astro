@@ -1,0 +1,62 @@
+---
+// Testimonials render nothing until real, approved quotes are added.
+// PLACEHOLDER: add entries only with written permission from the customer.
+//   { quote: '[TESTIMONIAL 1: studio owner quote about fewer no-shows or less time on the phone]', name: '[NAME]', studio: '[STUDIO NAME]', place: '[CITY, STATE]' },
+//   { quote: '[TESTIMONIAL 2: mobile artist quote about booking and reminders]', name: '[NAME]', studio: '[STUDIO NAME]', place: '[CITY, STATE]' },
+//   { quote: '[TESTIMONIAL 3: owner quote about switching from another system]', name: '[NAME]', studio: '[STUDIO NAME]', place: '[CITY, STATE]' },
+// PLACEHOLDER: optional studio logos row, only with written permission.
+type Testimonial = { quote: string; name: string; studio: string; place: string };
+const testimonials: Testimonial[] = [];
+---
+
+{
+  testimonials.length > 0 && (
+    <section class="section" aria-labelledby="testimonials-title">
+      <div class="wrap">
+        <h2 id="testimonials-title" class="visually-hidden">What studio owners say</h2>
+        <div class="quotes">
+          {testimonials.map((t) => (
+            <figure>
+              <blockquote>“{t.quote}”</blockquote>
+              <figcaption>
+                <b>{t.name}</b>
+                <span>
+                  {t.studio}, {t.place}
+                </span>
+              </figcaption>
+            </figure>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+<style>
+  .quotes {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 40px;
+  }
+  figure {
+    margin: 0;
+  }
+  blockquote {
+    margin: 0;
+    font-family: var(--serif);
+    font-size: clamp(22px, 2.4vw, 30px);
+    line-height: 1.25;
+    letter-spacing: -0.015em;
+  }
+  figcaption {
+    margin-top: 20px;
+  }
+  figcaption b {
+    display: block;
+    font-weight: 600;
+  }
+  figcaption span {
+    font-size: 13px;
+    color: var(--muted);
+  }
+</style>

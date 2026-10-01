@@ -1,0 +1,47 @@
+---
+import { site } from '../../config/site';
+
+interface Props {
+  eyebrow?: string;
+  title: string;
+  lede?: string;
+  cta?: boolean;
+}
+const { eyebrow, title, lede, cta = true } = Astro.props;
+---
+
+<section class="intro">
+  <div class="wrap">
+    {eyebrow && <p class="eyebrow">{eyebrow}</p>}
+    <h1>{title}</h1>
+    {lede && <p class="lede">{lede}</p>}
+    {
+      cta && (
+        <div class="btn-row actions">
+          <a class="btn btn-coral" href={site.cta.href}>{site.cta.label}</a>
+        </div>
+      )
+    }
+    <slot />
+  </div>
+</section>
+
+<style>
+  .intro {
+    padding-top: clamp(56px, 8vw, 104px);
+    background: radial-gradient(55% 60% at 20% 0%, rgba(246, 233, 228, 0.95) 0%, rgba(246, 233, 228, 0) 70%), var(--bg);
+  }
+  h1 {
+    font-size: clamp(38px, 4.6vw, 60px);
+    line-height: 1.04;
+    letter-spacing: -0.025em;
+    margin-top: 18px;
+    max-width: 14em;
+  }
+  .lede {
+    margin-top: 22px;
+  }
+  .actions {
+    margin-top: 30px;
+  }
+</style>

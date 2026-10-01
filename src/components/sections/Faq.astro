@@ -1,0 +1,108 @@
+---
+import SectionHead from './SectionHead.astro';
+
+export type FaqItem = { q: string; a: string; comingSoon?: boolean };
+
+interface Props {
+  items: FaqItem[];
+  title?: string;
+  id?: string;
+}
+const { items, title = 'Frequently asked questions', id = 'faq' } = Astro.props;
+// Bracketed text like [SETUP FEE ANSWER] is a copy placeholder and gets highlighted.
+const parts = (text: string) => text.split(/(\[[^\]]+\])/).filter(Boolean);
+---
+
+<section class="section" aria-labelledby={`${id}-title`}>
+  <div class="wrap faq-in">
+    <SectionHead eyebrow="FAQ" title={title} id={`${id}-title`} />
+    <div class="faq" data-reveal-stagger>
+      {
+        items.map((item) => (
+          <details>
+            <summary>
+              <h3>{item.q}</h3>
+              <span class="plus" aria-hidden="true" />
+            </summary>
+            <p>
+              {parts(item.a).map((part) =>
+                part.startsWith('[') ? <span class="placeholder">{part}</span> : part,
+              )}
+            </p>
+          </details>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .faq-in {
+    display: grid;
+    grid-template-columns: 0.8fr 1.2fr;
+    gap: 64px;
+    align-items: start;
+  }
+  .faq {
+    border-top: 1px solid var(--line);
+  }
+  details {
+    border-bottom: 1px solid var(--line);
+  }
+  summary {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    padding: 20px 0;
+    cursor: pointer;
+    list-style: none;
+    border-radius: 4px;
+  }
+  summary::-webkit-details-marker {
+    display: none;
+  }
+  h3 {
+    font-family: var(--sans);
+    font-size: 17px;
+    font-weight: 600;
+    letter-spacing: 0;
+    line-height: 1.4;
+  }
+  .plus {
+    position: relative;
+    flex: none;
+    width: 14px;
+    height: 14px;
+  }
+  .plus::before,
+  .plus::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 50%;
+    height: 1.5px;
+    margin-top: -0.75px;
+    background: var(--ink);
+    transition: transform 0.2s ease;
+  }
+  .plus::after {
+    transform: rotate(90deg);
+  }
+  details[open] .plus::after {
+    transform: rotate(0deg);
+  }
+  details p {
+    padding: 0 32px 22px 0;
+    color: var(--ink-2);
+    font-size: 15px;
+    max-width: 60ch;
+  }
+  @media (max-width: 860px) {
+    .faq-in {
+      grid-template-columns: 1fr;
+      gap: 32px;
+    }
+  }
+</style>

@@ -1,0 +1,1017 @@
+---
+// Scroll-zoom hero, ported from the .zoom section of site-mockup.html.
+// As the visitor scrolls through a tall section, the hero copy fades, the studio photo
+// zooms into the monitor on the front desk, the screen lands full size, and three panels
+// slide in beside it.
+//
+// Modes (set by the inline script on <section>):
+//   is-zoom    the scroll animation (default)
+//   is-static  prefers-reduced-motion: no scroll zoom; hero copy, then the final frame
+//              (landed screen + panels) laid out statically
+//   neither    no JavaScript: a one-screen hero with the photo and copy
+//
+// The photo and the monitor's position in it live in src/config/hero.ts (the one place to swap them).
+//
+// Layout shift: the screen and the phone buttons never change their layout position (left / top)
+// while scrolling. The screen lands with a translate to whole pixels (sharp, and no layout shift), and
+// the buttons sit under the fully grown screen and ride up with a transform while it grows.
+import { Picture } from 'astro:assets';
+import Icon from '../Icon.astro';
+import AppScreen from './AppScreen.astro';
+import { heroPhoto } from '../../config/hero';
+import { site } from '../../config/site';
+
+const photo = heroPhoto.src;
+const MONITOR = heroPhoto.monitor;
+// Responsive widths up to the photo's own width, so a larger replacement photo gets larger sizes.
+const photoWidths = [...[640, 960, 1280, 1672, 1920, 2560].filter((w) => w < photo.width), photo.width];
+const monitorRatio = `${MONITOR.x1 - MONITOR.x0} / ${MONITOR.y1 - MONITOR.y0}`;
+// AppScreen is laid out at this width (its px values apply 1:1) and scaled to fit the monitor.
+const APP_WIDTH = 1280;
+const appHeight = Math.round((APP_WIDTH * (MONITOR.y1 - MONITOR.y0)) / (MONITOR.x1 - MONITOR.x0));
+---
+
+<section
+  class="zoom"
+  data-zoom
+  data-iw={photo.width}
+  data-ih={photo.height}
+  data-monitor={JSON.stringify(MONITOR)}
+  data-app-width={APP_WIDTH}
+  style={`--monitor-ratio: ${monitorRatio}`}
+  aria-labelledby="hero-title"
+>
+  <script is:inline>
+    // Pick the mode before first paint so the tall scroll area never flashes.
+    (function (s) {
+      s.classList.add(window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'is-static' : 'is-zoom');
+    })(document.currentScript.parentElement);
+  </script>
+  <div class="stage">
+    <div class="layer photo-layer" aria-hidden="true">
+      <Picture
+        src={photo}
+        alt=""
+        formats={['webp']}
+        fallbackFormat="jpg"
+        widths={photoWidths}
+        sizes="(max-width: 700px) 730px, max(106vw, 188svh)"
+        quality={72}
+        loading="eager"
+        fetchpriority="high"
+        decoding="auto"
+        class="photo"
+      />
+    </div>
+    <div class="veil" aria-hidden="true"></div>
+
+    <div class="hero-copy">
+      <div class="wrap">
+        <p class="eyebrow">For spray tan studios and beauty pros</p>
+        <h1 id="hero-title">Your front desk, <em>down to one short list.</em></h1>
+        <p class="lede">
+          Clients book, pay deposits and get reminders on their own. Anything that needs you (gaps, waitlist matches,
+          texts to approve) lands in Needs you.
+        </p>
+        <div class="btn-row hero-actions">
+          <a class="btn btn-coral" href={site.cta.href}>{site.cta.label}</a>
+          <a class="btn btn-ghost" href="#walkthrough">See a day in Happli</a>
+        </div>
+        <p class="hero-note">
+          <Icon name="check" size={12} strokeWidth={2.2} />
+          Drafted texts wait for your approval.
+        </p>
+      </div>
+    </div>
+
+    <div class="layer ui-layer">
+      <div class="panel p-gap" aria-hidden="true">
+        <div class="panel-head">
+          <p class="panel-eyebrow">Gaps get noticed</p>
+          <p class="panel-title">An hour opens up. Pick who gets the offer.</p>
+        </div>
+        <div class="mock need-card">
+          <p class="need-t">Gap offer · waiting for your approval</p>
+          <p class="need-b">Maria K. for Dana's 1:15 pm opening on Thursday.</p>
+          <div class="client-row">
+            <i style="background:#a85d58">MK</i>
+            <div><b>Maria K.</b><span>Custom spray tan · last visit 2 weeks ago</span></div>
+          </div>
+          <p class="bubble">Hi Maria! A 1:15 spot just opened Thursday with Dana. Book it here: goldenglow.gohappli.com</p>
+          <p class="status"><span class="dot"></span>Approved · sent to Maria</p>
+        </div>
+      </div>
+
+      <div class="panel p-page" aria-hidden="true">
+        <div class="panel-head">
+          <p class="panel-eyebrow">Your booking page</p>
+          <p class="panel-title">Three taps, from any phone.</p>
+        </div>
+        <div class="phone phone-sm">
+          <p class="ph-svc">Custom spray tan · 30 min</p>
+          <p class="lbl lbl-day">Day</p>
+          <div class="days">
+            <div class="day"><span>Wed</span><b>26</b></div>
+            <div class="day on"><span>Thu</span><b>27</b></div>
+            <div class="day"><span>Fri</span><b>28</b></div>
+            <div class="day"><span>Sat</span><b>29</b></div>
+          </div>
+          <p class="lbl lbl-row">Time <span>Afternoon · 3</span></p>
+          <div class="slots">
+            <div class="slot on"><b>1:15 pm</b><span>with Dana</span></div>
+            <div class="slot"><b>1:30 pm</b><span>with Dana</span></div>
+            <div class="slot"><b>1:45 pm</b><span>with Dana</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel p-notes" aria-hidden="true">
+        <div class="panel-head">
+          <p class="panel-eyebrow">On the appointment</p>
+          <p class="panel-title">Notes and history, right where you need them.</p>
+        </div>
+        <div class="mock drawer">
+          <p class="drawer-e">Appointment</p>
+          <p class="drawer-name">Maria K.</p>
+          <p class="drawer-meta">Custom spray tan + contour · with Dana · 1:15 pm</p>
+          <div class="chips">
+            <span class="ok">Confirmed</span>
+            <span>Deposit paid</span>
+            <span>6th visit</span>
+            <span>Note: medium shade</span>
+            <span>Event on Saturday</span>
+          </div>
+          <div class="visits">
+            <div><b>Aug 13</b><span>Custom spray tan · Dana · $55</span></div>
+            <div><b>Jul 30</b><span>Rapid tan · Dana · $45</span></div>
+            <div><b>Jul 16</b><span>Custom spray tan · Jess · $55</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="monitor" role="group" aria-label="Interactive demo of the Happli calendar (sample data)" aria-describedby="hero-demo-desc">
+        <p class="visually-hidden" id="hero-demo-desc">
+          A day view of the Happli calendar for a sample studio, with a column for each team member, an open one-hour
+          gap, and a Needs you list with a drafted gap offer waiting for approval. Open an appointment, the gap or the
+          draft to see what Happli shows. Nothing is sent or booked.
+        </p>
+        <div class="app" style={`width:${APP_WIDTH}px;height:${appHeight}px`} inert>
+          <AppScreen />
+        </div>
+      </div>
+
+      <div class="demo-chips" data-od-chips>
+        <button type="button" class="demo-chip" data-od-open="ana">Open an appointment</button>
+        <button type="button" class="demo-chip" data-od-open="draft">See what needs you</button>
+      </div>
+    </div>
+
+    <div class="scroll-hint" aria-hidden="true"><span></span></div>
+  </div>
+</section>
+
+<script is:inline>
+  (function () {
+    var zoom = document.querySelector('[data-zoom]');
+    if (!zoom) return;
+    var stage = zoom.querySelector('.stage');
+    var layers = stage.querySelectorAll('.layer');
+    var photo = stage.querySelector('.photo');
+    var monitor = stage.querySelector('.monitor');
+    var app = monitor.querySelector('.app');
+    var veil = stage.querySelector('.veil');
+    var copy = stage.querySelector('.hero-copy');
+    var hint = stage.querySelector('.scroll-hint');
+    var panels = stage.querySelectorAll('.panel');
+    var chips = stage.querySelector('[data-od-chips]');
+    var od = app.querySelector('[data-od]');
+    var IW = +zoom.getAttribute('data-iw');
+    var IH = +zoom.getAttribute('data-ih');
+    var M = JSON.parse(zoom.getAttribute('data-monitor'));
+    var R = { x0: M.x0 / IW, y0: M.y0 / IH, x1: M.x1 / IW, y1: M.y1 / IH };
+    var APP_W = +zoom.getAttribute('data-app-width');
+    // Phones lay the app out narrower (its rail is hidden there), so it reads larger.
+    var APP_W_PHONE = 640;
+    var NAV = 68;
+
+    // Reduced motion: no scroll zoom. Show the final frame statically; only the screen's
+    // content needs scaling to its width.
+    if (zoom.classList.contains('is-static')) {
+      // The final frame is always there, so the demo is always usable.
+      app.inert = false;
+      stage.classList.add('is-landed');
+      var fit = function () {
+        app.style.transform = 'scale(' + monitor.clientWidth / APP_W + ')';
+      };
+      window.addEventListener('resize', fit);
+      fit();
+      return;
+    }
+
+    var S = 1;
+    var cx = 0;
+    var cy = 0;
+    var ticking = false;
+    var end = { dx: 0, dy: 0 };
+    var m0 = { x: 0, y: 0 };
+    var baseMH = 0; // the screen's landed height at the photo's proportions
+    var grow = 0; // phones: extra height the screen grows by as it lands
+    var landed = false;
+
+    // The demo inside the screen is usable only while the screen sits still, full size.
+    function setLanded(v) {
+      if (v === landed) return;
+      landed = v;
+      stage.classList.toggle('is-landed', v);
+      app.inert = !v;
+      if (od) od.dispatchEvent(new CustomEvent('od:landed', { detail: v }));
+    }
+
+    function layout() {
+      var w = stage.clientWidth;
+      var h = stage.clientHeight;
+      var sc = Math.max(w / IW, h / IH) * 1.06;
+      var bw = IW * sc;
+      var bh = IH * sc;
+      var left = (w - bw) / 2;
+      var anchor = w < 700 ? 0.76 : 0.72;
+      var mcy = (R.y0 + R.y1) / 2;
+      var mh0 = (R.y1 - R.y0) * bh;
+      // Keep the monitor below the hero copy (the copy is taller than the mockup's),
+      // but never push it off the bottom of the screen.
+      var wrap = copy.firstElementChild;
+      var copyBottom = copy.offsetTop + wrap.offsetTop + wrap.offsetHeight;
+      var gapBelowCopy = w < 700 ? 16 : 28;
+      var centerY = Math.max(anchor * h, copyBottom + gapBelowCopy + mh0 / 2);
+      centerY = Math.min(centerY, h - mh0 / 2 - 12);
+      var top = Math.max(h - bh, centerY - mcy * bh);
+      photo.style.width = bw + 'px';
+      photo.style.height = bh + 'px';
+      photo.style.left = left + 'px';
+      photo.style.top = top + 'px';
+      var mx = left + R.x0 * bw;
+      var my = top + R.y0 * bh;
+      var mw = (R.x1 - R.x0) * bw;
+      var mh = (R.y1 - R.y0) * bh;
+      cx = mx + mw / 2;
+      cy = my + mh / 2;
+      var gutter = Math.max(16, Math.min(40, w * 0.04));
+      var target = Math.min(w - 2 * gutter, 1120);
+      S = Math.min(target / mw, (h - NAV - 48) / mh);
+      // Lay the monitor out at its final size and pre-shrink it, so it stays sharp for the whole zoom.
+      monitor.style.left = mx + 'px';
+      monitor.style.top = my + 'px';
+      monitor.style.width = mw * S + 'px';
+      monitor.style.height = mh * S + 'px';
+      monitor.style.transformOrigin = '0 0';
+      monitor.style.transform = 'scale(' + 1 / S + ')';
+      var appW = w < 700 ? APP_W_PHONE : APP_W;
+      var k = (mw * S) / appW;
+      baseMH = mh * S;
+      grow = 0;
+      if (w < 700) {
+        // Grow the landed screen so the demo buttons sit near the bottom of the screen
+        // (the screen lands just under the header, see endCy below).
+        chips.style.width = mw * S + 'px';
+        // Leave room for the bottom "Book a demo" bar, which shows by the time the screen lands.
+        var bar = document.querySelector('[data-sticky-cta]');
+        var barH = bar ? bar.offsetHeight : 0;
+        grow = Math.max(0, h - (NAV + 16) - baseMH - 12 - chips.offsetHeight - 16 - barH);
+      }
+      app.style.width = appW + 'px';
+      app.style.height = (baseMH + grow) / k + 'px';
+      app.style.transform = 'scale(' + k + ')';
+      // Where the screen's center lands at the end: slightly below the vertical middle.
+      var endCx = w / 2;
+      // Phones: land the screen just under the header so there's no empty band above it.
+      var endCy = w < 700 ? (mh * S) / 2 + NAV + 16 : Math.max(h * 0.5, (mh * S) / 2 + NAV + 24);
+      for (var i = 0; i < layers.length; i++) layers[i].style.transformOrigin = cx + 'px ' + cy + 'px';
+      end = { dx: endCx - cx, dy: endCy - cy };
+      m0 = { x: mx, y: my };
+      update();
+    }
+
+    function ease(t) {
+      return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+    }
+    function clamp(v, a, b) {
+      return Math.max(a, Math.min(b, v));
+    }
+
+    function update() {
+      ticking = false;
+      var rect = zoom.getBoundingClientRect();
+      var range = zoom.offsetHeight - stage.clientHeight;
+      var P = range > 0 ? clamp(-rect.top / range, 0, 1) : 0;
+      // Tuned for the 420vh / 460vh section: the zoom lands by 42% of the scroll, the screen then
+      // holds still (and is usable) for about a viewport, and the panels slide in over the last 36%.
+      var p = clamp(P / 0.4667, 0, 1); // zoom-in
+      var sp = ease(clamp((P - 0.64) / 0.36, 0, 1)); // panel slide
+      // copy fades (0 -> .22), zoom (.15 -> .9), veil (.7 -> .95)
+      var cp = clamp(p / 0.22, 0, 1);
+      copy.style.opacity = (1 - cp).toFixed(3);
+      copy.style.transform = 'translateY(' + -cp * 40 + 'px)';
+      copy.style.visibility = cp >= 1 ? 'hidden' : '';
+      copy.style.pointerEvents = cp > 0.6 ? 'none' : '';
+      // fades with the copy (the mockup kept it until the end, where it overlapped the panels on phones)
+      hint.style.opacity = (1 - cp).toFixed(3);
+      var zp = ease(clamp((p - 0.15) / 0.75, 0, 1));
+      var vp = clamp((p - 0.7) / 0.25, 0, 1);
+      var s = Math.exp(Math.log(S) * zp);
+      var dx = end.dx * zp;
+      var dy = end.dy * zp;
+      var t = 'translate(' + dx.toFixed(2) + 'px,' + dy.toFixed(2) + 'px) scale(' + s.toFixed(4) + ')';
+      layers[0].style.transform = t;
+      var j;
+      monitor.style.height = baseMH + grow * vp + 'px';
+      if (zp >= 1) {
+        // Landed: drawn 1:1 (see the note at the top about layout shift).
+        var ML = Math.round(m0.x + end.dx - (cx - m0.x) * (S - 1));
+        var MT = Math.round(m0.y + end.dy - (cy - m0.y) * (S - 1));
+        monitor.style.transform = 'translate(' + (ML - m0.x).toFixed(3) + 'px,' + (MT - m0.y).toFixed(3) + 'px)';
+        // Lay the panels out to the right of the landed screen.
+        var w = stage.clientWidth;
+        var h = stage.clientHeight;
+        var MW = monitor.offsetWidth;
+        var MH = monitor.offsetHeight;
+        var gap = w < 700 ? 14 : 24;
+        var PW = w < 700 ? Math.round(MW * 0.86) : Math.round(Math.min(MW * 0.5, 520));
+        // Panels size to their content, capped at the space available (desktop: the screen's height).
+        var PH = w < 700 ? h - MT - 16 : MH;
+        for (j = 0; j < panels.length; j++) {
+          var pl = panels[j];
+          pl.style.left = ML + MW + gap + j * (PW + gap) + 'px';
+          pl.style.top = MT + 'px';
+          pl.style.width = PW + 'px';
+          pl.style.height = 'auto';
+          pl.style.maxHeight = PH + 'px';
+          pl.style.opacity = vp.toFixed(3);
+        }
+        chips.style.left = ML + 'px';
+        chips.style.top = MT + baseMH + grow + 12 + 'px';
+        chips.style.width = MW + 'px';
+        chips.style.transform = 'translateY(' + (MH - baseMH - grow).toFixed(1) + 'px)';
+        var shift = ML + MW + gap + panels.length * (PW + gap) - gap - (w - ML);
+        layers[1].style.transform = 'translateX(' + (-shift * sp).toFixed(2) + 'px)';
+      } else {
+        layers[1].style.transform = t;
+        monitor.style.transform = 'scale(' + 1 / S + ')';
+        for (j = 0; j < panels.length; j++) panels[j].style.opacity = 0;
+      }
+      monitor.style.setProperty('--real', (1 - vp).toFixed(3));
+      monitor.style.setProperty('--k', (S / s).toFixed(3));
+      veil.style.opacity = vp.toFixed(3);
+      monitor.style.borderRadius = (2 + 14 * vp) * (S / s) + 'px';
+      monitor.style.boxShadow =
+        vp > 0
+          ? '0 ' + 30 * vp * (S / s) + 'px ' + 80 * vp * (S / s) + 'px ' + -30 * (S / s) + 'px rgba(27,22,20,' + 0.35 * vp + ')'
+          : 'none';
+      monitor.style.outline = vp > 0 ? S / s + 'px solid rgba(27,22,20,' + 0.16 * vp + ')' : 'none';
+      stage.classList.toggle('end', P >= 1);
+      setLanded(zp >= 1 && sp < 0.25);
+    }
+
+    function onScroll() {
+      if (!ticking) {
+        ticking = true;
+        requestAnimationFrame(update);
+      }
+    }
+    var resizeQueued = false;
+    function onResize() {
+      if (!resizeQueued) {
+        resizeQueued = true;
+        requestAnimationFrame(function () {
+          resizeQueued = false;
+          layout();
+        });
+      }
+    }
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onResize);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(layout);
+    layout();
+  })();
+</script>
+
+<style>
+  /* ---------- section and stage ---------- */
+  .zoom {
+    position: relative;
+    /* sit under the translucent sticky header, like the mockup's fixed nav */
+    /* header height plus its 1px bottom border */
+    margin-top: calc(-1 * var(--nav-h) - 1px);
+    background: var(--bg);
+  }
+  .stage {
+    position: relative;
+    height: 100vh;
+    height: 100svh;
+    min-height: 520px;
+    overflow: hidden;
+    background: var(--blush);
+  }
+  .is-zoom {
+    height: 420vh;
+  }
+  @media (max-width: 699px) {
+    .is-zoom {
+      height: 460vh;
+    }
+  }
+  .is-zoom .stage {
+    position: sticky;
+    top: 0;
+  }
+  .layer {
+    position: absolute;
+    inset: 0;
+    transform-origin: 50% 50%;
+  }
+  .is-zoom .layer {
+    will-change: transform;
+  }
+
+  /* ---------- photo ---------- */
+  .photo-layer :global(picture) {
+    display: contents;
+  }
+  .photo-layer :global(.photo) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    max-width: none;
+    object-fit: cover;
+    object-position: 50% 70%;
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 26%, #000 88%, transparent 100%);
+    mask-image: linear-gradient(to bottom, transparent 0, #000 26%, #000 88%, transparent 100%);
+  }
+  /* the script sizes and positions the photo so the monitor can be zoomed into */
+  .is-zoom .photo-layer :global(.photo) {
+    inset: auto;
+    object-fit: fill;
+  }
+  .photo-layer::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    /* stronger than the mockup's (.92 / .55 / 0 at 62%): the copy-doc subhead is longer and sits over the photo */
+    background: linear-gradient(180deg, rgba(251, 250, 248, 0.95) 0%, rgba(251, 250, 248, 0.86) 40%, rgba(251, 250, 248, 0.5) 58%, rgba(251, 250, 248, 0) 74%);
+  }
+  .veil {
+    position: absolute;
+    inset: 0;
+    background: var(--bg);
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  /* ---------- hero copy ---------- */
+  .hero-copy {
+    position: absolute;
+    z-index: 2;
+    left: 0;
+    right: 0;
+    top: 0;
+    padding-top: calc(var(--nav-h) + 4vh);
+    text-align: center;
+    pointer-events: none;
+  }
+  .hero-copy .wrap > :global(*) {
+    pointer-events: auto;
+  }
+  h1 {
+    font-size: clamp(38px, 4.6vw, 60px);
+    line-height: 1;
+    letter-spacing: -0.025em;
+    margin: 18px auto 0;
+    max-width: 12em;
+  }
+  h1 em {
+    display: block;
+    font-style: italic;
+    font-weight: 300;
+  }
+  .lede {
+    margin: 22px auto 0;
+    font-size: clamp(16px, 1.3vw, 18px);
+    max-width: 60ch;
+  }
+  .hero-actions {
+    justify-content: center;
+    margin-top: 30px;
+  }
+  .hero-copy .btn-ghost {
+    background: rgba(255, 255, 255, 0.7);
+    border-color: rgba(27, 22, 20, 0.18);
+    backdrop-filter: blur(6px);
+  }
+  .hero-note {
+    margin-top: 16px;
+    font-size: 13px;
+    color: var(--ink-2);
+  }
+  .hero-note :global(svg) {
+    display: inline-block;
+    vertical-align: -1px;
+    margin-right: 6px;
+  }
+  .stage.end .hero-copy,
+  .stage.end .scroll-hint {
+    display: none;
+  }
+
+  /* ---------- scroll hint ---------- */
+  .scroll-hint {
+    display: none;
+    position: absolute;
+    left: 50%;
+    bottom: 22px;
+    width: 1px;
+    height: 44px;
+    margin-left: -0.5px;
+    background: rgba(27, 22, 20, 0.14);
+    overflow: hidden;
+  }
+  .is-zoom .scroll-hint {
+    display: block;
+  }
+  .scroll-hint span {
+    position: absolute;
+    left: 0;
+    top: -100%;
+    width: 100%;
+    height: 100%;
+    background: var(--ink);
+    animation: drop 1.8s ease-in-out infinite;
+  }
+  @keyframes drop {
+    to {
+      top: 100%;
+    }
+  }
+
+  /* ---------- screen and panels (hidden until the script runs) ---------- */
+  .ui-layer {
+    display: none;
+    pointer-events: none;
+  }
+  .is-zoom .ui-layer {
+    display: block;
+  }
+  .monitor {
+    position: absolute;
+    overflow: hidden;
+    border-radius: 2px;
+    background: #fff;
+  }
+  .app {
+    position: absolute;
+    left: 0;
+    top: 0;
+    transform-origin: 0 0;
+    filter: brightness(calc(1 - 0.09 * var(--real, 1))) contrast(calc(1 + 0.04 * var(--real, 1)))
+      saturate(calc(1 - 0.06 * var(--real, 1))) sepia(calc(0.14 * var(--real, 1)));
+  }
+  /* glass: reflection sheen + edge vignette + inner bezel shadow, faded out as the zoom lands */
+  .monitor::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 2;
+    opacity: var(--real, 1);
+    background:
+      linear-gradient(112deg, rgba(255, 255, 255, 0) 28%, rgba(255, 255, 255, 0.16) 43%, rgba(255, 255, 255, 0.05) 50%, rgba(255, 255, 255, 0) 58%),
+      linear-gradient(180deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0) 30%);
+  }
+  .monitor::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 3;
+    opacity: var(--real, 1);
+    background: radial-gradient(120% 90% at 50% 45%, rgba(0, 0, 0, 0) 55%, rgba(20, 12, 10, 0.22) 100%);
+    box-shadow:
+      inset 0 0 calc(18px * var(--k, 1)) rgba(0, 0, 0, 0.35),
+      inset 0 calc(1px * var(--k, 1)) calc(2px * var(--k, 1)) rgba(0, 0, 0, 0.35);
+  }
+  /* the screen takes clicks only once it has landed (the script also toggles `inert`) */
+  .is-landed .monitor {
+    pointer-events: auto;
+  }
+
+  /* phones: page-scale shortcuts under the landed screen, since the screen itself is small */
+  .demo-chips {
+    display: none;
+    position: absolute;
+    gap: 8px;
+    flex-wrap: wrap;
+    pointer-events: auto;
+  }
+  .demo-chip {
+    min-height: 44px;
+    padding: 0 16px;
+    border-radius: var(--radius-pill);
+    border: 1px solid rgba(43, 27, 26, 0.14);
+    background: #fcf6f1;
+    color: #5e3a38;
+    font: inherit;
+    font-size: 13.5px;
+    font-weight: 700;
+    cursor: pointer;
+    touch-action: manipulation;
+    box-shadow: 0 2px 8px rgba(43, 27, 26, 0.06);
+  }
+  .demo-chip:focus-visible {
+    outline: 2px solid #f9727c;
+    outline-offset: 2px;
+  }
+  /* laid out (and measured) all along on phones, shown once the screen has landed */
+  @media (max-width: 699px) {
+    .demo-chips {
+      display: flex;
+      visibility: hidden;
+    }
+    .is-landed .demo-chips {
+      visibility: visible;
+    }
+  }
+
+  /* ---------- side panels, in the app's look ---------- */
+  .panel {
+    --paper: #fcf6f1;
+    --gold: #9b7a33;
+    --olive: #6b6a45;
+    --maroon: #5e3a38;
+    --espresso: #2b1b1a;
+    --cream: #f7e4da;
+    --guava: #f9727c;
+    position: absolute;
+    opacity: 0;
+    background: var(--paper);
+    border: 0;
+    border-radius: 14px;
+    box-shadow:
+      0 2px 8px rgba(43, 27, 26, 0.05),
+      var(--shadow-card);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    padding: 28px;
+    text-align: left;
+    color: var(--espresso);
+  }
+  .panel-eyebrow,
+  .lbl,
+  .drawer-e {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--gold);
+  }
+  .panel-title {
+    font-family: var(--serif);
+    font-optical-sizing: auto;
+    font-size: clamp(20px, 2vw, 28px);
+    line-height: 1.15;
+    margin-top: 10px;
+    max-width: 14em;
+    text-wrap: balance;
+  }
+  .mock {
+    margin-top: 20px;
+    font-size: 13px;
+  }
+
+  /* panel 1: the Needs you draft card */
+  .need-card {
+    background: #fff;
+    border-radius: 14px;
+    padding: 16px;
+    box-shadow: 0 2px 8px rgba(43, 27, 26, 0.05);
+  }
+  .need-t {
+    font-size: 12.5px;
+    font-weight: 700;
+  }
+  .need-b {
+    font-size: 11.5px;
+    font-weight: 500;
+    color: var(--olive);
+    line-height: 1.5;
+    margin-top: 4px;
+  }
+  .client-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 14px;
+  }
+  .client-row i {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    color: #fff;
+    display: grid;
+    place-items: center;
+    font-style: normal;
+    font-size: 8.5px;
+    font-weight: 600;
+    flex: none;
+  }
+  .client-row div {
+    min-width: 0;
+    line-height: 1.3;
+  }
+  .client-row b {
+    display: block;
+    font-size: 12.5px;
+    font-weight: 600;
+  }
+  .client-row span {
+    font-size: 11.5px;
+    font-weight: 500;
+    color: var(--olive);
+  }
+  .bubble {
+    margin-top: 12px;
+    padding: 10px 12px;
+    border-radius: 14px 14px 14px 4px;
+    background: var(--paper);
+    border: 1px solid rgba(43, 27, 26, 0.07);
+    font-size: 12px;
+    line-height: 1.45;
+  }
+  .status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 12px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #5a7a5e;
+  }
+  .status .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #5a7a5e;
+  }
+
+  /* panel 2: a phone showing the booking page */
+  .phone {
+    margin: 20px auto 0;
+    width: 250px;
+    max-width: 100%;
+    background: var(--paper);
+    border-radius: 34px;
+    border: 1px solid rgba(43, 27, 26, 0.14);
+    box-shadow: 0 20px 40px -24px rgba(27, 22, 20, 0.3);
+    padding: 20px 16px 16px;
+    font-size: 12px;
+  }
+  .ph-svc {
+    font-family: var(--serif);
+    font-optical-sizing: auto;
+    font-size: 17px;
+    line-height: 1.2;
+  }
+  .lbl {
+    margin-top: 16px;
+  }
+  .lbl-row {
+    display: flex;
+    justify-content: space-between;
+  }
+  .lbl-row span {
+    color: var(--olive);
+    letter-spacing: 0.04em;
+    text-transform: none;
+    font-size: 11px;
+    font-weight: 500;
+  }
+  .days {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 8px;
+  }
+  .day {
+    text-align: center;
+    line-height: 1.2;
+  }
+  .day span {
+    display: block;
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--olive);
+  }
+  .day b {
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    margin-top: 4px;
+    border-radius: 50%;
+    font-family: var(--serif);
+    font-optical-sizing: auto;
+    font-size: 17px;
+    font-weight: 400;
+  }
+  .day.on b {
+    background: var(--guava);
+    color: #fff;
+  }
+  .slots {
+    display: grid;
+    gap: 8px;
+    margin-top: 10px;
+  }
+  .slot {
+    border: 1px solid rgba(43, 27, 26, 0.14);
+    border-radius: var(--radius-pill);
+    background: #fff;
+    padding: 7px 0;
+    text-align: center;
+    line-height: 1.25;
+  }
+  .slot b {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+  }
+  .slot span {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--olive);
+  }
+  .slot.on {
+    background: var(--guava);
+    border-color: var(--guava);
+    color: #fff;
+  }
+  .slot.on span {
+    color: rgba(255, 255, 255, 0.85);
+  }
+
+  /* panel 3: the appointment drawer */
+  .drawer-name {
+    font-family: var(--serif);
+    font-optical-sizing: auto;
+    font-size: 26px;
+    letter-spacing: -0.01em;
+    line-height: 1.1;
+    margin-top: 6px;
+  }
+  .drawer-meta {
+    font-size: 12.5px;
+    font-weight: 500;
+    color: var(--olive);
+    margin-top: 6px;
+  }
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 14px;
+  }
+  .chips span {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 6px 12px;
+    border-radius: var(--radius-pill);
+    background: var(--cream);
+    color: var(--maroon);
+  }
+  .chips span.ok {
+    background: #e6ede4;
+    color: #5a7a5e;
+    font-weight: 700;
+  }
+  .visits {
+    margin-top: 16px;
+    border-top: 1px solid rgba(43, 27, 26, 0.09);
+  }
+  .visits div {
+    display: flex;
+    gap: 14px;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(43, 27, 26, 0.09);
+    font-size: 12px;
+  }
+  .visits b {
+    font-weight: 600;
+    min-width: 4em;
+  }
+  .visits span {
+    color: var(--olive);
+  }
+
+  /* ---------- small screens ---------- */
+  @media (max-height: 700px) and (max-width: 700px) {
+    .hero-note {
+      display: none;
+    }
+  }
+  @media (max-height: 640px) {
+    h1 {
+      font-size: clamp(32px, 6vw, 54px);
+    }
+    .lede {
+      display: none;
+    }
+  }
+  @media (max-width: 700px) {
+    .hero-copy {
+      padding-top: calc(var(--nav-h) + 3vh);
+    }
+    .lede {
+      font-size: 15px;
+      margin-top: 16px;
+    }
+    .hero-actions {
+      margin-top: 22px;
+    }
+    .panel {
+      padding: 20px;
+    }
+    .panel-title {
+      font-size: 19px;
+    }
+    .phone {
+      width: 220px;
+    }
+    .phone .days,
+    .phone .lbl-day {
+      display: none;
+    }
+  }
+  @media (max-width: 400px) {
+    .hero-actions .btn {
+      padding: 0 18px;
+    }
+  }
+
+  /* ---------- reduced motion: the final frame, laid out statically ---------- */
+  .is-static .stage {
+    height: auto;
+    min-height: 0;
+    overflow: visible;
+    background: var(--bg);
+    padding-bottom: 8px;
+  }
+  .is-static .photo-layer,
+  .is-static .veil,
+  .is-static .scroll-hint {
+    display: none;
+  }
+  .is-static .hero-copy {
+    position: relative;
+  }
+  .is-static .lede,
+  .is-static .hero-note {
+    display: block;
+  }
+  .is-static .ui-layer {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    max-width: calc(var(--w) - 2 * var(--gutter));
+    margin: 48px auto 0;
+    width: calc(100% - 2 * var(--gutter));
+  }
+  .is-static .monitor {
+    position: relative;
+    grid-column: 1 / -1;
+    grid-row: 1;
+    aspect-ratio: var(--monitor-ratio);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--line-strong);
+    box-shadow: var(--shadow-card);
+    --real: 0;
+  }
+  .is-static .demo-chips {
+    position: relative;
+    grid-column: 1 / -1;
+  }
+  .is-static .panel {
+    position: relative;
+    opacity: 1;
+  }
+  @media (max-width: 860px) {
+    .is-static .ui-layer {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .scroll-hint span {
+      animation: none;
+      top: 0;
+    }
+  }
+</style>

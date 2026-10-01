@@ -1,0 +1,178 @@
+---
+import Logo from './Logo.astro';
+import { site } from '../config/site';
+
+const current = Astro.url.pathname.replace(/\/?$/, '/');
+const isCurrent = (href: string) => current === href;
+---
+
+<header class="nav">
+  <div class="wrap nav-in">
+    <a class="logo" href="/" aria-label="Happli home"><Logo eager /></a>
+    <nav class="nav-links" aria-label="Primary">
+      {
+        site.nav.map((link) => (
+          <a href={link.href} aria-current={isCurrent(link.href) ? 'page' : undefined}>
+            {link.label}
+          </a>
+        ))
+      }
+    </nav>
+    <div class="nav-cta">
+      <a class="signin" href={site.signInUrl}>Sign in</a>
+      <a class="btn btn-primary" href={site.cta.href}>{site.cta.label}</a>
+      <details class="menu">
+        <summary>Menu</summary>
+        <nav class="menu-panel" aria-label="Mobile">
+          {site.nav.map((link) => <a href={link.href}>{link.label}</a>)}
+          <a href={site.signInUrl}>Sign in</a>
+          <a class="menu-cta" href={site.cta.href}>{site.cta.label}</a>
+        </nav>
+      </details>
+    </div>
+  </div>
+</header>
+
+<style>
+  .nav {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    background: rgba(251, 250, 248, 0.86);
+    backdrop-filter: saturate(1.4) blur(14px);
+    -webkit-backdrop-filter: saturate(1.4) blur(14px);
+    border-bottom: 1px solid var(--line);
+  }
+  .nav-in {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: var(--nav-h);
+    gap: 24px;
+  }
+  .logo {
+    flex: none;
+    border-radius: 4px;
+  }
+  .nav-links {
+    display: flex;
+    gap: 28px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--ink-2);
+    margin-right: auto;
+    margin-left: 16px;
+  }
+  .nav-links a:hover,
+  .nav-links a[aria-current='page'] {
+    color: var(--ink);
+  }
+  .nav-links a[aria-current='page'] {
+    text-decoration: underline;
+    text-underline-offset: 6px;
+    text-decoration-thickness: 1px;
+  }
+  .nav-cta {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    font-size: 14px;
+    font-weight: 500;
+  }
+  .nav-cta .btn {
+    min-height: 38px;
+    padding: 0 16px;
+    font-size: 14px;
+  }
+  .signin:hover {
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+  .menu {
+    display: none;
+    position: relative;
+  }
+  .menu summary {
+    list-style: none;
+    display: inline-flex;
+    align-items: center;
+    height: 38px;
+    padding: 0 14px;
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius-pill);
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .menu summary::-webkit-details-marker {
+    display: none;
+  }
+  .menu-panel {
+    position: absolute;
+    right: 0;
+    top: calc(100% + 10px);
+    min-width: 200px;
+    display: grid;
+    padding: 8px;
+    background: var(--surface);
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-card);
+  }
+  .menu-panel a {
+    padding: 10px 12px;
+    border-radius: 8px;
+    font-weight: 500;
+  }
+  .menu-panel .menu-cta {
+    color: var(--coral-ink);
+    font-weight: 700;
+  }
+  .menu-panel a:hover {
+    background: var(--blush-2);
+  }
+  @media (max-width: 860px) {
+    .nav-links,
+    .signin {
+      display: none;
+    }
+    .menu {
+      display: block;
+    }
+  }
+  .nav-cta .btn,
+  .menu summary {
+    white-space: nowrap;
+  }
+  @media (max-width: 400px) {
+    .nav-in {
+      gap: 12px;
+    }
+    .nav-cta {
+      gap: 8px;
+    }
+    .nav-cta .btn {
+      padding: 0 12px;
+    }
+  }
+  /* phones: the page's own "Book a demo" buttons and the bottom bar cover it, so the header
+     never adds a second one (it stays in the menu) */
+  @media (max-width: 699.98px) {
+    .nav-cta .btn {
+      display: none;
+    }
+  }
+  @media (max-width: 359px) {
+    .logo :global(img) {
+      height: 22px;
+      width: auto;
+    }
+    .nav-cta {
+      gap: 6px;
+    }
+    .nav-cta .btn,
+    .menu summary {
+      padding: 0 10px;
+      font-size: 13px;
+    }
+  }
+</style>

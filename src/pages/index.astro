@@ -1,0 +1,67 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import HeroZoom from '../components/sections/HeroZoom.astro';
+import HeroStatic from '../components/sections/HeroStatic.astro';
+import Walkthrough from '../components/sections/Walkthrough.astro';
+import Problem from '../components/sections/Problem.astro';
+import SectionHead from '../components/sections/SectionHead.astro';
+import FeatureGrid, { type Feature } from '../components/sections/FeatureGrid.astro';
+import FeatureCards from '../components/sections/FeatureCards.astro';
+import Steps from '../components/sections/Steps.astro';
+import PaymentsTrust from '../components/sections/PaymentsTrust.astro';
+import Testimonials from '../components/sections/Testimonials.astro';
+import Faq, { type FaqItem } from '../components/sections/Faq.astro';
+import CtaBand from '../components/sections/CtaBand.astro';
+import { organization, softwareApplication } from '../lib/jsonld';
+import { site } from '../config/site';
+
+const title = 'Happli | Online Booking, Deposits and Front Desk for Spray Tan Studios';
+const description =
+  'Booking and front desk for spray tan studios and beauty pros. Clients book, pay deposits and get reminders on their own; what needs you lands in one list.';
+
+const audience: Feature[] = [
+  { icon: 'sun', title: 'Spray tan studios', body: 'that want online booking, deposits and prep reminders without the phone tag.' },
+  { icon: 'car', title: 'Mobile spray tan artists', body: 'who travel to clients. Happli supports mobile locations and can draft an "I\'m on my way" text for you to approve.' },
+  { icon: 'brush', title: 'Estheticians, lash and brow artists, and other appointment-based beauty pros', body: 'who want one place for booking, payments and client history.' },
+  { icon: 'users', title: 'Small teams and multi-location studios', body: "that need a shared calendar, each person's hours, and a booking page for each location." },
+];
+
+const faq: FaqItem[] = [
+  { q: 'Does Happli take a cut of my payments?', a: 'No. Happli never takes a cut of your payments. Card processing fees go to Stripe.' },
+  { q: 'Can I require a deposit?', a: "Yes. Choose a percentage of the service, and whether it applies to online bookings, staff bookings or both. When a deposit is required online, the booking is confirmed once it's paid." },
+  { q: "What happens when a client doesn't show?", a: "Mark the appointment as a no-show and, if you've turned on a no-show fee, collect it through a secure Stripe payment link. The fee is a percentage of the service price you set in Settings." },
+  { q: 'I use another booking system. Is switching hard?', a: "We import your clients, services, team and appointments from CSV files exported from your current system. Reminders for imported bookings stay off until you pick a switch-over date, so clients don't hear from two systems at once." },
+  { q: 'Can I sell packages?', a: "Yes. Create prepaid session packages, sell them by card or mark them paid, and see each client's balance. Redeeming sessions at checkout is coming soon." },
+  // TODO confirm: live texting to clients.
+  { q: 'Does Happli text my clients without asking me?', a: "Drafted texts, like gap offers and waitlist offers, always wait for your approval. Automatic messages like confirmations and reminders only send if you've turned them on, and reminder texts wait for your quiet hours." },
+  { q: 'Can I see reports on my business?', a: 'Yes. Reports show money collected (card and marked paid), tips, deposits, no-show fees, package sales and refunds, completed visits, no-shows, new vs returning clients, and results by team member, service and location, with CSV export.' },
+];
+---
+
+<BaseLayout title={title} description={description} jsonLd={[organization(), softwareApplication()]}>
+  {site.heroVariant === 'zoom' ? <HeroZoom /> : <HeroStatic />}
+  <Walkthrough />
+  <Problem />
+
+  <FeatureCards />
+
+  <Steps />
+  <PaymentsTrust />
+
+  <section class="section" aria-labelledby="who-title">
+    <div class="wrap">
+      <SectionHead title="Who it's for" id="who-title" />
+      <FeatureGrid items={audience} columns={2} />
+    </div>
+  </section>
+
+  <Testimonials />
+  <Faq items={faq} />
+
+  <CtaBand
+    title="Give your front desk a break."
+    body="See how Happli books, collects and reminds for you."
+  >
+    {/* PLACEHOLDER: secondary CTA [JOIN THE FOUNDING MEMBER PROGRAM], only if the program is still open. */}
+  </CtaBand>
+</BaseLayout>

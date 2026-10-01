@@ -1,0 +1,75 @@
+---
+import { site } from '../../config/site';
+
+interface Props {
+  eyebrow?: string;
+  title: string;
+  body?: string;
+  secondary?: { label: string; href: string };
+}
+const { eyebrow = site.cta.label, title, body, secondary } = Astro.props;
+---
+
+<section class="cta" aria-labelledby="cta-title">
+  <div class="wrap">
+    <div class="cta-in">
+      {/* the text rises in; the button stays put so the phone bar's one-Book-a-demo rule holds */}
+      <div data-reveal>
+        <p class="eyebrow">{eyebrow}</p>
+        <h2 id="cta-title">{title}</h2>
+        {body && <p class="body">{body}</p>}
+      </div>
+      <div class="btn-row actions">
+        <a class="btn btn-coral" href={site.cta.href}>{site.cta.label}</a>
+        {secondary && <a class="btn btn-ghost" href={secondary.href}>{secondary.label}</a>}
+      </div>
+      <slot />
+    </div>
+  </div>
+</section>
+
+<style>
+  .cta {
+    padding-top: calc(var(--space-section) + 20px);
+    text-align: center;
+  }
+  .cta-in {
+    position: relative;
+    padding: clamp(56px, 8vw, 96px) var(--gutter);
+    border-radius: var(--radius-xl);
+    background: var(--blush);
+    overflow: hidden;
+  }
+  .cta-in::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(60% 70% at 50% 110%, rgba(244, 112, 122, 0.22) 0%, rgba(244, 112, 122, 0) 70%),
+      radial-gradient(40% 50% at 8% 0%, rgba(255, 255, 255, 0.7) 0%, rgba(255, 255, 255, 0) 70%);
+    pointer-events: none;
+  }
+  .cta-in > :global(*) {
+    position: relative;
+  }
+  .eyebrow {
+    color: var(--coral-ink);
+  }
+  h2 {
+    font-size: clamp(36px, 4.2vw, 52px);
+    line-height: 1.04;
+    letter-spacing: -0.025em;
+    margin: 18px auto 0;
+    max-width: 13em;
+  }
+  .body {
+    margin: 24px auto 0;
+    max-width: 34em;
+    font-size: 17px;
+    color: var(--ink-2);
+  }
+  .actions {
+    justify-content: center;
+    margin-top: 36px;
+  }
+</style>

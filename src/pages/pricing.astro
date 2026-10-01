@@ -1,0 +1,64 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageIntro from '../components/sections/PageIntro.astro';
+import PricingPlans from '../components/sections/PricingPlans.astro';
+import SectionHead from '../components/sections/SectionHead.astro';
+import Icon from '../components/Icon.astro';
+import Faq, { type FaqItem } from '../components/sections/Faq.astro';
+import CtaBand from '../components/sections/CtaBand.astro';
+import { breadcrumbs } from '../lib/jsonld';
+
+const title = 'Pricing | Happli for Spray Tan Studios and Beauty Pros';
+// PLACEHOLDER: the copy doc's meta description ends with "[PRICE] per [UNIT]." Add it back once pricing is set.
+const description =
+  "Simple pricing for Happli. No fee on your payments: your money goes to your own Stripe account and you pay Stripe's standard fees directly.";
+// TODO confirm: PR #297 (own Stripe account, Stripe fees paid directly).
+
+// PLACEHOLDER answers are shown in brackets until they are written.
+const faq: FaqItem[] = [
+  { q: 'Is there a setup fee?', a: '[SETUP FEE ANSWER]' },
+  { q: 'Is there a contract?', a: '[CONTRACT / CANCELLATION TERMS]' },
+  { q: 'Do you charge for text messages?', a: '[SMS PRICING ANSWER]' },
+  { q: 'Do you help me move from my current system?', a: 'Yes. We import your clients, services, team and appointments from CSV. [IMPORT PRICING: included or fee]' },
+  { q: 'Do you take a percentage of my payments?', a: 'No. Happli takes no fee on your payments.' },
+];
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  jsonLd={[breadcrumbs([{ name: 'Home', href: '/' }, { name: 'Pricing', href: '/pricing/' }])]}
+>
+  <PageIntro
+    eyebrow="Pricing"
+    title="Simple pricing. No cut of your sales."
+    lede="One plan price for the software. Your payments go to your own Stripe account, and Happli takes no fee on them."
+    cta={false}
+  />
+  {/* TODO confirm: PR #297 for the subhead above. */}
+
+  <PricingPlans />
+
+  <section class="section" aria-labelledby="fees-title">
+    <div class="wrap">
+      <SectionHead eyebrow="Payments" title="What you pay for payments" id="fees-title" />
+      {/* TODO confirm: PR #297 for the Stripe fee line. */}
+      <ul class="checks fees">
+        {/* PLACEHOLDER: a "Happli fee on payments" line stays out until Grant decides on the fee wording. */}
+        <li><Icon name="check" size={16} strokeWidth={2} /><span><b>Stripe processing fees:</b> paid by your studio directly to Stripe, at Stripe's standard rates for your account.</span></li>
+        <li><Icon name="check" size={16} strokeWidth={2} /><span><b>Payouts:</b> from Stripe to your bank on your Stripe schedule.</span></li>
+      </ul>
+    </div>
+  </section>
+
+  <Faq items={faq} title="Pricing FAQ" id="pricing-faq" />
+
+  <CtaBand title="Ready when you are." />
+</BaseLayout>
+
+<style>
+  .fees {
+    margin-top: 32px;
+    max-width: 44em;
+  }
+</style>

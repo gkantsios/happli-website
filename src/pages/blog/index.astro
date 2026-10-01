@@ -1,0 +1,22 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageIntro from '../../components/sections/PageIntro.astro';
+import PostList from '../../components/PostList.astro';
+import { getPublished } from '../../lib/posts';
+import { breadcrumbs } from '../../lib/jsonld';
+import { site } from '../../config/site';
+
+const posts = await getPublished('blog');
+---
+
+<BaseLayout
+  title="Blog | Happli"
+  description="Practical guides for spray tan studios and beauty pros on booking, deposits, no-shows, reminders and running the front desk."
+  jsonLd={[breadcrumbs([{ name: 'Home', href: '/' }, { name: 'Blog', href: '/blog/' }])]}
+  noindex={!site.sections.blog}
+>
+  <PageIntro eyebrow="Blog" title="Notes for busy studio owners." cta={false} />
+  <div class="wrap">
+    <PostList entries={posts} base="/blog/" empty="The first posts are on their way. Check back soon." />
+  </div>
+</BaseLayout>
