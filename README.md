@@ -30,7 +30,7 @@ npm run build && npx wrangler deploy --dry-run
 | `src/layouts/` | `BaseLayout` (head, SEO, header, footer), `ProseLayout` (legal pages), `PostLayout` (blog and compare posts) |
 | `src/components/sections/` | One component per page section (HeroZoom, HeroStatic, Walkthrough, FeatureCards, FeatureRows, Faq, CtaBand, PricingPlans, …) |
 | `src/components/mocks/` | Product illustrations shared by the walkthrough, the home feature cards and the /features rows (NeedsList, CheckoutSheet, PhoneBooking, ReminderPreview) |
-| `src/components/StickyCta.astro` | The phone-only "Book a demo" bar (below 700px): it shows whenever none of the page's own "Book a demo" buttons is visible (as soon as the hero button fades or scrolls away; from the first screen on pages without one), footer included. The header's button is hidden on phones (it's in the menu), so exactly one shows at every scroll position. The hero's phone demo keeps its buttons and sheet above the bar |
+| `src/components/StickyCta.astro` | The phone-only "Book a demo" bar (below 700px): it shows whenever none of the page's own "Book a demo" buttons is visible: a button counts as gone once its bottom edge passes under the sticky header, or once the zoom hero's copy fades below 40% opacity. On pages without one it shows from the first screen, footer included. The header's button is hidden on phones (it's in the menu), so exactly one shows at every scroll position. The hero's phone demo keeps its buttons and sheet above the bar |
 | `src/pages/` | One file per route |
 | `src/legal/` | Privacy, terms and security page bodies (HTML, ported word-for-word from the old site) |
 | `src/content/blog/`, `src/content/compare/` | Markdown posts |

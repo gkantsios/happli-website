@@ -20,11 +20,14 @@ import { site } from '../config/site';
     var ctas = [].filter.call(document.querySelectorAll('main a.btn'), function (a) {
       return a.getAttribute('href') === href;
     });
-    // On screen and actually visible: the zoom hero fades its copy out while its box stays put,
-    // so opacity and visibility count, not just position.
+    var header = document.querySelector('header.nav');
+    // On screen and actually visible. A button counts as gone once its bottom edge is above the
+    // sticky header's bottom edge (measured live) or, in the zoom hero, once its copy has faded
+    // below 40% opacity (the copy fades while its box stays put).
     function seen(el) {
       var r = el.getBoundingClientRect();
-      if (r.width < 2 || r.bottom <= 0 || r.top >= window.innerHeight) return false;
+      var top = header ? Math.max(0, header.getBoundingClientRect().bottom) : 0;
+      if (r.width < 2 || r.bottom <= top || r.top >= window.innerHeight) return false;
       if (el.closest('[inert]')) return false;
       var o = 1;
       for (var n = el; n && n.nodeType === 1; n = n.parentElement) {
@@ -32,7 +35,7 @@ import { site } from '../config/site';
         if (cs.display === 'none' || cs.visibility === 'hidden') return false;
         o *= +cs.opacity;
       }
-      return o > 0.1;
+      return o >= 0.4;
     }
     var shown = null;
     var queued = false;
