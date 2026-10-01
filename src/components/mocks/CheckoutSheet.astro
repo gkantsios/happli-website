@@ -1,6 +1,9 @@
 ---
 // Appointment checkout sheet (illustration): notes, balance, deposit, due today.
 // interactive: a real Check out button with the walkthrough's data-act hook.
+// Otherwise (feature card, /features) it's a scroll moment (public/motion/reveal.js): the lines tick
+// in, "Due today" counts up to $50, then the button gives way to "Paid · tip $10". Without motion
+// it shows the paid end state.
 interface Props {
   interactive?: boolean;
 }
@@ -8,7 +11,7 @@ const { interactive = false } = Astro.props;
 const Btn = interactive ? 'button' : 'span';
 ---
 
-<div class="apt">
+<div class="apt" data-play={interactive ? undefined : ''}>
   <div class="client">
     <i aria-hidden="true">MK</i>
     <div><b>Maria K.</b><span>Custom spray tan + contour · with Dana · 1:15 pm</span></div>
@@ -24,10 +27,23 @@ const Btn = interactive ? 'button' : 'span';
     <div><span>Custom spray tan</span><b>$55</b></div>
     <div><span>Contour add-on</span><b>$15</b></div>
     <div><span>Deposit paid</span><b>−$20</b></div>
-    <div class="total"><span>Due today</span><b>$50</b></div>
+    <div class="total">
+      <span>Due today</span><b data-count={interactive ? undefined : ''}>$50</b>
+    </div>
   </div>
-  <Btn type={interactive ? 'button' : undefined} class="btn btn-primary demo-cta" data-act={interactive ? 'checkout' : undefined}>Check out · $50</Btn>
-  <p class="paid-tag">Paid · tip $10</p>
+  {
+    interactive ? (
+      <>
+        <Btn type="button" class="btn btn-primary demo-cta" data-act="checkout">Check out · $50</Btn>
+        <p class="paid-tag">Paid · tip $10</p>
+      </>
+    ) : (
+      <div class="end">
+        <span class="btn btn-primary demo-cta was">Check out · $50</span>
+        <p class="paid-tag now">Paid · tip $10</p>
+      </div>
+    )
+  }
 </div>
 
 <style>
@@ -126,6 +142,23 @@ const Btn = interactive ? 'button' : 'span';
   .apt-lines .total b {
     color: var(--ink);
     font-weight: 600;
+  }
+  /* static: the button and the paid tag share one spot; the paid end state shows unless playing */
+  .end {
+    display: grid;
+    margin-top: 18px;
+  }
+  .end > * {
+    grid-area: 1 / 1;
+  }
+  .end .demo-cta {
+    margin-top: 0;
+    opacity: 0;
+  }
+  .end .paid-tag {
+    display: inline-block;
+    justify-self: start;
+    align-self: center;
   }
   .apt.done .demo-cta {
     display: none;

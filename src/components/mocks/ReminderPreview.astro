@@ -1,15 +1,17 @@
 ---
 // A day-before reminder in the message editor (illustration): the wording with fill-in fields,
 // the channel choice, and preview / test actions.
+// Scroll moment (public/motion/reveal.js): the wording types itself out, "Send me a test" is tapped and
+// "Test sent to your phone ✓" ticks in. Without motion it shows the end state.
 ---
 
-<div class="rem">
+<div class="rem" data-play>
   <div class="rem-head">
     <b>Day-before reminder</b>
     <span class="chan"><em class="on">Text</em><em>Email</em></span>
   </div>
-  <p class="rem-text">
-    Hi <span class="field">first name</span>! Your <span class="field">service</span> is tomorrow at
+  <p class="rem-text" data-type>
+    Hi <span class="field">first name</span>! Your <span class="field">service</span> is tomorrow at{' '}
     <span class="field">time</span>.
   </p>
   <div class="rem-fields">
@@ -21,6 +23,7 @@
   <div class="rem-actions">
     <span class="act">Preview</span>
     <span class="act">Send me a test</span>
+    <span class="sent">Test sent to your phone ✓</span>
   </div>
 </div>
 
@@ -100,10 +103,20 @@
   }
   .rem-actions {
     display: flex;
+    flex-wrap: wrap;
     gap: 8px;
     margin-top: 16px;
     padding-top: 14px;
     border-top: 1px solid var(--line);
+  }
+  .sent {
+    align-self: center;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 5px 10px;
+    border-radius: var(--radius-pill);
+    background: var(--sage);
+    color: var(--sage-ink);
   }
   .act {
     font-size: 12px;

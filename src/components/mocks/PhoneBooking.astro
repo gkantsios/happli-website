@@ -1,24 +1,35 @@
 ---
 // Client booking page on a phone (illustration). Used by the booking page feature card and /features.
+// Scroll moment (public/motion/reveal.js): the days appear, Thursday is picked, the afternoon times
+// drop in, the 1:15 pm opening (Dana's gap) is tapped and the booking confirms. The selections are
+// overlays that fade in, so only opacity and transform animate. Without motion it shows the end.
 ---
 
-<div class="phone">
+<div class="phone" data-play>
   <div class="top"><div class="bb">gg</div><span class="studio">Golden Glow Studio</span></div>
   <p class="h">When suits <em>you?</em></p>
   <p class="svc">Custom spray tan · 30 min</p>
   <div class="days">
     <div class="day"><span>WED</span><b>26</b></div>
-    <div class="day on"><span>THU</span><b>27</b></div>
+    <div class="day">
+      <span>THU</span><b>27</b>
+      <i class="sel"><span>THU</span><b>27</b></i>
+    </div>
     <div class="day"><span>FRI</span><b>28</b></div>
     <div class="day off"><span>SAT</span><b>29</b></div>
   </div>
   <p class="lbl">AFTERNOON</p>
   <div class="slots">
-    <div class="slot on">1:15 pm</div>
+    <div class="slot">
+      1:15 pm<i class="sel">1:15 pm</i>
+    </div>
     <div class="slot">2:00 pm</div>
     <div class="slot">3:30 pm</div>
   </div>
-  <div class="foot"><span>Deposit due today</span><b>Pay &amp; confirm</b></div>
+  <div class="foot">
+    <div class="foot-was"><span>Deposit due today</span><b>Pay &amp; confirm</b></div>
+    <p class="foot-now">Booked · confirmation sent</p>
+  </div>
 </div>
 
 <style>
@@ -93,12 +104,24 @@
     font-weight: 600;
     margin-top: 3px;
   }
-  .day.on {
+  .day,
+  .slot {
+    position: relative;
+  }
+  /* the picked day and time, drawn over the plain one */
+  .sel {
+    position: absolute;
+    inset: -1px;
+    display: grid;
+    place-content: center;
+    font-style: normal;
+    border-radius: inherit;
+  }
+  .day .sel {
     background: var(--ink);
-    border-color: var(--ink);
     color: #fff;
   }
-  .day.on span {
+  .day .sel span {
     color: rgba(255, 255, 255, 0.75);
   }
   .day.off {
@@ -127,22 +150,38 @@
     text-align: center;
     font-weight: 600;
   }
-  .slot.on {
+  .slot .sel {
     background: var(--coral-strong);
-    border-color: var(--coral-strong);
     color: #fff;
   }
   .foot {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    display: grid;
     margin-top: 18px;
     padding-top: 14px;
     border-top: 1px solid var(--line);
     font-weight: 600;
   }
-  .foot span {
+  /* before and after booking share one spot; the end state shows unless the sequence is playing */
+  .foot > * {
+    grid-area: 1 / 1;
+  }
+  .foot-was {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    opacity: 0;
+  }
+  .foot-was span {
     color: var(--muted);
     font-weight: 500;
+  }
+  .foot-now {
+    justify-self: start;
+    align-self: center;
+    font-size: 12px;
+    padding: 5px 10px;
+    border-radius: var(--radius-pill);
+    background: var(--sage);
+    color: var(--sage-ink);
   }
 </style>

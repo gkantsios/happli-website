@@ -70,6 +70,19 @@ What the photo needs:
 - **Top third:** calm, with **no signage or text**. The headline sits over it behind a light gradient.
 - The screen itself can be blank; it gets covered.
 
+## Motion below the hero
+
+Every section below the zoom hero has one small moment as it scrolls into view. `public/motion/reveal.js` drives them, with the styles in `public/motion/motion.css`. `BaseLayout` loads the script as a plain deferred file, and the script loads the CSS once the page has loaded; neither is bundled into the page, which keeps them off the hero's first paint (measured: a module script or inline code pushed it back by about 150ms in Lighthouse).
+
+| Attribute | What it does |
+|---|---|
+| `data-reveal` | The element fades in and rises 12px once 18% of it is on screen |
+| `data-reveal-stagger` | The same for each child, 80ms apart (the last starts by 400ms) |
+| `data-play` | Plays a mock's one-shot sequence: children marked `.m-step` animate with their own `--d` delay (and optional `--m` keyframes, `--t` duration); `data-type` types text out, `data-count` counts a figure up. `data-play="manual"` is started by its own component (the walkthrough's day view) |
+| `data-draw` | Draws a line between `[data-draw-at]` markers as you scroll (How it works); it's complete by the time the section is centered |
+
+Rules: everything runs once and never loops; only `opacity` and `transform` animate, so nothing shifts; single effects are 900ms or less and sequences 2.5s or less (the scroll-drawn line is the exception). The hidden start states only apply under `html.motion`, which the script adds when the visitor hasn't asked for reduced motion. So with reduced motion the page is static and shows every end state (the How it works line drawn in full), and without JavaScript all content is visible (the How it works line needs JavaScript and is simply left out). Anything already on screen when the script starts (a reload partway down the page) stays in its end state. The walkthrough autoplays one pass through its four steps and stops on the last.
+
 ## Add a blog post or a comparison page
 
 1. Create a Markdown file (`.md` or `.mdx`):

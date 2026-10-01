@@ -17,24 +17,32 @@ const steps = [
 ];
 ---
 
-<section class="section" id="how" aria-labelledby="how-title">
+<section class="section" id="how" aria-labelledby="how-title" data-draw>
   <div class="wrap">
     <SectionHead eyebrow="3 steps" title="How it works" id="how-title" />
-    <ol class="steps">
-      {
-        steps.map((s, i) => (
-          <li class="step">
-            <span class="num" aria-hidden="true">{i + 1}</span>
-            <h3>{s.title}</h3>
-            <p>{s.body}</p>
-          </li>
-        ))
-      }
-    </ol>
+    <div class="steps-wrap">
+      {/* connector between the step numbers, drawn by scroll (public/motion/reveal.js) */}
+      <span aria-hidden="true" data-draw-line></span>
+      <ol class="steps">
+        {
+          steps.map((s, i) => (
+            <li class="step">
+              <span class="num" aria-hidden="true" data-draw-at>{i + 1}</span>
+              <h3>{s.title}</h3>
+              <p>{s.body}</p>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
   </div>
 </section>
 
 <style>
+  .steps-wrap {
+    position: relative;
+  }
+  /* the connector is laid out and styled by public/motion (it only exists with JavaScript) */
   .steps {
     list-style: none;
     margin: var(--space-block) 0 0;
@@ -51,6 +59,8 @@ const steps = [
     border: 1px solid var(--line);
   }
   .num {
+    position: relative;
+    z-index: 2;
     display: grid;
     place-items: center;
     width: 36px;

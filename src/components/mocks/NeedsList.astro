@@ -14,7 +14,7 @@ const Btn = interactive ? 'button' : 'span';
 
 {
   app && (
-    <div class="app-needs">
+    <div class="app-needs" data-play>
       <p class="app-h">Needs you</p>
       <div class="app-card">
         <b>Gap offer · waiting for your approval</b>
@@ -35,7 +35,8 @@ const Btn = interactive ? 'button' : 'span';
 }
 {!app && (
 
-<div class:list={['need', { static: !interactive }]} data-need={interactive ? '' : undefined}>
+<div class:list={['need', { static: !interactive }]} data-need={interactive ? '' : undefined} data-play={interactive ? undefined : ''}>
+  {/* static copies: the rows slide in one after another as they scroll into view */}
   <div class="need-row">
     <div>
       <b>Open gap · Thu 1:15 – 2:15</b>
