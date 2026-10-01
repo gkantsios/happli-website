@@ -19,12 +19,12 @@ import ReminderPreview from '../mocks/ReminderPreview.astro';
         <p>Open gaps, waitlist matches and drafted texts wait in one list. Pick a client for a gap, and nothing sends until you approve it.</p>
       </article>
       <article class="card">
-        <div class="frame frame-phone" aria-hidden="true"><PhoneBooking /></div>
+        <div class="frame frame-phone frame-end" aria-hidden="true"><PhoneBooking /></div>
         <h3>A booking page built for phones</h3>
         <p>Clients pick a service, a day and an open time on their phone. You control notice, how far ahead they can book, and closed days.</p>
       </article>
       <article class="card">
-        <div class="frame" aria-hidden="true"><div class="win"><CheckoutSheet /></div></div>
+        <div class="frame frame-end" aria-hidden="true"><div class="win"><CheckoutSheet /></div></div>
         <h3>Deposits and checkout on one sheet</h3>
         {/* TODO confirm: live card payments need the Stripe go-live steps. */}
         <p>Require a deposit when clients book online. At checkout, collect the balance, a suggested tip and sales tax by card, or mark it paid.</p>
@@ -97,12 +97,31 @@ import ReminderPreview from '../mocks/ReminderPreview.astro';
   .frame-phone :global(.phone) {
     width: 300px;
   }
+  /* booking page and checkout: show the bottom of the mock (where their scroll moment ends:
+     the 1:15 booking, and the total and paid tag), fading out at the top instead */
+  .frame-end {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 0 22px 22px;
+    -webkit-mask-image: linear-gradient(to top, #000 78%, transparent 100%);
+    mask-image: linear-gradient(to top, #000 78%, transparent 100%);
+  }
+  .frame-end > :global(*) {
+    flex: none;
+  }
+  .frame-phone.frame-end {
+    align-items: center;
+  }
   @media (max-width: 599px) {
     .card {
       padding: 10px 10px 24px;
     }
     .frame {
       padding: 14px 12px 0;
+    }
+    .frame-end {
+      padding: 0 12px 14px;
     }
     .win {
       padding: 4px 14px 14px;
