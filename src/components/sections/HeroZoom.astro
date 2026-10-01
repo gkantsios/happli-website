@@ -11,6 +11,10 @@
 //   neither    no JavaScript: a one-screen hero with the photo and copy
 //
 // The photo and the monitor's position in it live in src/config/hero.ts (the one place to swap them).
+//
+// Layout shift: the screen and the phone buttons never change their layout position (left / top)
+// while scrolling. The screen lands with a translate to whole pixels (sharp, and no layout shift), and
+// the buttons sit under the fully grown screen and ride up with a transform while it grows.
 import { Picture } from 'astro:assets';
 import Icon from '../Icon.astro';
 import AppScreen from './AppScreen.astro';
@@ -321,12 +325,10 @@ const appHeight = Math.round((APP_WIDTH * (MONITOR.y1 - MONITOR.y0)) / (MONITOR.
       var j;
       monitor.style.height = baseMH + grow * vp + 'px';
       if (zp >= 1) {
-        // Landed: drop the transforms so the screen is laid out 1:1 and stays sharp.
-        var ML = m0.x + end.dx - (cx - m0.x) * (S - 1);
-        var MT = m0.y + end.dy - (cy - m0.y) * (S - 1);
-        monitor.style.transform = 'none';
-        monitor.style.left = ML + 'px';
-        monitor.style.top = MT + 'px';
+        // Landed: drawn 1:1 (see the note at the top about layout shift).
+        var ML = Math.round(m0.x + end.dx - (cx - m0.x) * (S - 1));
+        var MT = Math.round(m0.y + end.dy - (cy - m0.y) * (S - 1));
+        monitor.style.transform = 'translate(' + (ML - m0.x).toFixed(3) + 'px,' + (MT - m0.y).toFixed(3) + 'px)';
         // Lay the panels out to the right of the landed screen.
         var w = stage.clientWidth;
         var h = stage.clientHeight;
@@ -346,15 +348,14 @@ const appHeight = Math.round((APP_WIDTH * (MONITOR.y1 - MONITOR.y0)) / (MONITOR.
           pl.style.opacity = vp.toFixed(3);
         }
         chips.style.left = ML + 'px';
-        chips.style.top = MT + MH + 12 + 'px';
+        chips.style.top = MT + baseMH + grow + 12 + 'px';
         chips.style.width = MW + 'px';
+        chips.style.transform = 'translateY(' + (MH - baseMH - grow).toFixed(1) + 'px)';
         var shift = ML + MW + gap + panels.length * (PW + gap) - gap - (w - ML);
         layers[1].style.transform = 'translateX(' + (-shift * sp).toFixed(2) + 'px)';
       } else {
         layers[1].style.transform = t;
         monitor.style.transform = 'scale(' + 1 / S + ')';
-        monitor.style.left = m0.x + 'px';
-        monitor.style.top = m0.y + 'px';
         for (j = 0; j < panels.length; j++) panels[j].style.opacity = 0;
       }
       monitor.style.setProperty('--real', (1 - vp).toFixed(3));

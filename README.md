@@ -72,16 +72,18 @@ What the photo needs:
 
 ## Motion below the hero
 
-Every section below the zoom hero has one small moment as it scrolls into view. `public/motion/reveal.js` drives them, with the styles in `public/motion/motion.css`. `BaseLayout` loads the script as a plain deferred file, and the script loads the CSS once the page has loaded; neither is bundled into the page, which keeps them off the hero's first paint (measured: a module script or inline code pushed it back by about 150ms in Lighthouse).
+Every section below the zoom hero has one small moment as it scrolls into view. `public/motion/reveal.js` drives them, with the styles and the mock timelines in `public/motion/motion.css`. `BaseLayout` loads the script on the first scroll (or 3s after the page has loaded), and the script loads the CSS. Neither is bundled into the page, which keeps them off the hero's first paint (measured: as a module, inline or deferred script, it pushed the first paint back by about 150ms in Lighthouse).
 
 | Attribute | What it does |
 |---|---|
 | `data-reveal` | The element fades in and rises 12px once 18% of it is on screen |
-| `data-reveal-stagger` | The same for each child, 80ms apart (the last starts by 400ms) |
-| `data-play` | Plays a mock's one-shot sequence: children marked `.m-step` animate with their own `--d` delay (and optional `--m` keyframes, `--t` duration); `data-type` types text out, `data-count` counts a figure up. `data-play="manual"` is started by its own component (the walkthrough's day view) |
-| `data-draw` | Draws a line between `[data-draw-at]` markers as you scroll (How it works); it's complete by the time the section is centered |
+| `data-reveal-stagger` | The same for each child as it comes into view; children arriving together follow one another 80ms apart (the last by 400ms) |
+| `data-play` | Plays a mock's one-shot sequence; its timeline (each step's delay, keyframes and duration) is in `motion.css`. `data-type` types text out and `data-count` counts a figure up. A mock inside a card starts 150ms after its card begins to appear. `data-play="manual"` is started by its own component (the walkthrough's day view) |
+| `data-draw` | Sets `--p` from the scroll, which draws the How it works connector; it's complete just before the section is centered |
 
-Rules: everything runs once and never loops; only `opacity` and `transform` animate, so nothing shifts; single effects are 900ms or less and sequences 2.5s or less (the scroll-drawn line is the exception). The hidden start states only apply under `html.motion`, which the script adds when the visitor hasn't asked for reduced motion. So with reduced motion the page is static and shows every end state (the How it works line drawn in full), and without JavaScript all content is visible (the How it works line needs JavaScript and is simply left out). Anything already on screen when the script starts (a reload partway down the page) stays in its end state. The walkthrough autoplays one pass through its four steps and stops on the last.
+Rules: everything runs once and never loops; only `opacity` and `transform` animate, and the animations fill backwards only, so a finished one leaves nothing behind (which would block scroll anchoring); single effects are 900ms or less and sequences 2.5s or less (the scroll-drawn line is the exception). The hidden start states only apply under `html.motion`, which the script adds when the visitor hasn't asked for reduced motion. So with reduced motion or without JavaScript the page is static and shows every end state, the How it works connector included (it's plain CSS, drawn in full unless the script draws it). Anything already on screen when the script starts (a reload partway down the page) stays in its end state. The walkthrough autoplays one pass through its four steps and stops on the last; its panel keeps one size whichever scene shows.
+
+The feature cards on the home page crop their mocks to a 320px frame (the booking page and checkout show the bottom of the mock, where their moment ends); every end state sits fully inside the clear part of the frame.
 
 ## Add a blog post or a comparison page
 

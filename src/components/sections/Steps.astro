@@ -20,29 +20,23 @@ const steps = [
 <section class="section" id="how" aria-labelledby="how-title" data-draw>
   <div class="wrap">
     <SectionHead eyebrow="3 steps" title="How it works" id="how-title" />
-    <div class="steps-wrap">
-      {/* connector between the step numbers, drawn by scroll (public/motion/reveal.js) */}
-      <span aria-hidden="true" data-draw-line></span>
-      <ol class="steps">
-        {
-          steps.map((s, i) => (
-            <li class="step">
-              <span class="num" aria-hidden="true" data-draw-at>{i + 1}</span>
-              <h3>{s.title}</h3>
-              <p>{s.body}</p>
-            </li>
-          ))
-        }
-      </ol>
-    </div>
+    {/* each step draws a connector to the next number (CSS below); public/motion/reveal.js sets
+        --p from the scroll so it draws as you go */}
+    <ol class="steps">
+      {
+        steps.map((s, i) => (
+          <li class="step">
+            <span class="num" aria-hidden="true" data-draw-at>{i + 1}</span>
+            <h3>{s.title}</h3>
+            <p>{s.body}</p>
+          </li>
+        ))
+      }
+    </ol>
   </div>
 </section>
 
 <style>
-  .steps-wrap {
-    position: relative;
-  }
-  /* the connector is laid out and styled by public/motion (it only exists with JavaScript) */
   .steps {
     list-style: none;
     margin: var(--space-block) 0 0;
@@ -52,6 +46,7 @@ const steps = [
     gap: 16px;
   }
   .step {
+    position: relative;
     padding: 28px 24px 30px;
     border-radius: var(--radius);
     background: var(--surface);
@@ -71,6 +66,26 @@ const steps = [
     font-family: var(--serif);
     font-size: 18px;
   }
+  /* The connector: from this step's number to the next one (the gap between cards is 16px), behind
+     the numbers. --p (0 to 1) is the scroll progress across the section, 1 unless reveal.js draws it,
+     so it's there from the first paint with reduced motion or without JavaScript. */
+  .step:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    z-index: 1;
+    left: 42px;
+    top: 45px;
+    width: calc(100% + 16px);
+    height: 2px;
+    border-radius: 2px;
+    background: rgba(244, 112, 122, 0.45);
+    pointer-events: none;
+    transform-origin: 0 0;
+    transform: scaleX(clamp(0, calc(var(--p, 1) * 2 - var(--k, 0)), 1));
+  }
+  .step:nth-child(2) {
+    --k: 1;
+  }
   h3 {
     font-size: 22px;
     line-height: 1.2;
@@ -84,6 +99,30 @@ const steps = [
   @media (max-width: 860px) {
     .steps {
       grid-template-columns: 1fr;
+    }
+    /* phones and tablets: numbers in their own column, so the vertical connector never crosses text */
+    .step {
+      display: grid;
+      grid-template-columns: 36px minmax(0, 1fr);
+      column-gap: 16px;
+      align-items: start;
+    }
+    .num {
+      grid-row: span 2;
+    }
+    h3,
+    p {
+      grid-column: 2;
+    }
+    h3 {
+      margin-top: 5px;
+    }
+    .step:not(:last-child)::after {
+      left: 41px;
+      top: 46px;
+      width: 2px;
+      height: calc(100% + 16px);
+      transform: scaleY(clamp(0, calc(var(--p, 1) * 2 - var(--k, 0)), 1));
     }
   }
 </style>

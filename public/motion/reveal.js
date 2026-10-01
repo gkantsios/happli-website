@@ -5,10 +5,10 @@
 //
 //   data-reveal            the element fades in and rises 12px once it's 18% visible
 //   data-reveal-stagger    the same for each child, one after another
-//   data-play              a mock's one-shot sequence (CSS steps marked .m-step, plus the typing
-//                          and count-up helpers below); data-play="manual" is left to its owner,
-//                          which adds .is-playing itself (CSS steps only)
-//   data-draw              a connector line drawn by scroll progress (How it works)
+//   data-play              a mock's one-shot sequence (its timeline is in motion.css, plus the
+//                          typing and count-up helpers below); data-play="manual" is left to its
+//                          owner, which adds .is-playing itself (CSS only)
+//   data-draw              sets --p as you scroll, which draws the How it works connector
 //
 // Every effect runs once. The hidden start states live in motion.css under html.motion, which is
 // only added when the visitor hasn't asked for reduced motion. So with reduced motion, without
@@ -104,82 +104,79 @@
   }
 
   // ---------- reveals ----------
+  // Grids and lists (data-reveal-stagger) reveal child by child: the children that come into view
+  // together follow one another 80ms apart. A mock inside a card plays 150ms after its card has
+  // started to appear, so it never plays while the card is still transparent.
 
-  const selector = '[data-reveal], [data-reveal-stagger], [data-play]:not([data-play="manual"])';
+  const onScreen = (el) => {
+    const r = el.getBoundingClientRect();
+    return r.bottom > 0 && r.top < window.innerHeight;
+  };
+
+  function revealChild(child) {
+    child.classList.add('is-in');
+    for (const mock of child.querySelectorAll('[data-play]')) setTimeout(() => play(mock), 150);
+  }
 
   function startReveals() {
+    const singles = [...document.querySelectorAll('[data-reveal], [data-play]:not([data-play="manual"])')].filter(
+      (el) => !el.closest('[data-reveal-stagger] > *'),
+    );
+    const children = [...document.querySelectorAll('[data-reveal-stagger] > *')];
     // Anything already on screen (say, after a reload partway down the page) just stays as it is.
-    for (const el of document.querySelectorAll(selector)) {
-      const r = el.getBoundingClientRect();
-      if (r.bottom > 0 && r.top < window.innerHeight) {
+    for (const el of singles) {
+      if (onScreen(el)) {
         el.removeAttribute('data-reveal');
-        el.removeAttribute('data-reveal-stagger');
         el.removeAttribute('data-play');
       }
     }
-    for (const parent of document.querySelectorAll('[data-reveal-stagger]')) {
-      [...parent.children].forEach((child, i) => child.style.setProperty('--i', String(i)));
+    for (const child of children) {
+      if (onScreen(child)) {
+        child.classList.add('is-in');
+        child.style.animation = 'none';
+        child.querySelectorAll('[data-play]').forEach((m) => m.removeAttribute('data-play'));
+      }
     }
     for (const el of document.querySelectorAll('[data-play]')) preparePlay(el);
     root.classList.add('motion');
 
     const io = new IntersectionObserver(
       (entries) => {
+        let k = 0;
         for (const entry of entries) {
           if (!entry.isIntersecting) continue;
-          io.unobserve(entry.target);
-          if (entry.target.hasAttribute('data-play')) play(entry.target);
-          else entry.target.classList.add('is-in');
+          const el = entry.target;
+          io.unobserve(el);
+          if (el.hasAttribute('data-play')) play(el);
+          else if (el.hasAttribute('data-reveal')) el.classList.add('is-in');
+          else setTimeout(() => revealChild(el), Math.min(k++ * 80, 400));
         }
       },
       { threshold: 0.18 },
     );
-    document.querySelectorAll(selector).forEach((el) => io.observe(el));
-    startDraw(true);
+    singles.filter((el) => el.hasAttribute('data-reveal') || el.hasAttribute('data-play')).forEach((el) => io.observe(el));
+    children.filter((c) => !c.classList.contains('is-in')).forEach((c) => io.observe(c));
+    startDraw();
   }
 
   // ---------- scroll-drawn connector (How it works) ----------
-  // The line runs between the first and last [data-draw-at] markers. It only grows, and is fully
-  // drawn just before the section's center reaches the middle of the screen. Without motion it's
-  // drawn right away (it's laid out by script, so without JavaScript there's no line).
+  // The connector itself is CSS (in Steps), drawn in full by default. Here --p follows the scroll and
+  // only grows; it reaches 1 just before the section's center gets to the middle of the screen, and
+  // the numbers pop in as the line reaches them.
 
-  function startDraw(animate) {
+  function startDraw() {
     for (const section of document.querySelectorAll('[data-draw]')) {
-      const line = section.querySelector('[data-draw-line]');
       const markers = [...section.querySelectorAll('[data-draw-at]')];
-      if (!line || markers.length < 2) continue;
-      const box = line.parentElement;
+      if (onScreen(section) || section.getBoundingClientRect().bottom < 0) continue;
       let progress = 0;
       let queued = false;
-
-      const place = () => {
-        const b = box.getBoundingClientRect();
-        const centers = markers.map((m) => {
-          const r = m.getBoundingClientRect();
-          return { x: r.left + r.width / 2 - b.left, y: r.top + r.height / 2 - b.top };
-        });
-        const first = centers[0];
-        const last = centers[centers.length - 1];
-        const vertical = Math.abs(last.y - first.y) > Math.abs(last.x - first.x);
-        line.dataset.axis = vertical ? 'y' : 'x';
-        line.style.left = `${first.x}px`;
-        line.style.top = `${first.y}px`;
-        line.style.width = vertical ? '' : `${last.x - first.x}px`;
-        line.style.height = vertical ? `${last.y - first.y}px` : '';
-      };
-
-      const paint = () => {
-        section.style.setProperty('--p', String(progress));
-        markers.forEach((m, i) => m.classList.toggle('reached', progress >= i / (markers.length - 1) - 0.001));
-      };
-
       const update = () => {
         queued = false;
         const r = section.getBoundingClientRect();
-        // reaches 1 a little before the section's center gets to mid-screen
         const p = (window.innerHeight - r.top) / ((window.innerHeight / 2 + r.height / 2) * 0.92);
         progress = Math.max(progress, Math.min(1, Math.max(0, p)));
-        paint();
+        section.style.setProperty('--p', String(progress));
+        markers.forEach((m, i) => m.classList.toggle('reached', progress >= i / (markers.length - 1) - 0.001));
         if (progress >= 1) window.removeEventListener('scroll', onScroll);
       };
       const onScroll = () => {
@@ -188,29 +185,19 @@
           requestAnimationFrame(update);
         }
       };
-
-      place();
-      window.addEventListener('resize', place);
-      if (document.fonts) document.fonts.ready.then(place);
-      // already on screen (or past it) when this starts: drawn in full, like everything else
-      const r = section.getBoundingClientRect();
-      if (!animate || r.top < window.innerHeight) {
-        progress = 1;
-        paint();
-      } else {
-        window.addEventListener('scroll', onScroll, { passive: true });
-        update();
-      }
+      section.classList.add('is-drawing');
+      window.addEventListener('scroll', onScroll, { passive: true });
+      update();
     }
   }
 
   // ---------- start ----------
-  // The CSS is needed either way (it styles the connector); the motion itself only starts when the
-  // visitor hasn't asked for reduced motion.
+  // Only when the visitor hasn't asked for reduced motion; otherwise the page stays as it is.
 
+  if (!motion) return;
   const css = document.createElement('link');
   css.rel = 'stylesheet';
   css.href = new URL('motion.css', document.currentScript.src).href;
-  css.onload = () => requestAnimationFrame(() => (motion ? startReveals() : startDraw(false)));
+  css.onload = () => requestAnimationFrame(startReveals);
   document.head.append(css);
 })();

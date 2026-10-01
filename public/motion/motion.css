@@ -1,8 +1,9 @@
 /* Scroll motion below the hero (see public/motion/reveal.js and the README).
-   reveal.js loads this file when it starts (on the first scroll, or 3s after the page has loaded), and
-   adds html.motion unless the visitor asked for reduced motion. The page itself carries none of it, so without JavaScript, with reduced motion,
-   or before this loads, everything shows in its final state. Each effect is a one-shot animation
-   that starts when its element scrolls into view; only opacity and transform animate. */
+   reveal.js loads this file when it starts (on the first scroll, or 3s after the page has loaded)
+   and adds html.motion; with reduced motion it does neither. The page itself carries none of it,
+   so without JavaScript, with reduced motion, or before this loads, everything shows in its final
+   state. Each effect is a one-shot animation that starts when its element scrolls into view; only
+   opacity and transform animate. */
 @keyframes m-rise {
   from {
     opacity: 0;
@@ -104,65 +105,65 @@
     transform: none;
   }
 }
-/* Before an element plays it's simply hidden (no animation is attached yet, which keeps page load
-   light); when it plays, a one-shot animation runs from its first keyframe. */
+/* Before an element plays it's simply hidden. When it plays, a one-shot animation runs from its
+   first keyframe; the fill is backwards only, so once it ends the element is back to its own styles
+   (a finished animation left in place would block scroll anchoring). */
 html.motion [data-reveal]:not(.is-in),
-html.motion [data-reveal-stagger]:not(.is-in) > * {
+html.motion [data-reveal-stagger] > :not(.is-in) {
   opacity: 0;
 }
-html.motion [data-reveal].is-in {
-  animation: m-rise 600ms var(--ease-out) both;
+/* card grids and lists: reveal.js adds .is-in to each child, 80ms apart */
+html.motion [data-reveal].is-in,
+html.motion [data-reveal-stagger] > .is-in {
+  animation: m-rise 600ms var(--ease-out) backwards;
 }
-/* card grids: children follow one another, 80ms apart, the last starting by 400ms */
-html.motion [data-reveal-stagger].is-in > * {
-  animation: m-rise 600ms var(--ease-out) both;
-  animation-delay: min(calc(var(--i, 0) * 80ms), 400ms);
-}
+
 /* ---------- mock timelines ----------
    Every step below runs once when its mock (data-play) starts: --d is its delay, --m its keyframes
-   (m-rise unless set) and --t its duration (450ms unless set). Before that, steps are hidden, except
-   a press, a pulse or a fade-out, which are visible until they play. */
+   (m-rise unless set) and --t its duration (450ms unless set). Before the mock plays, its steps are
+   hidden, except a press, a pulse or a fade-out, which are visible until they play. Each step's end
+   state is its own style, so the backwards fill hands over to it seamlessly. */
 
 html.motion :is(
-  .need[data-play] > .need-row:nth-child(1),
-  .need[data-play] > .need-row:nth-child(2),
-  .app-needs[data-play] > .app-card:nth-of-type(1),
-  .app-needs[data-play] > .app-card:nth-of-type(2),
-  .app-needs[data-play] > .app-card:nth-of-type(3),
-  .phone[data-play] .day:nth-child(1),
-  .phone[data-play] .day:nth-child(2),
-  .phone[data-play] .day:nth-child(3),
-  .phone[data-play] .day:nth-child(4),
-  .phone[data-play] .day .sel,
-  .phone[data-play] .slot:nth-child(1),
-  .phone[data-play] .slot:nth-child(2),
-  .phone[data-play] .slot:nth-child(3),
-  .phone[data-play] .slot .sel,
-  .phone[data-play] .foot-now,
-  .apt[data-play] .apt-lines > div:nth-child(1),
-  .apt[data-play] .apt-lines > div:nth-child(2),
-  .apt[data-play] .apt-lines > div:nth-child(3),
-  .apt[data-play] .apt-lines > div:nth-child(4),
-  .apt[data-play] .end .now,
-  .rem[data-play] .sent,
-  .pay-art [data-play] .hd,
-  .pay-art [data-play] .row:nth-child(2),
-  .pay-art [data-play] .row:nth-child(3),
-  .pay-art [data-play] .row:nth-child(4),
-  .pay-art [data-play] .row:nth-child(5),
-  .pay-art [data-play] .settle,
-  .gapview[data-play] .gap-ap.rose,
-  .gapview[data-play] .gap-ap.grey,
-  .gapview[data-play] .gap-open
+  .need[data-play]:not(.is-playing) > .need-row:nth-child(1),
+  .need[data-play]:not(.is-playing) > .need-row:nth-child(2),
+  .app-needs[data-play]:not(.is-playing) > .app-card:nth-of-type(1),
+  .app-needs[data-play]:not(.is-playing) > .app-card:nth-of-type(2),
+  .app-needs[data-play]:not(.is-playing) > .app-card:nth-of-type(3),
+  .phone[data-play]:not(.is-playing) .day:nth-child(1),
+  .phone[data-play]:not(.is-playing) .day:nth-child(2),
+  .phone[data-play]:not(.is-playing) .day:nth-child(3),
+  .phone[data-play]:not(.is-playing) .day:nth-child(4),
+  .phone[data-play]:not(.is-playing) .day .sel,
+  .phone[data-play]:not(.is-playing) .slot:nth-child(1),
+  .phone[data-play]:not(.is-playing) .slot:nth-child(2),
+  .phone[data-play]:not(.is-playing) .slot:nth-child(3),
+  .phone[data-play]:not(.is-playing) .slot .sel,
+  .phone[data-play]:not(.is-playing) .foot-now,
+  .apt[data-play]:not(.is-playing) .apt-lines > div:nth-child(1),
+  .apt[data-play]:not(.is-playing) .apt-lines > div:nth-child(2),
+  .apt[data-play]:not(.is-playing) .apt-lines > div:nth-child(3),
+  .apt[data-play]:not(.is-playing) .apt-lines > div:nth-child(4),
+  .apt[data-play]:not(.is-playing) .end .now,
+  .rem[data-play]:not(.is-playing) .sent,
+  .pay-art [data-play]:not(.is-playing):not(.is-playing) .hd,
+  .pay-art [data-play]:not(.is-playing):not(.is-playing) .row:nth-child(2),
+  .pay-art [data-play]:not(.is-playing):not(.is-playing) .row:nth-child(3),
+  .pay-art [data-play]:not(.is-playing):not(.is-playing) .row:nth-child(4),
+  .pay-art [data-play]:not(.is-playing):not(.is-playing) .row:nth-child(5),
+  .pay-art [data-play]:not(.is-playing):not(.is-playing) .settle,
+  .gapview[data-play]:not(.is-playing):not(.is-playing) .gap-ap.rose,
+  .gapview[data-play]:not(.is-playing):not(.is-playing) .gap-ap.grey,
+  .gapview[data-play]:not(.is-playing):not(.is-playing) .gap-open
 ) {
   opacity: 0;
 }
 
 html.motion :is(
-  .phone[data-play] .foot-was,
-  .apt[data-play] .end .was,
-  .rem[data-play] .act:nth-child(2),
-  .pay-art [data-play] .settle i
+  .phone[data-play]:not(.is-playing) .foot-was,
+  .apt[data-play]:not(.is-playing) .end .was,
+  .rem[data-play]:not(.is-playing) .act:nth-child(2),
+  .pay-art [data-play]:not(.is-playing) .settle i
 ) {
   opacity: 1;
 }
@@ -203,7 +204,7 @@ html.motion :is(
   .gapview[data-play].is-playing .gap-ap.grey,
   .gapview[data-play].is-playing .gap-open
 ) {
-  animation: var(--m, m-rise) var(--t, 450ms) var(--ease-out) var(--d, 0ms) both;
+  animation: var(--m, m-rise) var(--t, 450ms) var(--ease-out) var(--d, 0ms) backwards;
 }
 /* Needs you list (feature card): the rows slide in */
 .need[data-play] > .need-row:nth-child(1) {
@@ -316,40 +317,16 @@ html.motion :is(
 }
 
 /* Problem: the 01 / 02 / 03 numbers slide in just after their row */
-html.motion .pains.is-in li > span {
-  animation: m-slide 500ms var(--ease-out) both;
-  animation-delay: calc(min(calc(var(--i, 0) * 80ms), 400ms) + 150ms);
+html.motion .pains > .is-in > span {
+  animation: m-slide 500ms var(--ease-out) 150ms backwards;
 }
 /* How it works: each number pops as the scroll-drawn line reaches it */
-html.motion [data-draw] [data-draw-at] {
+html.motion .is-drawing [data-draw-at] {
   transform: scale(0.7);
   opacity: 0.35;
   transition: transform 350ms var(--ease-out), opacity 350ms var(--ease-out);
 }
-html.motion [data-draw] [data-draw-at].reached {
+html.motion .is-drawing [data-draw-at].reached {
   transform: none;
   opacity: 1;
-}
-
-/* How it works: the connector between the numbers (placed by reveal.js). --p is the scroll progress,
-   from 0 to 1; it's 1 straight away with reduced motion. */
-[data-draw-line] {
-  position: absolute;
-  z-index: 1;
-  width: 2px;
-  height: 2px;
-  margin: -1px 0 0 -1px;
-  border-radius: 2px;
-  background: rgba(244, 112, 122, 0.45);
-  pointer-events: none;
-  transform-origin: 0 0;
-}
-[data-draw-line][data-axis='x'] {
-  transform: scaleX(var(--p, 1));
-}
-[data-draw-line][data-axis='y'] {
-  transform: scaleY(var(--p, 1));
-}
-[data-draw-line]:not([data-axis]) {
-  display: none;
 }

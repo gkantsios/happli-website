@@ -70,18 +70,19 @@ import ReminderPreview from '../mocks/ReminderPreview.astro';
     border: 1px solid var(--line);
     box-shadow: 0 1px 0 var(--line), 0 12px 30px -22px rgba(27, 22, 20, 0.25);
   }
-  /* cropped mock: fixed height, content fades out at the bottom */
+  /* cropped mock: fixed height, content fades out at the bottom. Tall enough that each mock's
+     scroll moment ends fully inside the clear part (the fade is the last 12%). */
   .frame {
     position: relative;
-    height: 250px;
+    height: 320px;
     overflow: hidden;
     border-radius: var(--radius);
     padding: 22px 22px 0;
     background:
       radial-gradient(70% 80% at 20% 0%, #f8dad6 0%, rgba(248, 218, 214, 0) 70%),
       linear-gradient(160deg, var(--blush-2), var(--blush));
-    -webkit-mask-image: linear-gradient(to bottom, #000 78%, transparent 100%);
-    mask-image: linear-gradient(to bottom, #000 78%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to bottom, #000 88%, transparent 100%);
+    mask-image: linear-gradient(to bottom, #000 88%, transparent 100%);
   }
   .win {
     background: var(--surface);
@@ -104,8 +105,8 @@ import ReminderPreview from '../mocks/ReminderPreview.astro';
     flex-direction: column;
     justify-content: flex-end;
     padding: 0 22px 22px;
-    -webkit-mask-image: linear-gradient(to top, #000 78%, transparent 100%);
-    mask-image: linear-gradient(to top, #000 78%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to top, #000 88%, transparent 100%);
+    mask-image: linear-gradient(to top, #000 88%, transparent 100%);
   }
   .frame-end > :global(*) {
     flex: none;
@@ -122,6 +123,20 @@ import ReminderPreview from '../mocks/ReminderPreview.astro';
     }
     .frame-end {
       padding: 0 12px 14px;
+    }
+    /* the reminder's fill-in field chips don't animate; on phones they make way for the test result */
+    .frame :global(.rem-fields) {
+      display: none;
+    }
+  }
+  /* the narrowest phones: the mocks wrap a lot, so the frames fit them instead of cropping */
+  @media (max-width: 359px) {
+    .frame {
+      height: auto;
+    }
+    /* room below the content for the fade */
+    .frame:not(.frame-end) {
+      padding-bottom: 44px;
     }
     .win {
       padding: 4px 14px 14px;

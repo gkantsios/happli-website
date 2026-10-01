@@ -126,7 +126,6 @@ const titles = ['Needs you', 'The book · Thursday', 'Appointment · Maria K.', 
         st.setAttribute('aria-selected', on ? 'true' : 'false');
         st.tabIndex = on ? 0 : -1;
         if (on) {
-          // restart the progress bar
           var bar = st.querySelector('i');
           bar.style.animation = 'none';
           void st.offsetWidth;
@@ -156,7 +155,6 @@ const titles = ['Needs you', 'The book · Thursday', 'Appointment · Maria K.', 
       steps[cur].classList.remove('playing');
     }
 
-    // Any click or key inside the section stops auto-play.
     root.addEventListener('click', stopAuto);
     root.addEventListener('keydown', stopAuto);
 
@@ -188,7 +186,6 @@ const titles = ['Needs you', 'The book · Thursday', 'Appointment · Maria K.', 
       });
     });
 
-    // Start auto-play when the section scrolls into view.
     var started = false;
     if (!auto) {
       show(0, false);
@@ -208,7 +205,6 @@ const titles = ['Needs you', 'The book · Thursday', 'Appointment · Maria K.', 
       show(0, auto);
     }
 
-    // Scene interactions
     var need = root.querySelector('[data-need]');
     function needDone(row, tag) {
       row.classList.add('done');
@@ -228,7 +224,6 @@ const titles = ['Needs you', 'The book · Thursday', 'Appointment · Maria K.', 
         var act = btn.getAttribute('data-act');
 
         if (act === 'gap') {
-          // Drafting happens on the book: pick a client for the gap there.
           needDone(btn.closest('.need-row'));
           show(1, false);
         }
@@ -606,19 +601,23 @@ const titles = ['Needs you', 'The book · Thursday', 'Appointment · Maria K.', 
     .gapview {
       grid-template-columns: 1fr;
     }
+    /* all scenes share one grid cell, so the panel is as tall as the tallest scene and never
+       changes size when the scene changes (nothing below it shifts) */
     .demo {
       min-height: 0;
+      display: grid;
+      grid-template-rows: auto 1fr;
     }
     .scene {
-      display: none;
+      grid-area: 2 / 1;
       position: relative;
       inset: auto;
       opacity: 1;
       transform: none;
-      pointer-events: auto;
+      visibility: hidden;
     }
     .scene.on {
-      display: block;
+      visibility: visible;
     }
   }
   @media (max-width: 480px) {

@@ -8,6 +8,11 @@
 // HeroZoom decides when the screen is usable: it keeps the app `inert` until the zoom has landed,
 // and dispatches `od:landed` (detail: true/false) on the [data-od] root when that changes.
 // With reduced motion the screen is always usable.
+//
+// Script notes (kept here so they don't ship in the page): the phone sheet moves out of the scaled
+// monitor into the hero stage; panels are cloned from <template>s, which carry the component's
+// scoped-style attributes; a click on empty calendar area closes the panel (clicks inside it never
+// do); when the screen stops being usable, focus moves to the first focusable element after the hero.
 import Icon from '../Icon.astro';
 import logoRaw from '../../../public/logo-white.svg?raw';
 
@@ -516,7 +521,7 @@ const needsCount = 3;
     if (!root || !sheet) return;
     var zoom = root.closest('[data-zoom]');
     var stage = zoom ? zoom.querySelector('.stage') : null;
-    if (stage) stage.appendChild(sheet); // out of the scaled monitor, into the hero stage
+    if (stage) stage.appendChild(sheet);
     var sheetBody = sheet.querySelector('[data-od-sheet-body]');
     var rail = root.querySelector('[data-od-rail]');
     var railIdle = root.querySelector('[data-od-idle]');
@@ -547,7 +552,6 @@ const needsCount = 3;
     function open(kind, data, opener) {
       close(true);
       var tpl = root.querySelector('template[data-od-tpl="' + kind + '"]');
-      // template content carries the component's scoped-style attributes, so clones are styled
       var node = tpl.content.firstElementChild.cloneNode(true);
       var ghost = null;
 
@@ -579,7 +583,6 @@ const needsCount = 3;
           ghost.className = 'od-ghost';
           ghost.textContent = 'New · ' + data.start;
           ghost.setAttribute('style', opener.getAttribute('style'));
-          // carry the component's scope attribute so the ghost is styled
           for (var i = 0; i < opener.attributes.length; i++) {
             var a = opener.attributes[i].name;
             if (a.indexOf('data-astro-cid') === 0) ghost.setAttribute(a, '');
@@ -706,14 +709,12 @@ const needsCount = 3;
         return;
       }
 
-      // Clicking empty calendar area closes the panel; clicks inside the panel never do.
       if (current && cal.contains(t) && !t.closest('button')) close(false);
     }
 
     root.addEventListener('click', onClick);
     sheet.addEventListener('click', onClick);
     if (zoom) {
-      // page-scale chips (phones) live in the hero stage, outside this component
       zoom.addEventListener('click', function (e) {
         var chipBtn = e.target.closest('[data-od-open]');
         if (chipBtn && !root.contains(chipBtn) && !sheet.contains(chipBtn)) onClick(e);
@@ -726,14 +727,12 @@ const needsCount = 3;
       close(true);
     });
 
-    // HeroZoom tells us when the screen is (not) usable.
     root.addEventListener('od:landed', function (e) {
       if (e.detail) return;
       var active = document.activeElement;
       var hadFocus = active && (root.contains(active) || sheet.contains(active) || (zoom && zoom.querySelector('[data-od-chips]') && zoom.querySelector('[data-od-chips]').contains(active)));
       close(true);
       if (hadFocus && zoom) {
-        // move focus to the first focusable element after the hero
         var all = document.querySelectorAll('a[href], button:not([disabled]), [tabindex="0"]');
         for (var i = 0; i < all.length; i++) {
           if (zoom.compareDocumentPosition(all[i]) & Node.DOCUMENT_POSITION_FOLLOWING && !zoom.contains(all[i])) {
