@@ -1730,25 +1730,26 @@ const needsCount = 3;
     position: absolute;
     left: 0;
     right: 0;
-    bottom: 0;
+    /* above the phone "Book a demo" bar (StickyCta publishes its height) */
+    bottom: var(--cta-bar-h, 0px);
     z-index: 5;
-    max-height: calc(100% - var(--nav-h) - 8px);
+    max-height: calc(100% - var(--nav-h) - 8px - var(--cta-bar-h, 0px));
     display: flex;
     flex-direction: column;
     background: var(--paper);
     border-radius: 20px 20px 0 0;
     box-shadow: 0 -20px 50px -20px rgba(43, 27, 26, 0.35);
     overflow: hidden;
-    padding-bottom: env(safe-area-inset-bottom, 0px);
+    padding-bottom: max(0px, calc(env(safe-area-inset-bottom, 0px) - var(--cta-bar-h, 0px)));
   }
   .od-sheet[hidden] {
     display: none;
   }
   :global(.is-static) .od-sheet {
     position: fixed;
-    z-index: 40;
-    max-height: calc(100vh - var(--nav-h) - 8px);
-    max-height: calc(100svh - var(--nav-h) - 8px);
+    z-index: 25;
+    max-height: calc(100vh - var(--nav-h) - 8px - var(--cta-bar-h, 0px));
+    max-height: calc(100svh - var(--nav-h) - 8px - var(--cta-bar-h, 0px));
   }
   .od-sheet-body {
     display: flex;
@@ -1853,6 +1854,11 @@ const needsCount = 3;
     .od-sheet .pnl-msg {
       width: 38px;
       height: 38px;
+    }
+    /* the rail on desktop shows these; on short phones the sheet keeps to the essentials */
+    .od-sheet [data-slot='notes'],
+    .od-sheet .pnl-sec > .pnl-label:first-child:has(+ .pnl-svc) {
+      display: none;
     }
   }
 

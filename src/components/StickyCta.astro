@@ -1,8 +1,8 @@
 ---
 // Phones only (below 700px): a bottom bar with the site's "Book a demo" button.
-// It appears once the visitor scrolls past the hero (or the page intro, or the page's h1), and
-// hides while the footer or any of the page's own "Book a demo" buttons is on screen, so only one
-// is ever visible (the header's button is hidden on phones). Without JavaScript it never appears.
+// It shows whenever none of the page's own "Book a demo" buttons is visible (the header's is
+// hidden on phones), so exactly one is on screen at every scroll position, the footer included.
+// Without JavaScript it never appears.
 import { site } from '../config/site';
 ---
 
@@ -13,52 +13,51 @@ import { site } from '../config/site';
 <script is:inline>
   (function () {
     var bar = document.querySelector('[data-sticky-cta]');
-    if (!bar || !('IntersectionObserver' in window)) return;
-    var start = document.querySelector('[data-cta-after]') || document.querySelector('main h1');
-    var footer = document.querySelector('footer');
-    var past = !start;
-    var footerIn = false;
-    var ctasIn = 0;
+    if (!bar) return;
+    var phone = window.matchMedia('(max-width: 699.98px)');
+    var href = bar.firstElementChild.getAttribute('href');
+    // The page's own buttons to the same link (hero, page intro, final CTA band).
+    var ctas = [].filter.call(document.querySelectorAll('main a.btn'), function (a) {
+      return a.getAttribute('href') === href;
+    });
+    // On screen and actually visible: the zoom hero fades its copy out while its box stays put,
+    // so opacity and visibility count, not just position.
+    function seen(el) {
+      var r = el.getBoundingClientRect();
+      if (r.width < 2 || r.bottom <= 0 || r.top >= window.innerHeight) return false;
+      if (el.closest('[inert]')) return false;
+      var o = 1;
+      for (var n = el; n && n.nodeType === 1; n = n.parentElement) {
+        var cs = getComputedStyle(n);
+        if (cs.display === 'none' || cs.visibility === 'hidden') return false;
+        o *= +cs.opacity;
+      }
+      return o > 0.1;
+    }
+    var shown = null;
+    var queued = false;
     function sync() {
-      var show = past && !footerIn && ctasIn === 0;
+      queued = false;
+      var show = phone.matches && !ctas.some(seen);
+      if (show === shown) return;
+      shown = show;
       bar.classList.toggle('is-shown', show);
       bar.setAttribute('aria-hidden', show ? 'false' : 'true');
       bar.inert = !show;
-      document.documentElement.classList.toggle('sticky-cta-on', show);
+      // lets the hero's phone sheet sit above the bar
+      document.documentElement.style.setProperty('--cta-bar-h', show ? bar.offsetHeight + 'px' : '0px');
     }
-    if (start) {
-      new IntersectionObserver(function (entries) {
-        var e = entries[entries.length - 1];
-        past = !e.isIntersecting && e.boundingClientRect.top < 0;
-        sync();
-      }).observe(start);
+    function queue() {
+      if (!queued) {
+        queued = true;
+        requestAnimationFrame(sync);
+      }
     }
-    if (footer) {
-      new IntersectionObserver(function (entries) {
-        footerIn = entries[entries.length - 1].isIntersecting;
-        sync();
-      }).observe(footer);
-    }
-    // the page's own buttons to the same link (hero, page intro, plan cards, final CTA band)
-    var ctas = [].filter.call(document.querySelectorAll('main a.btn'), function (a) {
-      return a.getAttribute('href') === bar.firstElementChild.getAttribute('href');
-    });
-    if (ctas.length) {
-      var seen = new Map();
-      var io = new IntersectionObserver(function (entries) {
-        entries.forEach(function (e) {
-          seen.set(e.target, e.isIntersecting);
-        });
-        ctasIn = 0;
-        seen.forEach(function (v) {
-          if (v) ctasIn++;
-        });
-        sync();
-      });
-      ctas.forEach(function (a) {
-        io.observe(a);
-      });
-    }
+    window.addEventListener('scroll', queue, { passive: true });
+    window.addEventListener('resize', queue);
+    phone.addEventListener('change', queue);
+    // the zoom hero sets its copy's opacity in its own scroll handler; check again after it
+    window.addEventListener('load', queue);
     sync();
   })();
 </script>

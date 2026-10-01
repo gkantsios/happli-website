@@ -29,7 +29,6 @@ const appHeight = Math.round((APP_WIDTH * (MONITOR.y1 - MONITOR.y0)) / (MONITOR.
 
 <section
   class="zoom"
-  data-cta-after
   data-zoom
   data-iw={photo.width}
   data-ih={photo.height}
@@ -270,7 +269,10 @@ const appHeight = Math.round((APP_WIDTH * (MONITOR.y1 - MONITOR.y0)) / (MONITOR.
         // Grow the landed screen so the demo buttons sit near the bottom of the screen
         // (the screen lands just under the header, see endCy below).
         chips.style.width = mw * S + 'px';
-        grow = Math.max(0, h - (NAV + 16) - baseMH - 12 - chips.offsetHeight - 20);
+        // Leave room for the bottom "Book a demo" bar, which shows by the time the screen lands.
+        var bar = document.querySelector('[data-sticky-cta]');
+        var barH = bar ? bar.offsetHeight : 0;
+        grow = Math.max(0, h - (NAV + 16) - baseMH - 12 - chips.offsetHeight - 16 - barH);
       }
       app.style.width = appW + 'px';
       app.style.height = (baseMH + grow) / k + 'px';
