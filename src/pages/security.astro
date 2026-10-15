@@ -1,0 +1,13 @@
+---
+import ProseLayout from '../layouts/ProseLayout.astro';
+import { legal } from '../lib/legal';
+import { breadcrumbs } from '../lib/jsonld';
+---
+
+<ProseLayout
+  title="Security | Happli"
+  description="How Happli keeps studio data separate and encrypted, controls access, and handles vulnerability reports."
+  jsonLd={[breadcrumbs([{ name: 'Home', href: '/' }, { name: 'Security', href: '/security/' }])]}
+>
+  <Fragment set:html={legal.security} />
+</ProseLayout>

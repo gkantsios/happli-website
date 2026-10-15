@@ -1,0 +1,628 @@
+---
+// Interactive walkthrough, ported from the .walk section of site-mockup.html.
+// Four steps, each with a scene. Auto-plays (7s per step) once the section is in view, one pass
+// that stops on the last step, unless the visitor prefers reduced motion. Any click or key inside
+// the section stops auto-play. A scene's one-shot drop-in (data-play="manual", styled in
+// public/motion/motion.css) plays the first time the scene shows.
+// Service names and notes are adapted for spray tan studios (no salon services, no formula notes).
+// Every interaction matches the app today: gap offers go to one client you pick, Happli drafts the
+// text, and nothing sends until you approve it. No read receipts, no booking by reply.
+import SectionHead from './SectionHead.astro';
+import NeedsList from '../mocks/NeedsList.astro';
+import CheckoutSheet from '../mocks/CheckoutSheet.astro';
+
+const steps = [
+  { time: '8:40', title: 'Open the book', body: 'Everything that needs you, in one short list.' },
+  { time: '11:10', title: 'A gap opens', body: 'Pick a client, and Happli drafts the offer.' },
+  { time: '1:15', title: 'Maria arrives', body: 'Her notes and history are already on the appointment.' },
+  { time: '2:45', title: 'Before she leaves', body: 'Book her next visit before she goes.' },
+];
+const titles = ['Needs you', 'The book · Thursday', 'Appointment · Maria K.', 'Rebook'];
+---
+
+<section class="walk section" id="walkthrough" data-walk aria-labelledby="walk-title">
+  <div class="wrap">
+    <SectionHead eyebrow="How a Thursday runs" title="Four moments. None of them at the front desk." id="walk-title" />
+    <div class="walk-in">
+      <ol class="steps" role="tablist" aria-label="Walkthrough steps" aria-orientation="vertical">
+        {
+          steps.map((s, i) => (
+            <li
+              class:list={['step', { on: i === 0 }]}
+              role="tab"
+              id={`walk-tab-${i}`}
+              aria-controls="walk-panel"
+              aria-selected={i === 0 ? 'true' : 'false'}
+              tabindex={i === 0 ? '0' : '-1'}
+              data-step={i}
+            >
+              <b>
+                {s.time} · {s.title}
+              </b>
+              <span>{s.body}</span>
+              <i aria-hidden="true" />
+            </li>
+          ))
+        }
+      </ol>
+
+      <div class="demo" role="tabpanel" id="walk-panel" aria-labelledby="walk-tab-0" data-titles={JSON.stringify(titles)}>
+        <div class="demo-bar">
+          <div class="dots" aria-hidden="true"><i></i><i></i><i></i></div>
+          <span class="demo-title" data-title>{titles[0]}</span>
+        </div>
+
+        <div class="scene on" data-scene="0">
+          <NeedsList interactive />
+        </div>
+
+        <div class="scene" data-scene="1" inert>
+          {/* the first time this scene shows, the day drops in and the open hour pulses once */}
+          <div class="gapview" data-play="manual">
+            <div class="gap-col">
+              <div class="gap-head"><b>Dana</b><span>Thu 27</span></div>
+              <div class="gap-ap rose"><b>Ana O.</b><span>Custom spray tan · 11:00</span></div>
+              <div class="gap-open"><b>Open · 1 hr</b><span>1:15 – 2:15</span></div>
+              <div class="gap-ap grey"><b>Tess M.</b><span>Rapid tan · 2:30</span></div>
+            </div>
+            <div class="gap-side">
+              <p class="side-title">Pick a client for this gap</p>
+              <div class="side-list" data-picks>
+                <button type="button" class="pick" data-act="pick" data-first="Maria" aria-pressed="false">Maria K.</button>
+                <button type="button" class="pick" data-act="pick" data-first="Junie" aria-pressed="false">Junie P.</button>
+                <button type="button" class="pick" data-act="pick" data-first="Rae" aria-pressed="false">Rae L.</button>
+                <button type="button" class="pick" data-act="pick" data-first="Bea" aria-pressed="false">Bea T.</button>
+              </div>
+              <div class="draft" data-draft hidden>
+                <p class="draft-label">Happli's draft</p>
+                <p class="draft-text" data-draft-text></p>
+                <button type="button" class="btn btn-coral demo-cta" data-act="approve">Approve &amp; send</button>
+                <p class="sent-tag" data-sent aria-live="polite"></p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="scene" data-scene="2" inert>
+          <CheckoutSheet interactive />
+        </div>
+
+        <div class="scene" data-scene="3" inert>
+          <div class="rebook">
+            <p class="side-title">Book her next visit</p>
+            <div class="rebook-slots">
+              <button type="button" class="slot-btn" data-act="rebook">Thu 10 Sep · 1:15 pm</button>
+              <button type="button" class="slot-btn" data-act="rebook">Fri 11 Sep · 10:00 am</button>
+              <button type="button" class="slot-btn" data-act="rebook">Sat 12 Sep · 9:30 am</button>
+            </div>
+            <p class="rebook-done"><b>Booked</b> · confirmation sent</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script is:inline>
+  (function () {
+    var root = document.querySelector('[data-walk]');
+    if (!root) return;
+    var steps = [].slice.call(root.querySelectorAll('.step'));
+    var scenes = [].slice.call(root.querySelectorAll('.scene'));
+    var panel = root.querySelector('.demo');
+    var title = root.querySelector('[data-title]');
+    var titles = JSON.parse(panel.getAttribute('data-titles'));
+    var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var cur = 0;
+    var timer = null;
+    var auto = !reduced;
+
+    function show(i, play) {
+      cur = (i + steps.length) % steps.length;
+      steps.forEach(function (st, k) {
+        var on = k === cur;
+        st.classList.toggle('on', on);
+        st.classList.toggle('playing', on && play);
+        st.setAttribute('aria-selected', on ? 'true' : 'false');
+        st.tabIndex = on ? 0 : -1;
+        if (on) {
+          var bar = st.querySelector('i');
+          bar.style.animation = 'none';
+          void st.offsetWidth;
+          bar.style.animation = '';
+        }
+      });
+      scenes.forEach(function (sc, k) {
+        var on = k === cur;
+        sc.classList.toggle('on', on);
+        sc.inert = !on;
+        var seq = on && sc.querySelector('[data-play="manual"]');
+        if (seq) seq.classList.add('is-playing');
+      });
+      panel.setAttribute('aria-labelledby', steps[cur].id);
+      title.textContent = titles[cur];
+      clearTimeout(timer);
+      if (play && cur < steps.length - 1) {
+        timer = setTimeout(function () {
+          show(cur + 1, true);
+        }, 7000);
+      }
+    }
+
+    function stopAuto() {
+      auto = false;
+      clearTimeout(timer);
+      steps[cur].classList.remove('playing');
+    }
+
+    root.addEventListener('click', stopAuto);
+    root.addEventListener('keydown', stopAuto);
+
+    steps.forEach(function (st) {
+      st.addEventListener('click', function () {
+        show(+st.getAttribute('data-step'), false);
+      });
+      st.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          show(+st.getAttribute('data-step'), false);
+        } else if (e.key === 'ArrowDown' || e.key === 'ArrowRight') {
+          e.preventDefault();
+          show(cur + 1, false);
+          steps[cur].focus();
+        } else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
+          e.preventDefault();
+          show(cur - 1, false);
+          steps[cur].focus();
+        } else if (e.key === 'Home') {
+          e.preventDefault();
+          show(0, false);
+          steps[cur].focus();
+        } else if (e.key === 'End') {
+          e.preventDefault();
+          show(steps.length - 1, false);
+          steps[cur].focus();
+        }
+      });
+    });
+
+    var started = false;
+    if (!auto) {
+      show(0, false);
+    } else if ('IntersectionObserver' in window) {
+      var io = new IntersectionObserver(
+        function (entries) {
+          if (entries[0].isIntersecting && !started) {
+            started = true;
+            io.disconnect();
+            show(0, auto);
+          }
+        },
+        { threshold: 0.35 }
+      );
+      io.observe(root);
+    } else {
+      show(0, auto);
+    }
+
+    var need = root.querySelector('[data-need]');
+    function needDone(row, tag) {
+      row.classList.add('done');
+      if (tag) row.querySelector('.done-tag').textContent = tag;
+      if (need.querySelectorAll('.need-row.done').length === 2) need.classList.add('all');
+    }
+    var picks = [].slice.call(root.querySelectorAll('[data-act="pick"]'));
+    var draft = root.querySelector('[data-draft]');
+    var draftText = root.querySelector('[data-draft-text]');
+    var sent = root.querySelector('[data-sent]');
+    var approve = root.querySelector('[data-act="approve"]');
+    var picked = '';
+
+    root.querySelectorAll('[data-act]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        stopAuto();
+        var act = btn.getAttribute('data-act');
+
+        if (act === 'gap') {
+          needDone(btn.closest('.need-row'));
+          show(1, false);
+        }
+        if (act === 'wl-book') needDone(btn.closest('.need-row'), 'Booked');
+        if (act === 'wl-dismiss') needDone(btn.closest('.need-row'), 'Dismissed');
+
+        if (act === 'pick') {
+          picked = btn.getAttribute('data-first');
+          picks.forEach(function (b) {
+            var on = b === btn;
+            b.classList.toggle('picked', on);
+            b.setAttribute('aria-pressed', on ? 'true' : 'false');
+          });
+          draftText.textContent =
+            'Hi ' + picked + '! A 1:15 spot just opened Thursday with Dana. Book it here: goldenglow.gohappli.com';
+          draft.hidden = false;
+        }
+
+        if (act === 'approve' && picked) {
+          approve.hidden = true;
+          picks.forEach(function (b) {
+            b.disabled = true;
+          });
+          sent.textContent = 'Sent to ' + picked;
+          draft.classList.add('is-sent');
+        }
+
+        if (act === 'checkout') btn.closest('.apt').classList.add('done');
+
+        if (act === 'rebook') {
+          root.querySelectorAll('.slot-btn').forEach(function (b) {
+            b.classList.toggle('picked', b === btn);
+          });
+          btn.closest('.rebook').classList.add('done');
+        }
+      });
+    });
+  })();
+</script>
+
+<style>
+  .walk-in {
+    display: grid;
+    grid-template-columns: 0.9fr 1.4fr;
+    gap: 56px;
+    margin-top: 56px;
+    align-items: start;
+  }
+
+  /* steps */
+  .steps {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 4px;
+  }
+  .step {
+    position: relative;
+    padding: 16px 18px 18px;
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .step:hover {
+    background: rgba(27, 22, 20, 0.04);
+  }
+  .step:focus-visible {
+    outline: 2px solid var(--ink);
+    outline-offset: 2px;
+  }
+  .step b {
+    display: block;
+    font-weight: 600;
+    font-size: 16px;
+  }
+  .step span {
+    display: block;
+    margin-top: 4px;
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+  .step i {
+    position: absolute;
+    left: 18px;
+    right: 18px;
+    bottom: 8px;
+    height: 2px;
+    background: var(--line);
+    border-radius: 2px;
+    overflow: hidden;
+    opacity: 0;
+  }
+  .step i::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--ink);
+    transform: scaleX(0);
+    transform-origin: 0 0;
+  }
+  .step.on {
+    background: var(--surface);
+    box-shadow: 0 1px 0 var(--line), 0 8px 24px -16px rgba(27, 22, 20, 0.25);
+  }
+  .step.on i {
+    opacity: 1;
+  }
+  .step.on.playing i::after {
+    animation: progress 7s linear forwards;
+  }
+  @keyframes progress {
+    to {
+      transform: scaleX(1);
+    }
+  }
+
+  /* demo window */
+  .demo {
+    position: relative;
+    background: var(--surface);
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius-lg);
+    box-shadow: 0 30px 80px -30px rgba(27, 22, 20, 0.22);
+    min-height: 480px;
+    overflow: hidden;
+  }
+  .demo-bar {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    height: 44px;
+    padding: 0 18px;
+    border-bottom: 1px solid var(--line);
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--muted);
+  }
+  .dots {
+    display: flex;
+    gap: 6px;
+  }
+  .dots i {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: rgba(27, 22, 20, 0.12);
+  }
+  .scene {
+    position: absolute;
+    inset: 44px 0 0;
+    padding: 24px;
+    opacity: 0;
+    transform: translateY(8px);
+    transition: opacity 0.35s ease, transform 0.35s ease;
+    pointer-events: none;
+    font-size: 14px;
+  }
+  .scene.on {
+    opacity: 1;
+    transform: none;
+    pointer-events: auto;
+  }
+
+  .rebook-done {
+    display: none;
+    font-style: normal;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--sage-ink);
+    background: var(--sage);
+    padding: 5px 10px;
+    border-radius: var(--radius-pill);
+  }
+
+  /* scene 1: the book */
+  .gapview {
+    display: grid;
+    grid-template-columns: 1fr 1.2fr;
+    gap: 24px;
+  }
+  .gap-col {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 10px;
+    display: grid;
+    gap: 8px;
+    align-content: start;
+    font-size: 12px;
+  }
+  .gap-head {
+    display: flex;
+    justify-content: space-between;
+    padding: 4px 4px 8px;
+    border-bottom: 1px solid var(--line);
+  }
+  .gap-head b {
+    font-weight: 600;
+  }
+  .gap-head span {
+    color: var(--muted);
+  }
+  .gap-ap,
+  .gap-open {
+    border-radius: var(--radius-sm);
+    padding: 8px 10px;
+    line-height: 1.3;
+    border-left: 3px solid transparent;
+  }
+  .gap-col :global(b) {
+    display: block;
+    font-weight: 600;
+  }
+  .gap-col :global(span) {
+    color: var(--ink-2);
+    font-size: 11px;
+  }
+  .gap-ap.rose {
+    background: var(--ap-rose);
+    border-color: var(--ap-rose-edge);
+  }
+  .gap-ap.grey {
+    background: var(--ap-grey);
+    border-color: var(--ap-grey-edge);
+  }
+  .gap-open {
+    min-height: 64px;
+    border: 1px dashed var(--coral);
+    color: var(--coral-ink);
+    transition: background 0.4s, border-color 0.4s;
+  }
+  .gap-open :global(b),
+  .gap-open :global(span) {
+    color: var(--coral-ink);
+  }
+  .side-title {
+    font-family: var(--serif);
+    font-size: 22px;
+    line-height: 1.2;
+  }
+  .side-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 12px;
+  }
+  .pick {
+    font: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 6px 12px;
+    border-radius: var(--radius-pill);
+    background: var(--blush-2);
+    border: 1px solid var(--line-strong);
+    color: var(--ink);
+    cursor: pointer;
+  }
+  .pick:hover:not(:disabled) {
+    border-color: var(--ink);
+  }
+  .pick.picked {
+    background: var(--ink);
+    border-color: var(--ink);
+    color: #fff;
+  }
+  .pick:disabled {
+    cursor: default;
+  }
+  .pick:disabled:not(.picked) {
+    opacity: 0.55;
+  }
+  .demo-cta {
+    margin-top: 18px;
+    min-height: 42px;
+    font-size: 14px;
+  }
+  /* .btn sets display, which would otherwise override the hidden attribute */
+  .demo-cta[hidden] {
+    display: none;
+  }
+  .demo-cta:disabled {
+    cursor: default;
+    transform: none;
+  }
+  .draft {
+    margin-top: 16px;
+  }
+  .draft[hidden] {
+    display: none;
+  }
+  .draft-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .draft-text {
+    margin-top: 6px;
+    padding: 10px 12px;
+    border-radius: 12px 12px 12px 4px;
+    background: var(--blush-2);
+    border: 1px solid var(--line);
+    font-size: 13px;
+    line-height: 1.45;
+    color: var(--ink);
+  }
+  .sent-tag:empty {
+    display: none;
+  }
+  .sent-tag {
+    display: inline-block;
+    margin-top: 14px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--sage-ink);
+    background: var(--sage);
+    padding: 5px 10px;
+    border-radius: var(--radius-pill);
+  }
+
+  /* scene 3: rebook */
+  .rebook-slots {
+    display: grid;
+    gap: 8px;
+    margin-top: 18px;
+    max-width: 22em;
+  }
+  .slot-btn {
+    font: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 12px 16px;
+    border-radius: var(--radius-pill);
+    border: 1px solid var(--line-strong);
+    background: var(--surface);
+    color: var(--ink);
+    cursor: pointer;
+    text-align: left;
+    font-variant-numeric: tabular-nums;
+  }
+  .slot-btn:hover {
+    border-color: var(--ink);
+  }
+  .slot-btn.picked {
+    background: var(--coral-strong);
+    border-color: var(--coral-strong);
+    color: #fff;
+  }
+  .rebook.done .rebook-done {
+    display: inline-block;
+    margin-top: 16px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .step,
+    .scene,
+    .gap-open {
+      transition: none;
+    }
+    .scene {
+      transform: none;
+    }
+    .step i {
+      display: none;
+    }
+  }
+
+  @media (max-width: 860px) {
+    .walk-in {
+      grid-template-columns: 1fr;
+      gap: 24px;
+    }
+    .gapview {
+      grid-template-columns: 1fr;
+    }
+    /* all scenes share one grid cell, so the panel is as tall as the tallest scene and never
+       changes size when the scene changes (nothing below it shifts) */
+    .demo {
+      min-height: 0;
+      display: grid;
+      grid-template-rows: auto 1fr;
+    }
+    .scene {
+      grid-area: 2 / 1;
+      position: relative;
+      inset: auto;
+      opacity: 1;
+      transform: none;
+      visibility: hidden;
+    }
+    .scene.on {
+      visibility: visible;
+    }
+  }
+  @media (max-width: 480px) {
+    .scene {
+      padding: 18px 16px;
+    }
+  }
+</style>

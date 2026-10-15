@@ -1,0 +1,417 @@
+---
+import Icon from '../Icon.astro';
+
+// An illustration of the Happli calendar, built in HTML/CSS with sample data.
+// Hidden from assistive tech; the paragraph below describes it.
+// Layout responds to the component's own width (container queries), so it also works
+// inside the zoom hero's monitor. `bare` drops the outer margin, border and shadow and
+// fills its parent's height.
+interface Props {
+  bare?: boolean;
+}
+const { bare = false } = Astro.props;
+type Ap = { col: number; start: number; len: number; tone: 'rose' | 'sand' | 'sage' | 'grey' | 'open'; title: string; meta: string };
+
+const team = [
+  { name: 'Jess', sub: 'Studio' },
+  { name: 'Maya', sub: 'Studio' },
+  { name: 'Tori', sub: 'Mobile' },
+];
+const hours = ['9 am', '10 am', '11 am', '12 pm', '1 pm', '2 pm'];
+// start and len are in hours from 9 am
+const aps: Ap[] = [
+  { col: 0, start: 0.25, len: 0.5, tone: 'rose', title: 'Custom spray tan', meta: 'Deposit paid' },
+  { col: 0, start: 1.25, len: 0.75, tone: 'sand', title: 'Rapid tan', meta: 'Confirmed' },
+  { col: 0, start: 4.25, len: 0.75, tone: 'open', title: 'Open · 45 min', meta: '1:15 – 2:00' },
+  { col: 1, start: 0.5, len: 0.75, tone: 'sage', title: 'Spray tan + brows', meta: 'Reminder sent' },
+  { col: 1, start: 2, len: 0.5, tone: 'rose', title: 'Custom spray tan', meta: 'Deposit paid' },
+  { col: 1, start: 3.5, len: 1, tone: 'grey', title: 'Blocked', meta: 'Training' },
+  { col: 2, start: 0.75, len: 1.25, tone: 'sand', title: 'Mobile visit', meta: 'Bridal party · 3' },
+  { col: 2, start: 3.25, len: 0.75, tone: 'sage', title: 'Mobile visit', meta: 'Deposit paid' },
+];
+---
+
+<figure class:list={['book-figure', { bare }]}>
+  <div class="screen" aria-hidden="true">
+    <div class="screen-bar">
+      <div class="dots"><i></i><i></i><i></i></div>
+      <div class="screen-tabs"><b>Calendar</b><span>Clients</span><span>Messages</span></div>
+      <span class="screen-gear"><Icon name="settings" size={16} strokeWidth={1.75} /></span>
+    </div>
+    <div class="screen-sub">
+      <div class="view"><span class="on">Day</span><span>Week</span></div>
+      <div class="screen-date"><i></i>Thursday</div>
+    </div>
+    <div class="screen-body">
+      <div class="book" style={`--cols:${team.length}`}>
+        <div class="corner"></div>
+        {team.map((t, c) => <div class:list={['th', { 'hide-sm': c === 2 }]}><b>{t.name}</b><span>{t.sub}</span></div>)}
+        <div class="times">
+          {hours.map((h, i) => <span style={`top:${(i / hours.length) * 100}%`}>{h}</span>)}
+        </div>
+        {
+          team.map((_, c) => (
+            <div class:list={['col', { 'hide-sm': c === 2 }]}>
+              {aps
+                .filter((a) => a.col === c)
+                .map((a, i) => (
+                  <div
+                    class:list={['ap', a.tone, { short: a.len < 0.75 }]}
+                    style={`top:calc(${(a.start / hours.length) * 100}% + 2px);height:calc(${(a.len / hours.length) * 100}% - 4px);animation-delay:${0.08 * (i + c)}s`}
+                  >
+                    <b>{a.title}</b>
+                    <span>{a.meta}</span>
+                  </div>
+                ))}
+              {c === 0 && <div class="now" style="top:51%" />}
+            </div>
+          ))
+        }
+      </div>
+      <aside class="needs">
+        <p class="needs-title">Needs you</p>
+        <div class="need">
+          <b>Open gap · Jess</b>
+          <span>1:15 – 2:00 today</span>
+          <em>Offer drafted · waiting for you</em>
+        </div>
+        <div class="need">
+          <b>Waitlist match</b>
+          <span>Rapid tan · Saturday morning</span>
+          <em>Book or dismiss</em>
+        </div>
+      </aside>
+    </div>
+  </div>
+  <figcaption class="visually-hidden">
+    Illustration of the Happli calendar: a day view with a column for each team member, appointments marked
+    deposit paid or confirmed, an open 45-minute gap, and a "Needs you" list with a drafted gap offer waiting for
+    approval.
+  </figcaption>
+</figure>
+
+<style>
+  .book-figure {
+    margin: 64px auto 0;
+    max-width: 1040px;
+    container-type: inline-size;
+  }
+  .bare {
+    margin: 0;
+    max-width: none;
+    height: 100%;
+  }
+  .bare .screen {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+  }
+  .bare .screen-body {
+    flex: 1;
+  }
+  .bare .book {
+    grid-template-rows: auto 1fr;
+  }
+  .screen {
+    border-radius: var(--radius-lg);
+    background: var(--surface);
+    border: 1px solid var(--line-strong);
+    box-shadow: var(--shadow-card);
+    overflow: hidden;
+    text-align: left;
+    font-size: 12px;
+  }
+  .screen-bar {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+    height: 46px;
+    padding: 0 20px;
+    border-bottom: 1px solid var(--line);
+  }
+  .dots {
+    display: flex;
+    gap: 6px;
+  }
+  .dots i {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: rgba(27, 22, 20, 0.12);
+  }
+  .screen-gear {
+    margin-left: auto;
+    display: grid;
+    place-items: center;
+    color: var(--muted);
+  }
+  .screen-tabs {
+    display: flex;
+    gap: 20px;
+    font-weight: 500;
+    color: var(--muted);
+  }
+  .screen-tabs b {
+    color: var(--ink);
+    font-weight: 600;
+    position: relative;
+  }
+  .screen-tabs b::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -15px;
+    height: 2px;
+    background: var(--ink);
+  }
+  .screen-sub {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 20px;
+    border-bottom: 1px solid var(--line);
+    gap: 12px;
+  }
+  .view {
+    display: flex;
+    gap: 6px;
+  }
+  .view span {
+    padding: 5px 11px;
+    border-radius: var(--radius-pill);
+    font-weight: 600;
+    color: var(--muted);
+  }
+  .view span.on {
+    background: var(--ink);
+    color: #fff;
+  }
+  .screen-date {
+    font-weight: 600;
+    color: var(--ink-2);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .screen-date i {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--coral);
+  }
+  .screen-body {
+    display: grid;
+    grid-template-columns: 1fr 260px;
+  }
+  .book {
+    display: grid;
+    grid-template-columns: 48px repeat(var(--cols), 1fr);
+    grid-template-rows: auto 360px;
+  }
+  .th {
+    padding: 12px 8px;
+    border-bottom: 1px solid var(--line);
+    border-left: 1px solid var(--line);
+    text-align: center;
+    line-height: 1.35;
+  }
+  .th b {
+    display: block;
+    font-weight: 600;
+  }
+  .th span {
+    color: var(--muted);
+    font-weight: 500;
+  }
+  .corner {
+    border-bottom: 1px solid var(--line);
+  }
+  .times {
+    position: relative;
+  }
+  .times span {
+    position: absolute;
+    right: 8px;
+    margin-top: 4px;
+    color: var(--muted);
+    font-size: 11px;
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+  .col {
+    position: relative;
+    border-left: 1px solid var(--line);
+    background-image: linear-gradient(var(--line) 1px, transparent 1px);
+    background-size: 100% calc(100% / 6);
+  }
+  .ap {
+    position: absolute;
+    left: 6px;
+    right: 6px;
+    border-radius: var(--radius-sm);
+    padding: 6px 8px;
+    line-height: 1.3;
+    border-left: 3px solid transparent;
+    overflow: hidden;
+  }
+  .ap b {
+    display: block;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .ap span {
+    display: block;
+    color: var(--ink-2);
+    font-size: 11px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .ap.short span {
+    display: none;
+  }
+  .ap.rose {
+    background: var(--ap-rose);
+    border-color: var(--ap-rose-edge);
+  }
+  .ap.sand {
+    background: var(--ap-sand);
+    border-color: var(--ap-sand-edge);
+  }
+  .ap.sage {
+    background: var(--ap-sage);
+    border-color: var(--ap-sage-edge);
+  }
+  .ap.grey {
+    background: var(--ap-grey);
+    border-color: var(--ap-grey-edge);
+  }
+  .ap.open {
+    background: rgba(255, 225, 227, 0.35);
+    border: 1px dashed var(--coral);
+    color: var(--coral-ink);
+    text-align: center;
+  }
+  .ap.open b,
+  .ap.open span {
+    color: var(--coral-ink);
+  }
+  .now {
+    position: absolute;
+    left: 0;
+    right: -200%;
+    height: 1.5px;
+    background: var(--coral);
+    z-index: 2;
+    opacity: 0.9;
+    pointer-events: none;
+  }
+  .now::before {
+    content: '';
+    position: absolute;
+    left: -4px;
+    top: -3.5px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--coral);
+  }
+  .book {
+    position: relative;
+    overflow: hidden;
+  }
+  .needs {
+    border-left: 1px solid var(--line);
+    padding: 16px;
+    background: var(--blush-2);
+    display: grid;
+    align-content: start;
+    gap: 10px;
+  }
+  .needs-title {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .need {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 10px 12px;
+    line-height: 1.35;
+  }
+  .need b {
+    display: block;
+    font-weight: 600;
+  }
+  .need span {
+    display: block;
+    color: var(--muted);
+  }
+  .need em {
+    display: inline-block;
+    margin-top: 8px;
+    font-style: normal;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--coral-ink);
+    background: var(--coral-soft);
+    padding: 3px 8px;
+    border-radius: var(--radius-pill);
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .ap {
+      opacity: 0;
+      animation: rise 0.55s cubic-bezier(0.2, 0.7, 0.2, 1) forwards;
+    }
+  }
+  @keyframes rise {
+    from {
+      opacity: 0;
+      transform: translateY(6px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  @container (max-width: 800px) {
+    .screen-body {
+      grid-template-columns: 1fr;
+    }
+    .needs {
+      border-left: 0;
+      border-top: 1px solid var(--line);
+      grid-template-columns: 1fr 1fr;
+    }
+    .needs-title {
+      grid-column: 1 / -1;
+    }
+  }
+  @container (max-width: 552px) {
+    .screen-tabs {
+      display: none;
+    }
+    .book {
+      grid-template-columns: 40px repeat(2, 1fr);
+    }
+    .hide-sm {
+      display: none;
+    }
+    .needs {
+      grid-template-columns: 1fr;
+    }
+    .needs .need:nth-of-type(2) {
+      display: none;
+    }
+  }
+</style>

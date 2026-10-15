@@ -1,0 +1,1917 @@
+---
+// Interactive demo of the Happli owner app (calendar day view), shown on the zoom hero's monitor.
+// Laid out at a 1280 x 784 app size and CSS-scaled to the monitor by HeroZoom.
+//
+// Everything is sample data. The demo only shows what the app does today: nothing sends and
+// nothing books. Drafts wait for approval, and checkout ends on "Paid".
+//
+// HeroZoom decides when the screen is usable: it keeps the app `inert` until the zoom has landed,
+// and dispatches `od:landed` (detail: true/false) on the [data-od] root when that changes.
+// With reduced motion the screen is always usable.
+//
+// Script notes (kept here so they don't ship in the page): the phone sheet moves out of the scaled
+// monitor into the hero stage; panels are cloned from <template>s, which carry the component's
+// scoped-style attributes; a click on empty calendar area closes the panel (clicks inside it never
+// do); when the screen stops being usable, focus moves to the first focusable element after the hero.
+import Icon from '../Icon.astro';
+import logoRaw from '../../../public/logo-white.svg?raw';
+
+// ---------- demo data (the one source of truth) ----------
+type Appt = { kind: 'appt'; start: string; end: string; client: string; service: string; price: number; deposit?: number; since?: string; note?: string };
+type Hold = { kind: 'hold'; start: string; end: string; reason: string };
+type Gap = { kind: 'gap'; start: string; end: string };
+type Off = { kind: 'off'; start: string; end: string };
+type Block = Appt | Hold | Gap | Off;
+type Staff = { id: string; name: string; initials: string; color: string; open: [string, string][]; blocks: Block[] };
+
+const STUDIO = 'Golden Glow';
+const AXIS_START = 9 * 60;
+const AXIS_END = 15 * 60;
+const NOW = '11:42';
+
+const toMin = (t: string) => {
+  const [h, m] = t.split(':').map(Number);
+  return h * 60 + m;
+};
+const clock = (min: number) => {
+  const h = Math.floor(min / 60);
+  const m = min % 60;
+  return `${((h + 11) % 12) + 1}:${String(m).padStart(2, '0')}`;
+};
+const ampm = (min: number) => (Math.floor(min / 60) >= 12 ? 'pm' : 'am');
+const fmt = (min: number) => `${clock(min)} ${ampm(min)}`;
+const range = (a: number, b: number) => `${fmt(a)} – ${fmt(b)}`;
+const spoken = (a: number, b: number) => (ampm(a) === ampm(b) ? `${clock(a)} to ${fmt(b)}` : `${fmt(a)} to ${fmt(b)}`);
+
+const appt = (start: string, end: string, client: string, service: string, price: number, extra: Partial<Appt> = {}): Appt => ({ kind: 'appt', start, end, client, service, price, ...extra });
+const hold = (start: string, end: string, reason: string): Hold => ({ kind: 'hold', start, end, reason });
+const gap = (start: string, end: string): Gap => ({ kind: 'gap', start, end });
+const off = (start: string, end: string): Off => ({ kind: 'off', start, end });
+
+const DANA = { id: 'dana', name: 'Dana', initials: 'DA', color: '#a85d58' };
+const JESS = { id: 'jess', name: 'Jess', initials: 'JE', color: '#f89e69' };
+const MAYA = { id: 'maya', name: 'Maya', initials: 'MA', color: '#6b6a45' };
+
+// Thursday, Aug 27 ("today"). Every open stretch is booked or blocked except Dana's one gap,
+// because the app marks every free stretch between bookings as a gap.
+const thursday: Staff[] = [
+  {
+    ...DANA,
+    open: [['9:00', '15:00']],
+    blocks: [
+      appt('9:00', '9:30', 'Sofia L.', 'Custom spray tan', 55),
+      appt('9:30', '10:15', 'Ava R.', 'Rapid tan', 45),
+      appt('10:15', '11:00', 'Chloe P.', 'Custom spray tan + contour', 70),
+      appt('11:00', '11:30', 'Ana O.', 'Custom spray tan', 55, { deposit: 15, since: '2025', note: 'Light-medium shade. Prefers the 8-hour rinse.' }),
+      hold('11:30', '12:15', 'Lunch'),
+      appt('12:15', '13:15', 'Lena M.', 'Custom spray tan + contour', 70),
+      gap('13:15', '14:15'),
+      hold('14:15', '14:30', 'Break'),
+      appt('14:30', '15:00', 'Tess M.', 'Rapid tan', 45),
+    ],
+  },
+  {
+    ...JESS,
+    open: [['9:00', '12:00']],
+    blocks: [
+      appt('9:00', '9:30', 'Priya S.', 'Custom spray tan', 55),
+      appt('9:30', '10:15', 'Emma J.', 'Rapid tan', 45),
+      hold('10:15', '12:00', 'Training'),
+      off('12:00', '15:00'),
+    ],
+  },
+  {
+    ...MAYA,
+    open: [['12:00', '15:00']],
+    blocks: [
+      off('9:00', '12:00'),
+      appt('12:00', '13:00', 'Bridal party', 'Group spray tan', 60),
+      appt('13:00', '13:30', 'Nina T.', 'Custom spray tan', 55),
+      appt('13:30', '14:15', 'Grace H.', 'Rapid tan', 45),
+      hold('14:15', '15:00', 'Clean-up'),
+    ],
+  },
+];
+
+// Lighter prebuilt days for the week strip (no gaps). Mon and Tue reuse Wednesday.
+const wednesday: Staff[] = [
+  { ...DANA, open: [], blocks: [appt('10:00', '10:30', 'Olivia B.', 'Custom spray tan', 55), appt('13:00', '13:45', 'Mia C.', 'Rapid tan', 45)] },
+  { ...JESS, open: [], blocks: [appt('9:30', '10:00', 'Harper G.', 'Custom spray tan', 55), off('12:00', '15:00')] },
+  { ...MAYA, open: [], blocks: [off('9:00', '12:00')] },
+];
+const friday: Staff[] = [
+  { ...DANA, open: [], blocks: [appt('9:30', '10:15', 'Zoe K.', 'Rapid tan', 45)] },
+  { ...JESS, open: [], blocks: [appt('10:00', '10:30', 'Ruby S.', 'Custom spray tan', 55), off('12:00', '15:00')] },
+  { ...MAYA, open: [], blocks: [off('9:00', '12:00'), appt('12:30', '13:30', 'Lily P.', 'Custom spray tan + contour', 70)] },
+];
+const weekend: Staff[] = [DANA, JESS, MAYA].map((s) => ({ ...s, open: [], blocks: [off('9:00', '15:00')] }));
+
+const sets = [
+  { key: 'thu', title: 'Thu, Aug 27', staff: thursday, today: true },
+  { key: 'wed', title: 'Wed, Aug 26', staff: wednesday, today: false },
+  { key: 'fri', title: 'Fri, Aug 28', staff: friday, today: false },
+  { key: 'off', title: 'Sat, Aug 29', staff: weekend, today: false },
+];
+const week = [
+  { wd: 'S', num: 23, set: 'off', title: 'Sun, Aug 23' },
+  { wd: 'M', num: 24, set: 'wed', title: 'Mon, Aug 24' },
+  { wd: 'T', num: 25, set: 'wed', title: 'Tue, Aug 25' },
+  { wd: 'W', num: 26, set: 'wed', title: 'Wed, Aug 26' },
+  { wd: 'T', num: 27, set: 'thu', title: 'Thu, Aug 27', today: true },
+  { wd: 'F', num: 28, set: 'fri', title: 'Fri, Aug 28' },
+  { wd: 'S', num: 29, set: 'off', title: 'Sat, Aug 29' },
+];
+
+// ---------- stats, computed like the app ----------
+const dur = (b: { start: string; end: string }) => toMin(b.end) - toMin(b.start);
+const appts = (s: Staff) => s.blocks.filter((b): b is Appt => b.kind === 'appt');
+const bookedMin = (s: Staff) => appts(s).reduce((n, b) => n + dur(b), 0);
+const openMin = (s: Staff) => s.open.reduce((n, [a, b]) => n + toMin(b) - toMin(a), 0);
+const totalBooked = thursday.reduce((n, s) => n + bookedMin(s), 0);
+const totalOpen = thursday.reduce((n, s) => n + openMin(s), 0);
+const bookedLabel = `${Math.round(totalBooked / 60)} / ${Math.round(totalOpen / 60)}`;
+const projected = thursday.reduce((n, s) => n + appts(s).reduce((m, b) => m + b.price, 0), 0);
+const utilization = thursday.map((s) => ({ ...s, pct: Math.round((bookedMin(s) / openMin(s)) * 100) }));
+const busiest = [...utilization].sort((a, b) => b.pct - a.pct)[0];
+const summaryValue = `${bookedLabel} booked`;
+const summaryNote = `${busiest.name} is at ${busiest.pct}% — your busiest schedule today.`;
+const utilizationHeading = 'Utilization';
+
+// Build-time check: edits to the data can't silently drift from the agreed numbers.
+const expected = {
+  bookedLabel: '8 / 12',
+  projected: 600,
+  utilization: 'Dana 67, Jess 42, Maya 75',
+  summaryValue: '8 / 12 booked',
+  summaryNote: 'Maya is at 75% — your busiest schedule today.',
+};
+const actual = {
+  bookedLabel,
+  projected,
+  utilization: utilization.map((u) => `${u.name} ${u.pct}`).join(', '),
+  summaryValue,
+  summaryNote,
+};
+for (const k of Object.keys(expected) as (keyof typeof expected)[]) {
+  if (expected[k] !== actual[k]) {
+    throw new Error(`AppScreen demo data drifted: ${k} is "${actual[k]}", expected "${expected[k]}"`);
+  }
+}
+if (/chair/i.test(`${utilizationHeading} ${summaryNote}`)) throw new Error('AppScreen: no "chair" wording');
+
+// ---------- rendering helpers ----------
+// Positions are percentages of the day axis, so the calendar fills its card at any height
+// (the card grows to the bottom of the screen).
+const AXIS_MIN = AXIS_END - AXIS_START;
+const pct = (min: number) => `${+((min / AXIS_MIN) * 100).toFixed(4)}%`;
+const top = (t: string) => pct(toMin(t) - AXIS_START);
+const height = (b: Block) => pct(dur(b));
+const hours = Array.from({ length: (AXIS_END - AXIS_START) / 60 }, (_, i) => AXIS_START + i * 60);
+const hourLabel = (min: number) => `${((Math.floor(min / 60) + 11) % 12) + 1}${Math.floor(min / 60) >= 12 ? 'p' : 'a'}`;
+const tint = (service: string) => (/rapid tan/i.test(service) ? 'cut' : /spray tan/i.test(service) ? 'skin' : 'neutral');
+const nowTop = top(NOW);
+
+const apptData = (b: Appt, s: Staff, dayTitle: string) =>
+  JSON.stringify({
+    client: b.client,
+    service: b.service,
+    price: b.price,
+    deposit: b.deposit ?? 0,
+    since: b.since ?? '',
+    note: b.note ?? '',
+    staff: s.name,
+    minutes: dur(b),
+    time: range(toMin(b.start), toMin(b.end)),
+    day: dayTitle,
+  });
+
+// The logo for dark surfaces: the brand mark in guava, the word in cream (its "H" sits outside the groups).
+const logoSvg = logoRaw
+  .replace(/<\?xml[^>]*>\s*/, '')
+  .replace(/<defs>[\s\S]*?<\/defs>\s*/, '')
+  .replace(/ class="cls-1"/g, '')
+  .replace('<g>', '<g fill="#f9727c">')
+  .replace('<g>', '<g fill="#fcf6f1">')
+  .replace('<svg ', '<svg aria-hidden="true" focusable="false" fill="#fcf6f1" ')
+  .replace(/ id="logos"/, '');
+
+const needsCount = 3;
+---
+
+<div class="od" data-od>
+  <!-- top nav -->
+  <div class="od-nav">
+    <span class="od-logo" set:html={logoSvg} />
+    <span class="od-links">
+      <span class="on">Calendar</span><span>Clients</span><span>Messages</span><span>Reports</span>
+    </span>
+    <span class="od-tools">
+      <span class="od-settings"><Icon name="settings" size={17} /><span class="od-settings-l">Settings</span></span>
+      <Icon name="search" size={17} />
+      <Icon name="bell" size={17} />
+      <span class="od-avatar">DK</span>
+    </span>
+  </div>
+
+  <!-- header band -->
+  <div class="od-band">
+    <span class="od-locs"><span class="on">{STUDIO}</span><span>Mobile</span></span>
+    <span class="od-stats">
+      <span class="od-stat"><span class="od-eyebrow">Booked today</span><span class="od-stat-v">{bookedLabel}</span></span>
+      <span class="od-stat"><span class="od-eyebrow">Projected</span><span class="od-stat-v">${projected}</span></span>
+      <span class="od-new"><Icon name="plus" size={14} strokeWidth={2.2} />New booking</span>
+    </span>
+  </div>
+
+  <div class="od-body">
+    <!-- book -->
+    <div class="od-book">
+      <div class="od-daterow">
+        <span class="od-date" data-od-title>Thu, Aug 27</span>
+        <span class="od-circle"><Icon name="chevronLeft" size={16} /></span>
+        <span class="od-circle"><Icon name="chevronRight" size={16} /></span>
+        <span class="od-seg"><span class="on">Day</span><span>Week</span></span>
+        <span class="od-pill">Waitlist</span>
+        <button type="button" class="od-pill od-needs-pill" data-od-open="needs">
+          Needs you <span data-od-needs-count>{needsCount}</span>
+        </button>
+      </div>
+
+      <div class="od-week" role="group" aria-label="Days this week">
+        {
+          week.map((d) => (
+            <button
+              type="button"
+              class:list={['od-day', { sel: d.today, today: d.today }]}
+              data-od-day={d.set}
+              data-od-title={d.title}
+              aria-pressed={d.today ? 'true' : 'false'}
+              aria-label={d.title}
+            >
+              <span class="wd">{d.wd}</span>
+              <span class="num">{d.num}</span>
+            </button>
+          ))
+        }
+      </div>
+
+      <div class="od-cal" data-od-cal style={`--hours:${hours.length}`}>
+        <div class="od-grid od-head">
+          <div class="od-corner" />
+          {
+            thursday.map((s) => (
+              <div class="od-staff">
+                <span class="od-staff-av" style={`background:${s.color}`}>{s.initials}</span>
+                {s.name}
+              </div>
+            ))
+          }
+        </div>
+        {
+          sets.map((set) => (
+            <div class="od-grid od-grid-body" data-od-set={set.key} hidden={set.key !== 'thu'}>
+              <div class="od-gutter">
+                {hours.map((h) => (
+                  <span class="od-hour" style={`top:${pct(h - AXIS_START)}`}>
+                    {hourLabel(h)}
+                  </span>
+                ))}
+                {set.today && (
+                  <span class="od-now-pill" style={`top:${nowTop}`}>
+                    {fmt(toMin(NOW))}
+                  </span>
+                )}
+              </div>
+              {set.staff.map((s) => (
+                <div class="od-col" data-od-col={s.id}>
+                  {s.blocks.map((b) => {
+                    const style = `top:calc(${top(b.start)} + 1px);height:calc(${height(b)} - 2px)`;
+                    const size = dur(b) <= 15 ? 'tiny' : dur(b) <= 30 ? 'short' : '';
+                    if (b.kind === 'appt')
+                      return (
+                        <button
+                          type="button"
+                          class:list={['od-bar', `t-${tint(b.service)}`, size]}
+                          style={style}
+                          data-od-appt={apptData(b, s, set.title)}
+                          aria-label={`${b.client}, ${b.service}, ${spoken(toMin(b.start), toMin(b.end))}, with ${s.name}`}
+                        >
+                          <span class="od-bar-name">{b.client}</span>
+                          <span class="od-bar-svc">{b.service}</span>
+                        </button>
+                      );
+                    if (b.kind === 'gap')
+                      return (
+                        <button
+                          type="button"
+                          class="od-gap"
+                          style={style}
+                          data-od-gap={JSON.stringify({ staff: s.name, start: fmt(toMin(b.start)), day: set.title })}
+                          aria-label={`Open gap with ${s.name}, ${spoken(toMin(b.start), toMin(b.end))}. Start a new booking`}
+                        >
+                          <span class="od-gap-label">Gap · {dur(b) / 60}h</span>
+                          <span class="od-gap-cue">+ Book</span>
+                        </button>
+                      );
+                    if (b.kind === 'hold')
+                      return (
+                        <div class:list={['od-hold', size]} style={style}>
+                          <span>{b.reason}</span>
+                        </div>
+                      );
+                    return (
+                      <div class="od-off" style={style}>
+                        <span>Off</span>
+                      </div>
+                    );
+                  })}
+                </div>
+              ))}
+              {set.today && <div class="od-now" style={`top:${nowTop}`} />}
+            </div>
+          ))
+        }
+      </div>
+    </div>
+
+    <!-- right rail -->
+    <aside class="od-rail" data-od-rail aria-label="Needs you and utilization">
+      <div class="od-rail-idle" data-od-idle>
+        <p class="od-rail-h">Needs you</p>
+        <div class="od-needs" data-od-needs>
+          <button type="button" class="od-need link" data-od-open="draft" data-od-need="draft">
+            <span class="od-need-t">Gap offer · waiting for your approval</span>
+            <span class="od-need-b">Maria K. for Dana's 1:15 pm opening on Thursday.</span>
+            <span class="od-need-cta">Review draft →</span>
+          </button>
+          <div class="od-need">
+            <span class="od-need-t">Dana · 1h gap</span>
+            <span class="od-need-b">1:15 pm – 2:15 pm is open.</span>
+          </div>
+          <div class="od-need link hover-only">
+            <span class="od-need-t">Waitlist · Emma J. joined online</span>
+            <span class="od-need-b">Rapid tan on Sat, Aug 29, from the booking page. Book them when a time opens, or cancel the entry.</span>
+            <span class="od-need-cta">Open in Waitlist →</span>
+          </div>
+        </div>
+        <p class="od-rail-h od-rail-h2">{utilizationHeading}</p>
+        <div class="od-util">
+          {
+            utilization.map((u) => (
+              <div class="od-util-row">
+                <span class="od-util-top">
+                  <span class="nm">{u.name}</span>
+                  <span class="pct">{u.pct}%</span>
+                </span>
+                <span class="od-track">
+                  <span style={`width:${u.pct}%;background:${u.color}`} />
+                </span>
+              </div>
+            ))
+          }
+        </div>
+        <div class="od-summary">
+          <p class="od-summary-e">{STUDIO}</p>
+          <p class="od-summary-v">{summaryValue}</p>
+          <p class="od-summary-n">{summaryNote}</p>
+        </div>
+      </div>
+      <div class="od-rail-panel" data-od-rail-panel hidden></div>
+    </aside>
+  </div>
+
+  <!-- panel templates (cloned into the rail, or the phone sheet) -->
+  <template data-od-tpl="appt">
+    <section class="pnl" aria-label="Appointment">
+      <div class="pnl-head">
+        <button type="button" class="pnl-x" data-od-act="close" aria-label="Close panel"><Icon name="close" size={16} strokeWidth={2} /></button>
+        <p class="pnl-eyebrow">Appointment</p>
+        <p class="pnl-name" data-slot="name"></p>
+        <p class="pnl-meta" data-slot="meta"></p>
+        <div class="pnl-chips" data-slot="chips"></div>
+      </div>
+      <div class="pnl-body">
+        <div class="pnl-sec">
+          <p class="pnl-label">Services</p>
+          <div class="pnl-svc">
+            <div>
+              <p class="pnl-svc-name" data-slot="service"></p>
+              <p class="pnl-svc-meta" data-slot="svcmeta"></p>
+            </div>
+            <p class="pnl-svc-price" data-slot="price"></p>
+          </div>
+        </div>
+        <div class="pnl-sec" data-slot="notes" hidden>
+          <p class="pnl-label">Notes</p>
+          <p class="pnl-note" data-slot="note"></p>
+        </div>
+      </div>
+      <div class="pnl-foot">
+        <div data-view="default">
+          <div class="pnl-total"><span>Booked service total</span><span data-slot="total"></span></div>
+          <p class="pnl-dep" data-slot="deposit" hidden></p>
+          <div class="pnl-actions">
+            <button type="button" class="pnl-btn primary wide" data-od-act="checkout">Check out</button>
+            <button type="button" class="pnl-btn ghost" aria-disabled="true">Reschedule</button>
+            <button type="button" class="pnl-btn ghost" aria-disabled="true">More</button>
+            <button type="button" class="pnl-msg" aria-disabled="true" aria-label="Message client"><Icon name="message" size={18} /></button>
+          </div>
+        </div>
+        <div data-view="checkout" hidden>
+          <div class="pnl-total"><span data-slot="balance"></span><span>balance due</span></div>
+          <div class="pnl-tip">
+            <span class="pnl-label">Tip</span>
+            <span class="pnl-tips">
+              <button type="button" class="pnl-tipbtn" data-od-act="tip" data-tip="5" aria-pressed="false">$5</button>
+              <button type="button" class="pnl-tipbtn" data-od-act="tip" data-tip="10" aria-pressed="false">$10</button>
+              <button type="button" class="pnl-tipbtn" data-od-act="tip" data-tip="15" aria-pressed="false">$15</button>
+            </span>
+          </div>
+          <div class="pnl-actions">
+            <button type="button" class="pnl-btn primary" data-od-act="pay">Card</button>
+            <button type="button" class="pnl-btn ghost" data-od-act="pay">Mark paid (cash/other)</button>
+            <button type="button" class="pnl-btn ghost" data-od-act="cancel-checkout">Cancel</button>
+          </div>
+          <p class="pnl-small">Demo only. In Happli, Card opens Stripe checkout.</p>
+        </div>
+        <div data-view="paid" hidden>
+          <div class="pnl-total"><span data-slot="paid">Paid</span></div>
+        </div>
+      </div>
+    </section>
+  </template>
+
+  <template data-od-tpl="new">
+    <section class="pnl" aria-label="New booking">
+      <div class="pnl-head">
+        <button type="button" class="pnl-x" data-od-act="close" aria-label="Close panel"><Icon name="close" size={16} strokeWidth={2} /></button>
+        <p class="pnl-eyebrow" data-slot="eyebrow"></p>
+        <p class="pnl-name">New booking</p>
+        <p class="pnl-meta" data-slot="meta"></p>
+      </div>
+      <div class="pnl-body">
+        <div class="pnl-sec">
+          <p class="pnl-label">Client</p>
+          <div class="pnl-search"><Icon name="search" size={15} /><span>Search by name or phone</span></div>
+          <span class="pnl-dashed">+ Add a walk-in</span>
+        </div>
+        <div class="pnl-sec">
+          <p class="pnl-label">Service</p>
+          <span class="pnl-dashed">+ Choose from your menu</span>
+        </div>
+      </div>
+      <div class="pnl-foot">
+        <div class="pnl-actions">
+          <button type="button" class="pnl-btn primary is-disabled" aria-disabled="true">Book</button>
+          <button type="button" class="pnl-btn ghost" data-od-act="close">Cancel</button>
+        </div>
+        <p class="pnl-small">Add a client and a service to book.</p>
+      </div>
+    </section>
+  </template>
+
+  <template data-od-tpl="draft">
+    <section class="pnl pnl-fit" aria-label="Gap offer draft">
+      <div class="pnl-head">
+        <button type="button" class="pnl-x" data-od-act="close" aria-label="Close panel"><Icon name="close" size={16} strokeWidth={2} /></button>
+        <p class="pnl-eyebrow">Gap offer</p>
+        <p class="pnl-name">Maria K.</p>
+        <p class="pnl-meta">Dana · Thu, Aug 27 · 1:15 pm</p>
+      </div>
+      <div class="pnl-body">
+        <div class="pnl-sec">
+          <p class="pnl-label">Draft</p>
+          <p class="pnl-bubble">Hi Maria! A 1:15 spot just opened Thursday with Dana. Book it here: goldenglow.gohappli.com</p>
+          <p class="pnl-small">In Happli, drafts are approved in Messages.</p>
+        </div>
+      </div>
+      <div class="pnl-foot">
+        <div class="pnl-actions" data-view="default">
+          <button type="button" class="pnl-btn primary" data-od-act="approve">Approve</button>
+          <button type="button" class="pnl-btn ghost" data-od-act="reject">Reject</button>
+        </div>
+        <p class="pnl-status" data-view="done" hidden><i></i><span data-slot="status"></span></p>
+      </div>
+    </section>
+  </template>
+
+  <template data-od-tpl="needs">
+    <section class="pnl" aria-label="Needs you">
+      <div class="pnl-head">
+        <button type="button" class="pnl-x" data-od-act="close" aria-label="Close panel"><Icon name="close" size={16} strokeWidth={2} /></button>
+        <p class="pnl-eyebrow">{STUDIO}</p>
+        <p class="pnl-name">Needs you</p>
+      </div>
+      <div class="pnl-body">
+        <div class="od-needs" data-slot="needs"></div>
+      </div>
+    </section>
+  </template>
+</div>
+
+<!-- phone bottom sheet: page-scale, moved into the hero stage by the script below -->
+<div class="od od-sheet" data-od-sheet role="region" aria-label="Demo panel" hidden>
+  <div class="od-sheet-body" data-od-sheet-body></div>
+</div>
+
+<script is:inline>
+  (function () {
+    var root = document.querySelector('[data-od]');
+    var sheet = document.querySelector('[data-od-sheet]');
+    if (!root || !sheet) return;
+    var zoom = root.closest('[data-zoom]');
+    var stage = zoom ? zoom.querySelector('.stage') : null;
+    if (stage) stage.appendChild(sheet);
+    var sheetBody = sheet.querySelector('[data-od-sheet-body]');
+    var rail = root.querySelector('[data-od-rail]');
+    var railIdle = root.querySelector('[data-od-idle]');
+    var railPanel = root.querySelector('[data-od-rail-panel]');
+    var cal = root.querySelector('[data-od-cal]');
+    var phone = window.matchMedia('(max-width: 699.98px)');
+    var current = null; // { node, kind, opener, ghost, where }
+    var needsLeft = 3;
+
+    function fill(node, slot, text) {
+      var el = node.querySelector('[data-slot="' + slot + '"]');
+      if (el) el.textContent = text;
+      return el;
+    }
+    function view(node, name) {
+      node.setAttribute('data-state', name);
+      node.querySelectorAll('[data-view]').forEach(function (v) {
+        v.hidden = v.getAttribute('data-view') !== name;
+      });
+    }
+    function chip(text, ok) {
+      var c = document.createElement('span');
+      c.className = 'pnl-chip' + (ok ? ' ok' : '');
+      c.textContent = text;
+      return c;
+    }
+
+    function open(kind, data, opener) {
+      close(true);
+      var tpl = root.querySelector('template[data-od-tpl="' + kind + '"]');
+      var node = tpl.content.firstElementChild.cloneNode(true);
+      var ghost = null;
+
+      if (kind === 'appt') {
+        fill(node, 'name', data.client);
+        fill(node, 'meta', data.time + ' · with ' + data.staff);
+        var chips = node.querySelector('[data-slot="chips"]');
+        chips.appendChild(chip('Confirmed', true));
+        if (data.deposit) chips.appendChild(chip('Deposit paid'));
+        if (data.since) chips.appendChild(chip('Client since ' + data.since));
+        fill(node, 'service', data.service);
+        fill(node, 'svcmeta', data.minutes + ' min · with ' + data.staff);
+        fill(node, 'price', '$' + data.price);
+        fill(node, 'total', '$' + data.price);
+        if (data.deposit) fill(node, 'deposit', 'Deposit · Paid $' + data.deposit).hidden = false;
+        if (data.note) {
+          fill(node, 'note', data.note);
+          node.querySelector('[data-slot="notes"]').hidden = false;
+        }
+        fill(node, 'balance', '$' + (data.price - data.deposit));
+        node._appt = data;
+        node._tip = 0;
+      }
+      if (kind === 'new') {
+        fill(node, 'eyebrow', 'Golden Glow · ' + data.day);
+        fill(node, 'meta', data.staff + ' at ' + data.start);
+        if (opener && opener.classList.contains('od-gap')) {
+          ghost = document.createElement('div');
+          ghost.className = 'od-ghost';
+          ghost.textContent = 'New · ' + data.start;
+          ghost.setAttribute('style', opener.getAttribute('style'));
+          for (var i = 0; i < opener.attributes.length; i++) {
+            var a = opener.attributes[i].name;
+            if (a.indexOf('data-astro-cid') === 0) ghost.setAttribute(a, '');
+          }
+          opener.parentNode.appendChild(ghost);
+          opener.classList.add('is-drafting');
+        }
+      }
+      if (kind === 'needs') {
+        var list = node.querySelector('[data-slot="needs"]');
+        root.querySelectorAll('[data-od-needs] > *').forEach(function (card) {
+          list.appendChild(card.cloneNode(true));
+        });
+      }
+
+      var where = phone.matches ? 'sheet' : 'rail';
+      if (where === 'sheet') {
+        sheetBody.appendChild(node);
+        sheet.hidden = false;
+      } else {
+        railPanel.appendChild(node);
+        railPanel.hidden = false;
+        railIdle.hidden = true;
+        rail.classList.add('has-panel');
+      }
+      current = { node: node, kind: kind, opener: opener, ghost: ghost, where: where };
+      var x = node.querySelector('.pnl-x');
+      if (x) x.focus({ preventScroll: true });
+    }
+
+    function close(silent) {
+      if (!current) return;
+      var c = current;
+      current = null;
+      c.node.remove();
+      if (c.ghost) {
+        c.ghost.remove();
+        c.opener.classList.remove('is-drafting');
+      }
+      sheet.hidden = true;
+      railPanel.hidden = true;
+      railIdle.hidden = false;
+      rail.classList.remove('has-panel');
+      if (!silent) {
+        var back = c.opener && document.contains(c.opener) && !c.opener.closest('[inert]') ? c.opener : null;
+        if (!back) back = root.querySelector('[data-od-needs] > button') || root.querySelector('.od-bar');
+        if (back) back.focus({ preventScroll: true });
+      }
+    }
+
+    function removeDraftCard() {
+      var card = root.querySelector('[data-od-need="draft"]');
+      if (card) card.remove();
+      needsLeft = Math.max(0, needsLeft - 1);
+      root.querySelectorAll('[data-od-needs-count]').forEach(function (n) {
+        n.textContent = needsLeft;
+      });
+    }
+
+    function onClick(e) {
+      var t = e.target;
+      var bar = t.closest('[data-od-appt]');
+      if (bar && root.contains(bar)) return open('appt', JSON.parse(bar.getAttribute('data-od-appt')), bar);
+      var gapBtn = t.closest('[data-od-gap]');
+      if (gapBtn && root.contains(gapBtn)) return open('new', JSON.parse(gapBtn.getAttribute('data-od-gap')), gapBtn);
+      var opener = t.closest('[data-od-open]');
+      if (opener) {
+        var what = opener.getAttribute('data-od-open');
+        if (what === 'draft') return open('draft', {}, opener);
+        if (what === 'needs') return open('needs', {}, opener);
+        if (what === 'ana') {
+          var ana = root.querySelector('[data-od-set="thu"] .od-bar[aria-label^="Ana O."]');
+          return open('appt', JSON.parse(ana.getAttribute('data-od-appt')), opener);
+        }
+      }
+      var day = t.closest('[data-od-day]');
+      if (day && root.contains(day)) {
+        close(true);
+        root.querySelectorAll('[data-od-day]').forEach(function (d) {
+          var on = d === day;
+          d.classList.toggle('sel', on);
+          d.setAttribute('aria-pressed', on ? 'true' : 'false');
+        });
+        var key = day.getAttribute('data-od-day');
+        root.querySelectorAll('[data-od-set]').forEach(function (s) {
+          s.hidden = s.getAttribute('data-od-set') !== key;
+        });
+        root.querySelector('[data-od-title]').textContent = day.getAttribute('data-od-title');
+        return;
+      }
+
+      var act = t.closest('[data-od-act]');
+      if (act && current && current.node.contains(act)) {
+        var a = act.getAttribute('data-od-act');
+        var node = current.node;
+        if (act.getAttribute('aria-disabled') === 'true') return;
+        if (a === 'close') return close(false);
+        if (a === 'checkout') return view(node, 'checkout');
+        if (a === 'cancel-checkout') return view(node, 'default');
+        if (a === 'tip') {
+          var v = +act.getAttribute('data-tip');
+          node._tip = node._tip === v ? 0 : v;
+          node.querySelectorAll('[data-od-act="tip"]').forEach(function (b) {
+            b.setAttribute('aria-pressed', +b.getAttribute('data-tip') === node._tip ? 'true' : 'false');
+          });
+          return;
+        }
+        if (a === 'pay') {
+          var status = node.querySelector('.pnl-chip.ok');
+          if (status) status.textContent = 'Completed';
+          fill(node, 'paid', node._tip ? 'Paid · tip $' + node._tip : 'Paid');
+          view(node, 'paid');
+          node.querySelector('.pnl-x').focus({ preventScroll: true });
+          return;
+        }
+        if (a === 'approve' || a === 'reject') {
+          fill(node, 'status', a === 'approve' ? 'Approved · sent to Maria' : 'Rejected · nothing was sent');
+          view(node, 'done');
+          node.querySelector('.pnl-status').classList.toggle('rejected', a === 'reject');
+          removeDraftCard();
+          node.querySelector('.pnl-x').focus({ preventScroll: true });
+          return;
+        }
+        return;
+      }
+
+      if (current && cal.contains(t) && !t.closest('button')) close(false);
+    }
+
+    root.addEventListener('click', onClick);
+    sheet.addEventListener('click', onClick);
+    if (zoom) {
+      zoom.addEventListener('click', function (e) {
+        var chipBtn = e.target.closest('[data-od-open]');
+        if (chipBtn && !root.contains(chipBtn) && !sheet.contains(chipBtn)) onClick(e);
+      });
+    }
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && current) close(false);
+    });
+    phone.addEventListener('change', function () {
+      close(true);
+    });
+
+    root.addEventListener('od:landed', function (e) {
+      if (e.detail) return;
+      var active = document.activeElement;
+      var hadFocus = active && (root.contains(active) || sheet.contains(active) || (zoom && zoom.querySelector('[data-od-chips]') && zoom.querySelector('[data-od-chips]').contains(active)));
+      close(true);
+      if (hadFocus && zoom) {
+        var all = document.querySelectorAll('a[href], button:not([disabled]), [tabindex="0"]');
+        for (var i = 0; i < all.length; i++) {
+          if (zoom.compareDocumentPosition(all[i]) & Node.DOCUMENT_POSITION_FOLLOWING && !zoom.contains(all[i])) {
+            all[i].focus({ preventScroll: true });
+            break;
+          }
+        }
+      }
+    });
+  })();
+</script>
+
+<style>
+  /* ---------- the app's design tokens (owner-desktop.css), scoped to the demo ---------- */
+  .od {
+    --paper: #fcf6f1;
+    --card: #ffffff;
+    --cream: #f7e4da;
+    --blush: #fdf2ee;
+    --guava: #f9727c;
+    --passion: #f89e69;
+    --terracotta: #a85d58;
+    --maroon: #5e3a38;
+    --espresso: #2b1b1a;
+    --olive: #6b6a45;
+    --taupe: #a8978a;
+    --gold: #9b7a33;
+    --success-ink: #5a7a5e;
+    --success-fill: #e6ede4;
+    --ease: cubic-bezier(0.22, 1, 0.36, 1);
+    font-family: var(--sans);
+    color: var(--espresso);
+    text-align: left;
+  }
+  .od[data-od] {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    background: var(--paper);
+    overflow: hidden;
+  }
+  :focus-visible {
+    outline: 2px solid var(--guava);
+    outline-offset: 2px;
+  }
+  button {
+    font: inherit;
+    color: inherit;
+    background: none;
+    border: 0;
+    padding: 0;
+    text-align: inherit;
+    cursor: pointer;
+    touch-action: manipulation;
+  }
+  p {
+    margin: 0;
+  }
+
+  /* ---------- top nav ---------- */
+  .od-nav {
+    flex: none;
+    height: 58px;
+    background: var(--espresso);
+    padding: 0 28px;
+    display: flex;
+    align-items: center;
+    gap: 34px;
+    cursor: default;
+  }
+  .od-logo {
+    display: block;
+    height: 24px;
+  }
+  .od-logo :global(svg) {
+    height: 24px;
+    width: auto;
+  }
+  .od-links {
+    display: flex;
+    gap: 28px;
+    align-items: baseline;
+  }
+  .od-links span {
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1;
+    color: rgba(252, 246, 241, 0.6);
+    padding-bottom: 3px;
+    border-bottom: 2px solid transparent;
+  }
+  .od-links span.on {
+    font-weight: 700;
+    color: #fcf6f1;
+    border-bottom-color: var(--guava);
+  }
+  .od-tools {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    color: rgba(252, 246, 241, 0.7);
+  }
+  .od-settings {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 13px;
+    font-weight: 600;
+  }
+  .od-avatar {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: var(--terracotta);
+    color: var(--paper);
+    display: grid;
+    place-items: center;
+    font-size: 11.5px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+  }
+
+  /* ---------- header band ---------- */
+  .od-band {
+    flex: none;
+    height: 64px;
+    background: rgba(247, 228, 218, 0.55);
+    border-bottom: 1px solid rgba(43, 27, 26, 0.09);
+    padding: 0 28px;
+    display: flex;
+    align-items: center;
+    gap: 22px;
+    cursor: default;
+  }
+  .od-locs {
+    display: flex;
+    gap: 4px;
+    padding: 4px;
+    border-radius: 999px;
+    background: rgba(252, 246, 241, 0.85);
+    border: 1px solid rgba(43, 27, 26, 0.07);
+  }
+  .od-locs span {
+    padding: 7px 15px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--maroon);
+  }
+  .od-locs span.on {
+    background: var(--guava);
+    color: #fff;
+    font-weight: 700;
+  }
+  .od-stats {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 22px;
+  }
+  .od-stat {
+    display: flex;
+    flex-direction: column;
+  }
+  .od-eyebrow {
+    font-size: 9.5px;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--gold);
+    line-height: 1;
+  }
+  .od-stat-v {
+    font-family: var(--serif);
+    font-optical-sizing: auto;
+    font-size: 19px;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    line-height: 1.1;
+    margin-top: 1px;
+  }
+  .od-new {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 10px 18px;
+    border-radius: 999px;
+    background: var(--guava);
+    color: #fff;
+    font-size: 12.5px;
+    font-weight: 700;
+    box-shadow: 0 8px 18px -8px rgba(249, 114, 124, 0.6);
+  }
+
+  /* ---------- body ---------- */
+  .od-body {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+  }
+  .od-book {
+    flex: 1;
+    min-width: 0;
+    padding: 20px 0 20px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .od-daterow {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: default;
+  }
+  .od-date {
+    font-family: var(--serif);
+    font-optical-sizing: auto;
+    font-size: 24px;
+    font-weight: 400;
+    letter-spacing: -0.01em;
+    min-width: 132px;
+  }
+  .od-circle {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 1px solid rgba(43, 27, 26, 0.09);
+    background: var(--paper);
+    display: grid;
+    place-items: center;
+    color: var(--maroon);
+  }
+  .od-seg {
+    display: inline-flex;
+    border: 1px solid rgba(43, 27, 26, 0.14);
+    border-radius: 999px;
+    padding: 2px;
+    background: var(--paper);
+    margin-left: 8px;
+  }
+  .od-seg span {
+    font-size: 11.5px;
+    font-weight: 600;
+    color: var(--maroon);
+    padding: 5px 11px;
+    border-radius: 999px;
+  }
+  .od-seg span.on {
+    background: var(--espresso);
+    color: var(--paper);
+  }
+  .od-pill {
+    border: 1px solid rgba(43, 27, 26, 0.14);
+    border-radius: 999px;
+    background: var(--paper);
+    font-size: 11.5px;
+    font-weight: 700;
+    color: var(--maroon);
+    padding: 6px 12px;
+    line-height: 1.2;
+  }
+  .od-needs-pill {
+    display: none;
+    padding: 6px 10px;
+  }
+
+  /* week strip */
+  .od-week {
+    display: flex;
+    gap: 4px;
+    margin-top: -4px;
+  }
+  .od-day {
+    min-width: 36px;
+    padding: 5px 6px 6px;
+    border-radius: 10px;
+    color: var(--maroon);
+    border: 1px solid transparent;
+    text-align: center;
+    position: relative;
+    transition: background 180ms var(--ease), color 180ms var(--ease);
+  }
+  .od-day .wd {
+    display: block;
+    font-size: 9.5px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--taupe);
+  }
+  .od-day .num {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+  }
+  .od-day:hover {
+    background: var(--cream);
+    color: var(--espresso);
+  }
+  .od-day.sel,
+  .od-day.sel:hover {
+    background: var(--espresso);
+    color: var(--paper);
+    border-color: var(--espresso);
+  }
+  .od-day.sel .wd {
+    color: rgba(252, 246, 241, 0.7);
+  }
+  .od-day.today::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    bottom: 3px;
+    width: 4px;
+    height: 4px;
+    margin-left: -2px;
+    border-radius: 50%;
+    background: var(--guava);
+  }
+
+  /* calendar card */
+  .od-cal {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+    border: 1px solid rgba(43, 27, 26, 0.14);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .od-grid {
+    display: grid;
+    grid-template-columns: 64px repeat(3, 1fr);
+  }
+  .od-grid[hidden] {
+    display: none;
+  }
+  .od-corner,
+  .od-staff {
+    background: rgba(247, 228, 218, 0.72);
+    border-bottom: 1px solid rgba(43, 27, 26, 0.14);
+    padding: 10px 8px;
+    min-height: 44px;
+  }
+  .od-staff {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--espresso);
+    border-left: 1px solid rgba(43, 27, 26, 0.08);
+  }
+  .od-staff-av {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    color: #fff;
+    display: grid;
+    place-items: center;
+    font-size: 8.5px;
+    font-weight: 600;
+  }
+  .od-grid-body {
+    position: relative;
+    flex: 1;
+    min-height: 0;
+  }
+  .od-gutter {
+    position: relative;
+    background: #fff;
+    border-right: 1px solid rgba(43, 27, 26, 0.12);
+  }
+  .od-hour {
+    position: absolute;
+    right: 8px;
+    transform: translateY(-50%);
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--maroon);
+    letter-spacing: 0.02em;
+  }
+  .od-hour:first-child {
+    transform: translateY(2px);
+  }
+  .od-now-pill {
+    position: absolute;
+    right: 4px;
+    transform: translateY(-50%);
+    padding: 2px 6px;
+    border-radius: 999px;
+    background: var(--guava);
+    color: var(--paper);
+    font-size: 9.5px;
+    font-weight: 700;
+    z-index: 3;
+    white-space: nowrap;
+  }
+  .od-col {
+    position: relative;
+    border-right: 1px solid rgba(43, 27, 26, 0.08);
+    background-image: linear-gradient(rgba(43, 27, 26, 0.09) 1px, transparent 1px);
+    background-size: 100% calc(100% / var(--hours));
+  }
+  .od-col:last-child {
+    border-right: 0;
+  }
+  .od-now {
+    position: absolute;
+    left: 64px;
+    right: 0;
+    height: 1.5px;
+    background: var(--guava);
+    z-index: 2;
+    pointer-events: none;
+  }
+  .od-now::before {
+    content: '';
+    position: absolute;
+    left: -4px;
+    top: -3.25px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--guava);
+  }
+
+  /* bars */
+  .od-bar,
+  .od-hold,
+  .od-off,
+  .od-gap,
+  .od-ghost {
+    position: absolute;
+    left: 4px;
+    right: 4px;
+    border-radius: 9px;
+    padding: 5px 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    line-height: 1.15;
+    overflow: hidden;
+  }
+  .od-bar {
+    width: auto;
+    transition: transform 220ms var(--ease), box-shadow 220ms var(--ease);
+  }
+  .od-bar:hover,
+  .od-bar:focus-visible {
+    transform: translateY(-1px);
+    box-shadow: 0 10px 22px -10px rgba(43, 27, 26, 0.35);
+  }
+  .od-bar-name,
+  .od-bar-svc {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-width: 0;
+  }
+  .od-bar-name {
+    font-size: 11.5px;
+    font-weight: 700;
+    color: var(--espresso);
+  }
+  .od-bar-svc {
+    font-size: 10.5px;
+    font-weight: 500;
+    color: var(--terracotta);
+  }
+  .od-bar.short,
+  .od-hold.short {
+    flex-direction: row;
+    align-items: center;
+    gap: 6px;
+    padding: 0 8px;
+  }
+  .od-hold.tiny {
+    padding: 0 8px;
+    justify-content: center;
+    font-size: 9.5px;
+  }
+  .t-skin {
+    background: #efe0dc;
+  }
+  .t-cut {
+    background: #fbe7d6;
+  }
+  .t-neutral {
+    background: #f4ebe6;
+    box-shadow: inset 0 0 0 1px rgba(43, 27, 26, 0.08);
+  }
+  .od-hold {
+    background: #f7e4da;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--maroon);
+  }
+  .od-off {
+    background: rgba(43, 27, 26, 0.07) repeating-linear-gradient(45deg, rgba(43, 27, 26, 0.05) 0 6px, transparent 6px 12px);
+    border: 1px solid rgba(43, 27, 26, 0.08);
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--taupe);
+  }
+  .od-gap {
+    background: rgba(253, 242, 238, 0.7);
+    border: 1.5px dashed var(--guava);
+    padding: 5px 9px;
+  }
+  .od-gap-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--guava);
+  }
+  .od-gap-cue {
+    position: absolute;
+    right: 9px;
+    bottom: 6px;
+    font-size: 10.5px;
+    font-weight: 700;
+    color: var(--guava);
+    opacity: 0;
+    transition: opacity 120ms var(--ease);
+  }
+  .od-gap:hover .od-gap-cue,
+  .od-gap:focus-visible .od-gap-cue {
+    opacity: 1;
+  }
+  .od-gap.is-drafting > span {
+    visibility: hidden;
+  }
+  .od-ghost {
+    background: rgba(249, 114, 124, 0.14);
+    border: 1.5px dashed var(--guava);
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--guava);
+    z-index: 1;
+    pointer-events: none;
+    justify-content: center;
+  }
+
+  /* ---------- right rail ---------- */
+  .od-rail {
+    flex: none;
+    width: 360px;
+    background: rgba(247, 228, 218, 0.35);
+    border-left: 1px solid rgba(43, 27, 26, 0.09);
+    padding: 22px;
+    display: flex;
+    flex-direction: column;
+  }
+  .od-rail.has-panel {
+    padding: 0;
+    background: var(--paper);
+  }
+  .od-rail-idle {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+  .od-rail-idle[hidden],
+  .od-rail-panel[hidden] {
+    display: none;
+  }
+  .od-rail-panel {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+  .od-rail-h {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin: 0 0 10px;
+  }
+  .od-rail-h2 {
+    margin-top: 22px;
+  }
+  .od-needs {
+    display: flex;
+    flex-direction: column;
+    gap: 11px;
+  }
+  .od-need {
+    display: flex;
+    flex-direction: column;
+    background: var(--paper);
+    border-radius: 14px;
+    padding: 16px;
+    box-shadow: 0 2px 8px rgba(43, 27, 26, 0.05);
+    transition: box-shadow 220ms var(--ease);
+    cursor: default;
+  }
+  button.od-need {
+    cursor: pointer;
+  }
+  .od-need.link:hover {
+    box-shadow: 0 4px 14px rgba(43, 27, 26, 0.1);
+  }
+  .od-need-t {
+    font-size: 12.5px;
+    font-weight: 700;
+    color: var(--espresso);
+  }
+  .od-need-b {
+    font-size: 11.5px;
+    font-weight: 500;
+    color: var(--olive);
+    line-height: 1.5;
+    margin-top: 4px;
+  }
+  .od-need-cta {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--guava);
+    margin-top: 6px;
+  }
+  .od-util {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .od-util-top {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11.5px;
+    font-weight: 600;
+  }
+  .od-util-top .pct {
+    color: var(--olive);
+    font-variant-numeric: tabular-nums;
+  }
+  .od-track {
+    display: block;
+    height: 5px;
+    margin-top: 5px;
+    border-radius: 999px;
+    background: rgba(43, 27, 26, 0.08);
+    overflow: hidden;
+  }
+  .od-track span {
+    display: block;
+    height: 100%;
+    border-radius: 999px;
+  }
+  .od-summary {
+    margin-top: auto;
+    background: var(--espresso);
+    color: var(--cream);
+    border-radius: 14px;
+    padding: 16px;
+  }
+  .od-summary-e {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: rgba(247, 228, 218, 0.6);
+  }
+  .od-summary-v {
+    font-family: var(--serif);
+    font-optical-sizing: auto;
+    font-size: 26px;
+    font-weight: 300;
+    margin-top: 2px;
+  }
+  .od-summary-n {
+    font-size: 11.5px;
+    font-weight: 500;
+    color: rgba(247, 228, 218, 0.7);
+    margin-top: 4px;
+  }
+
+  /* ---------- panels (rail and phone sheet) ---------- */
+  .pnl {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+    background: var(--paper);
+  }
+  .pnl-head {
+    position: relative;
+    padding: 26px 28px 20px;
+    border-bottom: 1px solid rgba(43, 27, 26, 0.09);
+  }
+  .pnl-x {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--cream);
+    color: var(--maroon);
+    display: grid;
+    place-items: center;
+  }
+  .pnl-eyebrow,
+  .pnl-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--gold);
+  }
+  .pnl-eyebrow {
+    margin-bottom: 8px;
+    padding-right: 40px;
+  }
+  .pnl-label {
+    margin-bottom: 10px;
+  }
+  .pnl-name {
+    font-family: var(--serif);
+    font-optical-sizing: auto;
+    font-size: 29px;
+    font-weight: 400;
+    letter-spacing: -0.01em;
+    line-height: 1.1;
+  }
+  .pnl-meta {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--olive);
+    margin-top: 6px;
+  }
+  .pnl-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 16px;
+  }
+  .pnl-chips:empty {
+    display: none;
+  }
+  .pnl-chips :global(.pnl-chip) {
+    padding: 6px 13px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 600;
+    background: var(--cream);
+    color: var(--maroon);
+  }
+  .pnl-chips :global(.pnl-chip.ok) {
+    background: var(--success-fill);
+    color: var(--success-ink);
+    font-weight: 700;
+  }
+  .pnl-body {
+    padding: 22px 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+  }
+  .pnl-sec[hidden] {
+    display: none;
+  }
+  .pnl-svc {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 12px;
+    background: #fff;
+    border: 1px solid rgba(43, 27, 26, 0.07);
+    border-radius: 14px;
+    padding: 16px 18px;
+  }
+  .pnl-svc-name,
+  .pnl-svc-price {
+    font-size: 13.5px;
+    font-weight: 600;
+  }
+  .pnl-svc-price {
+    text-align: right;
+  }
+  .pnl-svc-meta {
+    font-size: 11.5px;
+    font-weight: 500;
+    color: var(--olive);
+    margin-top: 2px;
+  }
+  .pnl-note {
+    font-size: 12.5px;
+    color: var(--maroon);
+    line-height: 1.5;
+  }
+  .pnl-bubble {
+    padding: 12px 14px;
+    border-radius: 14px 14px 14px 4px;
+    background: #fff;
+    border: 1px solid rgba(43, 27, 26, 0.07);
+    font-size: 12.5px;
+    line-height: 1.5;
+  }
+  .pnl-small {
+    font-size: 11px;
+    color: var(--olive);
+    margin-top: 10px;
+  }
+  .pnl-search {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 11px 14px;
+    border-radius: 12px;
+    background: #fff;
+    border: 1px solid rgba(43, 27, 26, 0.14);
+    font-size: 12.5px;
+    color: var(--taupe);
+  }
+  .pnl-dashed {
+    display: block;
+    margin-top: 10px;
+    padding: 11px 14px;
+    border-radius: 12px;
+    border: 1.5px dashed rgba(43, 27, 26, 0.16);
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--maroon);
+  }
+  .pnl-foot {
+    margin-top: auto;
+    border-top: 1px solid rgba(43, 27, 26, 0.09);
+    background: rgba(247, 228, 218, 0.45);
+    padding: 18px 28px 22px;
+  }
+  /* short panels: the actions follow the content instead of sitting at the bottom of the rail */
+  .pnl-fit .pnl-foot {
+    margin-top: 0;
+    padding-top: 0;
+    border-top: 0;
+    background: none;
+  }
+  .pnl-foot [hidden] {
+    display: none;
+  }
+  .pnl-total {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 12px;
+    font-family: var(--serif);
+    font-optical-sizing: auto;
+    font-size: 24px;
+    font-weight: 500;
+    letter-spacing: -0.015em;
+  }
+  .pnl-total span:first-child {
+    font-size: 15px;
+    font-family: var(--sans);
+    font-weight: 600;
+    letter-spacing: 0;
+  }
+  [data-view='checkout'] .pnl-total span:first-child,
+  [data-view='paid'] .pnl-total span:first-child {
+    font-family: var(--serif);
+    font-size: 24px;
+    font-weight: 500;
+    letter-spacing: -0.015em;
+  }
+  [data-view='checkout'] .pnl-total span:last-child {
+    font-family: var(--sans);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--olive);
+    letter-spacing: 0;
+    margin-right: auto;
+  }
+  [data-view='checkout'] .pnl-total {
+    justify-content: flex-start;
+  }
+  .pnl-dep {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--success-ink);
+    margin-top: 4px;
+  }
+  .pnl-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 14px;
+  }
+  .pnl-btn {
+    border-radius: 999px;
+    padding: 14px 22px;
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1;
+  }
+  .pnl-btn.primary {
+    background: var(--guava);
+    color: #fff;
+  }
+  .pnl-btn.ghost {
+    border: 1px solid rgba(43, 27, 26, 0.16);
+    color: var(--espresso);
+    font-weight: 600;
+  }
+  [data-view='checkout'] .pnl-actions {
+    gap: 8px;
+  }
+  [data-view='checkout'] .pnl-btn {
+    padding: 12px 14px;
+    font-size: 12.5px;
+  }
+  .pnl-btn.wide {
+    flex-basis: 100%;
+    text-align: center;
+  }
+  .pnl-btn[aria-disabled='true'],
+  .pnl-msg[aria-disabled='true'] {
+    cursor: default;
+  }
+  .pnl-btn.is-disabled {
+    opacity: 0.45;
+  }
+  .pnl-msg {
+    width: 46px;
+    height: 46px;
+    border-radius: 14px;
+    border: 1px solid rgba(43, 27, 26, 0.16);
+    color: var(--maroon);
+    display: grid;
+    place-items: center;
+  }
+  .pnl-tip {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 14px;
+  }
+  .pnl-tip .pnl-label {
+    margin: 0;
+  }
+  .pnl-tips {
+    display: flex;
+    gap: 8px;
+  }
+  .pnl-tipbtn {
+    padding: 8px 14px;
+    border-radius: 999px;
+    border: 1px solid rgba(43, 27, 26, 0.16);
+    background: #fff;
+    font-size: 12.5px;
+    font-weight: 700;
+  }
+  .pnl-tipbtn[aria-pressed='true'] {
+    background: var(--espresso);
+    border-color: var(--espresso);
+    color: var(--paper);
+  }
+  .pnl-status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--success-ink);
+  }
+  .pnl-status i {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--success-ink);
+  }
+  .pnl-status.rejected {
+    color: var(--maroon);
+  }
+  .pnl-status.rejected i {
+    background: var(--taupe);
+  }
+
+  /* checkout replaces the notes (rail) or the whole body (phone sheet), so it fits without scrolling */
+  .pnl[data-state='checkout'] [data-slot='notes'],
+  .pnl[data-state='paid'] [data-slot='notes'] {
+    display: none;
+  }
+  .od-sheet .pnl[data-state='checkout'] .pnl-body,
+  .od-sheet .pnl[data-state='paid'] .pnl-body {
+    display: none;
+  }
+
+  /* ---------- phone sheet (page scale) ---------- */
+  .od-sheet {
+    position: absolute;
+    left: 0;
+    right: 0;
+    /* above the phone "Book a demo" bar (StickyCta publishes its height) */
+    bottom: var(--cta-bar-h, 0px);
+    z-index: 5;
+    max-height: calc(100% - var(--nav-h) - 8px - var(--cta-bar-h, 0px));
+    display: flex;
+    flex-direction: column;
+    background: var(--paper);
+    border-radius: 20px 20px 0 0;
+    box-shadow: 0 -20px 50px -20px rgba(43, 27, 26, 0.35);
+    overflow: hidden;
+    padding-bottom: max(0px, calc(env(safe-area-inset-bottom, 0px) - var(--cta-bar-h, 0px)));
+  }
+  .od-sheet[hidden] {
+    display: none;
+  }
+  :global(.is-static) .od-sheet {
+    position: fixed;
+    z-index: 25;
+    max-height: calc(100vh - var(--nav-h) - 8px - var(--cta-bar-h, 0px));
+    max-height: calc(100svh - var(--nav-h) - 8px - var(--cta-bar-h, 0px));
+  }
+  .od-sheet-body {
+    display: flex;
+    flex-direction: column;
+  }
+  /* compact panels in the sheet */
+  .od-sheet .pnl-head {
+    padding: 18px 20px 14px;
+  }
+  .od-sheet .pnl-name {
+    font-size: 24px;
+  }
+  .od-sheet .pnl-chips {
+    margin-top: 10px;
+    gap: 6px;
+  }
+  .od-sheet .pnl-body {
+    padding: 14px 20px;
+    gap: 14px;
+  }
+  .od-sheet .pnl-svc {
+    padding: 12px 14px;
+  }
+  .od-sheet .pnl-note {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .od-sheet .pnl-foot {
+    padding: 14px 20px 16px;
+  }
+  .od-sheet .pnl-total {
+    font-size: 21px;
+  }
+  .od-sheet .pnl-actions {
+    margin-top: 10px;
+    gap: 8px;
+  }
+  .od-sheet .pnl-btn {
+    padding: 12px 18px;
+  }
+  .od-sheet .pnl-small {
+    margin-top: 8px;
+  }
+  .od-sheet .pnl-label {
+    margin-bottom: 8px;
+  }
+  .od-sheet .od-needs {
+    gap: 8px;
+  }
+  .od-sheet .od-need {
+    padding: 12px 14px;
+  }
+
+  /* short phones: tighter still, so the tallest panel fits under the header */
+  @media (max-height: 620px) {
+    .od-sheet .pnl-head {
+      padding: 14px 18px 12px;
+    }
+    .od-sheet .pnl-x {
+      top: 10px;
+      right: 10px;
+    }
+    .od-sheet .pnl-eyebrow {
+      margin-bottom: 4px;
+    }
+    .od-sheet .pnl-name {
+      font-size: 21px;
+    }
+    .od-sheet .pnl-meta {
+      margin-top: 4px;
+      font-size: 12.5px;
+    }
+    .od-sheet .pnl-chips {
+      margin-top: 8px;
+    }
+    .od-sheet .pnl-chips :global(.pnl-chip) {
+      padding: 4px 10px;
+    }
+    .od-sheet .pnl-body {
+      padding: 10px 18px;
+      gap: 10px;
+    }
+    .od-sheet .pnl-label {
+      margin-bottom: 6px;
+    }
+    .od-sheet .pnl-svc {
+      padding: 9px 12px;
+    }
+    .od-sheet .pnl-foot {
+      padding: 10px 18px 12px;
+    }
+    .od-sheet .pnl-total {
+      font-size: 19px;
+    }
+    .od-sheet .pnl-actions {
+      margin-top: 8px;
+    }
+    .od-sheet .pnl-btn {
+      padding: 10px 15px;
+    }
+    .od-sheet .pnl-msg {
+      width: 38px;
+      height: 38px;
+    }
+    /* the rail on desktop shows these; on short phones the sheet keeps to the essentials */
+    .od-sheet [data-slot='notes'],
+    .od-sheet .pnl-sec > .pnl-label:first-child:has(+ .pnl-svc) {
+      display: none;
+    }
+  }
+
+  /* ---------- phones: the in-app rail hides, the Needs you pill shows ---------- */
+  @media (max-width: 699.98px) {
+    .od-rail {
+      display: none;
+    }
+    .od-needs-pill {
+      display: inline-flex;
+      gap: 5px;
+      align-items: center;
+    }
+    .od-book {
+      padding-right: 20px;
+    }
+    /* the zoom hero lays the app out 640px wide on phones */
+    .od-nav {
+      padding: 0 20px;
+      gap: 22px;
+    }
+    .od-links {
+      gap: 18px;
+    }
+    .od-tools {
+      gap: 12px;
+    }
+    .od-settings-l {
+      display: none;
+    }
+    .od-band {
+      padding: 0 20px;
+      gap: 14px;
+    }
+    .od-stats {
+      gap: 16px;
+    }
+    .od-date {
+      min-width: 0;
+    }
+    .od-daterow {
+      gap: 8px;
+    }
+  }
+
+  /* ---------- no motion ---------- */
+  :global(.is-static) .od *,
+  :global(.is-static) .od *::after {
+    transition: none !important;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .od *,
+    .od *::after {
+      transition: none !important;
+    }
+  }
+</style>

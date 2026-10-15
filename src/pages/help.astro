@@ -1,0 +1,90 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageIntro from '../components/sections/PageIntro.astro';
+import { breadcrumbs } from '../lib/jsonld';
+import { site } from '../config/site';
+
+const title = 'Help | Happli Support';
+const description = 'Find answers in the Happli help center, or email us. Support for spray tan studios and beauty pros using Happli.';
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  jsonLd={[breadcrumbs([{ name: 'Home', href: '/' }, { name: 'Help', href: '/help/' }])]}
+>
+  <PageIntro eyebrow="Help" title="We're here to help." lede="Get answers in the help center, or write to us and a person will get back to you." cta={false} />
+  <div class="wrap">
+    <div class="cards">
+      <a class="card" href={site.helpUrl} rel="noopener">
+        <h2>Help center</h2>
+        <p>Guides and answers for setting up and running your studio in Happli.</p>
+        <span class="go">Open support.gohappli.com →</span>
+      </a>
+      <a class="card" href={`mailto:${site.contactEmail}`}>
+        <h2>Email us</h2>
+        <p>Questions about your account, your setup or switching from another system.</p>
+        <span class="go">{site.contactEmail} →</span>
+      </a>
+      <a class="card" href={site.cta.href}>
+        <h2>Talk it through</h2>
+        <p>Book a 30-minute call and we'll look at your schedule together.</p>
+        <span class="go">{site.cta.label} →</span>
+      </a>
+    </div>
+    <p class="signin">Already a customer? <a href={site.signInUrl}>Sign in to Happli</a>.</p>
+  </div>
+</BaseLayout>
+
+<style>
+  .cards {
+    margin-top: var(--space-block);
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 20px;
+  }
+  .card {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 28px;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--line-strong);
+    background: var(--surface);
+    transition: border-color 0.18s ease, box-shadow 0.18s ease;
+  }
+  .card:hover {
+    border-color: var(--coral);
+    box-shadow: var(--shadow-card);
+  }
+  h2 {
+    font-size: 24px;
+  }
+  .card p {
+    color: var(--ink-2);
+    font-size: 15px;
+  }
+  .go {
+    margin-top: auto;
+    padding-top: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--coral-ink);
+    overflow-wrap: anywhere;
+  }
+  .signin {
+    margin-top: 32px;
+    font-size: 15px;
+    color: var(--ink-2);
+  }
+  .signin a {
+    color: var(--coral-ink);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  @media (max-width: 860px) {
+    .cards {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

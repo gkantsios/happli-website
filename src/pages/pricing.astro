@@ -1,0 +1,81 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageIntro from '../components/sections/PageIntro.astro';
+import PricingPlans from '../components/sections/PricingPlans.astro';
+import SectionHead from '../components/sections/SectionHead.astro';
+import Icon from '../components/Icon.astro';
+import Faq, { type FaqItem } from '../components/sections/Faq.astro';
+import CtaBand from '../components/sections/CtaBand.astro';
+import { breadcrumbs, softwareApplication } from '../lib/jsonld';
+
+const title = 'Pricing | Happli Booking Software from $99 a Month';
+const description =
+  'Founding member pricing for Happli: $99 a month for 1 location, $149 for 2, $199 for 3. No fee on your payments; Stripe fees go to Stripe.';
+// TODO confirm: PR #297 (own Stripe account, Stripe fees paid directly) for the description above.
+
+// Answers we can't source yet are kept as comments, not rendered:
+// TODO confirm: "Is there a setup fee?" (not on the live site)
+// TODO confirm: "Is there a contract / how do I cancel?" (not on the live site)
+// TODO confirm: whether client import (CSV) is included or priced separately
+const faq: FaqItem[] = [
+  {
+    q: 'What is founding member pricing?',
+    a: 'It is the launch price for studios that join early. You get locked founding pricing for your current locations, white-glove onboarding and priority support, early access to new features, a direct say in the roadmap, and a spot as a founding case study. Founding pricing applies to the locations enrolled when you join.',
+  },
+  {
+    q: 'Do you charge for text messages?',
+    a: 'Normal email and SMS usage is included during the founding phase. Unusually high messaging usage, dedicated phone numbers, or carrier fees may be priced separately in the future.',
+  },
+  {
+    q: 'Do you help me move from my current system?',
+    a: 'Yes. We import your clients, services, team and appointments from CSV.',
+  },
+  { q: 'Do you take a percentage of my payments?', a: 'No. Happli takes no fee on your payments. Card processing fees go to Stripe.' },
+];
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  jsonLd={[
+    softwareApplication(),
+    breadcrumbs([{ name: 'Home', href: '/' }, { name: 'Pricing', href: '/pricing/' }]),
+  ]}
+>
+  <PageIntro
+    eyebrow="Pricing"
+    title="Simple pricing. No cut of your sales."
+    lede="One monthly price for the software, based on how many locations you run. Your payments go to your own Stripe account, and Happli takes no fee on them."
+    cta={false}
+  />
+  {/* TODO confirm: PR #297 for the subhead above. */}
+
+  <PricingPlans />
+
+  <section class="section" aria-labelledby="fees-title">
+    <div class="wrap">
+      <SectionHead eyebrow="Payments" title="What you pay for payments" id="fees-title" />
+      {/* TODO confirm: PR #297 for the Stripe fee line. */}
+      <ul class="checks fees">
+        {/* TODO confirm: a "Happli fee on payments: none" line stays out until Grant decides on the fee wording. */}
+        <li><Icon name="check" size={16} strokeWidth={2} /><span><b>Stripe processing fees:</b> paid by your studio directly to Stripe, at Stripe's standard rates for your account.</span></li>
+        <li><Icon name="check" size={16} strokeWidth={2} /><span><b>Payouts:</b> from Stripe to your bank on your Stripe schedule.</span></li>
+      </ul>
+    </div>
+  </section>
+
+  <Faq items={faq} title="Pricing FAQ" id="pricing-faq" />
+
+  <CtaBand
+    title="Not sure which plan fits?"
+    body="Book a 30-minute call and we'll walk through your studio."
+    secondary={{ label: 'Get started', href: '/signup/' }}
+  />
+</BaseLayout>
+
+<style>
+  .fees {
+    margin-top: 32px;
+    max-width: 44em;
+  }
+</style>

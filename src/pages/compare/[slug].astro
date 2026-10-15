@@ -1,0 +1,17 @@
+---
+import { render } from 'astro:content';
+import PostLayout from '../../layouts/PostLayout.astro';
+import { getPublished } from '../../lib/posts';
+
+export async function getStaticPaths() {
+  const pages = await getPublished('compare');
+  return pages.map((entry) => ({ params: { slug: entry.id }, props: { entry } }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+---
+
+<PostLayout entry={entry} section={{ name: 'Compare', href: '/compare/' }}>
+  <Content />
+</PostLayout>

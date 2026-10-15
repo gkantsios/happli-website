@@ -1,0 +1,27 @@
+---
+import BaseLayout from './BaseLayout.astro';
+
+interface Props {
+  title: string;
+  description: string;
+  jsonLd?: object[];
+}
+const { title, description, jsonLd } = Astro.props;
+---
+
+<BaseLayout title={title} description={description} jsonLd={jsonLd}>
+  <div class="wrap prose-page">
+    <article class="prose">
+      <slot />
+    </article>
+  </div>
+</BaseLayout>
+
+<style>
+  .prose-page {
+    padding-top: clamp(48px, 7vw, 88px);
+  }
+  .prose {
+    margin: 0 auto;
+  }
+</style>

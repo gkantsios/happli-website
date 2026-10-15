@@ -1,0 +1,36 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Page not found | Happli" description="We couldn't find that page." noindex>
+  <section class="nf">
+    <div class="wrap">
+      <p class="eyebrow">404</p>
+      <h1>We couldn't find that page.</h1>
+      <p class="lede">It may have moved, or the link may be mistyped.</p>
+      <div class="btn-row actions">
+        <a class="btn btn-primary" href="/">Go to the homepage</a>
+        <a class="btn btn-ghost" href="/features/">See features</a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .nf {
+    padding-top: clamp(72px, 12vw, 160px);
+    text-align: center;
+  }
+  h1 {
+    font-size: clamp(36px, 5vw, 60px);
+    line-height: 1.05;
+    margin-top: 18px;
+  }
+  .lede {
+    margin: 20px auto 0;
+  }
+  .actions {
+    justify-content: center;
+    margin-top: 30px;
+  }
+</style>
