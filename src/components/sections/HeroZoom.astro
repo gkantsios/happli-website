@@ -67,14 +67,15 @@ const appHeight = Math.round((APP_WIDTH * (MONITOR.y1 - MONITOR.y0)) / (MONITOR.
 
     <div class="hero-copy">
       <div class="wrap">
-        <p class="eyebrow">For spray tan studios and beauty pros</p>
-        <h1 id="hero-title">Your front desk, <em>down to one short list.</em></h1>
+        <p class="eyebrow">Spray tan studios and beauty pros</p>
+        <h1 id="hero-title">Booking software for spray tan and beauty studios, <em>with an AI COO.</em></h1>
         <p class="lede">
-          Clients book, pay deposits and get reminders on their own. Anything that needs you (gaps, waitlist matches,
-          texts to approve) lands in Needs you.
+          Clients book online, pay deposits and get reminders on their own. Anything that needs you (gaps, waitlist matches,
+          texts to approve) lands in one short list.
         </p>
         <div class="btn-row hero-actions">
           <a class="btn btn-coral" href={site.cta.href}>{site.cta.label}</a>
+          {site.demo.enabled && <a class="btn btn-ghost" href={site.demo.href}>{site.demo.label}</a>}
           <a class="btn btn-ghost" href="#walkthrough">See a day in Happli</a>
         </div>
         <p class="hero-note">

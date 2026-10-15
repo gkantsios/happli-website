@@ -12,12 +12,12 @@ import PaymentsTrust from '../components/sections/PaymentsTrust.astro';
 import Testimonials from '../components/sections/Testimonials.astro';
 import Faq, { type FaqItem } from '../components/sections/Faq.astro';
 import CtaBand from '../components/sections/CtaBand.astro';
-import { organization, softwareApplication } from '../lib/jsonld';
+import { softwareApplication } from '../lib/jsonld';
 import { site } from '../config/site';
 
-const title = 'Happli | Online Booking, Deposits and Front Desk for Spray Tan Studios';
+const title = 'Happli | Booking Software for Spray Tan and Beauty Studios, with an AI COO';
 const description =
-  'Booking and front desk for spray tan studios and beauty pros. Clients book, pay deposits and get reminders on their own; what needs you lands in one list.';
+  'Booking software for spray tan and beauty studios, with an AI COO. Clients book, pay deposits and get reminders on their own; what needs you lands in one list.';
 
 const audience: Feature[] = [
   { icon: 'sun', title: 'Spray tan studios', body: 'that want online booking, deposits and prep reminders without the phone tag.' },
@@ -38,7 +38,7 @@ const faq: FaqItem[] = [
 ];
 ---
 
-<BaseLayout title={title} description={description} jsonLd={[organization(), softwareApplication()]}>
+<BaseLayout title={title} description={description} jsonLd={[softwareApplication()]}>
   {site.heroVariant === 'zoom' ? <HeroZoom /> : <HeroStatic />}
   <Walkthrough />
   <Problem />
@@ -62,6 +62,22 @@ const faq: FaqItem[] = [
     title="Give your front desk a break."
     body="See how Happli books, collects and reminds for you."
   >
-    {/* PLACEHOLDER: secondary CTA [JOIN THE FOUNDING MEMBER PROGRAM], only if the program is still open. */}
+    <p class="more">
+      Founding member plans start at $99 a month. <a href="/pricing/">See pricing</a> or <a href="/signup/">get started</a>.
+    </p>
   </CtaBand>
 </BaseLayout>
+
+<style>
+  .more {
+    position: relative;
+    margin-top: 24px;
+    font-size: 15px;
+    color: var(--ink-2);
+  }
+  .more a {
+    color: var(--coral-ink);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+</style>

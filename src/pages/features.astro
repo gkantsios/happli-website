@@ -6,7 +6,7 @@ import FeatureRows from '../components/sections/FeatureRows.astro';
 import CtaBand from '../components/sections/CtaBand.astro';
 import { breadcrumbs } from '../lib/jsonld';
 
-const title = 'Features | Happli Booking, Payments and Front Desk for Beauty Studios';
+const title = 'Features | Happli Booking Software for Spray Tan and Beauty Studios';
 const description =
   'Online booking, deposits, card checkout, tips and tax, no-show fees, packages, waitlist, gap offers, reminders, client import and a website chat assistant. Built for spray tan studios.';
 
@@ -170,7 +170,10 @@ const sections: Section[] = [
     {sections.map((s) => <FeatureList id={s.id} title={s.title} intro={s.intro} items={s.items} soon={s.soon} />)}
   </div>
 
-  <CtaBand title="See it with your own schedule." />
+  <CtaBand
+    title="See it with your own schedule."
+    secondary={{ label: 'See pricing', href: '/pricing/' }}
+  />
 </BaseLayout>
 
 <style>

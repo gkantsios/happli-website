@@ -1,22 +1,127 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import PageIntro from '../../components/sections/PageIntro.astro';
-import PostList from '../../components/PostList.astro';
+import SectionHead from '../../components/sections/SectionHead.astro';
+import ComparisonTable, { type Cell } from '../../components/ComparisonTable.astro';
+import CtaBand from '../../components/sections/CtaBand.astro';
 import { getPublished } from '../../lib/posts';
 import { breadcrumbs } from '../../lib/jsonld';
 import { site } from '../../config/site';
 
 const pages = await getPublished('compare');
+
+// Prices as listed on each company's own pricing page on Oct 15, 2026.
+const rows: { label: string; cells: Cell[] }[] = [
+  { label: 'Happli', cells: ['$99/month for 1 location, $149 for 2, $199 for 3 (founding member pricing)', 'None listed', { text: 'happli.com/pricing', href: '/pricing/' }] },
+  { label: 'Mangomint', cells: ['$120/month per location + $10/month per user', 'Offered (length not stated)', { text: 'mangomint.com/pricing', href: 'https://www.mangomint.com/pricing/' }] },
+  { label: 'GlossGenius', cells: ['Standard $28/month, Gold $56, Platinum $168 (billed monthly; less billed annually)', '14 days', { text: 'glossgenius.com/pricing', href: 'https://glossgenius.com/pricing' }] },
+  { label: 'Vagaro', cells: ['$23.99/month as an exclusive rate for the first 6 months, plus $10 per bookable calendar license', '30 days', { text: 'vagaro.com/pro/pricing', href: 'https://www.vagaro.com/pro/pricing' }] },
+  { label: 'MySunless', cells: ['Starter $20/month (1 team member), Pro $45/month (5 team members)', '14 days', { text: 'mysunless.com/pricing', href: 'https://mysunless.com/pricing' }] },
+];
 ---
 
 <BaseLayout
   title="Compare Happli | Booking Software Alternatives for Spray Tan Studios"
-  description="Honest comparisons between Happli and other booking systems for spray tan studios and beauty pros."
+  description="Fair, dated comparisons of Happli with Mangomint, GlossGenius, Vagaro and MySunless for spray tan studios and beauty pros. Last checked Oct 15, 2026."
   jsonLd={[breadcrumbs([{ name: 'Home', href: '/' }, { name: 'Compare', href: '/compare/' }])]}
   noindex={!site.sections.compare}
 >
-  <PageIntro eyebrow="Compare" title="How Happli compares." cta={false} />
-  <div class="wrap">
-    <PostList entries={pages} base="/compare/" empty="Comparison pages are on their way. Check back soon." />
-  </div>
+  <PageIntro
+    eyebrow="Compare"
+    title="How Happli compares."
+    lede="Choosing booking software is a big decision. These pages set Happli beside four other options, with the other company's own pricing page as the source. Where they do something better, we say so."
+    cta={false}
+  />
+
+  <section class="section tight" aria-labelledby="glance-title">
+    <div class="wrap">
+      <SectionHead eyebrow="At a glance" title="What each one costs" id="glance-title">
+        <p>Last checked Oct 15, 2026, from each company's public pricing page. Pricing models differ, so read the full comparison before you decide.</p>
+      </SectionHead>
+      <div class="table">
+        <ComparisonTable
+          caption="Starting prices and free trials, as listed by each company"
+          columns={['Price as listed', 'Free trial', 'Source']}
+          rows={rows}
+        />
+      </div>
+    </div>
+  </section>
+
+  <section class="section tight" aria-labelledby="pages-title">
+    <div class="wrap">
+      <SectionHead eyebrow="Full comparisons" title="Happli vs the rest" id="pages-title" />
+      <ul class="cards" data-reveal-stagger>
+        {
+          pages.map((e) => (
+            <li>
+              <a href={`/compare/${e.id}/`}>
+                <p class="eyebrow">Happli vs {e.data.competitor}</p>
+                <h3>{e.data.title.replace(' (2026)', '')}</h3>
+                <p class="desc">{e.data.description.replace(/ Last checked.*$/, '')}</p>
+                <span class="more">Read the comparison →</span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <CtaBand title="See it with your own schedule." />
 </BaseLayout>
+
+<style>
+  .tight {
+    padding-top: var(--space-block);
+  }
+  .table {
+    margin-top: 32px;
+  }
+  .cards {
+    list-style: none;
+    margin: 32px 0 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px;
+  }
+  .cards a {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    height: 100%;
+    padding: 28px;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--line-strong);
+    background: var(--surface);
+    transition: border-color 0.18s ease, box-shadow 0.18s ease;
+  }
+  .cards a:hover {
+    border-color: var(--coral);
+    box-shadow: var(--shadow-card);
+  }
+  h3 {
+    font-size: 24px;
+    line-height: 1.2;
+  }
+  .desc {
+    color: var(--ink-2);
+    font-size: 15px;
+  }
+  .more {
+    margin-top: auto;
+    padding-top: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--coral-ink);
+  }
+  @media (max-width: 760px) {
+    .cards {
+      grid-template-columns: 1fr;
+    }
+    .cards a {
+      padding: 22px;
+    }
+  }
+</style>

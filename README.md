@@ -23,7 +23,8 @@ npm run build && npx wrangler deploy --dry-run
 
 | Path | What it is |
 |---|---|
-| `src/config/site.ts` | Site name, URLs, the **"Book a demo" link**, sign-in URL, contact email, header and footer links, which homepage hero to use, and whether /blog and /compare are switched on |
+| `src/config/site.ts` | Site name, URLs, the **"Book a demo" link**, sign-in URL, contact email, header and footer links, which homepage hero to use, whether /blog and /compare are switched on, and the **"Try the demo" flag** (`demo.enabled`, off by default) |
+| `src/config/pricing.ts` | The three founding member plans, their Stripe Payment Links and the pricing footnote (feeds /pricing, /signup and the SoftwareApplication JSON-LD) |
 | `src/config/hero.ts` | The zoom hero's studio photo and where its monitor screen is (the one place to swap the photo) |
 | `src/styles/tokens.css` | Colors, fonts, spacing and radii |
 | `src/styles/global.css` | Base styles, buttons, section rhythm, long-form (`.prose`) styles |
@@ -31,7 +32,9 @@ npm run build && npx wrangler deploy --dry-run
 | `src/components/sections/` | One component per page section (HeroZoom, HeroStatic, Walkthrough, FeatureCards, FeatureRows, Faq, CtaBand, PricingPlans, …) |
 | `src/components/mocks/` | Product illustrations shared by the walkthrough, the home feature cards and the /features rows (NeedsList, CheckoutSheet, PhoneBooking, ReminderPreview) |
 | `src/components/StickyCta.astro` | The phone-only "Book a demo" bar (below 700px): it shows whenever none of the page's own "Book a demo" buttons is visible: a button counts as gone once its bottom edge passes under the sticky header, or once the zoom hero's copy fades below 40% opacity. On pages without one it shows from the first screen, footer included. The header's button is hidden on phones (it's in the menu), so exactly one shows at every scroll position. The hero's phone demo keeps its buttons and sheet above the bar |
-| `src/pages/` | One file per route |
+| `src/pages/` | One file per route: home, /features/, /pricing/, /phone/, /spray-tan-studio-software/, /signup/, /help/, /compare/ (index plus `src/content/compare/*.md`), and the legal pages |
+| `seo/` | Keyword map, article briefs, page templates, Search Console tracking steps, AEO notes and the robots.txt rationale (see `seo/README.md`) |
+| `docs/screenshots/` | Full-page screenshots of key pages at 375, 768 and 1280px |
 | `src/legal/` | Privacy, terms and security page bodies (HTML, ported word-for-word from the old site) |
 | `src/content/blog/`, `src/content/compare/` | Markdown posts |
 | `public/` | Files served as-is: logos, favicons (`favicon.ico` is made by `node scripts/generate-favicon.mjs`), `robots.txt`, the default social image, `_redirects` (Cloudflare edge redirects) and fallback redirect pages for the old `privacy.html` / `terms.html` / `security.html` URLs |
@@ -104,6 +107,7 @@ draft: true                    # optional, defaults to false
 heroImage: './images/deposits.jpg'  # optional, path relative to the post file
 heroImageAlt: 'A client paying a deposit on her phone'  # recommended when heroImage is set
 competitor: 'Other Booking App'     # required for compare pages only
+todo: ['A claim to verify']         # optional, compare pages: never rendered
 ---
 ```
 
@@ -113,13 +117,14 @@ competitor: 'Other Booking App'     # required for compare pages only
 
 Each post gets Open Graph and Twitter tags and `BlogPosting` and `BreadcrumbList` structured data. Once its section is switched on (below), it also gets a canonical URL and an entry in the sitemap. Published blog posts go into `/rss.xml`.
 
-**Switching a section on.** /blog and /compare are off in `src/config/site.ts` (`sections`) until they have published posts. While a section is off, its pages still build and work by URL, but they're marked noindex, left out of the sitemap and the footer, and (for the blog) the RSS link is left out of the page head. After the first post is published, set `sections.blog` (or `sections.compare`) to `true`, and add Blog to the header `nav` if you want it there.
+**Switching a section on.** /blog is off in `src/config/site.ts` (`sections`) until it has published posts (/compare is on). While a section is off, its pages still build and work by URL, but they're marked noindex, left out of the sitemap and the footer, and (for the blog) the RSS link is left out of the page head. After the first post is published, set `sections.blog` (or `sections.compare`) to `true`, and add Blog to the header `nav` if you want it there.
 
 ## SEO
 
 - `@astrojs/sitemap` writes `sitemap-index.xml` on every build, and `public/robots.txt` points to it.
 - Every page sets a unique title and meta description, a canonical URL (on `https://gohappli.com`, with a trailing slash), and Open Graph and Twitter tags. The default share image is `public/og-default.png` (regenerate it with `node scripts/generate-og.mjs`).
-- The home page has `Organization` and `SoftwareApplication` JSON-LD. Other pages have `BreadcrumbList`.
+- Every page has `Organization` and `WebSite` JSON-LD (added in `BaseLayout`). Home, /pricing/ and the niche page add `SoftwareApplication` with the founding-plan `offers`; any page that renders an FAQ gets `FAQPage`; other pages get `BreadcrumbList`.
+- `public/robots.txt` allows search and AI-answer crawlers and blocks training-only crawlers. See `seo/robots.md`.
 
 ## Deploy
 

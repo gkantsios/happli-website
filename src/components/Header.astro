@@ -20,11 +20,14 @@ const isCurrent = (href: string) => current === href;
     </nav>
     <div class="nav-cta">
       <a class="signin" href={site.signInUrl}>Sign in</a>
+      {site.demo.enabled && <a class="demo" href={site.demo.href}>{site.demo.label}</a>}
       <a class="btn btn-primary" href={site.cta.href}>{site.cta.label}</a>
       <details class="menu">
         <summary>Menu</summary>
         <nav class="menu-panel" aria-label="Mobile">
           {site.nav.map((link) => <a href={link.href}>{link.label}</a>)}
+          {site.demo.enabled && <a href={site.demo.href}>{site.demo.label}</a>}
+          <a href="/signup/">Get started</a>
           <a href={site.signInUrl}>Sign in</a>
           <a class="menu-cta" href={site.cta.href}>{site.cta.label}</a>
         </nav>
@@ -84,6 +87,11 @@ const isCurrent = (href: string) => current === href;
     padding: 0 16px;
     font-size: 14px;
   }
+  .demo {
+    color: var(--coral-ink);
+    font-weight: 600;
+  }
+  .demo:hover,
   .signin:hover {
     text-decoration: underline;
     text-underline-offset: 4px;
@@ -132,6 +140,7 @@ const isCurrent = (href: string) => current === href;
   }
   @media (max-width: 860px) {
     .nav-links,
+    .demo,
     .signin {
       display: none;
     }

@@ -1,4 +1,35 @@
+# Happli (gohappli.com) crawler policy. Rationale and the full list: seo/robots.md
+#
+# Policy: search engines and AI answer/search crawlers may read the site, so Happli can be found and
+# cited. Crawlers that collect content only to train models are blocked.
+
+# Search and AI-answer crawlers: allowed
+User-agent: Googlebot
+User-agent: Bingbot
+User-agent: OAI-SearchBot
+User-agent: ChatGPT-User
+User-agent: PerplexityBot
+User-agent: Perplexity-User
+User-agent: Claude-SearchBot
+User-agent: Claude-User
+User-agent: Applebot
+Allow: /
+
+# Training-only crawlers: blocked
+User-agent: GPTBot
+User-agent: Google-Extended
+User-agent: CCBot
+User-agent: ClaudeBot
+User-agent: anthropic-ai
+User-agent: Applebot-Extended
+User-agent: Bytespider
+User-agent: meta-externalagent
+User-agent: cohere-training-data-crawler
+Disallow: /
+
+# Everyone else
 User-agent: *
+Content-Signal: search=yes, ai-input=yes, ai-train=no
 Allow: /
 
 Sitemap: https://gohappli.com/sitemap-index.xml

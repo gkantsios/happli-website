@@ -1,0 +1,72 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageIntro from '../components/sections/PageIntro.astro';
+import PricingPlans from '../components/sections/PricingPlans.astro';
+import SectionHead from '../components/sections/SectionHead.astro';
+import { breadcrumbs } from '../lib/jsonld';
+import { site } from '../config/site';
+
+const title = 'Get Started | Join Happli as a Founding Member';
+const description =
+  'Join Happli as a founding member from $99 a month, or book a 30-minute call first. Booking software for spray tan and beauty studios, with an AI COO.';
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  jsonLd={[breadcrumbs([{ name: 'Home', href: '/' }, { name: 'Get started', href: '/signup/' }])]}
+>
+  <PageIntro
+    eyebrow="Get started"
+    title="Join as a founding member."
+    lede="Pick the plan that matches your locations and check out securely with Stripe. Want to see it first? Book a call and we'll walk through your schedule."
+    cta={false}
+  >
+    <div class="btn-row call">
+      <a class="btn btn-coral" href={site.cta.href}>Book a call</a>
+      {site.demo.enabled && <a class="btn btn-ghost" href={site.demo.href}>{site.demo.label}</a>}
+    </div>
+  </PageIntro>
+
+  <PricingPlans included={false} />
+
+  <section class="section" aria-labelledby="next-title">
+    <div class="wrap">
+      <SectionHead eyebrow="What happens next" title="From checkout to your first booking." id="next-title" />
+      {/* TODO confirm: the exact onboarding steps and timing after a founding member checks out. */}
+      <ol class="next">
+        <li><b>Check out with Stripe.</b> Choose your plan above and pay securely.</li>
+        <li><b>We get in touch.</b> Founding members get white-glove onboarding and priority support.</li>
+        <li><b>Set up your studio.</b> Add services, team and hours, and bring your clients over from CSV if you're switching.</li>
+      </ol>
+      <p class="help">Questions first? <a href="/pricing/">See pricing details</a>, <a href="/help/">visit Help</a> or email <a href={`mailto:${site.contactEmail}`}>{site.contactEmail}</a>.</p>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .call {
+    margin-top: 28px;
+  }
+  .next {
+    margin: 32px 0 0;
+    padding-left: 22px;
+    display: grid;
+    gap: 14px;
+    max-width: 44em;
+    color: var(--ink-2);
+  }
+  .next b {
+    color: var(--ink);
+  }
+  .help {
+    margin-top: 32px;
+    font-size: 15px;
+    color: var(--ink-2);
+  }
+  .help a {
+    color: var(--coral-ink);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+</style>

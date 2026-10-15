@@ -5,12 +5,15 @@ export type NavLink = { label: string; href: string };
 // Blog and compare sections. While a section is off, its pages still build and work by URL,
 // but they're marked noindex, left out of the sitemap, and not linked from the footer.
 // Turn one on once it has published posts.
-const sections = { blog: false, compare: false };
+const sections = { blog: false, compare: true };
 
 export const site = {
   name: 'Happli',
   url: 'https://gohappli.com',
-  tagline: 'The booking and front-desk partner for spray tan studios and beauty pros.',
+  positioning: 'Booking software for spray tan and beauty studios, with an AI COO.',
+  tagline: 'Booking software for spray tan and beauty studios, with an AI COO.',
+  helpUrl: 'https://support.gohappli.com/',
+  appUrl: 'https://app.gohappli.com',
   signInUrl: 'https://app.gohappli.com/login',
   contactEmail: 'hello@gohappli.com',
   defaultOgImage: '/og-default.png',
@@ -27,16 +30,28 @@ export const site = {
     href: 'https://tidycal.com/gkantsios/30-minute-meeting',
   },
 
+  // "Try the demo" button. It renders in the header, the home hero and the final CTA band only when
+  // enabled is true. Turn it on once app.gohappli.com/demo is live.
+  demo: {
+    enabled: false,
+    label: 'Try the demo',
+    href: 'https://app.gohappli.com/demo',
+  },
+
   // Header links. Add { label: 'Blog', href: '/blog/' } once the first post is published.
   nav: [
     { label: 'Features', href: '/features/' },
     { label: 'Pricing', href: '/pricing/' },
+    { label: 'Compare', href: '/compare/' },
+    { label: 'Help', href: '/help/' },
   ] satisfies NavLink[],
 
   footer: {
     product: [
       { label: 'Features', href: '/features/' },
       { label: 'Pricing', href: '/pricing/' },
+      { label: 'Happli on your phone', href: '/phone/' },
+      { label: 'Spray tan studio software', href: '/spray-tan-studio-software/' },
       ...(sections.blog ? [{ label: 'Blog', href: '/blog/' }] : []),
       ...(sections.compare ? [{ label: 'Compare', href: '/compare/' }] : []),
     ] satisfies NavLink[],

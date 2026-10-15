@@ -22,7 +22,10 @@ const blog = defineCollection({
 
 const compare = defineCollection({
   loader: glob({ base: './src/content/compare', pattern: '**/*.{md,mdx}' }),
-  schema: (ctx) => postSchema(ctx).extend({ competitor: z.string() }),
+  schema: (ctx) => postSchema(ctx).extend({ competitor: z.string(),
+    // Claims to verify; kept here so they never render. Search the repo for "todo:".
+    todo: z.array(z.string()).default([]),
+  }),
 });
 
 export const collections = { blog, compare };

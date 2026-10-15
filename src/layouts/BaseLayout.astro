@@ -9,6 +9,7 @@ import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import StickyCta from '../components/StickyCta.astro';
 import { site } from '../config/site';
+import { organization, website } from '../lib/jsonld';
 
 interface Props {
   title: string;
@@ -26,7 +27,7 @@ const {
   title,
   description,
   image = site.defaultOgImage,
-  imageAlt = 'Happli: online booking, deposits and front desk for spray tan studios',
+  imageAlt = 'Happli: booking software for spray tan and beauty studios, with an AI COO',
   type = 'website',
   jsonLd = [],
   noindex = false,
@@ -75,7 +76,7 @@ const ogImage = new URL(image, site.url).href;
     <meta name="twitter:image" content={ogImage} />
     <meta name="twitter:image:alt" content={imageAlt} />
 
-    {jsonLd.map((data) => <script type="application/ld+json" set:html={JSON.stringify(data)} />)}
+    {[organization(), website(), ...jsonLd].map((data) => <script type="application/ld+json" set:html={JSON.stringify(data)} />)}
   </head>
   <body>
     <a class="skip-link" href="#main">Skip to content</a>

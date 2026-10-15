@@ -36,7 +36,7 @@ const ogImage = heroImage ? heroImage.src : site.defaultOgImage;
 >
   <div class="wrap post">
     <Breadcrumbs items={crumbs} />
-    <article class="prose">
+    <article class:list={['prose', { compare: entry.collection === 'compare' }]}>
       <header>
         {draft && <p class="badge">Draft preview (not published)</p>}
         <h1>{title}</h1>

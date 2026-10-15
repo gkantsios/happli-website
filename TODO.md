@@ -40,14 +40,11 @@ The zoom hero's landed screen (`src/components/sections/AppScreen.astro`) is mod
 
 ## Placeholders to fill
 
-- [ ] **Pricing plans** (`src/components/sections/PricingPlans.astro`): plan names, prices, billing unit, "best for", locations, team members, SMS allowance, whether the chat assistant is included, client import (included or fee), support level, and the per-plan CTA label. All are shown on the page as highlighted `[PLACEHOLDER]` text.
-- [ ] Pricing extras (commented out): founding member offer, free trial, annual discount.
-- [ ] Pricing fee list: the "Happli fee on payments: none." line was removed until Grant decides on the fee wording. Other "no fee" wording (hero trust line, payments section, FAQ, pricing subhead and meta description, /features Stripe Connect line) is unchanged for now.
-- [ ] Pricing FAQ answers (`src/pages/pricing.astro`): setup fee, contract/cancellation terms, SMS pricing, import pricing.
-- [ ] Pricing meta description: add "[PRICE] per [UNIT]." back once pricing is set (`src/pages/pricing.astro`).
-- [ ] Add `offers` to the SoftwareApplication JSON-LD once pricing is real (`src/lib/jsonld.ts`).
+- [ ] **Pricing: confirm what's the same on every plan** (`src/components/sections/PricingPlans.astro`). The "Every plan includes" list shows only what the old placeholder table marked "Included". Whether the website chat assistant, reports and client import (included or fee) apply to all three plans is unconfirmed, and the plans don't list team-member limits.
+- [ ] Pricing FAQ: setup fee and contract/cancellation answers are unsourced, so they're not rendered (TODO comments in `src/pages/pricing.astro`). Client import pricing too.
+- [ ] Pricing: the "Happli fee on payments: none" line is still out of the fees list until you decide the wording (the subhead, meta description and FAQ still say no fee).
+- [ ] Signup page "What happens next" steps and timing (`src/pages/signup.astro`) are generic. Confirm the real onboarding steps.
 - [ ] Testimonials (`src/components/sections/Testimonials.astro`): 3 slots, rendered only when real quotes with written permission are added. Optional logos row, same rule.
-- [ ] Home final CTA secondary button "Join the founding member program" (only if the program is still open) (`src/pages/index.astro`). The old site's Stripe buy links for founding members were removed with the old index.html. If those links are still live, they need a new home.
 - [ ] Default OG image (`public/og-default.png`) is a generated placeholder. Replace it with a designed 1200×630 image, or edit and rerun `node scripts/generate-og.mjs`.
 - [ ] Primary CTA currently points to the TidyCal 30-minute meeting link. Change `cta.href` in `src/config/site.ts` if that changes.
 
@@ -66,9 +63,29 @@ The copy doc has no headings for some sections, so these were added. Please revi
 - Footer tagline and "Made for spray tan studios and beauty pros."
 - Sample names in the calendar, phone and walkthrough illustrations (Dana, Jess, Maya, Golden Glow; the static hero's calendar still uses Tori; walkthrough client and team names are from the mockup; its prices ($55, $15, $20 deposit, $10 tip) are illustrative)
 
+## Competitor claims to verify (/compare, checked Oct 15, 2026)
+
+Each compare page lists its own open items in the `todo:` frontmatter (not rendered). Search for `todo:` in `src/content/compare/`. Summary:
+
+- [ ] **Mangomint:** free-trial length; whether it has a waitlist or gap feature; whether deposits and no-show fees work without Mangomint Payments.
+- [ ] **GlossGenius:** card processing rates (the rate fields didn't render when fetched); deposit and no-show policy availability by tier; text-credit limits by tier.
+- [ ] **Vagaro:** standard price after the first-6-months rate ($30.00 appears unlabeled, so it isn't shown); text/SMS, forms and processing prices; how the $10 per bookable calendar license combines with the base price.
+- [ ] **MySunless:** waitlist or gap features and multiple-location support (not on its pricing page). Prices came from the rendered pricing page; the site is a JavaScript app, so re-check in a browser.
+- [ ] Re-check all four pages quarterly and bump `updatedDate`.
+- [ ] Happli side: memberships are not claimed anywhere (the compare tables say "not listed on our features page"). Update if you offer them. Client import wording ("done by the Happli team") depends on the CSV import item above.
+
+## Other open items from this pass
+
+- [ ] **Try the demo:** set `site.demo.enabled` to `true` in `src/config/site.ts` once https://app.gohappli.com/demo is live. It then appears in the header, home hero, final CTA bands and the /phone/, niche and signup pages.
+- [ ] /phone/ and the spray tan niche page: unconfirmed claims are marked `TODO confirm` in the source (owner phone view ready to advertise; live texting; post-care texts are described only as custom messages; memberships are left out).
+- [ ] **Cloudflare:** after the cutover, open /robots.txt and confirm it's this repo's file, not Cloudflare's managed one (`seo/robots.md`). Verify Search Console via a DNS TXT record, submit the sitemap, and set up Bing (`seo/tracking/README.md`). Decide on Amazonbot (left allowed).
+- [ ] AI-instructions draft (`/workspace/ai-instructions/`) describes Happli as a layer on another booking system; reconcile with the new positioning before publishing anything like it.
+- [ ] Fill volume and KD in `seo/keyword-map.csv` (marked TODO).
+- [ ] Node: the repo needs Node 22.12 or newer (`.node-version`).
+
 ## After the first post
 
-/blog and /compare are switched off in `src/config/site.ts` (`sections`): the pages build and work by URL, but they're noindex, left out of the sitemap and footer, and the RSS link is left out of the page head.
+/blog is switched off in `src/config/site.ts` (`sections`): its pages build and work by URL, but they're noindex, left out of the sitemap and footer, and the RSS link is left out of the page head. /compare is on.
 
-- [ ] Set `sections.blog` (or `sections.compare`) to `true` in `src/config/site.ts`, and add `{ label: 'Blog', href: '/blog/' }` to `nav` if it should be in the header.
-- [ ] Delete the two draft samples in `src/content/blog/` and `src/content/compare/`.
+- [ ] Set `sections.blog` to `true` in `src/config/site.ts`, and add `{ label: 'Blog', href: '/blog/' }` to `nav` if it should be in the header.
+- [ ] Delete the draft sample in `src/content/blog/`.

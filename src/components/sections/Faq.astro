@@ -1,5 +1,6 @@
 ---
 import SectionHead from './SectionHead.astro';
+import { faqPage } from '../../lib/jsonld';
 
 export type FaqItem = { q: string; a: string; comingSoon?: boolean };
 
@@ -9,10 +10,9 @@ interface Props {
   id?: string;
 }
 const { items, title = 'Frequently asked questions', id = 'faq' } = Astro.props;
-// Bracketed text like [SETUP FEE ANSWER] is a copy placeholder and gets highlighted.
-const parts = (text: string) => text.split(/(\[[^\]]+\])/).filter(Boolean);
 ---
 
+<script type="application/ld+json" set:html={JSON.stringify(faqPage(items))} />
 <section class="section" aria-labelledby={`${id}-title`}>
   <div class="wrap faq-in">
     <SectionHead eyebrow="FAQ" title={title} id={`${id}-title`} />
@@ -25,9 +25,7 @@ const parts = (text: string) => text.split(/(\[[^\]]+\])/).filter(Boolean);
               <span class="plus" aria-hidden="true" />
             </summary>
             <p>
-              {parts(item.a).map((part) =>
-                part.startsWith('[') ? <span class="placeholder">{part}</span> : part,
-              )}
+              {item.a}
             </p>
           </details>
         ))

@@ -19,6 +19,8 @@ const year = new Date().getFullYear();
         <h2 id="footer-company">Company</h2>
         <ul>
           <li><a href={site.cta.href}>{site.cta.label}</a></li>
+          <li><a href="/signup/">Get started</a></li>
+          <li><a href="/help/">Help</a></li>
           <li><a href={site.signInUrl}>Sign in</a></li>
           <li><a href={`mailto:${site.contactEmail}`}>{site.contactEmail}</a></li>
         </ul>
@@ -30,7 +32,7 @@ const year = new Date().getFullYear();
     </div>
     <div class="legal">
       <p>© {year} Happli</p>
-      <p>Made for spray tan studios and beauty pros.</p>
+      <p>Booking software for spray tan and beauty studios.</p>
     </div>
   </div>
 </footer>

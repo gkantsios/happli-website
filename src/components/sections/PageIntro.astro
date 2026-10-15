@@ -6,8 +6,9 @@ interface Props {
   title: string;
   lede?: string;
   cta?: boolean;
+  secondary?: { label: string; href: string };
 }
-const { eyebrow, title, lede, cta = true } = Astro.props;
+const { eyebrow, title, lede, cta = true, secondary } = Astro.props;
 ---
 
 <section class="intro">
@@ -19,6 +20,8 @@ const { eyebrow, title, lede, cta = true } = Astro.props;
       cta && (
         <div class="btn-row actions">
           <a class="btn btn-coral" href={site.cta.href}>{site.cta.label}</a>
+          {site.demo.enabled && <a class="btn btn-ghost" href={site.demo.href}>{site.demo.label}</a>}
+          {secondary && <a class="btn btn-ghost" href={secondary.href}>{secondary.label}</a>}
         </div>
       )
     }
