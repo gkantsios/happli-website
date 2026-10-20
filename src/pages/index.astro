@@ -14,6 +14,7 @@ import Faq, { type FaqItem } from '../components/sections/Faq.astro';
 import CtaBand from '../components/sections/CtaBand.astro';
 import { softwareApplication } from '../lib/jsonld';
 import { site } from '../config/site';
+import { lowPrice, founding, usd } from '../config/pricing';
 
 const title = 'Happli | Booking Software for Spray Tan and Beauty Studios, with an AI COO';
 const description =
@@ -63,7 +64,7 @@ const faq: FaqItem[] = [
     body="See how Happli books, collects and reminds for you."
   >
     <p class="more">
-      Founding member plans start at $99 a month. <a href="/pricing/">See pricing</a> or <a href="/signup/">get started</a>.
+      Plans start at {usd(lowPrice)} a month, with {founding.discountPercent}% off for Founding Studios. <a href="/pricing/">See pricing</a> or <a href="/signup/">get started</a>.
     </p>
   </CtaBand>
 </BaseLayout>

@@ -5,10 +5,10 @@ import PricingPlans from '../components/sections/PricingPlans.astro';
 import SectionHead from '../components/sections/SectionHead.astro';
 import { breadcrumbs } from '../lib/jsonld';
 import { site } from '../config/site';
+import { solo, founding, trialDays, usd } from '../config/pricing';
 
-const title = 'Get Started | Join Happli as a Founding Member';
-const description =
-  'Join Happli as a founding member from $99 a month, or book a 30-minute call first. Booking software for spray tan and beauty studios, with an AI COO.';
+const title = 'Get Started | Join Happli as a Founding Studio';
+const description = `Join Happli from ${usd(solo.monthly)} a month, with ${founding.discountPercent}% off for Founding Studios. Free until you go live. Booking software for spray tan and beauty studios, with an AI COO.`;
 ---
 
 <BaseLayout
@@ -18,8 +18,8 @@ const description =
 >
   <PageIntro
     eyebrow="Get started"
-    title="Join as a founding member."
-    lede="Pick the plan that matches your locations and check out securely with Stripe. Want to see it first? Book a call and we'll walk through your schedule."
+    title="Join as a Founding Studio."
+    lede={`Pick Solo or Studio, then book a call and we'll set you up for free. Happli is free until your studio goes live, for up to ${trialDays} days.`}
     cta={false}
   >
     <div class="btn-row call">
@@ -28,16 +28,16 @@ const description =
     </div>
   </PageIntro>
 
-  <PricingPlans included={false} />
+  <PricingPlans included={false} cta="call" />
 
   <section class="section" aria-labelledby="next-title">
     <div class="wrap">
-      <SectionHead eyebrow="What happens next" title="From checkout to your first booking." id="next-title" />
-      {/* TODO confirm: the exact onboarding steps and timing after a founding member checks out. */}
+      <SectionHead eyebrow="What happens next" title="From your first call to your first booking." id="next-title" />
+      {/* TODO confirm: the exact onboarding steps and timing. Online checkout comes back once the new Stripe Payment Links exist. */}
       <ol class="next">
-        <li><b>Check out with Stripe.</b> Choose your plan above and pay securely.</li>
-        <li><b>We get in touch.</b> Founding members get white-glove onboarding and priority support.</li>
-        <li><b>Set up your studio.</b> Add services, team and hours, and bring your clients over from CSV if you're switching.</li>
+        <li><b>Book a call.</b> Pick a time and tell us about your studio and team.</li>
+        <li><b>Set up your studio, free.</b> Add services, team and hours, and we bring your clients over from CSV if you're switching. There's no setup fee.</li>
+        <li><b>Go live.</b> Happli is free until your studio goes live, for up to {trialDays} days. Then you pay for Solo or Studio, monthly or yearly.</li>
       </ol>
       <p class="help">Questions first? <a href="/pricing/">See pricing details</a>, <a href="/help/">visit Help</a> or email <a href={`mailto:${site.contactEmail}`}>{site.contactEmail}</a>.</p>
     </div>

@@ -7,12 +7,15 @@ import CtaBand from '../../components/sections/CtaBand.astro';
 import { getPublished } from '../../lib/posts';
 import { breadcrumbs } from '../../lib/jsonld';
 import { site } from '../../config/site';
+import { solo, studio, trialDays, usd } from '../../config/pricing';
 
 const pages = await getPublished('compare');
 
-// Prices as listed on each company's own pricing page on Oct 15, 2026.
+// Prices as listed on each company's own pricing page on Oct 15, 2026 (Square: October 2026, from Grant's
+// pricing research; no full comparison page yet, so its source is plain text).
 const rows: { label: string; cells: Cell[] }[] = [
-  { label: 'Happli', cells: ['$99/month for 1 location, $149 for 2, $199 for 3 (founding member pricing)', 'None listed', { text: 'happli.com/pricing', href: '/pricing/' }] },
+  { label: 'Happli', cells: [`Solo ${usd(solo.monthly)}/month, Studio ${usd(studio.monthly)}/month per location (less billed yearly)`, `Free until you go live, up to ${trialDays} days`, { text: 'gohappli.com/pricing', href: '/pricing/' }] },
+  { label: 'Square Appointments', cells: ['Free, Plus $49/month, Premium $149/month per location', 'Free plan available', 'Square Appointments pricing page'] },
   { label: 'Mangomint', cells: ['$120/month per location + $10/month per user', 'Offered (length not stated)', { text: 'mangomint.com/pricing', href: 'https://www.mangomint.com/pricing/' }] },
   { label: 'GlossGenius', cells: ['Standard $28/month, Gold $56, Platinum $168 (billed monthly; less billed annually)', '14 days', { text: 'glossgenius.com/pricing', href: 'https://glossgenius.com/pricing' }] },
   { label: 'Vagaro', cells: ['$23.99/month as an exclusive rate for the first 6 months, plus $10 per bookable calendar license', '30 days', { text: 'vagaro.com/pro/pricing', href: 'https://www.vagaro.com/pro/pricing' }] },
@@ -36,7 +39,7 @@ const rows: { label: string; cells: Cell[] }[] = [
   <section class="section tight" aria-labelledby="glance-title">
     <div class="wrap">
       <SectionHead eyebrow="At a glance" title="What each one costs" id="glance-title">
-        <p>Last checked Oct 15, 2026, from each company's public pricing page. Pricing models differ, so read the full comparison before you decide.</p>
+        <p>Last checked Oct 15, 2026 (Square in October 2026), from each company's public pricing page. Pricing models differ, so read the full comparison before you decide.</p>
       </SectionHead>
       <div class="table">
         <ComparisonTable
