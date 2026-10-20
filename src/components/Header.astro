@@ -36,6 +36,23 @@ const isCurrent = (href: string) => current === href;
   </div>
 </header>
 
+<script is:inline>
+  // The phone menu is a <details>: close it on Escape or a tap outside it.
+  (function () {
+    var menu = document.querySelector('.nav .menu');
+    if (!menu) return;
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && menu.open) {
+        menu.open = false;
+        menu.querySelector('summary').focus();
+      }
+    });
+    document.addEventListener('click', function (e) {
+      if (menu.open && !menu.contains(e.target)) menu.open = false;
+    });
+  })();
+</script>
+
 <style>
   .nav {
     position: sticky;
@@ -104,7 +121,7 @@ const isCurrent = (href: string) => current === href;
     list-style: none;
     display: inline-flex;
     align-items: center;
-    height: 38px;
+    height: 44px;
     padding: 0 14px;
     border: 1px solid var(--line-strong);
     border-radius: var(--radius-pill);
@@ -127,7 +144,7 @@ const isCurrent = (href: string) => current === href;
     box-shadow: var(--shadow-card);
   }
   .menu-panel a {
-    padding: 10px 12px;
+    padding: 12px 12px;
     border-radius: 8px;
     font-weight: 500;
   }

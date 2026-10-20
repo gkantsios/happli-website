@@ -56,7 +56,7 @@ export const solo = plan({
   forWho: 'For the owner who does every appointment.',
   monthly: 69,
   yearly: 59,
-  unit: '/ month',
+  unit: '/mo',
   unitShort: '/mo',
   points: [
     '1 team member who takes bookings (you, the owner)',
@@ -73,7 +73,7 @@ export const studio = plan({
   forWho: 'For teams, priced per location.',
   monthly: 149,
   yearly: 129,
-  unit: '/ month per location',
+  unit: '/mo per location',
   unitShort: '/mo per location',
   points: [
     `Up to ${studioIncludedMembers} team members who take bookings, then +$${extraMemberPrice}/mo each`,
@@ -101,7 +101,8 @@ export const reminderFairUse = 1000;
 /** Free until the studio goes live, capped at this many days. */
 export const trialDays = 30;
 
-export const includedEverywhere = [
+export type Included = string | { label: string; status: 'Coming soon' | 'Early access' };
+export const includedEverywhere: Included[] = [
   'Online booking',
   'Desk calendar',
   'Checkout',
@@ -109,11 +110,11 @@ export const includedEverywhere = [
   'Gift cards',
   'Forms and waivers',
   'Reminders',
-  'Memberships (coming soon)',
+  { label: 'Memberships', status: 'Coming soon' },
   'Reports',
   'Ask your reports (AI)',
   'AI form import',
-  'AI COO (coming soon)',
+  { label: 'AI COO', status: 'Coming soon' },
   'Email rewards',
   'Client import',
   'Free team logins',

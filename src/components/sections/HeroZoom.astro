@@ -195,11 +195,28 @@ const appHeight = Math.round((APP_WIDTH * (MONITOR.y1 - MONITOR.y0)) / (MONITOR.
     var APP_W_PHONE = 640;
     var NAV = 68;
 
+    // Phones: the scaled screen's own buttons are far too small to tap, so the screen stays inert and
+    // out of the tab order there; the page-size chips below it open the same panels.
+    var phoneMQ = window.matchMedia('(max-width: 699.98px)');
+    var landed = false;
+    function phoneLock() {
+      var small = phoneMQ.matches;
+      app.inert = !landed || small;
+      app.querySelectorAll('button').forEach(function (b) {
+        if (small) b.setAttribute('tabindex', '-1');
+        else b.removeAttribute('tabindex');
+      });
+    }
+
+    phoneMQ.addEventListener('change', phoneLock);
+    phoneLock();
+
     // Reduced motion: no scroll zoom. Show the final frame statically; only the screen's
     // content needs scaling to its width.
     if (zoom.classList.contains('is-static')) {
-      // The final frame is always there, so the demo is always usable.
-      app.inert = false;
+      // The final frame is always there, so the demo is always usable (on phones, through the chips).
+      landed = true;
+      phoneLock();
       stage.classList.add('is-landed');
       var fit = function () {
         app.style.transform = 'scale(' + monitor.clientWidth / APP_W + ')';
@@ -217,14 +234,13 @@ const appHeight = Math.round((APP_WIDTH * (MONITOR.y1 - MONITOR.y0)) / (MONITOR.
     var m0 = { x: 0, y: 0 };
     var baseMH = 0; // the screen's landed height at the photo's proportions
     var grow = 0; // phones: extra height the screen grows by as it lands
-    var landed = false;
 
     // The demo inside the screen is usable only while the screen sits still, full size.
     function setLanded(v) {
       if (v === landed) return;
       landed = v;
       stage.classList.toggle('is-landed', v);
-      app.inert = !v;
+      phoneLock();
       if (od) od.dispatchEvent(new CustomEvent('od:landed', { detail: v }));
     }
 
@@ -510,7 +526,7 @@ const appHeight = Math.round((APP_WIDTH * (MONITOR.y1 - MONITOR.y0)) / (MONITOR.
   }
   .hero-note {
     margin-top: 16px;
-    font-size: 13px;
+    font-size: 16px;
     color: var(--ink-2);
   }
   .hero-note :global(svg) {
@@ -930,7 +946,7 @@ const appHeight = Math.round((APP_WIDTH * (MONITOR.y1 - MONITOR.y0)) / (MONITOR.
       padding-top: calc(var(--nav-h) + 3vh);
     }
     .lede {
-      font-size: 15px;
+      font-size: 16px;
       margin-top: 16px;
     }
     .hero-actions {

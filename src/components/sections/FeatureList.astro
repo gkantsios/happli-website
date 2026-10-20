@@ -2,7 +2,9 @@
 // A features-page section: heading on the left, a checklist of features on the right.
 import Icon from '../Icon.astro';
 
-export type FeatureItem = { title?: string; body: string; soon?: boolean };
+export type Status = 'soon' | 'early';
+export type FeatureItem = { title?: string; body: string; status?: Status };
+const label: Record<Status, string> = { soon: 'Coming soon', early: 'Early access' };
 
 interface Props {
   id: string;
@@ -10,9 +12,9 @@ interface Props {
   title: string;
   intro?: string;
   items: FeatureItem[];
-  soon?: boolean;
+  status?: Status;
 }
-const { id, eyebrow, title, intro, items, soon = false } = Astro.props;
+const { id, eyebrow, title, intro, items, status } = Astro.props;
 ---
 
 <section class="flist" id={id} aria-labelledby={`${id}-title`}>
@@ -21,7 +23,7 @@ const { id, eyebrow, title, intro, items, soon = false } = Astro.props;
       {eyebrow && <p class="eyebrow">{eyebrow}</p>}
       <h2 id={`${id}-title`}>
         {title}
-        {soon && <span class="badge">Coming soon</span>}
+        {status && <span class="badge">{label[status]}</span>}
       </h2>
       {intro && <p class="intro">{intro}</p>}
       <slot name="note" />
@@ -32,8 +34,17 @@ const { id, eyebrow, title, intro, items, soon = false } = Astro.props;
           <li>
             <Icon name="check" size={16} strokeWidth={2} />
             <span>
-              {item.title && <b>{item.title}</b>} {item.body}
-              {item.soon && <span class="badge">Coming soon</span>}
+              {item.title ? (
+                <>
+                  <b>{item.title}</b>
+                  {item.status && <span class="badge">{label[item.status]}</span>} {item.body}
+                </>
+              ) : (
+                <>
+                  {item.body}
+                  {item.status && <span class="badge">{label[item.status]}</span>}
+                </>
+              )}
             </span>
           </li>
         ))
@@ -74,7 +85,7 @@ const { id, eyebrow, title, intro, items, soon = false } = Astro.props;
     max-width: 26em;
   }
   .checks li > span .badge {
-    margin-left: 6px;
+    margin: 0 4px;
   }
   @media (max-width: 860px) {
     .flist-in {

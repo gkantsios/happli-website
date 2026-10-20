@@ -36,7 +36,7 @@ const terms = [
     <p class="founding">
       <span class="badge">Founding Studio offer</span>
       <span>
-        {founding.discountPercent}% off for as long as you stay subscribed. First {founding.maxStudios} studios or first
+        {founding.discountPercent}% off for as long as you stay subscribed. First {founding.maxStudios} studios or first{' '}
         {founding.days} days after launch.
         <a href={foundingHref}>See how it works</a>
       </span>
@@ -86,7 +86,7 @@ const terms = [
       <div class="addon-price">
         <p class="price">
           <span class="amount">{usd(marketingAddOn.price)}</span>
-          <span class="unit">/ month</span>
+          <span class="unit">/mo</span>
         </p>
         <p class="muted">Optional, on either plan</p>
       </div>
@@ -94,8 +94,8 @@ const terms = [
         <h3>{marketingAddOn.name}</h3>
         <p class="addon-body">Text and email campaigns to bring clients back.</p>
         <ul class="addon-list">
-          <li>{marketingAddOn.texts.toLocaleString('en-US')} marketing texts / month</li>
-          <li>{marketingAddOn.emails.toLocaleString('en-US')} emails / month</li>
+          <li>{marketingAddOn.texts.toLocaleString('en-US')} marketing texts/mo</li>
+          <li>{marketingAddOn.emails.toLocaleString('en-US')} emails/mo</li>
           <li>Extra texts {marketingAddOn.extraTextCents}¢ each</li>
         </ul>
       </div>
@@ -110,7 +110,7 @@ const terms = [
         <div class="included">
           <h3>Included on every plan</h3>
           <ul class="checks inc-list">
-            {includedEverywhere.map((p) => <li><Icon name="check" size={16} strokeWidth={2} /><span>{p}</span></li>)}
+            {includedEverywhere.map((p) => <li><Icon name="check" size={16} strokeWidth={2} /><span>{typeof p === 'string' ? p : <>{p.label} <span class="badge">{p.status}</span></>}</span></li>)}
           </ul>
           <p class="more">
             Booking pages plug into the website you already have. <a href="/features/">See every feature</a>
@@ -176,7 +176,7 @@ const terms = [
   .for {
     margin-top: -10px;
     color: var(--ink-2);
-    font-size: 15px;
+    font-size: 16px;
   }
   .price {
     display: flex;
@@ -197,7 +197,7 @@ const terms = [
   }
   .yearly {
     margin-top: 8px;
-    font-size: 15px;
+    font-size: 16px;
     color: var(--ink-2);
   }
   .fp {
@@ -212,7 +212,7 @@ const terms = [
   }
   .fp-prices {
     margin-top: 6px;
-    font-size: 15px;
+    font-size: 16px;
     color: var(--ink-2);
   }
   .fp-prices b {
@@ -266,6 +266,12 @@ const terms = [
   .included {
     margin-top: 48px;
   }
+  .included .badge {
+    font-size: 10px;
+    padding: 2px 7px;
+    margin-left: 2px;
+    vertical-align: 1px;
+  }
   .included h3 {
     font-family: var(--sans);
     font-size: 18px;
@@ -273,7 +279,7 @@ const terms = [
     margin-bottom: 18px;
   }
   .inc-list {
-    grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
     column-gap: 24px;
   }
   .more {

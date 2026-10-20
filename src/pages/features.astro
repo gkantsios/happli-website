@@ -1,16 +1,16 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PageIntro from '../components/sections/PageIntro.astro';
-import FeatureList, { type FeatureItem } from '../components/sections/FeatureList.astro';
+import FeatureList, { type FeatureItem, type Status } from '../components/sections/FeatureList.astro';
 import FeatureRows from '../components/sections/FeatureRows.astro';
 import CtaBand from '../components/sections/CtaBand.astro';
 import { breadcrumbs } from '../lib/jsonld';
 
-const title = 'Features | Happli Booking Software for Spray Tan and Beauty Studios';
+const title = 'Features | Happli booking software for spray tan and beauty studios';
 const description =
   'Online booking, deposits, card checkout, tips and tax, no-show fees, packages, waitlist, gap offers, reminders, client import and AI built in: ask your reports, form import and review request drafts. Built for spray tan studios.';
 
-type Section = { id: string; title: string; intro?: string; soon?: boolean; items: FeatureItem[] };
+type Section = { id: string; title: string; intro?: string; status?: Status; items: FeatureItem[] };
 
 const sections: Section[] = [
   {
@@ -47,7 +47,7 @@ const sections: Section[] = [
     items: [
       // TODO confirm: PR #297 (charges on the studio's own account, no Happli fee).
       { title: 'Stripe Connect:', body: 'connect your own Stripe account from Settings. Charges are made on your account, and Happli takes no fee.' },
-      { title: 'Deposits', body: 'as a percentage of the service, for online bookings, staff bookings or both.' },
+      { title: 'Deposits', body: 'as a percentage of the service, for online bookings, bookings by your team or both.' },
       { title: 'Card checkout', body: 'through secure Stripe checkout.' },
       { title: 'Mark paid', body: 'to record cash or other payments.' },
       { title: 'Tips', body: 'with three suggested amounts you choose.' },
@@ -64,7 +64,7 @@ const sections: Section[] = [
       { title: 'Create packages', body: 'of prepaid sessions for the services you choose, with an optional expiry.' },
       { title: 'Sell a package', body: 'by card or mark it paid.' },
       { title: 'Client balances:', body: 'see how many sessions each client has left, and adjust, void or refund when needed.' },
-      { body: 'Redeem package sessions at checkout.', soon: true },
+      { body: 'Redeem package sessions at checkout.', status: 'soon' },
     ],
   },
   {
@@ -83,8 +83,8 @@ const sections: Section[] = [
     title: 'Reminders and client messages',
     // TODO confirm: live texting to clients is switched on.
     items: [
-      { title: 'Automatic messages:', body: 'booking confirmed, day-before reminder, two-hours-before reminder, moved or cancelled, thank-you after the visit, and time to come back.' },
-      { title: 'Text, email or both', body: 'for each message, and separate choices for online and staff bookings.' },
+      { title: 'Automatic messages:', body: 'booking confirmed, day-before reminder, two-hours-before reminder, moved or canceled, thank-you after the visit, and time to come back.' },
+      { title: 'Text, email or both', body: 'for each message, and separate choices for online bookings and bookings by your team.' },
       { title: 'Quiet hours:', body: 'reminder and follow-up texts wait until your texting window opens. Confirmations and change notices send right away.' },
       { title: 'Edit the wording', body: "with fill-in fields like first name, service and time, preview it, send yourself a test, or go back to Happli's wording in one click." },
       { title: 'Custom messages:', body: 'add up to three more, like prep instructions a few days before a spray tan.' },
@@ -110,7 +110,7 @@ const sections: Section[] = [
       { title: 'Form import:', body: 'upload a Word or PDF intake form or waiver, and Happli turns it into an online form for you to review before you save it.' },
       { title: 'Review request texts:', body: 'Happli drafts a short, friendly text asking happy clients for a Google review. It sends only after you approve it.' },
       { title: 'Profile from your website:', body: "Happli reads your studio's website and suggests your description, brand voice and a services summary for you to review and save." },
-      { title: 'AI COO chat:', body: 'ask questions about your business and get a daily plan.', soon: true },
+      { title: 'AI COO chat', status: 'soon', body: 'Ask questions about your business and get a daily plan.' },
     ],
   },
   {
@@ -124,7 +124,8 @@ const sections: Section[] = [
   },
   {
     id: 'chat',
-    title: 'Website chat assistant (early access)',
+    title: 'Website chat assistant',
+    status: 'early',
     intro: 'Available to studios in early access. Ask us to turn it on for your website.',
     items: [
       { title: 'A chat bubble for your website', body: "that answers visitor questions using your studio's own information." },
@@ -179,7 +180,7 @@ const sections: Section[] = [
   <FeatureRows />
 
   <div class="lists">
-    {sections.map((s) => <FeatureList id={s.id} title={s.title} intro={s.intro} items={s.items} soon={s.soon} />)}
+    {sections.map((s) => <FeatureList id={s.id} title={s.title} intro={s.intro} items={s.items} status={s.status} />)}
   </div>
 
   <CtaBand
@@ -199,7 +200,7 @@ const sections: Section[] = [
   .jump a {
     font-size: 13px;
     font-weight: 600;
-    padding: 6px 12px;
+    padding: 11px 14px;
     border-radius: var(--radius-pill);
     border: 1px solid var(--line-strong);
     background: rgba(255, 255, 255, 0.6);

@@ -21,7 +21,7 @@ import {
   yearlyTotal,
 } from '../config/pricing';
 
-const title = `Pricing | Happli Booking Software from ${usd(solo.monthly)} a Month`;
+const title = `Pricing | Happli booking software from ${usd(solo.monthly)} a month`;
 const description = `Solo ${usd(solo.monthly)} a month, Studio ${usd(studio.monthly)} a month per location, every feature on both. No setup fee, no cut of your sales. Founding Studios get ${founding.discountPercent}% off.`;
 
 const foundingRows = [solo, studio].flatMap((p) => {
@@ -159,10 +159,15 @@ const faq: FaqItem[] = [
   }
   .founding-grid {
     display: grid;
-    grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
-    gap: 48px;
-    align-items: start;
+    /* the table gets the full row so no column is clipped; minmax(0, 1fr) lets it scroll in its own box on phones */
+    grid-template-columns: minmax(0, 1fr);
+    gap: 40px;
     margin-top: 32px;
+  }
+  .rules {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px 48px;
   }
   .fees {
     margin-top: 32px;
@@ -170,8 +175,10 @@ const faq: FaqItem[] = [
   }
   @media (max-width: 960px) {
     .founding-grid {
-      grid-template-columns: 1fr;
       gap: 32px;
+    }
+    .rules {
+      grid-template-columns: minmax(0, 1fr);
     }
   }
 </style>
