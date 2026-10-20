@@ -12,7 +12,7 @@ export const site = {
   url: 'https://gohappli.com',
   positioning: 'Booking software for spray tan and beauty studios, with AI built in.',
   tagline: 'Booking software for spray tan and beauty studios, with AI built in.',
-  helpUrl: 'https://support.gohappli.com/',
+  helpUrl: 'https://support.gohappli.com/hc/happli-help/en',
   appUrl: 'https://app.gohappli.com',
   signInUrl: 'https://app.gohappli.com/login',
   contactEmail: 'hello@gohappli.com',
