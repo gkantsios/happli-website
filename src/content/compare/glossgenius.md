@@ -15,7 +15,7 @@ todo:
 
 *Last checked Oct 15, 2026. GlossGenius details come from its [public pricing page](https://glossgenius.com/pricing). Prices and features change, so check their site before you decide.*
 
-GlossGenius is an all-in-one booking, payments and marketing platform for beauty and wellness businesses. Happli is booking software for spray tan and beauty studios, with an AI COO. Both give you online booking and client messaging. The biggest differences are how plans are tiered and what you get at each level.
+GlossGenius is an all-in-one booking, payments and marketing platform for beauty and wellness businesses. Happli is booking software for spray tan and beauty studios, with AI built in. Both give you online booking and client messaging. The biggest differences are how plans are tiered and what you get at each level.
 
 ## At a glance
 

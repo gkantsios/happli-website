@@ -15,7 +15,7 @@ todo:
 
 *Last checked Oct 15, 2026. Vagaro details come from its [public pricing page](https://www.vagaro.com/pro/pricing). Prices and features change, so check their site before you decide.*
 
-Vagaro is a general-purpose booking platform that includes a free Marketplace listing. Happli is booking software for spray tan and beauty studios, with an AI COO. Vagaro is broad and lower-priced. Happli is narrower and built around the spray tan day.
+Vagaro is a general-purpose booking platform that includes a free Marketplace listing. Happli is booking software for spray tan and beauty studios, with AI built in. Vagaro is broad and lower-priced. Happli is narrower and built around the spray tan day.
 
 ## At a glance
 

@@ -16,7 +16,7 @@ const svg = `
   <rect width="100%" height="100%" fill="#F6E9E4"/>
   <rect width="100%" height="100%" fill="url(#glow)"/>
   <text x="80" y="290" font-family="Georgia, 'Times New Roman', serif" font-size="64" fill="#1B1614" letter-spacing="-1.2">Booking software for spray tan</text>
-  <text x="80" y="362" font-family="Georgia, 'Times New Roman', serif" font-size="64" fill="#1B1614" letter-spacing="-1.2">and beauty studios, <tspan font-style="italic">with an AI COO.</tspan></text>
+  <text x="80" y="362" font-family="Georgia, 'Times New Roman', serif" font-size="64" fill="#1B1614" letter-spacing="-1.2">and beauty studios, <tspan font-style="italic">with AI built in.</tspan></text>
   <text x="82" y="480" font-family="Helvetica, Arial, sans-serif" font-size="28" fill="#4A423E">Online booking, deposits and reminders. Plans from $69/month.</text>
 </svg>`;
 

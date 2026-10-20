@@ -10,7 +10,7 @@
   <p>Data is encrypted in transit (TLS) and at rest (our database provider encrypts storage). Payment details are handled entirely by Stripe — full card numbers never touch our systems.</p>
 
   <h2>The approval gate as a safety control</h2>
-  <p>No client-facing message leaves the Service without the business operator's explicit approval. This is a permanent architectural decision, not a setting — it means an AI mistake can't reach your clients on its own, and every outbound message has a human decision attached to it in the audit trail.</p>
+  <p>No AI-drafted message leaves the Service without the studio's explicit approval. This is a permanent architectural decision, not a setting: it means an AI mistake can't reach your clients on its own, and every approved message has a human decision attached to it in the audit trail. Transactional messages a studio switches on, such as booking confirmations and reminders, use the studio's own wording and send automatically.</p>
 
   <h2>Auditability</h2>
   <p>Actions in the Service — syncs, drafts, approvals, sends, opt-outs — are recorded in an append-only audit log scoped to your business.</p>

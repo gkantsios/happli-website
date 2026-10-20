@@ -14,7 +14,7 @@ todo:
 
 *Last checked Oct 15, 2026. Mangomint details come from its [public pricing page](https://www.mangomint.com/pricing/). Prices and features change, so check their site before you decide.*
 
-Mangomint is a booking and payments system with a pricing model built on locations and users. Happli is booking software for spray tan and beauty studios, with an AI COO that keeps a short list of what needs you. Both handle online booking, reminders and payments. They differ in price, how they charge, and how much of the day they try to run for you.
+Mangomint is a booking and payments system with a pricing model built on locations and users. Happli is booking software for spray tan and beauty studios, with AI built in and a short list of what needs you. Both handle online booking, reminders and payments. They differ in price, how they charge, and how much of the day they try to run for you.
 
 ## At a glance
 

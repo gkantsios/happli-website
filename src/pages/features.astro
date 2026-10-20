@@ -8,7 +8,7 @@ import { breadcrumbs } from '../lib/jsonld';
 
 const title = 'Features | Happli Booking Software for Spray Tan and Beauty Studios';
 const description =
-  'Online booking, deposits, card checkout, tips and tax, no-show fees, packages, waitlist, gap offers, reminders, client import and a website chat assistant. Built for spray tan studios.';
+  'Online booking, deposits, card checkout, tips and tax, no-show fees, packages, waitlist, gap offers, reminders, client import and AI built in: ask your reports, form import and review request drafts. Built for spray tan studios.';
 
 type Section = { id: string; title: string; intro?: string; soon?: boolean; items: FeatureItem[] };
 
@@ -102,6 +102,18 @@ const sections: Section[] = [
     ],
   },
   {
+    id: 'ai',
+    title: 'AI built in',
+    intro: 'AI helps with the busywork. It drafts and suggests; you decide, and it never calculates your numbers.',
+    items: [
+      { title: 'Ask your reports:', body: 'type a question like "How much did we collect?" on the Reports page. Happli matches it to a report and answers with your real numbers.' },
+      { title: 'Form import:', body: 'upload a Word or PDF intake form or waiver, and Happli turns it into an online form for you to review before you save it.' },
+      { title: 'Review request texts:', body: 'Happli drafts a short, friendly text asking happy clients for a Google review. It sends only after you approve it.' },
+      { title: 'Profile from your website:', body: "Happli reads your studio's website and suggests your description, brand voice and a services summary for you to review and save." },
+      { title: 'AI COO chat:', body: 'ask questions about your business and get a daily plan.', soon: true },
+    ],
+  },
+  {
     id: 'switching',
     title: 'Switching from another system',
     // TODO confirm: import is run by the Happli team during onboarding.
@@ -112,8 +124,8 @@ const sections: Section[] = [
   },
   {
     id: 'chat',
-    title: 'Website chat assistant',
-    // TODO confirm: chat widget is available to studios on the Happli booking system.
+    title: 'Website chat assistant (early access)',
+    intro: 'Available to studios in early access. Ask us to turn it on for your website.',
     items: [
       { title: 'A chat bubble for your website', body: "that answers visitor questions using your studio's own information." },
       { title: 'Never guesses prices:', body: "it only quotes prices you've confirmed." },
