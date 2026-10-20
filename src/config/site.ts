@@ -59,6 +59,11 @@ export const site = {
       { label: 'Privacy', href: '/privacy/' },
       { label: 'Terms', href: '/terms/' },
       { label: 'Security', href: '/security/' },
+      { label: 'Data Processing Addendum', href: '/dpa/' },
+      { label: 'Acceptable Use', href: '/acceptable-use/' },
+      { label: 'Refunds and Cancellation', href: '/refunds/' },
+      { label: 'SMS Terms', href: '/sms-terms/' },
+      { label: 'Cookies', href: '/cookies/' },
     ] satisfies NavLink[],
   },
 } as const;

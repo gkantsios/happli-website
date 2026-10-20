@@ -1,0 +1,13 @@
+---
+import ProseLayout from '../layouts/ProseLayout.astro';
+import { legal } from '../lib/legal';
+import { breadcrumbs } from '../lib/jsonld';
+---
+
+<ProseLayout
+  title="Refund and Cancellation Policy | Happli"
+  description="How cancelling a Happli subscription works, the free-until-live trial, and refunds."
+  jsonLd={[breadcrumbs([{ name: 'Home', href: '/' }, { name: 'Refund and Cancellation Policy', href: '/refunds/' }])]}
+>
+  <Fragment set:html={legal.refunds} />
+</ProseLayout>

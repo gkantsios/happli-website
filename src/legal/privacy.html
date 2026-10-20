@@ -1,64 +1,85 @@
 <h1>Privacy Policy</h1>
-  <p class="updated">Last updated: October 2026 · Beta program</p>
+  <p class="updated">Last updated: October 20, 2026</p>
 
-  <p>This policy explains what Happli collects, how we use it, and the choices you have. Happli handles two different kinds of data, and it's worth naming the difference up front:</p>
+  <p>This policy explains what personal information Happli ([CONFIRM: legal entity name]) collects, how we use and share it, and the choices you have. Happli handles two kinds of information:</p>
   <ul>
-    <li><strong>Account data</strong> — information about you and your business (your email, business profile, settings). We're the ones deciding how this is used, as described here.</li>
-    <li><strong>Client data</strong> — your business's client information (names, contact details, appointment history) that syncs from your booking tools or arrives through Happli features like the website chat. <strong>This data belongs to your business; we process it on your behalf</strong> to operate the Service, and we don't use it for anything else.</li>
+    <li><strong>Studio account information</strong>: information about studio owners and their team members, such as names, emails and settings. Happli decides how this is used, as described here.</li>
+    <li><strong>Studio client information</strong>: information about a studio's clients, such as names, contact details, appointments, form answers and purchases. <strong>This belongs to the studio.</strong> Happli processes it only on the studio's behalf and instructions, as a service provider (processor) under our <a href="/dpa/">Data Processing Addendum</a>. If you're a studio's client, the studio's own privacy policy also applies, and the studio is your first point of contact.</li>
   </ul>
 
   <h2>1. What we collect</h2>
+  <h3>From studio owners and team members</h3>
   <ul>
-    <li><strong>Account &amp; business information:</strong> your name and email, business name, locations, hours, services and pricing, brand voice preferences, and settings you configure.</li>
-    <li><strong>Synced business data:</strong> appointments, client records, and related activity from the booking platforms you connect (for example, Square via its API, or Vagaro via booking notifications you route to Happli).</li>
-    <li><strong>Website chat &amp; leads:</strong> if you install Happli's chat widget on your website, visitor conversations and any contact details visitors choose to share are stored so you can follow up.</li>
-    <li><strong>Messages &amp; approvals:</strong> drafts, your edits and approval decisions, and delivery records for messages sent through the Service.</li>
-    <li><strong>Payment information:</strong> handled by Stripe. We never see or store full card numbers.</li>
-    <li><strong>Usage &amp; logs:</strong> standard technical logs (for reliability and security) and an audit trail of actions taken in your account.</li>
+    <li><strong>Account and business details:</strong> name, email, phone, business name, locations, hours, services and prices, team members and roles, and settings.</li>
+    <li><strong>Billing:</strong> your subscription is billed through Stripe. We see the plan, status and the last digits of the card, never full card numbers.</li>
+    <li><strong>Payout setup:</strong> to take client payments, you set up a Stripe Connect account directly with Stripe, which collects identity and bank details under its own privacy policy.</li>
+    <li><strong>Usage and logs:</strong> sign-ins, an audit log of actions in your account, device and browser details, IP addresses, and error logs.</li>
+  </ul>
+  <h3>For studios, about their clients (processed on the studio's behalf)</h3>
+  <ul>
+    <li>Contact details: name, email and phone.</li>
+    <li>Appointments, services, team member, notes the studio adds, packages, gift cards and purchase history.</li>
+    <li>Forms and waivers clients fill out, including signatures.</li>
+    <li>Message history and text and email opt-out status.</li>
+    <li>Payment records. Card details are entered into Stripe; Happli never sees full card numbers.</li>
+    <li>Client lists a studio imports from another system.</li>
+    <li>Website chat conversations and details a visitor chooses to share, if the studio uses the chat widget.</li>
   </ul>
 
   <h2>2. How we use it</h2>
   <ul>
-    <li>To operate the Service: sync your business data, compute your metrics and daily priorities, and draft communications for your review.</li>
-    <li>To send messages <strong>you approve</strong> to your clients, and platform emails to you (like sign-in links).</li>
-    <li>To generate AI drafts and answers: relevant business context is sent to our AI provider (Anthropic) to produce drafts and responses. <strong>Per our API agreement, this content is not used to train their models.</strong></li>
-    <li>To improve the Service, in aggregate and with care — we don't sell data, and we don't use your clients' information for advertising, ever.</li>
+    <li>To provide the Service: online booking, the calendar, checkout, reminders, forms, reports and the features a studio turns on.</li>
+    <li>To send messages on a studio's behalf: confirmations and reminders the studio switches on, and campaign messages the studio approves.</li>
+    <li>To send you service emails, such as sign-in links, invitations, billing notices and important updates.</li>
+    <li>To generate AI drafts, summaries and answers. Only the context needed is sent to our AI provider, client prompts use first names only, and under our agreement the provider doesn't use it to train its models.</li>
+    <li>To secure, debug, support and improve the Service, including with aggregated, de-identified data.</li>
+    <li>To comply with law and enforce our terms.</li>
   </ul>
+  <p><strong>We never sell personal information or share it for cross-context behavioral advertising.</strong> We never use a studio's client list to market Happli or anyone else.</p>
 
-  <h2>3. What we never do</h2>
-  <ul>
-    <li>We never sell personal information — yours or your clients'.</li>
-    <li>We never use your client list to market other businesses or products.</li>
-    <li>We never send a client-facing message without your approval.</li>
-  </ul>
-
-  <h2>4. Service providers (subprocessors)</h2>
-  <p>We use a small set of infrastructure providers to run Happli:</p>
+  <h2>3. Who we share it with</h2>
+  <p>We share information only with the subprocessors below, which help us run the Service under contracts that limit their use of it, and when the law requires, to protect rights and safety, or as part of a merger or sale of the business.</p>
   <table>
-    <tr><th>Provider</th><th>Purpose</th></tr>
-    <tr><td>Anthropic</td><td>AI drafting and analysis (API; not used for model training)</td></tr>
-    <tr><td>Twilio</td><td>Text-message delivery</td></tr>
-    <tr><td>Postmark (ActiveCampaign)</td><td>Platform email delivery (e.g., sign-in links)</td></tr>
-    <tr><td>Stripe</td><td>Payments and subscription billing</td></tr>
-    <tr><td>Neon</td><td>Encrypted database hosting</td></tr>
-    <tr><td>Railway</td><td>Application hosting</td></tr>
-    <tr><td>Google</td><td>Maps/Places and Business Profile features you enable</td></tr>
+    <tr><th>Subprocessor</th><th>Purpose</th><th>Data</th></tr>
+    <tr><td>Railway</td><td>Application and database hosting</td><td>All Service data</td></tr>
+    <tr><td>Stripe</td><td>Subscription billing and client card payments (Stripe Connect)</td><td>Billing, payment and payout data</td></tr>
+    <tr><td>Twilio</td><td>Text message delivery and STOP handling</td><td>Phone numbers and message content</td></tr>
+    <tr><td>Postmark (ActiveCampaign)</td><td>Email delivery</td><td>Email addresses and message content</td></tr>
+    <tr><td>Anthropic</td><td>AI drafting, summaries and answers</td><td>Business context and client first names; no phone numbers or emails</td></tr>
+    <tr><td>Google</td><td>Business and address lookup (Google Places and Maps)</td><td>Business name and address searches</td></tr>
+    <tr><td>Cloudflare</td><td>Hosting and protection for gohappli.com [CONFIRM: also in front of app.gohappli.com?]</td><td>Website visitor IP addresses and request data</td></tr>
   </table>
+  <p>We'll update this list before adding a new subprocessor that handles studio client information.</p>
 
-  <h2>5. Website-chat visitors</h2>
-  <p>If you're a visitor chatting on a business's website through Happli's widget: your conversation and any contact details you share are stored and made available to that business so they can respond to you. The business is responsible for how it uses your information; this policy governs how Happli stores and protects it.</p>
+  <h2>4. Retention</h2>
+  <ul>
+    <li>Account and studio client information is kept while the studio's account is active.</li>
+    <li>After an account closes, we delete or de-identify studio data within [CONFIRM: 90 days], after any export window.</li>
+    <li>Unconfirmed client-import files are deleted after 24 hours. Unrecognized inbound data kept for review is deleted after 30 days.</li>
+    <li>Opt-out records are kept so they stay honored. Audit logs and billing records are kept as long as needed for security, legal and tax purposes. [CONFIRM: audit log and backup retention periods]</li>
+  </ul>
 
-  <h2>6. Retention</h2>
-  <p>We keep data for as long as your account is active and as needed to operate the Service. Opt-out records (like STOP requests) are retained so they stay honored. Logs and audit records are retained for security and reliability purposes.</p>
+  <h2>5. Your rights and choices</h2>
+  <ul>
+    <li><strong>Studio owners</strong> can view and update account details in the app and can request access, correction, export or deletion by emailing <a href="mailto:hello@gohappli.com">hello@gohappli.com</a>.</li>
+    <li><strong>Studio clients</strong> should contact the studio directly. If you contact us, we'll pass your request to the studio and help it respond.</li>
+    <li><strong>Texts:</strong> reply STOP to any text to stop texts from that sender. <strong>Email:</strong> use the unsubscribe link in any marketing email.</li>
+  </ul>
+  <h3>California residents (CCPA/CPRA)</h3>
+  <p>If you're a California resident, you have the right to know what personal information we collect, use and disclose; to request deletion and correction; to opt out of the sale or sharing of personal information; to limit use of sensitive personal information; and not to be discriminated against for using these rights. We don't sell or share personal information as those terms are defined, and we don't use sensitive personal information to infer characteristics. The categories we collect are listed in section 1, the sources are you, your studio and your use of the Service, and the purposes are in section 2. To make a request, email <a href="mailto:hello@gohappli.com">hello@gohappli.com</a>. We'll verify your identity and respond within 45 days. You can use an authorized agent. For studio client information, we act as the studio's service provider and will refer requests to the studio.</p>
+  <p>Residents of other states with privacy laws may have similar rights and can make requests the same way. [CONFIRM: appeal process for states that require one]</p>
 
-  <h2>7. Deletion &amp; your choices</h2>
-  <p>You can request deletion of your account and your business's data by emailing <a href="mailto:hello@gohappli.com">hello@gohappli.com</a>. If you're a client of a business that uses Happli and want your information corrected or removed, you can contact the business directly or email us and we'll coordinate with them. We'll respond to verified requests within 30 days.</p>
+  <h2>6. Cookies</h2>
+  <p>We use only essential cookies, to keep you signed in and secure. We don't use advertising or third-party analytics cookies. See our <a href="/cookies/">Cookie Notice</a>.</p>
 
-  <h2>8. Cookies</h2>
-  <p>The app uses essential cookies only — to keep you signed in. No advertising trackers, no third-party analytics cookies on the app.</p>
+  <h2>7. Security</h2>
+  <p>We use encryption in transit, per-studio data isolation enforced in the database, passwordless sign-in and an append-only audit log. See our <a href="/security/">Security page</a>. No system is perfectly secure; we'll notify affected studios of a breach as required by law.</p>
 
-  <h2>9. Children</h2>
-  <p>The Service is for businesses and isn't directed to children. We don't knowingly collect information from anyone under 18 as a user of the Service.</p>
+  <h2>8. Children</h2>
+  <p>The Service is for businesses and isn't directed to children under 13. We don't knowingly collect personal information from children under 13 except as a studio's client records entered by the studio, such as a minor client booked by a parent. Studios are responsible for any parental consent required. [CONFIRM: whether studios may book minors]</p>
 
-  <h2>10. Changes &amp; contact</h2>
-  <p>We'll update this policy as the Service evolves and note the date above; material changes will be announced by email or in the product. Questions: <a href="mailto:hello@gohappli.com">hello@gohappli.com</a>.</p>
+  <h2>9. Where data is stored</h2>
+  <p>Happli is operated from, and stores data in, the United States. [CONFIRM: Railway region]</p>
+
+  <h2>10. Changes and contact</h2>
+  <p>We'll post updates here with a new date and tell studios about material changes by email or in the app. Questions or requests: <a href="mailto:hello@gohappli.com">hello@gohappli.com</a>, [CONFIRM: mailing address].</p>
