@@ -29,7 +29,6 @@ A fair, dated shortlist that names real tradeoffs. Happli is on the list, not at
   - H3: Mobile and travel appointments
   - H3: Gap filling and waitlist
 - **H2: The shortlist**
-  - H3: MySunless (spray-tan-specific, lowest price)
   - H3: GlossGenius (beauty and wellness, tiers)
   - H3: Vagaro (broad, marketplace)
   - H3: Mangomint (per location and user)
@@ -53,7 +52,7 @@ A fair, dated shortlist that names real tradeoffs. Happli is on the list, not at
 
 ## Sources to check before writing
 
-Each vendor's pricing page (mangomint.com/pricing, glossgenius.com/pricing, vagaro.com/pro/pricing, mysunless.com/pricing); Happli `/pricing/` and `/features/`; Stripe pricing page for processing; reviews on Capterra or G2 only if quoted with a link. Keyword volume and difficulty from the SEO tool (fill in `keyword-map.csv`).
+Each vendor's pricing page (mangomint.com/pricing, glossgenius.com/pricing, vagaro.com/pro/pricing); Happli `/pricing/` and `/features/`; Stripe pricing page for processing; reviews on Capterra or G2 only if quoted with a link. Keyword volume and difficulty from the SEO tool (fill in `keyword-map.csv`).
 
 ## AEO notes
 

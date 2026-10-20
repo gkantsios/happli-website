@@ -71,7 +71,6 @@ Each compare page lists its own open items in the `todo:` frontmatter (not rende
 - [ ] **Mangomint:** free-trial length; whether it has a waitlist or gap feature; whether deposits and no-show fees work without Mangomint Payments.
 - [ ] **GlossGenius:** card processing rates (the rate fields didn't render when fetched); deposit and no-show policy availability by tier; text-credit limits by tier.
 - [ ] **Vagaro:** standard price after the first-6-months rate ($30.00 appears unlabeled, so it isn't shown); text/SMS, forms and processing prices; how the $10 per bookable calendar license combines with the base price.
-- [ ] **MySunless:** waitlist or gap features and multiple-location support (not on its pricing page). Prices came from the rendered pricing page; the site is a JavaScript app, so re-check in a browser.
 - [ ] Re-check all four pages quarterly and bump `updatedDate`.
 - [ ] Happli side: memberships are not claimed anywhere (the compare tables say "not listed on our features page"). Update if you offer them. Client import wording ("done by the Happli team") depends on the CSV import item above.
 
