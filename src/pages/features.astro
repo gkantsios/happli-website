@@ -2,7 +2,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PageIntro from '../components/sections/PageIntro.astro';
 import FeatureList, { type FeatureItem, type Status } from '../components/sections/FeatureList.astro';
-import type { VisualKind } from '../components/mocks/FeatureVisual.astro';
+import FeatureVisual, { type VisualKind } from '../components/mocks/FeatureVisual.astro';
 import CtaBand from '../components/sections/CtaBand.astro';
 import { breadcrumbs } from '../lib/jsonld';
 
@@ -72,7 +72,7 @@ const sections: Section[] = [
       { title: 'Create packages', body: 'of prepaid sessions for the services you choose, with an optional expiry.' },
       { title: 'Sell a package', body: 'by card or mark it paid.' },
       { title: 'Client balances:', body: 'see how many sessions each client has left, and adjust, void or refund when needed.' },
-      { body: 'Redeem package sessions at checkout.', status: 'soon' },
+      { title: 'Redeem at checkout', status: 'soon', body: 'Use package sessions to pay at checkout.' },
     ],
   },
   {
@@ -198,9 +198,47 @@ const sections: Section[] = [
     </nav>
   </PageIntro>
 
-  <div class="lists">
-    {sections.map((s, i) => <FeatureList id={s.id} title={s.title} intro={s.intro} items={s.items} status={s.status} visual={s.visual} flip={i % 2 === 1} />)}
+  {/* Desktop (1024px+, with JS): one pinned visual panel that crossfades to the active section.
+      Every section keeps its own visual in the DOM, which is what shows without JS and under 1024px. */}
+  <div class="lists" data-scrolly>
+    <div class="scrolly-text">
+      {sections.map((s, i) => <FeatureList id={s.id} title={s.title} intro={s.intro} items={s.items} status={s.status} visual={s.visual} flip={i % 2 === 1} />)}
+    </div>
+    <div class="scrolly-stage" aria-hidden="true">
+      <div class="stage-in">
+        {sections.map((s, i) => (
+          <div class:list={['frame', { on: i === 0 }]} data-frame={s.id}>
+            <FeatureVisual kind={s.visual} />
+          </div>
+        ))}
+      </div>
+    </div>
   </div>
+
+  <script is:inline>
+    (function () {
+      var root = document.querySelector('[data-scrolly]');
+      if (!root || !('IntersectionObserver' in window)) return;
+      var mq = window.matchMedia('(min-width: 1024px)');
+      var frames = {};
+      root.querySelectorAll('[data-frame]').forEach(function (f) { frames[f.getAttribute('data-frame')] = f; });
+      var sections = root.querySelectorAll('.scrolly-text > .flist');
+      function show(id) {
+        if (!frames[id]) return;
+        for (var k in frames) frames[k].classList.toggle('on', k === id);
+      }
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) { if (e.isIntersecting) show(e.target.id); });
+      }, { rootMargin: '-45% 0px -45% 0px' });
+      function apply() {
+        root.classList.toggle('is-scrolly', mq.matches);
+        if (mq.matches) sections.forEach(function (s) { io.observe(s); });
+        else io.disconnect();
+      }
+      mq.addEventListener('change', apply);
+      apply();
+    })();
+  </script>
 
   <CtaBand
     title="See it with your own schedule."
@@ -231,5 +269,67 @@ const sections: Section[] = [
   }
   .lists {
     margin-top: var(--space-block);
+  }
+  .scrolly-stage {
+    display: none;
+  }
+  @media (min-width: 1024px) {
+    .lists.is-scrolly {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+      gap: 64px;
+      max-width: var(--w);
+      margin-inline: auto;
+      padding-inline: var(--gutter);
+    }
+    .is-scrolly .scrolly-text :global(.wrap) {
+      padding-inline: 0;
+    }
+    .is-scrolly .scrolly-text :global(.flist-in.has-vis) {
+      grid-template-columns: minmax(0, 1fr);
+      grid-template-areas: 'head' 'list';
+    }
+    .is-scrolly .scrolly-text :global(.vis) {
+      display: none;
+    }
+    .is-scrolly .scrolly-text :global(.flist) {
+      min-height: 70vh;
+    }
+    .is-scrolly .scrolly-stage {
+      display: block;
+    }
+    .stage-in {
+      position: sticky;
+      top: calc(var(--nav-h) + 32px);
+      height: min(640px, calc(100vh - var(--nav-h) - 64px));
+      min-height: 460px;
+      margin-block: clamp(56px, 8vw, 104px);
+      border-radius: var(--radius-xl);
+      background:
+        radial-gradient(70% 80% at 20% 0%, #f8dad6 0%, rgba(248, 218, 214, 0) 70%),
+        linear-gradient(160deg, var(--blush-2), var(--blush));
+      overflow: hidden;
+    }
+    .frame {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      padding: 40px;
+      opacity: 0;
+      transform: translateY(8px);
+      transition: opacity 0.45s var(--ease-out), transform 0.45s var(--ease-out);
+      pointer-events: none;
+    }
+    .frame.on {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .frame {
+      transition: none;
+      transform: none;
+    }
   }
 </style>

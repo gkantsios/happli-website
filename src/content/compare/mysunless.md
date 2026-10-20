@@ -1,5 +1,5 @@
 ---
-title: 'Happli vs MySunless for Spray Tan Studios (2026)'
+title: 'Happli vs MySunless for spray tan studios (2026)'
 description: 'How Happli and MySunless, the spray tan booking software, compare on price, booking, SMS, memberships and payments. Last checked Oct 15, 2026.'
 pubDate: 2026-10-15
 updatedDate: 2026-10-20

@@ -351,3 +351,8 @@ p {
 .prose.compare table thead th {
   background: var(--blush-2);
 }
+
+/* skip link target clears the fixed header */
+main {
+  scroll-margin-top: 80px;
+}

@@ -1,5 +1,5 @@
 ---
-title: 'Happli vs GlossGenius for Spray Tan Studios (2026)'
+title: 'Happli vs GlossGenius for spray tan studios (2026)'
 description: 'How Happli and GlossGenius compare on price, booking, reminders, packages and payments for spray tan studios and beauty pros. Last checked Oct 15, 2026.'
 pubDate: 2026-10-15
 updatedDate: 2026-10-20

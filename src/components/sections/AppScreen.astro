@@ -134,7 +134,7 @@ const projected = thursday.reduce((n, s) => n + appts(s).reduce((m, b) => m + b.
 const utilization = thursday.map((s) => ({ ...s, pct: Math.round((bookedMin(s) / openMin(s)) * 100) }));
 const busiest = [...utilization].sort((a, b) => b.pct - a.pct)[0];
 const summaryValue = `${bookedLabel} booked`;
-const summaryNote = `${busiest.name} is at ${busiest.pct}% — your busiest schedule today.`;
+const summaryNote = `${busiest.name} is at ${busiest.pct}%, your busiest schedule today.`;
 const utilizationHeading = 'Utilization';
 
 // Build-time check: edits to the data can't silently drift from the agreed numbers.
@@ -143,7 +143,7 @@ const expected = {
   projected: 600,
   utilization: 'Dana 67, Jess 42, Maya 75',
   summaryValue: '8 / 12 booked',
-  summaryNote: 'Maya is at 75% — your busiest schedule today.',
+  summaryNote: 'Maya is at 75%, your busiest schedule today.',
 };
 const actual = {
   bookedLabel,

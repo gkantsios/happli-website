@@ -1,5 +1,5 @@
 ---
-title: 'Happli vs Mangomint for Spray Tan Studios (2026)'
+title: 'Happli vs Mangomint for spray tan studios (2026)'
 description: 'How Happli and Mangomint compare on price, booking, deposits, reminders and payments for spray tan studios and beauty pros. Last checked Oct 15, 2026.'
 pubDate: 2026-10-15
 updatedDate: 2026-10-20
