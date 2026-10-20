@@ -50,6 +50,7 @@ export const site = {
     product: [
       { label: 'Features', href: '/features/' },
       { label: 'Pricing', href: '/pricing/' },
+      { label: 'Roadmap', href: '/roadmap/' },
       { label: 'Happli on your phone', href: '/phone/' },
       { label: 'Spray tan studio software', href: '/spray-tan-studio-software/' },
       ...(sections.blog ? [{ label: 'Blog', href: '/blog/' }] : []),

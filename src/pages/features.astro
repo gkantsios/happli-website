@@ -240,6 +240,8 @@ const sections: Section[] = [
     })();
   </script>
 
+  <p class="wrap roadmap-link">Want to know what's coming? <a href="/roadmap/">See the roadmap →</a></p>
+
   <CtaBand
     title="See it with your own schedule."
     secondary={{ label: 'See pricing', href: '/pricing/' }}
@@ -269,6 +271,19 @@ const sections: Section[] = [
   }
   .lists {
     margin-top: var(--space-block);
+  }
+  .roadmap-link {
+    margin-top: var(--space-block);
+    font-size: 17px;
+    color: var(--ink-2);
+  }
+  .roadmap-link a {
+    color: var(--coral-ink);
+    font-weight: 600;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    display: inline-block;
+    padding-block: 10px;
   }
   .scrolly-stage {
     display: none;
