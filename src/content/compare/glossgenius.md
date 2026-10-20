@@ -27,7 +27,7 @@ GlossGenius is an all-in-one booking, payments and marketing platform for beauty
 | Online booking | Yes, booking pages that plug into your existing website | Yes, 24/7 online booking and a custom booking website |
 | Reminders | Yes, text, email or both, with your own wording | Unlimited client notifications on every tier |
 | Packages | Yes, prepaid session packages | Packages and memberships from Standard |
-| Memberships | Included on every plan | Included from Standard |
+| Memberships | Coming soon | Included from Standard |
 | Waitlist | Yes, with match alerts and gap offers you approve | Automated waitlist on Gold and above |
 | Forms and waivers | Included on every plan | Gold and above |
 | Payment processing | Your own Stripe account at Stripe's standard rate, no Happli markup | Processing rates not shown in the text of its pricing page; instant payouts cost an extra 1.8% |

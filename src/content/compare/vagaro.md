@@ -26,7 +26,7 @@ Vagaro is a general-purpose booking platform that includes a free Marketplace li
 | Free trial | Free until you go live, up to 30 days | 30 days, per its FAQ |
 | Online booking | Yes, booking pages that plug into your existing website | Included in every plan, also on Instagram, Facebook and Apple Maps |
 | Reminders | Yes, text, email or both, with your own wording | Unlimited notifications and appointment reminders included |
-| Packages | Yes, prepaid session packages, plus memberships and gift cards | Memberships, packages and gift certificates included |
+| Packages | Yes, prepaid session packages, plus gift cards (memberships coming soon) | Memberships, packages and gift certificates included |
 | Waitlist | Yes, with match alerts and gap offers you approve | Waitlist included |
 | Client marketplace | No | Free Marketplace listing |
 | Payment processing | Your own Stripe account at Stripe's standard rate, no Happli markup | Rates not stated on the pricing page |

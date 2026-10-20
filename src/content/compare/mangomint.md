@@ -28,7 +28,7 @@ Mangomint is a booking and payments system with a pricing model built on locatio
 | Deposits | Yes, a percentage of the service | Mentioned; requires Mangomint's payment processing |
 | Text and email reminders | Yes, editable wording, quiet hours. Included on every plan (fair use about 1,000 texts a month) | Unlimited confirmations and reminders at no extra cost |
 | Packages | Yes, prepaid session packages | Packages and memberships listed as core features |
-| Memberships | Included on every plan | Listed as a core feature |
+| Memberships | Coming soon | Listed as a core feature |
 | Payment processing | Your own Stripe account at Stripe's standard rate, no Happli markup | 2.45% + 15¢ in person, 2.90% + 30¢ virtual |
 | Waitlist and gap offers | Yes. Happli drafts the text, you approve it | Not covered on the pricing page |
 

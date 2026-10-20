@@ -27,7 +27,7 @@ MySunless is software made for spray tan professionals, and it's the closest lik
 | Online booking | Yes, booking pages that plug into your existing website | Yes, plus your own branded booking site |
 | Text messages | Reminder texts included (fair use about 1,000 a month). Marketing texts with the $39/month Marketing add-on | Unlimited SMS on both plans |
 | Packages | Yes, prepaid session packages | Memberships and packages |
-| Memberships | Included on every plan | Yes |
+| Memberships | Coming soon | Yes |
 | Payments | Your own Stripe account at Stripe's standard rate, no Happli markup | Your own connected Stripe account at Stripe's standard rates, no markup, plus cash POS |
 | Client import | Free, done by the Happli team from CSV | Free on every plan, from Vagaro, GlossGenius exports or any CSV |
 | Waitlist and gap offers | Yes. Happli drafts the text, you approve it | Not on its pricing page |

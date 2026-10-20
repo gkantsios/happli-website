@@ -109,7 +109,7 @@ export const includedEverywhere = [
   'Gift cards',
   'Forms and waivers',
   'Reminders',
-  'Memberships',
+  'Memberships (coming soon)',
   'Reports',
   'AI COO',
   'Email rewards',
