@@ -2,7 +2,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PageIntro from '../components/sections/PageIntro.astro';
 import FeatureList, { type FeatureItem, type Status } from '../components/sections/FeatureList.astro';
-import FeatureRows from '../components/sections/FeatureRows.astro';
+import type { VisualKind } from '../components/mocks/FeatureVisual.astro';
 import CtaBand from '../components/sections/CtaBand.astro';
 import { breadcrumbs } from '../lib/jsonld';
 
@@ -10,12 +10,14 @@ const title = 'Features | Happli booking software for spray tan and beauty studi
 const description =
   'Online booking, deposits, card checkout, tips and tax, no-show fees, packages, waitlist, gap offers, reminders, client import and AI built in: ask your reports, form import and review request drafts. Built for spray tan studios.';
 
-type Section = { id: string; title: string; intro?: string; status?: Status; items: FeatureItem[] };
+type Section = { id: string; title: string; intro?: string; status?: Status; visual: VisualKind; items: FeatureItem[] };
 
 const sections: Section[] = [
   {
     id: 'online-booking',
     title: 'Online booking',
+    visual: 'booking',
+    intro: 'A booking page built for phones. Share the link or embed it on your site.',
     items: [
       { title: 'Your booking page:', body: 'a public page for each location that you can share as a link or embed on your website.' },
       { title: 'Phone-friendly calendar:', body: 'clients pick a day on a calendar sized for small screens, then choose an open time.' },
@@ -28,6 +30,8 @@ const sections: Section[] = [
   {
     id: 'calendar',
     title: 'Calendar and front desk',
+    visual: 'calendar',
+    intro: "Your whole team's day at a glance, with open gaps marked.",
     items: [
       { title: 'Day and week views,', body: 'with a column for each team member, or everyone at once.' },
       { title: 'One appointment panel', body: 'to confirm, check out, reschedule, cancel or mark a no-show, with notes.' },
@@ -43,6 +47,8 @@ const sections: Section[] = [
   {
     id: 'payments',
     title: 'Payments',
+    visual: 'payments',
+    intro: 'Deposits, checkout, tips and tax on one sheet.',
     // TODO confirm: live card payments need the Stripe go-live checklist completed.
     items: [
       // TODO confirm: PR #297 (charges on the studio's own account, no Happli fee).
@@ -60,6 +66,8 @@ const sections: Section[] = [
   {
     id: 'packages',
     title: 'Packages',
+    visual: 'packages',
+    intro: 'Sell prepaid sessions and always know what each client has left.',
     items: [
       { title: 'Create packages', body: 'of prepaid sessions for the services you choose, with an optional expiry.' },
       { title: 'Sell a package', body: 'by card or mark it paid.' },
@@ -70,6 +78,8 @@ const sections: Section[] = [
   {
     id: 'waitlist',
     title: 'Waitlist and gap offers',
+    visual: 'waitlist',
+    intro: 'Fill open times with clients who already asked for them.',
     items: [
       { title: 'Waitlist:', body: 'add clients with their service, preferred team member (or anyone), day and time of day. Happli matches them to openings.' },
       // TODO confirm: advertise online waitlist join.
@@ -81,6 +91,8 @@ const sections: Section[] = [
   {
     id: 'reminders',
     title: 'Reminders and client messages',
+    visual: 'reminders',
+    intro: 'Reminders and follow-ups in your own words.',
     // TODO confirm: live texting to clients is switched on.
     items: [
       { title: 'Automatic messages:', body: 'booking confirmed, day-before reminder, two-hours-before reminder, moved or canceled, thank-you after the visit, and time to come back.' },
@@ -95,6 +107,8 @@ const sections: Section[] = [
   {
     id: 'clients',
     title: 'Clients',
+    visual: 'clients',
+    intro: 'Every client, their visits and their notes, in one place.',
     items: [
       { title: 'One client list', body: 'with search, contact details and notes.' },
       { title: 'History', body: 'of visits, no-shows and spend.' },
@@ -104,6 +118,7 @@ const sections: Section[] = [
   {
     id: 'ai',
     title: 'AI built in',
+    visual: 'ai',
     intro: 'AI helps with the busywork. It drafts and suggests; you decide, and it never calculates your numbers.',
     items: [
       { title: 'Ask your reports:', body: 'type a question like "How much did we collect?" on the Reports page. Happli matches it to a report and answers with your real numbers.' },
@@ -116,6 +131,8 @@ const sections: Section[] = [
   {
     id: 'switching',
     title: 'Switching from another system',
+    visual: 'switching',
+    intro: 'Bring your clients, services and bookings with you.',
     // TODO confirm: import is run by the Happli team during onboarding.
     items: [
       { title: 'CSV import', body: 'of clients, services, team and appointments, with a preview before anything is saved and a list of any rows that need fixing.' },
@@ -125,6 +142,7 @@ const sections: Section[] = [
   {
     id: 'chat',
     title: 'Website chat assistant',
+    visual: 'chat',
     status: 'early',
     intro: 'Available to studios in early access. Ask us to turn it on for your website.',
     items: [
@@ -136,6 +154,8 @@ const sections: Section[] = [
   {
     id: 'settings',
     title: 'Settings',
+    visual: 'settings',
+    intro: 'Set up your studio once, the way you work.',
     items: [
       { title: 'Profile and brand voice:', body: 'your business details and how your studio sounds, with a live preview.' },
       { title: 'Locations:', body: 'studio or mobile locations, each with its own booking page.' },
@@ -151,6 +171,7 @@ const sections: Section[] = [
   {
     id: 'reports',
     title: 'Reports',
+    visual: 'reports',
     intro: 'A clear view of how your studio is doing, built from real payments rather than estimates:',
     items: [
       { body: 'Money collected, split by card and marked paid.' },
@@ -177,10 +198,8 @@ const sections: Section[] = [
     </nav>
   </PageIntro>
 
-  <FeatureRows />
-
   <div class="lists">
-    {sections.map((s) => <FeatureList id={s.id} title={s.title} intro={s.intro} items={s.items} status={s.status} />)}
+    {sections.map((s, i) => <FeatureList id={s.id} title={s.title} intro={s.intro} items={s.items} status={s.status} visual={s.visual} flip={i % 2 === 1} />)}
   </div>
 
   <CtaBand
@@ -198,9 +217,9 @@ const sections: Section[] = [
     max-width: 52em;
   }
   .jump a {
-    font-size: 13px;
+    font-size: 16px;
     font-weight: 600;
-    padding: 11px 14px;
+    padding: 10px 16px;
     border-radius: var(--radius-pill);
     border: 1px solid var(--line-strong);
     background: rgba(255, 255, 255, 0.6);
