@@ -28,4 +28,21 @@ const compare = defineCollection({
   }),
 });
 
-export const collections = { blog, compare };
+// Guides (long-form how-tos), studio-type pages (/for/) and "X alternatives" pages (/alternatives/).
+// Templates only for now: each has one draft example and its section is switched off in site.ts.
+const guides = defineCollection({
+  loader: glob({ base: './src/content/guides', pattern: '**/*.{md,mdx}' }),
+  schema: postSchema,
+});
+
+const forStudios = defineCollection({
+  loader: glob({ base: './src/content/for', pattern: '**/*.{md,mdx}' }),
+  schema: (ctx) => postSchema(ctx).extend({ studioType: z.string() }),
+});
+
+const alternatives = defineCollection({
+  loader: glob({ base: './src/content/alternatives', pattern: '**/*.{md,mdx}' }),
+  schema: (ctx) => postSchema(ctx).extend({ competitor: z.string(), todo: z.array(z.string()).default([]) }),
+});
+
+export const collections = { blog, compare, guides, for: forStudios, alternatives };

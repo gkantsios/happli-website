@@ -1,9 +1,10 @@
 ---
 import type { CollectionEntry } from 'astro:content';
+import type { PostCollection } from '../lib/posts';
 import { formatDate } from '../lib/posts';
 
 interface Props {
-  entries: (CollectionEntry<'blog'> | CollectionEntry<'compare'>)[];
+  entries: CollectionEntry<PostCollection>[];
   base: string;
   empty: string;
 }

@@ -2,10 +2,10 @@
 
 export type NavLink = { label: string; href: string };
 
-// Blog and compare sections. While a section is off, its pages still build and work by URL,
-// but they're marked noindex, left out of the sitemap, and not linked from the footer.
-// Turn one on once it has published posts.
-const sections = { blog: false, compare: true };
+// Content sections. While a section is off, its pages still build and work by URL, but they're
+// marked noindex, left out of the sitemap, and not linked from the footer. Turn one on once it has
+// published posts. guides, for (studio types) and alternatives are templates with drafts only.
+const sections = { blog: false, compare: true, guides: false, for: false, alternatives: false };
 
 export const site = {
   name: 'Happli',
