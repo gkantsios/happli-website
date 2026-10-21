@@ -186,7 +186,7 @@ p {
   display: flex;
   gap: 12px;
   align-items: flex-start;
-  font-size: 15px;
+  font-size: 16px;
   color: var(--ink-2);
 }
 .checks li > svg {
@@ -203,7 +203,8 @@ p {
 
 .badge {
   display: inline-block;
-  font-size: 11px;
+  white-space: nowrap;
+  font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -272,8 +273,12 @@ p {
   text-decoration: underline;
   text-underline-offset: 3px;
 }
+/* legal pages: a shorter line for easier reading */
+.legal .prose {
+  max-width: 68ch;
+}
 .prose .updated {
-  font-size: 14px;
+  font-size: 16px;
   color: var(--muted);
   margin: 10px 0 32px;
 }
@@ -345,4 +350,9 @@ p {
 }
 .prose.compare table thead th {
   background: var(--blush-2);
+}
+
+/* skip link target clears the fixed header */
+main {
+  scroll-margin-top: 80px;
 }

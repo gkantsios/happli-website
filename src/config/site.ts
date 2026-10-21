@@ -10,9 +10,9 @@ const sections = { blog: false, compare: true };
 export const site = {
   name: 'Happli',
   url: 'https://gohappli.com',
-  positioning: 'Booking software for spray tan and beauty studios, with an AI COO.',
-  tagline: 'Booking software for spray tan and beauty studios, with an AI COO.',
-  helpUrl: 'https://support.gohappli.com/',
+  positioning: 'Booking software for spray tan and beauty studios, with AI built in.',
+  tagline: 'Booking software for spray tan and beauty studios, with AI built in.',
+  helpUrl: 'https://support.gohappli.com/hc/happli-help/en',
   appUrl: 'https://app.gohappli.com',
   signInUrl: 'https://app.gohappli.com/login',
   contactEmail: 'hello@gohappli.com',
@@ -50,6 +50,7 @@ export const site = {
     product: [
       { label: 'Features', href: '/features/' },
       { label: 'Pricing', href: '/pricing/' },
+      { label: 'Roadmap', href: '/roadmap/' },
       { label: 'Happli on your phone', href: '/phone/' },
       { label: 'Spray tan studio software', href: '/spray-tan-studio-software/' },
       ...(sections.blog ? [{ label: 'Blog', href: '/blog/' }] : []),
@@ -59,6 +60,11 @@ export const site = {
       { label: 'Privacy', href: '/privacy/' },
       { label: 'Terms', href: '/terms/' },
       { label: 'Security', href: '/security/' },
+      { label: 'Data Processing Addendum', href: '/dpa/' },
+      { label: 'Acceptable Use', href: '/acceptable-use/' },
+      { label: 'Refunds and Cancellation', href: '/refunds/' },
+      { label: 'SMS Terms', href: '/sms-terms/' },
+      { label: 'Cookies', href: '/cookies/' },
     ] satisfies NavLink[],
   },
 } as const;

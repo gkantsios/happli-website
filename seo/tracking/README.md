@@ -47,17 +47,17 @@ Pick a fixed day. Use a private window, US location, signed out.
 7. mangomint alternative
 8. glossgenius alternative
 9. vagaro alternative
-10. mysunless alternative
-11. mangomint vs glossgenius
-12. spray tan cancellation policy template
-13. how to reduce spray tan no-shows
-14. spray tan appointment reminder text
-15. booking software with deposits and no-show fees
-16. beauty studio booking software
-17. online booking for beauty studio
-18. spray tan software pricing
-19. booking software for estheticians
-20. mysunless vs happli
+10. mangomint vs glossgenius
+11. spray tan cancellation policy template
+12. how to reduce spray tan no-shows
+13. spray tan appointment reminder text
+14. booking software with deposits and no-show fees
+15. beauty studio booking software
+16. online booking for beauty studio
+17. spray tan software pricing
+18. booking software for estheticians
+19. square appointments alternative
+20. spray tan prep instructions
 
 For each, record in `seo/tracking/rankings.csv` (`date,keyword,google_position,bing_position,url`): the position of gohappli.com (or "none"), and which URL ranks. Use Search Console's Performance tab for average position (it lags 2 to 3 days) rather than relying only on manual checks.
 

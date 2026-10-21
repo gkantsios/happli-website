@@ -1,21 +1,23 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PageIntro from '../components/sections/PageIntro.astro';
-import FeatureList, { type FeatureItem } from '../components/sections/FeatureList.astro';
-import FeatureRows from '../components/sections/FeatureRows.astro';
+import FeatureList, { type FeatureItem, type Status } from '../components/sections/FeatureList.astro';
+import FeatureVisual, { type VisualKind } from '../components/mocks/FeatureVisual.astro';
 import CtaBand from '../components/sections/CtaBand.astro';
 import { breadcrumbs } from '../lib/jsonld';
 
-const title = 'Features | Happli Booking Software for Spray Tan and Beauty Studios';
+const title = 'Features | Happli booking software for spray tan and beauty studios';
 const description =
-  'Online booking, deposits, card checkout, tips and tax, no-show fees, packages, waitlist, gap offers, reminders, client import and a website chat assistant. Built for spray tan studios.';
+  'Online booking, deposits, card checkout, tips and tax, no-show fees, packages, waitlist, gap offers, reminders, client import and AI built in: ask your reports, form import and review request drafts. Built for spray tan studios.';
 
-type Section = { id: string; title: string; intro?: string; soon?: boolean; items: FeatureItem[] };
+type Section = { id: string; title: string; intro?: string; status?: Status; visual: VisualKind; items: FeatureItem[] };
 
 const sections: Section[] = [
   {
     id: 'online-booking',
     title: 'Online booking',
+    visual: 'booking',
+    intro: 'A booking page built for phones. Share the link or embed it on your site.',
     items: [
       { title: 'Your booking page:', body: 'a public page for each location that you can share as a link or embed on your website.' },
       { title: 'Phone-friendly calendar:', body: 'clients pick a day on a calendar sized for small screens, then choose an open time.' },
@@ -28,6 +30,8 @@ const sections: Section[] = [
   {
     id: 'calendar',
     title: 'Calendar and front desk',
+    visual: 'calendar',
+    intro: "Your whole team's day at a glance, with open gaps marked.",
     items: [
       { title: 'Day and week views,', body: 'with a column for each team member, or everyone at once.' },
       { title: 'One appointment panel', body: 'to confirm, check out, reschedule, cancel or mark a no-show, with notes.' },
@@ -43,11 +47,13 @@ const sections: Section[] = [
   {
     id: 'payments',
     title: 'Payments',
+    visual: 'payments',
+    intro: 'Deposits, checkout, tips and tax on one sheet.',
     // TODO confirm: live card payments need the Stripe go-live checklist completed.
     items: [
       // TODO confirm: PR #297 (charges on the studio's own account, no Happli fee).
       { title: 'Stripe Connect:', body: 'connect your own Stripe account from Settings. Charges are made on your account, and Happli takes no fee.' },
-      { title: 'Deposits', body: 'as a percentage of the service, for online bookings, staff bookings or both.' },
+      { title: 'Deposits', body: 'as a percentage of the service, for online bookings, bookings by your team or both.' },
       { title: 'Card checkout', body: 'through secure Stripe checkout.' },
       { title: 'Mark paid', body: 'to record cash or other payments.' },
       { title: 'Tips', body: 'with three suggested amounts you choose.' },
@@ -60,16 +66,20 @@ const sections: Section[] = [
   {
     id: 'packages',
     title: 'Packages',
+    visual: 'packages',
+    intro: 'Sell prepaid sessions and always know what each client has left.',
     items: [
       { title: 'Create packages', body: 'of prepaid sessions for the services you choose, with an optional expiry.' },
       { title: 'Sell a package', body: 'by card or mark it paid.' },
       { title: 'Client balances:', body: 'see how many sessions each client has left, and adjust, void or refund when needed.' },
-      { body: 'Redeem package sessions at checkout.', soon: true },
+      { title: 'Redeem at checkout', status: 'soon', body: 'Use package sessions to pay at checkout.' },
     ],
   },
   {
     id: 'waitlist',
     title: 'Waitlist and gap offers',
+    visual: 'waitlist',
+    intro: 'Fill open times with clients who already asked for them.',
     items: [
       { title: 'Waitlist:', body: 'add clients with their service, preferred team member (or anyone), day and time of day. Happli matches them to openings.' },
       // TODO confirm: advertise online waitlist join.
@@ -81,10 +91,12 @@ const sections: Section[] = [
   {
     id: 'reminders',
     title: 'Reminders and client messages',
+    visual: 'reminders',
+    intro: 'Reminders and follow-ups in your own words.',
     // TODO confirm: live texting to clients is switched on.
     items: [
-      { title: 'Automatic messages:', body: 'booking confirmed, day-before reminder, two-hours-before reminder, moved or cancelled, thank-you after the visit, and time to come back.' },
-      { title: 'Text, email or both', body: 'for each message, and separate choices for online and staff bookings.' },
+      { title: 'Automatic messages:', body: 'booking confirmed, day-before reminder, two-hours-before reminder, moved or canceled, thank-you after the visit, and time to come back.' },
+      { title: 'Text, email or both', body: 'for each message, and separate choices for online bookings and bookings by your team.' },
       { title: 'Quiet hours:', body: 'reminder and follow-up texts wait until your texting window opens. Confirmations and change notices send right away.' },
       { title: 'Edit the wording', body: "with fill-in fields like first name, service and time, preview it, send yourself a test, or go back to Happli's wording in one click." },
       { title: 'Custom messages:', body: 'add up to three more, like prep instructions a few days before a spray tan.' },
@@ -95,6 +107,8 @@ const sections: Section[] = [
   {
     id: 'clients',
     title: 'Clients',
+    visual: 'clients',
+    intro: 'Every client, their visits and their notes, in one place.',
     items: [
       { title: 'One client list', body: 'with search, contact details and notes.' },
       { title: 'History', body: 'of visits, no-shows and spend.' },
@@ -102,8 +116,23 @@ const sections: Section[] = [
     ],
   },
   {
+    id: 'ai',
+    title: 'AI built in',
+    visual: 'ai',
+    intro: 'AI helps with the busywork. It drafts and suggests; you decide, and it never calculates your numbers.',
+    items: [
+      { title: 'Ask your reports:', body: 'type a question like "How much did we collect?" on the Reports page. Happli matches it to a report and answers with your real numbers.' },
+      { title: 'Form import:', body: 'upload a Word or PDF intake form or waiver, and Happli turns it into an online form for you to review before you save it.' },
+      { title: 'Review request texts:', body: 'Happli drafts a short, friendly text asking happy clients for a Google review. It sends only after you approve it.' },
+      { title: 'Profile from your website:', body: "Happli reads your studio's website and suggests your description, brand voice and a services summary for you to review and save." },
+      { title: 'AI COO chat', status: 'soon', body: 'Ask questions about your business and get a daily plan.' },
+    ],
+  },
+  {
     id: 'switching',
     title: 'Switching from another system',
+    visual: 'switching',
+    intro: 'Bring your clients, services and bookings with you.',
     // TODO confirm: import is run by the Happli team during onboarding.
     items: [
       { title: 'CSV import', body: 'of clients, services, team and appointments, with a preview before anything is saved and a list of any rows that need fixing.' },
@@ -113,7 +142,9 @@ const sections: Section[] = [
   {
     id: 'chat',
     title: 'Website chat assistant',
-    // TODO confirm: chat widget is available to studios on the Happli booking system.
+    visual: 'chat',
+    status: 'early',
+    intro: 'Available to studios in early access. Ask us to turn it on for your website.',
     items: [
       { title: 'A chat bubble for your website', body: "that answers visitor questions using your studio's own information." },
       { title: 'Never guesses prices:', body: "it only quotes prices you've confirmed." },
@@ -123,6 +154,8 @@ const sections: Section[] = [
   {
     id: 'settings',
     title: 'Settings',
+    visual: 'settings',
+    intro: 'Set up your studio once, the way you work.',
     items: [
       { title: 'Profile and brand voice:', body: 'your business details and how your studio sounds, with a live preview.' },
       { title: 'Locations:', body: 'studio or mobile locations, each with its own booking page.' },
@@ -138,6 +171,7 @@ const sections: Section[] = [
   {
     id: 'reports',
     title: 'Reports',
+    visual: 'reports',
     intro: 'A clear view of how your studio is doing, built from real payments rather than estimates:',
     items: [
       { body: 'Money collected, split by card and marked paid.' },
@@ -164,11 +198,49 @@ const sections: Section[] = [
     </nav>
   </PageIntro>
 
-  <FeatureRows />
-
-  <div class="lists">
-    {sections.map((s) => <FeatureList id={s.id} title={s.title} intro={s.intro} items={s.items} soon={s.soon} />)}
+  {/* Desktop (1024px+, with JS): one pinned visual panel that crossfades to the active section.
+      Every section keeps its own visual in the DOM, which is what shows without JS and under 1024px. */}
+  <div class="lists" data-scrolly>
+    <div class="scrolly-text">
+      {sections.map((s, i) => <FeatureList id={s.id} title={s.title} intro={s.intro} items={s.items} status={s.status} visual={s.visual} flip={i % 2 === 1} />)}
+    </div>
+    <div class="scrolly-stage" aria-hidden="true">
+      <div class="stage-in">
+        {sections.map((s, i) => (
+          <div class:list={['frame', { on: i === 0 }]} data-frame={s.id}>
+            <FeatureVisual kind={s.visual} />
+          </div>
+        ))}
+      </div>
+    </div>
   </div>
+
+  <script is:inline>
+    (function () {
+      var root = document.querySelector('[data-scrolly]');
+      if (!root || !('IntersectionObserver' in window)) return;
+      var mq = window.matchMedia('(min-width: 1024px)');
+      var frames = {};
+      root.querySelectorAll('[data-frame]').forEach(function (f) { frames[f.getAttribute('data-frame')] = f; });
+      var sections = root.querySelectorAll('.scrolly-text > .flist');
+      function show(id) {
+        if (!frames[id]) return;
+        for (var k in frames) frames[k].classList.toggle('on', k === id);
+      }
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) { if (e.isIntersecting) show(e.target.id); });
+      }, { rootMargin: '-45% 0px -45% 0px' });
+      function apply() {
+        root.classList.toggle('is-scrolly', mq.matches);
+        if (mq.matches) sections.forEach(function (s) { io.observe(s); });
+        else io.disconnect();
+      }
+      mq.addEventListener('change', apply);
+      apply();
+    })();
+  </script>
+
+  <p class="wrap roadmap-link">Want to know what's coming? <a href="/roadmap/">See the roadmap →</a></p>
 
   <CtaBand
     title="See it with your own schedule."
@@ -185,9 +257,9 @@ const sections: Section[] = [
     max-width: 52em;
   }
   .jump a {
-    font-size: 13px;
+    font-size: 16px;
     font-weight: 600;
-    padding: 6px 12px;
+    padding: 10px 16px;
     border-radius: var(--radius-pill);
     border: 1px solid var(--line-strong);
     background: rgba(255, 255, 255, 0.6);
@@ -199,5 +271,80 @@ const sections: Section[] = [
   }
   .lists {
     margin-top: var(--space-block);
+  }
+  .roadmap-link {
+    margin-top: var(--space-block);
+    font-size: 17px;
+    color: var(--ink-2);
+  }
+  .roadmap-link a {
+    color: var(--coral-ink);
+    font-weight: 600;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    display: inline-block;
+    padding-block: 10px;
+  }
+  .scrolly-stage {
+    display: none;
+  }
+  @media (min-width: 1024px) {
+    .lists.is-scrolly {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+      gap: 64px;
+      max-width: var(--w);
+      margin-inline: auto;
+      padding-inline: var(--gutter);
+    }
+    .is-scrolly .scrolly-text :global(.wrap) {
+      padding-inline: 0;
+    }
+    .is-scrolly .scrolly-text :global(.flist-in.has-vis) {
+      grid-template-columns: minmax(0, 1fr);
+      grid-template-areas: 'head' 'list';
+    }
+    .is-scrolly .scrolly-text :global(.vis) {
+      display: none;
+    }
+    .is-scrolly .scrolly-text :global(.flist) {
+      min-height: 70vh;
+    }
+    .is-scrolly .scrolly-stage {
+      display: block;
+    }
+    .stage-in {
+      position: sticky;
+      top: calc(var(--nav-h) + 32px);
+      height: min(640px, calc(100vh - var(--nav-h) - 64px));
+      min-height: 460px;
+      margin-block: clamp(56px, 8vw, 104px);
+      border-radius: var(--radius-xl);
+      background:
+        radial-gradient(70% 80% at 20% 0%, #f8dad6 0%, rgba(248, 218, 214, 0) 70%),
+        linear-gradient(160deg, var(--blush-2), var(--blush));
+      overflow: hidden;
+    }
+    .frame {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      padding: 40px;
+      opacity: 0;
+      transform: translateY(8px);
+      transition: opacity 0.45s var(--ease-out), transform 0.45s var(--ease-out);
+      pointer-events: none;
+    }
+    .frame.on {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .frame {
+      transition: none;
+      transform: none;
+    }
   }
 </style>

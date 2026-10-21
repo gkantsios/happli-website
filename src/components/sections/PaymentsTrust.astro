@@ -47,7 +47,7 @@ const trust = [
         <div class="row"><span>Sales tax</span><b>At your rate</b></div>
         <p class="settle"><i></i>Settles in your Stripe account</p>
         {/* TODO confirm: "Settles in your Stripe account" depends on happli-coo PR #297. */}
-        {/* PLACEHOLDER: a fee line ("Happli fee") is intentionally not shown until pricing is set. */}
+        {/* No "Happli fee" line: card payments run at Stripe's standard rate with no markup at launch (src/config/pricing.ts). */}
       </div>
     </div>
   </div>

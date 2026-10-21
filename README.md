@@ -24,7 +24,7 @@ npm run build && npx wrangler deploy --dry-run
 | Path | What it is |
 |---|---|
 | `src/config/site.ts` | Site name, URLs, the **"Book a demo" link**, sign-in URL, contact email, header and footer links, which homepage hero to use, whether /blog and /compare are switched on, and the **"Try the demo" flag** (`demo.enabled`, off by default) |
-| `src/config/pricing.ts` | The three founding member plans, their Stripe Payment Links and the pricing footnote (feeds /pricing, /signup and the SoftwareApplication JSON-LD) |
+| `src/config/pricing.ts` | The Solo and Studio plans (monthly, yearly and Founding Studio prices), the Marketing add-on, the trial and the "Included on every plan" list (feeds /pricing, /signup, the home, niche and compare pages, and the SoftwareApplication JSON-LD) |
 | `src/config/hero.ts` | The zoom hero's studio photo and where its monitor screen is (the one place to swap the photo) |
 | `src/styles/tokens.css` | Colors, fonts, spacing and radii |
 | `src/styles/global.css` | Base styles, buttons, section rhythm, long-form (`.prose`) styles |
@@ -123,7 +123,7 @@ Each post gets Open Graph and Twitter tags and `BlogPosting` and `BreadcrumbList
 
 - `@astrojs/sitemap` writes `sitemap-index.xml` on every build, and `public/robots.txt` points to it.
 - Every page sets a unique title and meta description, a canonical URL (on `https://gohappli.com`, with a trailing slash), and Open Graph and Twitter tags. The default share image is `public/og-default.png` (regenerate it with `node scripts/generate-og.mjs`).
-- Every page has `Organization` and `WebSite` JSON-LD (added in `BaseLayout`). Home, /pricing/ and the niche page add `SoftwareApplication` with the founding-plan `offers`; any page that renders an FAQ gets `FAQPage`; other pages get `BreadcrumbList`.
+- Every page has `Organization` and `WebSite` JSON-LD (added in `BaseLayout`). Home, /pricing/ and the niche page add `SoftwareApplication` with the Solo and Studio `offers`; any page that renders an FAQ gets `FAQPage`; other pages get `BreadcrumbList`.
 - `public/robots.txt` allows search and AI-answer crawlers and blocks training-only crawlers. See `seo/robots.md`.
 
 ## Deploy

@@ -180,6 +180,16 @@ const Btn = interactive ? 'button' : 'span';
   .need.all .need-empty {
     color: var(--ink);
   }
+  /* phones: the walkthrough's real buttons get full-size tap targets */
+  @media (max-width: 699.98px) {
+    .need:not(.static) .mini {
+      min-height: 44px;
+      padding: 0 16px;
+    }
+    .need-row > .mini-pair {
+      gap: 8px;
+    }
+  }
   @media (max-width: 480px) {
     .need-row {
       flex-wrap: wrap;

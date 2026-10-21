@@ -1,0 +1,13 @@
+---
+import ProseLayout from '../layouts/ProseLayout.astro';
+import { legal } from '../lib/legal';
+import { breadcrumbs } from '../lib/jsonld';
+---
+
+<ProseLayout
+  title="Cookie Notice | Happli"
+  description="The cookies Happli uses: strictly necessary only, no advertising or analytics."
+  jsonLd={[breadcrumbs([{ name: 'Home', href: '/' }, { name: 'Cookie Notice', href: '/cookies/' }])]}
+>
+  <Fragment set:html={legal.cookies} />
+</ProseLayout>

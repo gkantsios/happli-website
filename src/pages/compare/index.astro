@@ -7,42 +7,46 @@ import CtaBand from '../../components/sections/CtaBand.astro';
 import { getPublished } from '../../lib/posts';
 import { breadcrumbs } from '../../lib/jsonld';
 import { site } from '../../config/site';
+import { solo, studio, trialDays, usd } from '../../config/pricing';
 
 const pages = await getPublished('compare');
 
-// Prices as listed on each company's own pricing page on Oct 15, 2026.
+// Prices as listed on each company's own pricing page on Oct 15, 2026 (Square: October 2026, from Grant's
+// pricing research; no full comparison page yet).
 const rows: { label: string; cells: Cell[] }[] = [
-  { label: 'Happli', cells: ['$99/month for 1 location, $149 for 2, $199 for 3 (founding member pricing)', 'None listed', { text: 'happli.com/pricing', href: '/pricing/' }] },
-  { label: 'Mangomint', cells: ['$120/month per location + $10/month per user', 'Offered (length not stated)', { text: 'mangomint.com/pricing', href: 'https://www.mangomint.com/pricing/' }] },
-  { label: 'GlossGenius', cells: ['Standard $28/month, Gold $56, Platinum $168 (billed monthly; less billed annually)', '14 days', { text: 'glossgenius.com/pricing', href: 'https://glossgenius.com/pricing' }] },
-  { label: 'Vagaro', cells: ['$23.99/month as an exclusive rate for the first 6 months, plus $10 per bookable calendar license', '30 days', { text: 'vagaro.com/pro/pricing', href: 'https://www.vagaro.com/pro/pricing' }] },
-  { label: 'MySunless', cells: ['Starter $20/month (1 team member), Pro $45/month (5 team members)', '14 days', { text: 'mysunless.com/pricing', href: 'https://mysunless.com/pricing' }] },
+  { label: 'Happli', cells: [`Solo ${usd(solo.monthly)}/mo, Studio ${usd(studio.monthly)}/mo per location (less yearly)`, `Until you go live, up to ${trialDays} days`, { text: 'gohappli.com/pricing', href: '/pricing/' }] },
+  { label: 'Square Appointments', cells: ['Free, Plus $49/mo, Premium $149/mo per location', 'Free plan available', { text: 'squareup.com/appointments/pricing', href: 'https://squareup.com/us/en/appointments/pricing' }] },
+  { label: 'Mangomint', cells: ['$120/mo per location + $10/mo per user', 'Offered (length not stated)', { text: 'mangomint.com/pricing', href: 'https://www.mangomint.com/pricing/' }] },
+  { label: 'GlossGenius', cells: ['Standard $28/mo, Gold $56, Platinum $168 (less yearly)', '14 days', { text: 'glossgenius.com/pricing', href: 'https://glossgenius.com/pricing' }] },
+  { label: 'Vagaro', cells: ['$23.99/mo for the first 6 months, + $10 per calendar license', '30 days', { text: 'vagaro.com/pro/pricing', href: 'https://www.vagaro.com/pro/pricing' }] },
 ];
 ---
 
 <BaseLayout
-  title="Compare Happli | Booking Software Alternatives for Spray Tan Studios"
-  description="Fair, dated comparisons of Happli with Mangomint, GlossGenius, Vagaro and MySunless for spray tan studios and beauty pros. Last checked Oct 15, 2026."
+  title="Compare Happli | Booking software alternatives for spray tan studios"
+  description="Fair, dated comparisons of Happli with Mangomint, GlossGenius and Vagaro for spray tan studios and beauty pros. Last checked Oct 15, 2026."
   jsonLd={[breadcrumbs([{ name: 'Home', href: '/' }, { name: 'Compare', href: '/compare/' }])]}
   noindex={!site.sections.compare}
 >
   <PageIntro
     eyebrow="Compare"
     title="How Happli compares."
-    lede="Choosing booking software is a big decision. These pages set Happli beside four other options, with the other company's own pricing page as the source. Where they do something better, we say so."
+    lede="Choosing booking software is a big decision. These pages set Happli beside four other options, using each company's own pricing page as the source, with full comparisons for three of them. Where they do something better, we say so."
     cta={false}
   />
 
   <section class="section tight" aria-labelledby="glance-title">
     <div class="wrap">
       <SectionHead eyebrow="At a glance" title="What each one costs" id="glance-title">
-        <p>Last checked Oct 15, 2026, from each company's public pricing page. Pricing models differ, so read the full comparison before you decide.</p>
+        <p>Last checked Oct 15, 2026 (Square in October 2026), from each company's public pricing page. Pricing models differ, so read the full comparison before you decide.</p>
       </SectionHead>
       <div class="table">
         <ComparisonTable
           caption="Starting prices and free trials, as listed by each company"
           columns={['Price as listed', 'Free trial', 'Source']}
           rows={rows}
+          highlightFirst
+          class="prices"
         />
       </div>
     </div>

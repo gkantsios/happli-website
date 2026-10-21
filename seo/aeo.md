@@ -25,7 +25,7 @@ One sentence, used in the home hero, meta, OG, schema and the footer: **"Booking
 
 ## 4. Structured data (already built)
 
-- Organization + WebSite on all pages; SoftwareApplication with `offers` (USD 99 to 199 per month) on home, pricing and the niche page; FAQPage wherever an FAQ renders; BreadcrumbList on inner pages; BlogPosting on posts and compare pages.
+- Organization + WebSite on all pages; SoftwareApplication with `offers` (Solo and Studio, USD 69 to 149 per month) on home, pricing and the niche page; FAQPage wherever an FAQ renders; BreadcrumbList on inner pages; BlogPosting on posts and compare pages.
 - Don't add `aggregateRating` until there are real reviews shown on the page.
 - Offer prices must match the visible plan prices (`src/config/pricing.ts` feeds both).
 
@@ -34,7 +34,7 @@ One sentence, used in the home hero, meta, OG, schema and the footer: **"Booking
 AI answers repeat what pages say. Wrong or stale facts spread.
 
 - Features copy only describes what is built; unconfirmed items are marked `TODO confirm` in source.
-- Pricing: only the three founding member prices. No invented trials or discounts.
+- Pricing: only the prices in `src/config/pricing.ts` (Solo, Studio, the Marketing add-on and the Founding Studio offer). No invented trials or discounts. Don't market a free website, and don't say "for life" without "while subscribed".
 - Phone: say "mobile-friendly web app." There's no App Store app.
 - Re-check the competitor pages each quarter.
 - **Reconcile the draft AI-instructions page before using it.** It describes Happli as an AI layer on top of an existing booking system (Square, Vagaro). The site now positions Happli as booking software with an AI COO. Any brand-facts page must match the site.
@@ -42,7 +42,7 @@ AI answers repeat what pages say. Wrong or stale facts spread.
 ## 6. Distribution outside the site
 
 - **YouTube companion** for each major article: a query-shaped title, the answer in the first lines of the description, chapters starting at 00:00, and reviewed captions.
-- **Third-party listings**: Capterra, G2, Software Advice, Google Business Profile for the company. Ask founding members for reviews (with permission).
+- **Third-party listings**: Capterra, G2, Software Advice, Google Business Profile for the company. Ask Founding Studios for reviews (with permission).
 - **Mentions that name Happli with its category**: guest posts and podcasts, always as "Happli, booking software for spray tan and beauty studios."
 
 ## 7. Measure

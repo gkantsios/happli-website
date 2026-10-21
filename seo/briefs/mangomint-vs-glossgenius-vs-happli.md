@@ -23,7 +23,7 @@ Most "X vs Y" pages are thin. This one answers who each fits, in plain language,
 - **H2: Pricing, explained**
   - H3: Mangomint: per location plus per user
   - H3: GlossGenius: feature tiers
-  - H3: Happli: by location (founding member pricing)
+  - H3: Happli: Solo or Studio, by team members who take bookings (Founding Studio offer)
   - H3: A worked example: 1 person, 3 people, 2 locations
 - **H2: Booking and deposits**
 - **H2: Reminders and client messages**

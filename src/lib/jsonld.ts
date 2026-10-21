@@ -39,7 +39,8 @@ export function faqPage(items: { q: string; a: string }[]) {
   };
 }
 
-// Offers are the founding member plans (src/config/pricing.ts). No aggregateRating until there are real reviews.
+// Offers are the Solo and Studio plans at their normal monthly prices (src/config/pricing.ts).
+// No aggregateRating until there are real reviews.
 export function softwareApplication() {
   return {
     '@context': 'https://schema.org',
@@ -57,12 +58,12 @@ export function softwareApplication() {
       offerCount: String(plans.length),
       offers: plans.map((p) => ({
         '@type': 'Offer',
-        name: `${p.name} (founding member pricing)`,
-        price: String(p.price),
+        name: p.id === 'studio' ? `${p.name} (per location)` : p.name,
+        price: String(p.monthly),
         priceCurrency: 'USD',
         priceSpecification: {
           '@type': 'UnitPriceSpecification',
-          price: String(p.price),
+          price: String(p.monthly),
           priceCurrency: 'USD',
           billingDuration: 1,
           unitCode: 'MON',

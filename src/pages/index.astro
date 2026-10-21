@@ -14,10 +14,11 @@ import Faq, { type FaqItem } from '../components/sections/Faq.astro';
 import CtaBand from '../components/sections/CtaBand.astro';
 import { softwareApplication } from '../lib/jsonld';
 import { site } from '../config/site';
+import { lowPrice, founding, usd } from '../config/pricing';
 
-const title = 'Happli | Booking Software for Spray Tan and Beauty Studios, with an AI COO';
+const title = 'Happli | Booking software for spray tan and beauty studios, with AI built in';
 const description =
-  'Booking software for spray tan and beauty studios, with an AI COO. Clients book, pay deposits and get reminders on their own; what needs you lands in one list.';
+  'Booking software for spray tan and beauty studios, with AI built in. Clients book, pay deposits and get reminders on their own; what needs you lands in one list.';
 
 const audience: Feature[] = [
   { icon: 'sun', title: 'Spray tan studios', body: 'that want online booking, deposits and prep reminders without the phone tag.' },
@@ -28,7 +29,7 @@ const audience: Feature[] = [
 
 const faq: FaqItem[] = [
   { q: 'Does Happli take a cut of my payments?', a: 'No. Happli never takes a cut of your payments. Card processing fees go to Stripe.' },
-  { q: 'Can I require a deposit?', a: "Yes. Choose a percentage of the service, and whether it applies to online bookings, staff bookings or both. When a deposit is required online, the booking is confirmed once it's paid." },
+  { q: 'Can I require a deposit?', a: "Yes. Choose a percentage of the service, and whether it applies to online bookings, bookings by your team or both. When a deposit is required online, the booking is confirmed once it's paid." },
   { q: "What happens when a client doesn't show?", a: "Mark the appointment as a no-show and, if you've turned on a no-show fee, collect it through a secure Stripe payment link. The fee is a percentage of the service price you set in Settings." },
   { q: 'I use another booking system. Is switching hard?', a: "We import your clients, services, team and appointments from CSV files exported from your current system. Reminders for imported bookings stay off until you pick a switch-over date, so clients don't hear from two systems at once." },
   { q: 'Can I sell packages?', a: "Yes. Create prepaid session packages, sell them by card or mark them paid, and see each client's balance. Redeeming sessions at checkout is coming soon." },
@@ -63,7 +64,7 @@ const faq: FaqItem[] = [
     body="See how Happli books, collects and reminds for you."
   >
     <p class="more">
-      Founding member plans start at $99 a month. <a href="/pricing/">See pricing</a> or <a href="/signup/">get started</a>.
+      Plans start at {usd(lowPrice)} a month, with {founding.discountPercent}% off for Founding Studios. <a href="/pricing/">See pricing</a> or <a href="/signup/">get started</a>.
     </p>
   </CtaBand>
 </BaseLayout>
