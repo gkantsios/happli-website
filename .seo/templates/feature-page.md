@@ -10,7 +10,7 @@ Use for `/features/<feature>/` pages (online booking, text reminders, checkout, 
 | Meta description | What it does, who it's for, one proof point (under 160) |
 | H1 | The outcome, not the feature name. Example: "Clients book and pay a deposit without calling you." |
 | Eyebrow | The feature name |
-| Primary keyword | From `seo/keyword-map.csv` |
+| Primary keyword | From `.seo/keyword-map.csv` |
 | CTA | Book a demo; add "Try the demo" automatically when `site.demo.enabled` is on |
 
 ## Sections

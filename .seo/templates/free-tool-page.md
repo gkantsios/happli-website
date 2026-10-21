@@ -21,4 +21,4 @@ Use for downloadable templates and small calculators (cancellation policy, conse
 - Calculators: do the math in the page with no data sent anywhere. Show the formula in text.
 - Use real numbers only if the user types them in. Don't show industry averages without a source.
 - Page title: "<Thing> (Free <Template/Calculator>) | Happli".
-- Add to `seo/keyword-map.csv` with intent "template" or "tool".
+- Add to `.seo/keyword-map.csv` with intent "template" or "tool".

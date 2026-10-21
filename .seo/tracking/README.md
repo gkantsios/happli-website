@@ -20,9 +20,9 @@ Do these once after the site is live on gohappli.com. Steps marked **Grant** nee
 3. Check **Sitemaps** lists `sitemap-index.xml`.
 4. Bing powers some AI assistants' web search, so this matters for AI answers too.
 
-## 3. IndexNow (optional)
+## 3. IndexNow (optional, Grant)
 
-IndexNow tells Bing and some other engines the moment a page changes.
+IndexNow tells Bing and some other engines the moment a page changes. A person does this; the `/seo` skill never submits anything.
 
 1. Generate a key (a random string of 8 to 128 characters) and save it as a text file at `public/<key>.txt` containing only the key.
 2. After each deploy, send changed URLs: `curl "https://api.indexnow.org/indexnow?url=https://gohappli.com/pricing/&key=<key>"`.
@@ -30,13 +30,13 @@ IndexNow tells Bing and some other engines the moment a page changes.
 
 ## 4. Baseline (week 0)
 
-In Search Console, export Performance for the last 28 days (queries, pages, countries, devices). Save as `seo/tracking/baseline-YYYY-MM-DD.csv`. The site is new, so expect near zero. This is the starting line.
+In Search Console, export Performance for the last 28 days (queries, pages, countries, devices). Save as `.seo/tracking/baseline-YYYY-MM-DD.csv`. The site is new, so expect near zero. This is the starting line.
 
 ## 5. Weekly check (15 minutes)
 
 Pick a fixed day. Use a private window, US location, signed out.
 
-**Rankings for 20 core terms.** Take the 20 highest-priority terms from `seo/keyword-map.csv`. Suggested list:
+**Rankings for 20 core terms.** Take the 20 highest-priority terms from `.seo/keyword-map.csv`. Suggested list:
 
 1. spray tan booking software
 2. best spray tan booking software
@@ -59,9 +59,9 @@ Pick a fixed day. Use a private window, US location, signed out.
 19. square appointments alternative
 20. spray tan prep instructions
 
-For each, record in `seo/tracking/rankings.csv` (`date,keyword,google_position,bing_position,url`): the position of gohappli.com (or "none"), and which URL ranks. Use Search Console's Performance tab for average position (it lags 2 to 3 days) rather than relying only on manual checks.
+For each, record in `.seo/tracking/rankings.csv` (`date,keyword,google_position,bing_position,url`): the position of gohappli.com (or "none"), and which URL ranks. Use Search Console's Performance tab for average position (it lags 2 to 3 days) rather than relying only on manual checks.
 
-**AI answer checks.** For the same 20 terms, ask ChatGPT (search on), Perplexity, Google (AI Overview or AI Mode) and Claude (web search on). Record in `seo/tracking/ai-answers.csv` (`date,engine,query,mentioned,cited_url,competitors_named,notes`):
+**AI answer checks.** For the same 20 terms, ask ChatGPT (search on), Perplexity, Google (AI Overview or AI Mode) and Claude (web search on). Record in `.seo/tracking/ai-answers.csv` (`date,engine,query,mentioned,cited_url,competitors_named,notes`):
 
 - Is Happli mentioned? Is gohappli.com cited as a source?
 - Which competitors are named, and which sources are cited?

@@ -11,4 +11,4 @@ todo: ['Source and date every claim about the competitor before publishing.']
 
 This is a **sample draft** for an "alternatives" page at `/alternatives/<slug>/`, for people searching "[competitor] alternatives". Head-to-head "Happli vs X" pages stay at `/compare/`. It is excluded from the build and the sitemap because `draft: true` is set.
 
-Every statement about a competitor needs a source link and the date it was checked, like the compare pages. MySunless is never named, compared against or listed. Switch on `sections.alternatives` in `src/config/site.ts` before the first page goes live.
+Every statement about a competitor needs a source link and the date it was checked, like the compare pages. The banned competitor in `.seo/GUARDRAILS.md` is never named, compared against or listed. Switch on `sections.alternatives` in `src/config/site.ts` before the first page goes live.

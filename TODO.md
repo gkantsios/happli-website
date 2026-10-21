@@ -78,9 +78,9 @@ Each compare page lists its own open items in the `todo:` frontmatter (not rende
 
 - [ ] **Try the demo:** set `site.demo.enabled` to `true` in `src/config/site.ts` once https://app.gohappli.com/demo is live. It then appears in the header, home hero, final CTA bands and the /phone/, niche and signup pages.
 - [ ] /phone/ and the spray tan niche page: unconfirmed claims are marked `TODO confirm` in the source (owner phone view ready to advertise; live texting; post-care texts are described only as custom messages; memberships are left out).
-- [ ] **Cloudflare:** after the cutover, open /robots.txt and confirm it's this repo's file, not Cloudflare's managed one (`seo/robots.md`). Verify Search Console via a DNS TXT record, submit the sitemap, and set up Bing (`seo/tracking/README.md`). Decide on Amazonbot (left allowed).
+- [ ] **Cloudflare:** after the cutover, open /robots.txt and confirm it's this repo's file, not Cloudflare's managed one (`.seo/robots.md`). Verify Search Console via a DNS TXT record, submit the sitemap, and set up Bing (`.seo/tracking/README.md`). Decide on Amazonbot (left allowed).
 - [ ] AI-instructions draft (`/workspace/ai-instructions/`) describes Happli as a layer on another booking system; reconcile with the new positioning before publishing anything like it.
-- [ ] Fill volume and KD in `seo/keyword-map.csv` (marked TODO).
+- [ ] Fill volume and KD in `.seo/keyword-map.csv` (marked TODO) from free sources and Search Console only ($0 paid keyword-data budget).
 - [ ] Node: the repo needs Node 22.12 or newer (`.node-version`).
 
 ## After the first post

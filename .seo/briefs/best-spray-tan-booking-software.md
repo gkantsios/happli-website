@@ -52,7 +52,7 @@ A fair, dated shortlist that names real tradeoffs. Happli is on the list, not at
 
 ## Sources to check before writing
 
-Each vendor's pricing page (mangomint.com/pricing, glossgenius.com/pricing, vagaro.com/pro/pricing); Happli `/pricing/` and `/features/`; Stripe pricing page for processing; reviews on Capterra or G2 only if quoted with a link. Keyword volume and difficulty from the SEO tool (fill in `keyword-map.csv`).
+Each vendor's pricing page (mangomint.com/pricing, glossgenius.com/pricing, vagaro.com/pro/pricing); Happli `/pricing/` and `/features/`; Stripe pricing page for processing; reviews on Capterra or G2 only if quoted with a link. Keyword volume and difficulty from free sources and Search Console only, no paid tools (fill in `keyword-map.csv`).
 
 ## AEO notes
 
