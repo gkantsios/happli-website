@@ -58,7 +58,8 @@ p {
   margin: 0 auto;
   padding-inline: var(--gutter);
 }
-.visually-hidden {
+.visually-hidden,
+.sr-only {
   position: absolute !important;
   width: 1px;
   height: 1px;
@@ -350,6 +351,34 @@ p {
 }
 .prose.compare table thead th {
   background: var(--blush-2);
+}
+
+/* source footnotes on compare posts: a numbered marker after each claim, and the numbered list
+   under the page's Sources heading (the processor's own "Footnotes" heading is .sr-only) */
+.prose sup {
+  font-size: 0.72em;
+  line-height: 0;
+}
+.prose sup a {
+  padding: 0 2px;
+  text-decoration: none;
+  font-weight: 600;
+  color: var(--coral-ink);
+}
+.prose sup a,
+.prose .footnotes li {
+  scroll-margin-top: 90px;
+}
+.prose .footnotes {
+  font-size: 15px;
+  color: var(--ink-2);
+}
+.prose .footnotes p {
+  margin: 0 0 8px;
+}
+/* one way back is enough when a source is cited many times */
+.prose .footnotes [data-footnote-backref] ~ [data-footnote-backref] {
+  display: none;
 }
 
 /* skip link target clears the fixed header */
