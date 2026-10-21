@@ -53,8 +53,10 @@ const ogImage = new URL(image, site.url).href;
     {noindex && <meta name="robots" content="noindex" />}
     <meta name="theme-color" content="#FBFAF8" />
     <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="icon" type="image/svg+xml" href="/icon.svg" />
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
     <link rel="sitemap" href="/sitemap-index.xml" />
     {site.sections.blog && <link rel="alternate" type="application/rss+xml" title={`${site.name} blog`} href={new URL('/rss.xml', site.url)} />}
     <link rel="preload" href={newsreaderLatin} as="font" type="font/woff2" crossorigin />

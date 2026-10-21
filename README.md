@@ -37,7 +37,7 @@ npm run build && npx wrangler deploy --dry-run
 | `docs/screenshots/` | Full-page screenshots of key pages at 375, 768 and 1280px |
 | `src/legal/` | Privacy, terms and security page bodies (HTML, ported word-for-word from the old site) |
 | `src/content/blog/`, `src/content/compare/` | Markdown posts |
-| `public/` | Files served as-is: logos, favicons (`favicon.ico` is made by `node scripts/generate-favicon.mjs`), `robots.txt`, the default social image, `_redirects` (Cloudflare edge redirects) and fallback redirect pages for the old `privacy.html` / `terms.html` / `security.html` URLs |
+| `public/` | Files served as-is: logos, favicons (`favicon.ico` is made by `node scripts/generate-favicon.mjs`), `robots.txt`, the default social image, `_redirects` (Cloudflare edge redirects) |
 | `wrangler.jsonc` | Cloudflare Worker config: a static-assets-only Worker named `happli-website` that serves `dist/` |
 | `TODO.md` | Launch blockers, claims to confirm and placeholders to fill |
 
@@ -144,4 +144,4 @@ Workers Builds installs dependencies with `npm` (from `package-lock.json`) and u
 
 One-time launch step: point gohappli.com at the Worker. In Cloudflare, open the `happli-website` Worker and go to **Settings → Domains & Routes → Add → Custom Domain**, then add `gohappli.com` (and `www.gohappli.com` if wanted). The gohappli.com zone must be on Cloudflare, and Cloudflare won't create a Custom Domain on a hostname that already has a CNAME record, so delete the old GitHub Pages DNS records for those hostnames first. Cloudflare then creates the DNS records and certificate.
 
-**URLs and redirects.** Pages live at trailing-slash URLs (`/features/`), and Cloudflare redirects `/features` to `/features/`. `public/_redirects` sends the old `/privacy.html`, `/terms.html` and `/security.html` URLs (and `/privacy`, `/terms`, `/security`) straight to `/privacy/`, `/terms/` and `/security/` with a 301. The `public/*.html` redirect pages stay as a fallback for any host that doesn't read `_redirects`.
+**URLs and redirects.** Pages live at trailing-slash URLs (`/features/`), and Cloudflare redirects `/features` to `/features/`. `public/_redirects` sends the old `/privacy.html`, `/terms.html` and `/security.html` URLs (and `/privacy`, `/terms`, `/security`) straight to `/privacy/`, `/terms/` and `/security/` with a 301.
