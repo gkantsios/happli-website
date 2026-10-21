@@ -1,0 +1,170 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageIntro from '../components/sections/PageIntro.astro';
+import { breadcrumbs } from '../lib/jsonld';
+import { site } from '../config/site';
+
+const title = 'Help | Happli Support';
+const description = 'Find answers in the Happli help center, or email us. Support for spray tan studios and beauty pros using Happli.';
+const helpBase = 'https://support.gohappli.com/hc/happli-help/articles/';
+const topics = [
+  { name: 'Getting started', articles: [
+    ['a1-how-do-i-get-my-studio-ready-to-take-online-bookings', 'How do I get my studio ready to take online bookings?'],
+    ['b1-how-do-i-turn-on-online-booking-and-find-my-booking-page-link', 'How do I turn on online booking and find my booking page link?'],
+    ['b2-how-do-i-add-a-book-now-button-to-my-website-instagram-or-google-profile', 'How do I add a Book Now button to my website, Instagram or Google profile?'],
+  ] },
+  { name: 'Services and team', articles: [
+    ['c1-how-do-i-add-or-change-a-service', 'How do I add or change a service?'],
+    ['d3-how-do-i-add-a-team-member-and-choose-which-services-they-do', 'How do I add a team member and choose which services they do?'],
+  ] },
+  { name: 'Calendar and client messages', articles: [
+    ['e1-how-do-i-book-move-or-cancel-an-appointment', 'How do I book, move or cancel an appointment?'],
+    ['g1-which-texts-and-emails-do-my-clients-get-and-when', 'Which texts and emails do my clients get, and when?'],
+  ] },
+  { name: 'Forms and payments', articles: [
+    ['h1-how-do-i-create-my-waiver-or-intake-form', 'How do I create my waiver or intake form?'],
+    ['i1-how-do-i-connect-stripe-so-i-can-take-card-payments', 'How do I connect Stripe so I can take card payments?'],
+    ['i3-how-do-deposits-and-no-show-fees-work', 'How do deposits and no-show fees work?'],
+  ] },
+  { name: 'Switching to Happli', articles: [
+    ['k1-can-you-bring-over-my-clients-and-appointments-from-my-old-booking-system', 'Can you bring over my clients and appointments from my old booking system?'],
+  ] },
+];
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  jsonLd={[breadcrumbs([{ name: 'Home', href: '/' }, { name: 'Help', href: '/help/' }])]}
+>
+  <PageIntro eyebrow="Help" title="We're here to help." lede="Get answers in the help center, or write to us and a person will get back to you." cta={false} />
+  <div class="wrap">
+    <div class="cards">
+      <a class="card" href={site.helpUrl} rel="noopener">
+        <h2>Help center</h2>
+        <p>Guides and answers for setting up and running your studio in Happli.</p>
+        <span class="go">Open the help center →</span>
+      </a>
+      <a class="card" href={`mailto:${site.contactEmail}`}>
+        <h2>Email us</h2>
+        <p>Questions about your account, your setup or switching from another system.</p>
+        <span class="go">{site.contactEmail} →</span>
+      </a>
+      <a class="card" href={site.cta.href}>
+        <h2>Talk it through</h2>
+        <p>Book a 30-minute call and we'll look at your schedule together.</p>
+        <span class="go">{site.cta.label} →</span>
+      </a>
+    </div>
+    <section class="popular" aria-labelledby="popular-title">
+      <h2 id="popular-title">Popular articles</h2>
+      <div class="topics">
+        {topics.map((t) => (
+          <div class="topic">
+            <h3>{t.name}</h3>
+            <ul>
+              {t.articles.map(([slug, q]) => (
+                <li><a href={`${helpBase}${slug}`} rel="noopener">{q}</a></li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </div>
+    </section>
+    <p class="signin">Already a customer? <a href={site.signInUrl}>Sign in to Happli</a>.</p>
+  </div>
+</BaseLayout>
+
+<style>
+  .cards {
+    margin-top: var(--space-block);
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 20px;
+  }
+  .card {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 28px;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--line-strong);
+    background: var(--surface);
+    transition: border-color 0.18s ease, box-shadow 0.18s ease;
+  }
+  .card:hover {
+    border-color: var(--coral);
+    box-shadow: var(--shadow-card);
+  }
+  h2 {
+    font-size: 24px;
+  }
+  .card p {
+    color: var(--ink-2);
+    font-size: 15px;
+  }
+  .go {
+    margin-top: auto;
+    padding-top: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--coral-ink);
+    overflow-wrap: anywhere;
+  }
+  .signin {
+    margin-top: 32px;
+    font-size: 15px;
+    color: var(--ink-2);
+  }
+  .signin a {
+    color: var(--coral-ink);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  @media (max-width: 860px) {
+    .cards {
+      grid-template-columns: 1fr;
+    }
+  }
+  .popular {
+    margin-top: var(--space-block);
+  }
+  .popular > h2 {
+    font-size: clamp(28px, 3vw, 36px);
+  }
+  .topics {
+    margin-top: 24px;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 32px 48px;
+  }
+  .topic h3 {
+    font-family: var(--sans);
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--ink);
+  }
+  .topic ul {
+    list-style: none;
+    margin: 10px 0 0;
+    padding: 0;
+  }
+  .topic li {
+    border-top: 1px solid var(--line);
+  }
+  .topic a {
+    display: block;
+    padding: 12px 0;
+    font-size: 16px;
+    color: var(--ink);
+    font-weight: 500;
+  }
+  .topic a:hover {
+    color: var(--coral-ink);
+  }
+  @media (max-width: 860px) {
+    .topics {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+</style>

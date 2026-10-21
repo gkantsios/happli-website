@@ -1,0 +1,13 @@
+---
+import ProseLayout from '../layouts/ProseLayout.astro';
+import { legal } from '../lib/legal';
+import { breadcrumbs } from '../lib/jsonld';
+---
+
+<ProseLayout
+  title="Data Processing Addendum | Happli"
+  description="How Happli processes studio client data on a studio's behalf as its service provider."
+  jsonLd={[breadcrumbs([{ name: 'Home', href: '/' }, { name: 'Data Processing Addendum', href: '/dpa/' }])]}
+>
+  <Fragment set:html={legal.dpa} />
+</ProseLayout>

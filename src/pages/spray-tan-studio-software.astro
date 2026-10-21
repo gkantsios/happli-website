@@ -1,0 +1,113 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageIntro from '../components/sections/PageIntro.astro';
+import SectionHead from '../components/sections/SectionHead.astro';
+import Split from '../components/sections/Split.astro';
+import FeatureGrid, { type Feature } from '../components/sections/FeatureGrid.astro';
+import Faq, { type FaqItem } from '../components/sections/Faq.astro';
+import CtaBand from '../components/sections/CtaBand.astro';
+import PhoneBooking from '../components/mocks/PhoneBooking.astro';
+import ReminderPreview from '../components/mocks/ReminderPreview.astro';
+import NeedsList from '../components/mocks/NeedsList.astro';
+import { breadcrumbs, softwareApplication } from '../lib/jsonld';
+import { solo, studio, founding, usd } from '../config/pricing';
+
+const title = 'Spray Tan Studio Software | Online Booking, Deposits, Reminders | Happli';
+const description =
+  'Booking software for spray tan studios and mobile artists: online booking, deposits, no-show fees, prep reminders, packages and a short list of what needs you.';
+
+// Claims below come from the existing /features copy.
+// TODO confirm: memberships are not claimed anywhere in the features copy, so they stay out of this page.
+// TODO confirm: post-care texts. Custom messages (up to three) and the thank-you message are on /features; a dedicated
+//   "aftercare" template is not, so the page says "your own messages" rather than promising templates.
+// TODO confirm: live texting to clients is switched on.
+const what: Feature[] = [
+  { icon: 'calendar', title: 'Online booking, 24/7', body: 'A booking page for each location. Clients choose a service, a day and an open time on their phones.' },
+  { icon: 'card', title: 'Deposits that hold the spot', body: 'Require a percentage upfront. An online booking is confirmed once the deposit is paid.' },
+  { icon: 'receipt', title: 'No-show fees', body: 'Mark a no-show and collect a fee you set, as a percentage of the service, through a secure payment link.' },
+  { icon: 'bell', title: 'Reminders and prep messages', body: 'Day-before and two-hours-before reminders, plus custom messages like prep instructions a few days before a tan.' },
+  { icon: 'sparkle', title: 'Gap offers and a waitlist', body: 'A cancellation opens a gap. Pick a client and Happli drafts the text. It sends when you approve it.' },
+  { icon: 'car', title: 'Mobile artists welcome', body: 'Set up mobile locations, and have Happli draft an "I\'m on my way" text for you to approve.' },
+  { icon: 'brush', title: 'Packages', body: 'Sell prepaid session packages by card, and see each client\'s remaining balance.' },
+  { icon: 'users', title: 'Client notes and history', body: 'Notes, visits, spend and no-shows for every client, at your fingertips.' },
+  { icon: 'shield', title: 'Your money goes to you', body: 'Connect your own Stripe account. Charges are made on it, and Happli takes no fee.' },
+];
+
+const faq: FaqItem[] = [
+  { q: 'Does Happli work for mobile spray tan artists?', a: 'Yes. Happli supports mobile locations and can draft an "I\'m on my way" text for you to approve.' },
+  { q: 'Can I require a deposit for spray tans?', a: "Yes. Choose a percentage of the service, and whether it applies to online bookings, bookings by your team or both. When a deposit is required online, the booking is confirmed once it's paid." },
+  { q: "What happens when a client doesn't show?", a: "Mark the appointment as a no-show and, if you've turned on a no-show fee, collect it through a secure Stripe payment link." },
+  { q: 'Can I send prep instructions before an appointment?', a: 'Yes. Add up to three custom messages, like prep instructions a few days before a spray tan, in addition to the confirmation and reminders. You choose text, email or both.' },
+  { q: 'I use another booking system. Is switching hard?', a: "We import your clients, services, team and appointments from CSV files exported from your current system. Reminders for imported bookings stay off until you pick a switch-over date, so clients don't hear from two systems at once." },
+  { q: 'How much does it cost?', a: `Solo is ${usd(solo.monthly)} a month and Studio is ${usd(studio.monthly)} a month per location, with every feature on both. Founding Studios get ${founding.discountPercent}% off for as long as they stay subscribed. See the pricing page for details.` },
+];
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  jsonLd={[
+    softwareApplication(),
+    breadcrumbs([{ name: 'Home', href: '/' }, { name: 'Spray tan studio software', href: '/spray-tan-studio-software/' }]),
+  ]}
+>
+  <PageIntro
+    eyebrow="Spray tan studio software"
+    title="Booking software built for spray tan studios."
+    lede="Clients book online, pay a deposit and get prep reminders on their own. You get fewer no-shows, fewer empty gaps and a short list of what needs you."
+    secondary={{ label: 'See pricing', href: '/pricing/' }}
+  />
+
+  <Split id="booking" eyebrow="Online booking" title="Let clients book at 11 pm, deposit paid">
+    <div slot="mock"><PhoneBooking /></div>
+    <p>Share your booking link on Instagram, your bio and your website. Clients see only the times you've left open, and a time is held while they finish booking.</p>
+  </Split>
+
+  <Split id="reminders" eyebrow="Reminders" title="Prep and reminder texts, in your voice" reverse>
+    <div slot="mock" class="win"><ReminderPreview /></div>
+    <p>Confirmations, day-before and two-hours-before reminders, a thank-you and a nudge to come back. Add your own prep instructions, edit any wording, and send yourself a test first.</p>
+  </Split>
+
+  <Split id="gaps" eyebrow="Fill the gaps" title="A cancellation shouldn't mean an empty hour">
+    <div slot="mock" class="win"><NeedsList app /></div>
+    <p>Open gaps and waitlist matches show up in Needs you. Pick a client, review the drafted offer and approve it. Nothing goes out without you.</p>
+  </Split>
+
+  <section class="section" aria-labelledby="what-title">
+    <div class="wrap">
+      <SectionHead eyebrow="What's included" title="Everything a spray tan studio runs on." id="what-title" />
+      <FeatureGrid items={what} columns={3} />
+      <p class="seemore"><a href="/features/">See every feature</a></p>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="alt-title">
+    <div class="wrap">
+      <SectionHead eyebrow="Comparing options?" title="See how Happli stacks up." id="alt-title">
+        <p>We compare Happli with Mangomint, GlossGenius and Vagaro, with a source link and check date on every claim about them.</p>
+      </SectionHead>
+      <p class="seemore"><a href="/compare/">Read the comparisons</a></p>
+    </div>
+  </section>
+
+  <Faq items={faq} title="Spray tan studio FAQ" id="niche-faq" />
+
+  <CtaBand
+    title="Give your front desk a break."
+    body="See how Happli books, collects and reminds for your spray tan studio."
+    secondary={{ label: 'Get started', href: '/signup/' }}
+  />
+</BaseLayout>
+
+<style>
+  .seemore {
+    margin-top: 28px;
+    font-size: 15px;
+    font-weight: 600;
+  }
+  .seemore a {
+    color: var(--coral-ink);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+</style>

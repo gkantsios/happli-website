@@ -1,0 +1,12 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  // Static-assets-only Worker for gohappli.com. The name must match the Cloudflare project.
+  "name": "happli-website",
+  "compatibility_date": "2026-09-30",
+  "assets": {
+    // Astro's build output (npm run build).
+    "directory": "./dist",
+    // Unknown paths get dist/404.html with a 404 status.
+    "not_found_handling": "404-page"
+  }
+}

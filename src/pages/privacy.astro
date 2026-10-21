@@ -1,0 +1,13 @@
+---
+import ProseLayout from '../layouts/ProseLayout.astro';
+import { legal } from '../lib/legal';
+import { breadcrumbs } from '../lib/jsonld';
+---
+
+<ProseLayout
+  title="Privacy Policy | Happli"
+  description="How Happli collects, uses and protects account data and client data, the service providers we use, and the choices you have."
+  jsonLd={[breadcrumbs([{ name: 'Home', href: '/' }, { name: 'Privacy Policy', href: '/privacy/' }])]}
+>
+  <Fragment set:html={legal.privacy} />
+</ProseLayout>

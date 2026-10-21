@@ -1,0 +1,311 @@
+---
+// Product illustrations for the /features sections, drawn in the owner app's style (same palette,
+// cards and type as the hero's app screen). Sample data only (Golden Glow, Dana, Jess and Maya).
+// Purely decorative: the section text says everything, so the frame is aria-hidden.
+import NeedsList from './NeedsList.astro';
+import PhoneBooking from './PhoneBooking.astro';
+import CheckoutSheet from './CheckoutSheet.astro';
+import ReminderPreview from './ReminderPreview.astro';
+
+export type VisualKind =
+  | 'booking' | 'calendar' | 'payments' | 'packages' | 'waitlist' | 'reminders'
+  | 'clients' | 'ai' | 'switching' | 'chat' | 'settings' | 'reports';
+interface Props { kind: VisualKind }
+const { kind } = Astro.props;
+
+const cols = [
+  { name: 'Dana', color: '#a85d58', blocks: [
+    { top: 0, h: 2, t: 'Sofia L.', s: 'Custom spray tan', c: 'rose' },
+    { top: 2, h: 3, t: 'Ava R.', s: 'Rapid tan', c: 'sand' },
+    { top: 5, h: 2, t: 'Open gap', s: '1:15 – 2:15 pm', c: 'gap' },
+    { top: 7, h: 2, t: 'Tess M.', s: 'Rapid tan', c: 'sage' } ] },
+  { name: 'Jess', color: '#b5581f', blocks: [
+    { top: 0, h: 2, t: 'Priya S.', s: 'Custom spray tan', c: 'sand' },
+    { top: 2, h: 3, t: 'Emma J.', s: 'Rapid tan', c: 'rose' },
+    { top: 5, h: 4, t: 'Training', s: 'Blocked', c: 'hold' } ] },
+  { name: 'Maya', color: '#6b6a45', blocks: [
+    { top: 1, h: 4, t: 'Bridal party', s: 'Group spray tan', c: 'sage' },
+    { top: 5, h: 2, t: 'Nina T.', s: 'Custom spray tan', c: 'rose' },
+    { top: 7, h: 2, t: 'Grace H.', s: 'Rapid tan', c: 'sand' } ] },
+];
+const bars = [38, 52, 44, 61, 70, 86, 58];
+---
+
+<div class:list={['fv', `fv-${kind}`]} aria-hidden="true">
+  {kind === 'booking' && <PhoneBooking />}
+  {kind === 'payments' && <div class="win"><CheckoutSheet /></div>}
+  {kind === 'waitlist' && <div class="win"><NeedsList app /></div>}
+  {kind === 'reminders' && <div class="win"><ReminderPreview /></div>}
+
+  {kind === 'calendar' && (
+    <div class="win wide">
+      <div class="bar"><b>Thu, Aug 27</b><span class="seg"><em class="on">Day</em><em>Week</em></span></div>
+      <div class="cal">
+        {cols.map((c) => (
+          <div class="col">
+            <p class="who"><i style={`background:${c.color}`}>{c.name.slice(0, 2).toUpperCase()}</i>{c.name}</p>
+            <div class="lane">
+              {c.blocks.map((b) => (
+                <div class:list={['blk', b.c]} style={`top:calc(${b.top} * var(--slot));height:calc(${b.h} * var(--slot) - 4px)`}>
+                  <b>{b.t}</b><span>{b.s}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  )}
+
+  {kind === 'packages' && (
+    <div class="stack">
+      <div class="win">
+        <p class="cap">Package</p>
+        <div class="row-b"><b class="big">Glow 5-pack</b><b class="big">$240</b></div>
+        <p class="sub">5 custom spray tans · expires 6 months after purchase</p>
+        <span class="btnlike">Sell package</span>
+      </div>
+      <div class="win offset">
+        <div class="client"><i>MK</i><div><b>Maria K.</b><span>Glow 5-pack</span></div></div>
+        <div class="meter"><span style="width:60%"></span></div>
+        <div class="row-b small"><span>3 of 5 sessions left</span><span>Expires Feb 12</span></div>
+      </div>
+    </div>
+  )}
+
+  {kind === 'clients' && (
+    <div class="win">
+      <div class="client"><i>MK</i><div><b>Maria K.</b><span>(555) 014-2290 · client since 2025</span></div></div>
+      <div class="stats">
+        <div><b>6</b><span>Visits</span></div>
+        <div><b>$410</b><span>Lifetime spend</span></div>
+        <div><b>0</b><span>No-shows</span></div>
+      </div>
+      <p class="cap">Notes</p>
+      <p class="note">Medium shade. Prefers the 8-hour rinse.</p>
+      <p class="cap">History</p>
+      <ul class="hist">
+        <li><span>Aug 13 · Custom spray tan + contour</span><b>$70</b></li>
+        <li><span>Jul 30 · Custom spray tan</span><b>$55</b></li>
+        <li><span>Jul 2 · Rapid tan</span><b>$45</b></li>
+      </ul>
+    </div>
+  )}
+
+  {kind === 'ai' && (
+    <div class="ai-grid">
+      <div class="win">
+        <p class="cap">Ask your reports</p>
+        <p class="q">How much did we collect last week?</p>
+        <p class="a"><b>$3,860 collected</b> Aug 17 – 23, from 64 payments.</p>
+        <p class="tiny">Worked out from your payments, not by the AI.</p>
+      </div>
+      <div class="win">
+        <p class="cap">Form import</p>
+        <p class="file">Waiver-2025.pdf</p>
+        <ul class="fields">
+          <li>Full name <em>Text</em></li>
+          <li>Skin sensitivities <em>Long answer</em></li>
+          <li>Signature <em>Signature</em></li>
+        </ul>
+        <p class="tiny">Review before you save.</p>
+      </div>
+      <div class="win">
+        <p class="cap">Review request</p>
+        <p class="bubble">Hi Sofia, thanks for coming in today! If you loved your tan, would you leave us a quick Google review?</p>
+        <div class="acts"><span class="btnlike">Approve and send</span><span class="ghost">Edit</span></div>
+      </div>
+      <div class="win">
+        <p class="cap">Profile from your website</p>
+        <p class="file">goldenglowstudio.com</p>
+        <p class="sub"><b>Brand voice:</b> warm, upbeat and a little playful.</p>
+        <p class="sub"><b>Description:</b> custom spray tans and contouring in a calm, private studio.</p>
+        <p class="tiny">Suggested. You review and save.</p>
+      </div>
+    </div>
+  )}
+
+  {kind === 'switching' && (
+    <div class="win wide">
+      <div class="bar"><b>Import clients</b><span class="sub">clients.csv · 412 rows</span></div>
+      <table class="tbl">
+        <thead><tr><th>Name</th><th>Phone</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td>Sofia L.</td><td>(555) 010-3381</td><td><em class="ok">Ready</em></td></tr>
+          <tr><td>Ava R.</td><td>(555) 017-9902</td><td><em class="ok">Ready</em></td></tr>
+          <tr><td>Chloe P.</td><td>—</td><td><em class="warn">Missing phone</em></td></tr>
+          <tr><td>Lena M.</td><td>(555) 012-4417</td><td><em class="ok">Ready</em></td></tr>
+        </tbody>
+      </table>
+      <div class="row-b small foot"><span>411 ready · 1 to fix</span><span class="btnlike">Import 411 clients</span></div>
+    </div>
+  )}
+
+  {kind === 'chat' && (
+    <div class="chatw">
+      <div class="win chat">
+        <div class="bar"><b>Golden Glow</b><span class="badge">Early access</span></div>
+        <p class="msg them">Do you do spray tans on Saturdays?</p>
+        <p class="msg us">Yes! Saturday hours are 9 am to 3 pm. A custom spray tan is $55. Want me to have the studio text you?</p>
+        <p class="msg them">Yes please, I'm Bea, (555) 013-7720</p>
+        <p class="msg us">Thanks, Bea! The studio will reach out soon.</p>
+      </div>
+      <span class="fab">Chat</span>
+    </div>
+  )}
+
+  {kind === 'settings' && (
+    <div class="win wide set">
+      <ul class="side">
+        <li>Profile</li><li>Locations</li><li>Hours</li><li>Team</li>
+        <li class="on">Booking rules</li><li>Payments</li><li>Deposits</li>
+      </ul>
+      <div class="pane">
+        <p class="cap">Booking rules</p>
+        <div class="field"><span>Minimum notice</span><b>2 hours</b></div>
+        <div class="field"><span>Book up to</span><b>60 days ahead</b></div>
+        <div class="field"><span>Cancellation window</span><b>24 hours</b></div>
+        <div class="field"><span>Deposit for online bookings</span><b>25%</b></div>
+      </div>
+    </div>
+  )}
+
+  {kind === 'reports' && (
+    <div class="win wide">
+      <div class="bar"><b>Reports</b><span class="sub">Last 7 days</span></div>
+      <div class="stats">
+        <div><b>$3,860</b><span>Collected</span></div>
+        <div><b>$412</b><span>Tips</span></div>
+        <div><b>64</b><span>Visits</span></div>
+      </div>
+      <div class="chart">
+        {bars.map((h, i) => (
+          <div class="cb"><span style={`height:${h}%`}></span><em>{['M','T','W','T','F','S','S'][i]}</em></div>
+        ))}
+      </div>
+      <div class="row-b small"><span>Card $3,240 · Marked paid $620</span><span>Export CSV</span></div>
+    </div>
+  )}
+</div>
+
+<style>
+  .fv { width: 100%; display: flex; justify-content: center; font-size: 13px; color: #2b1b1a; }
+  .win {
+    width: 100%;
+    max-width: 440px;
+    background: var(--surface);
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius);
+    padding: 18px 20px 20px;
+    box-shadow: 0 20px 40px -28px rgba(27, 22, 20, 0.35);
+    text-align: left;
+  }
+  .win.wide { max-width: 520px; }
+  .fv-payments .win, .fv-waitlist .win, .fv-reminders .win { padding-top: 6px; }
+  .bar { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-bottom: 12px; border-bottom: 1px solid var(--line); margin-bottom: 14px; }
+  .bar b { font-size: 14px; }
+  .seg { display: inline-flex; background: var(--ap-grey); border-radius: 999px; padding: 3px; }
+  .seg em { font-style: normal; font-size: 12px; font-weight: 600; padding: 4px 10px; border-radius: 999px; color: var(--muted); }
+  .seg em.on { background: #fff; color: var(--ink); box-shadow: 0 1px 2px rgba(0,0,0,.08); }
+  .cap { font-size: 12px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: #896c2d; margin: 14px 0 6px; }
+  .cap:first-child { margin-top: 0; }
+  .sub { color: var(--muted); font-size: 13px; line-height: 1.5; margin-top: 4px; }
+  .sub b { color: var(--ink); font-weight: 600; }
+  .tiny { font-size: 12px; color: var(--sage-ink); margin-top: 10px; font-weight: 600; }
+  .row-b { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+  .row-b.small { font-size: 12px; color: var(--muted); margin-top: 10px; flex-wrap: wrap; }
+  .big { font-size: 18px; font-family: var(--serif); font-weight: 600; }
+  .btnlike { display: inline-block; margin-top: 14px; font-size: 12px; font-weight: 700; color: #fff; background: var(--coral-strong); padding: 8px 14px; border-radius: 999px; white-space: nowrap; }
+  .row-b .btnlike { margin-top: 0; }
+  .ghost { display: inline-block; font-size: 12px; font-weight: 700; padding: 7px 13px; border-radius: 999px; border: 1px solid var(--line-strong); }
+  .acts { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-top: 2px; }
+  .acts .btnlike { margin-top: 0; }
+
+  /* calendar */
+  .cal { --slot: 26px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+  .who { display: flex; align-items: center; gap: 6px; font-weight: 700; font-size: 12px; margin-bottom: 8px; }
+  .who i { font-style: normal; width: 22px; height: 22px; border-radius: 50%; color: #fff; font-size: 10px; display: grid; place-items: center; }
+  .lane { position: relative; height: calc(9 * var(--slot)); background: repeating-linear-gradient(to bottom, transparent 0 calc(var(--slot) * 2 - 1px), var(--line) calc(var(--slot) * 2 - 1px) calc(var(--slot) * 2)); border-radius: 8px; }
+  .blk { position: absolute; left: 0; right: 0; border-radius: 8px; padding: 5px 7px; border-left: 3px solid; overflow: hidden; display: flex; flex-direction: column; }
+  .blk b { font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .blk span { font-size: 12px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .blk.rose { background: var(--ap-rose); border-color: var(--ap-rose-edge); }
+  .blk.sand { background: var(--ap-sand); border-color: var(--ap-sand-edge); }
+  .blk.sage { background: var(--ap-sage); border-color: var(--ap-sage-edge); }
+  .blk.hold { background: var(--ap-grey); border-color: var(--ap-grey-edge); }
+  .blk.gap { background: #fff; border: 1.5px dashed var(--coral); }
+  .blk.gap b { color: var(--coral-ink); }
+
+  /* packages, clients */
+  .stack { width: 100%; max-width: 440px; display: grid; gap: 16px; }
+  .offset { margin-left: 24px; width: calc(100% - 24px); }
+  .client { display: flex; align-items: center; gap: 12px; }
+  .client i { font-style: normal; width: 38px; height: 38px; flex: none; border-radius: 50%; background: var(--blush); color: var(--coral-ink); font-weight: 700; display: grid; place-items: center; font-size: 13px; }
+  .client b { display: block; font-size: 14px; }
+  .client span { display: block; color: var(--muted); font-size: 12px; }
+  .meter { height: 8px; background: var(--ap-grey); border-radius: 999px; margin-top: 16px; overflow: hidden; }
+  .meter span { display: block; height: 100%; background: var(--coral); border-radius: 999px; }
+  .stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin: 16px 0 4px; }
+  .stats div { background: var(--blush-2); border-radius: 10px; padding: 10px 8px; min-width: 0; }
+  .stats b { display: block; white-space: nowrap; font-size: clamp(14px, 4.5vw, 17px); font-family: var(--serif); }
+  .stats span { font-size: 12px; color: var(--muted); }
+  .note { background: var(--ap-sand); border-radius: 8px; padding: 8px 10px; }
+  .hist { list-style: none; margin: 0; padding: 0; }
+  .hist li { display: flex; justify-content: space-between; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--line); }
+  .hist li:last-child { border-bottom: 0; }
+  .hist span { color: var(--ink-2); }
+
+  /* ai */
+  .ai-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; width: 100%; max-width: 560px; }
+  .ai-grid .win { padding: 16px; }
+  .q { background: var(--ap-grey); border-radius: 10px 10px 10px 2px; padding: 8px 10px; }
+  .a { margin-top: 8px; line-height: 1.5; }
+  .a b { display: block; font-family: var(--serif); font-size: 18px; }
+  .file { display: inline-block; font-size: 12px; font-weight: 600; background: var(--blush-2); border: 1px solid var(--line); border-radius: 6px; padding: 4px 8px; }
+  .fields { list-style: none; margin: 10px 0 0; padding: 0; }
+  .fields li { display: flex; justify-content: space-between; gap: 8px; padding: 6px 0; border-bottom: 1px solid var(--line); }
+  .fields em { font-style: normal; color: var(--muted); font-size: 12px; }
+  .bubble { background: var(--coral-soft); border-radius: 12px 12px 2px 12px; padding: 9px 11px; line-height: 1.45; margin-bottom: 12px; }
+
+  /* switching */
+  .tbl { width: 100%; border-collapse: collapse; table-layout: fixed; }
+  .tbl th { text-align: left; font-size: 12px; color: var(--muted); font-weight: 600; padding: 0 6px 8px 0; }
+  .tbl td { padding: 9px 6px 9px 0; border-top: 1px solid var(--line); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .tbl em { font-style: normal; font-size: 12px; font-weight: 700; padding: 3px 8px; border-radius: 999px; }
+  .tbl .ok { background: var(--sage); color: var(--sage-ink); }
+  .tbl .warn { background: var(--ap-sand); color: #7a5a1c; }
+  .foot { margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--line); }
+
+  /* chat */
+  .chatw { position: relative; width: 100%; max-width: 360px; padding-bottom: 36px; }
+  .chat { display: flex; flex-direction: column; gap: 8px; }
+  .chat .bar { margin-bottom: 4px; }
+  .msg { max-width: 85%; padding: 8px 11px; line-height: 1.45; border-radius: 12px; }
+  .msg.them { align-self: flex-end; background: var(--ink); color: #fff; border-bottom-right-radius: 2px; }
+  .msg.us { align-self: flex-start; background: var(--blush-2); border-bottom-left-radius: 2px; }
+  .fab { position: absolute; right: 8px; bottom: 0; background: var(--coral-strong); color: #fff; font-weight: 700; font-size: 12px; padding: 8px 14px; border-radius: 999px; box-shadow: 0 8px 20px -8px rgba(191,68,80,.6); }
+
+  /* settings */
+  .set { display: grid; grid-template-columns: 130px minmax(0, 1fr); gap: 18px; }
+  .side { list-style: none; margin: 0; padding: 0 14px 0 0; border-right: 1px solid var(--line); }
+  .side li { padding: 7px 10px; border-radius: 8px; color: var(--muted); font-weight: 600; }
+  .side li.on { background: var(--blush); color: var(--ink); }
+  .field { display: flex; justify-content: space-between; gap: 10px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 8px; margin-top: 8px; }
+  .field span { color: var(--muted); }
+
+  /* reports */
+  .chart { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 10px; align-items: end; height: 130px; margin-top: 16px; }
+  .cb { display: flex; flex-direction: column; align-items: center; justify-content: flex-end; height: 100%; gap: 6px; }
+  .cb span { width: 100%; background: linear-gradient(to top, var(--coral), #f8a8ae); border-radius: 6px 6px 2px 2px; }
+  .cb em { font-style: normal; font-size: 12px; color: var(--muted); }
+
+  @media (max-width: 520px) {
+    .ai-grid { grid-template-columns: minmax(0, 1fr); }
+    .set { grid-template-columns: minmax(0, 1fr); }
+    .side { display: flex; flex-wrap: wrap; gap: 4px; border-right: 0; padding: 0 0 12px; border-bottom: 1px solid var(--line); }
+    .offset { margin-left: 12px; width: calc(100% - 12px); }
+    .cal { --slot: 22px; gap: 5px; }
+    .blk { padding: 4px 5px; }
+    .blk span { display: none; }
+  }
+</style>

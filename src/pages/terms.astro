@@ -1,0 +1,13 @@
+---
+import ProseLayout from '../layouts/ProseLayout.astro';
+import { legal } from '../lib/legal';
+import { breadcrumbs } from '../lib/jsonld';
+---
+
+<ProseLayout
+  title="Terms of Service | Happli"
+  description="The terms for using Happli, including plans and billing, payments, messaging, your data and liability."
+  jsonLd={[breadcrumbs([{ name: 'Home', href: '/' }, { name: 'Terms of Service', href: '/terms/' }])]}
+>
+  <Fragment set:html={legal.terms} />
+</ProseLayout>

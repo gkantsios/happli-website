@@ -1,0 +1,132 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageIntro from '../../components/sections/PageIntro.astro';
+import SectionHead from '../../components/sections/SectionHead.astro';
+import ComparisonTable, { type Cell } from '../../components/ComparisonTable.astro';
+import CtaBand from '../../components/sections/CtaBand.astro';
+import { getPublished } from '../../lib/posts';
+import { breadcrumbs } from '../../lib/jsonld';
+import { site } from '../../config/site';
+import { solo, studio, trialDays, usd } from '../../config/pricing';
+
+const pages = await getPublished('compare');
+
+// Prices as listed on each company's own pricing page. Each row says when it was last checked; update
+// that date whenever the row is re-verified against its source.
+const checked = 'Oct 21, 2026';
+const rows: { label: string; cells: Cell[] }[] = [
+  { label: 'Happli', cells: [`Solo ${usd(solo.monthly)}/mo, Studio ${usd(studio.monthly)}/mo per location (less yearly)`, `Until you go live, up to ${trialDays} days`, { text: 'gohappli.com/pricing', href: '/pricing/' }, 'Current'] },
+  { label: 'Square Appointments', cells: ['Free, Plus $49/mo, Premium $149/mo per location', 'Free plan; 30-day trial on Plus and Premium', { text: 'squareup.com/appointments/pricing', href: 'https://squareup.com/us/en/appointments/pricing' }, checked] },
+  { label: 'Mangomint', cells: ['$120/mo per location + $10/mo per user', 'Offered (length not stated)', { text: 'mangomint.com/pricing', href: 'https://www.mangomint.com/pricing/' }, checked] },
+  { label: 'GlossGenius', cells: ['Standard $28/mo, Gold $56, Platinum $168 (less yearly)', '14 days', { text: 'glossgenius.com/pricing', href: 'https://glossgenius.com/pricing' }, checked] },
+  { label: 'Vagaro', cells: ['$23.99/mo for the first 6 months, + $10 per calendar license (up to 7)', '30 days', { text: 'vagaro.com/pro/pricing', href: 'https://www.vagaro.com/pro/pricing' }, checked] },
+];
+---
+
+<BaseLayout
+  title="Compare Happli | Booking software alternatives for spray tan studios"
+  description="Fair, dated comparisons of Happli with Mangomint, GlossGenius and Vagaro for spray tan studios and beauty pros. Every competitor claim is sourced, last checked Oct 21, 2026."
+  jsonLd={[breadcrumbs([{ name: 'Home', href: '/' }, { name: 'Compare', href: '/compare/' }])]}
+  noindex={!site.sections.compare}
+>
+  <PageIntro
+    eyebrow="Compare"
+    title="How Happli compares."
+    lede="Choosing booking software is a big decision. These pages set Happli beside four other options, with a source link and check date on every claim about them, and full comparisons for three of them. Where they do something better, we say so."
+    cta={false}
+  />
+
+  <section class="section tight" aria-labelledby="glance-title">
+    <div class="wrap">
+      <SectionHead eyebrow="At a glance" title="What each one costs" id="glance-title">
+        <p>From each company's public pricing page, checked {checked}. Pricing models differ, so read the full comparison before you decide.</p>
+      </SectionHead>
+      <div class="table">
+        <ComparisonTable
+          caption="Starting prices and free trials, as listed by each company"
+          columns={['Price as listed', 'Free trial', 'Source', 'Checked']}
+          rows={rows}
+          highlightFirst
+          class="prices"
+        />
+      </div>
+    </div>
+  </section>
+
+  <section class="section tight" aria-labelledby="pages-title">
+    <div class="wrap">
+      <SectionHead eyebrow="Full comparisons" title="Happli vs the rest" id="pages-title" />
+      <ul class="cards" data-reveal-stagger>
+        {
+          pages.map((e) => (
+            <li>
+              <a href={`/compare/${e.id}/`}>
+                <p class="eyebrow">Happli vs {e.data.competitor}</p>
+                <h3>{e.data.title.replace(' (2026)', '')}</h3>
+                <p class="desc">{e.data.description.replace(/ Sourced and checked.*$/, '')}</p>
+                <span class="more">Read the comparison →</span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <CtaBand title="See it with your own schedule." />
+</BaseLayout>
+
+<style>
+  .tight {
+    padding-top: var(--space-block);
+  }
+  .table {
+    margin-top: 32px;
+  }
+  .cards {
+    list-style: none;
+    margin: 32px 0 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px;
+  }
+  .cards a {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    height: 100%;
+    padding: 28px;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--line-strong);
+    background: var(--surface);
+    transition: border-color 0.18s ease, box-shadow 0.18s ease;
+  }
+  .cards a:hover {
+    border-color: var(--coral);
+    box-shadow: var(--shadow-card);
+  }
+  h3 {
+    font-size: 24px;
+    line-height: 1.2;
+  }
+  .desc {
+    color: var(--ink-2);
+    font-size: 15px;
+  }
+  .more {
+    margin-top: auto;
+    padding-top: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--coral-ink);
+  }
+  @media (max-width: 760px) {
+    .cards {
+      grid-template-columns: 1fr;
+    }
+    .cards a {
+      padding: 22px;
+    }
+  }
+</style>

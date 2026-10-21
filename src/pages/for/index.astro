@@ -1,0 +1,23 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageIntro from '../../components/sections/PageIntro.astro';
+import PostList from '../../components/PostList.astro';
+import { getPublished } from '../../lib/posts';
+import { breadcrumbs } from '../../lib/jsonld';
+import { site } from '../../config/site';
+
+// Template: switched off in src/config/site.ts (sections.for) until it has published entries.
+const entries = await getPublished('for');
+---
+
+<BaseLayout
+  title="Happli for your kind of studio | Happli"
+  description="How Happli fits spray tan studios, mobile spray tan artists, estheticians and small beauty teams."
+  jsonLd={[breadcrumbs([{ name: 'Home', href: '/' }, { name: "Who it's for", href: '/for/' }])]}
+  noindex={!site.sections['for']}
+>
+  <PageIntro eyebrow="Who it's for" title="Happli for your kind of studio." cta={false} />
+  <div class="wrap">
+    <PostList entries={entries} base="/for/" empty="Pages for each kind of studio are on their way." />
+  </div>
+</BaseLayout>

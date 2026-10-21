@@ -1,0 +1,184 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageIntro from '../components/sections/PageIntro.astro';
+import PricingPlans from '../components/sections/PricingPlans.astro';
+import SectionHead from '../components/sections/SectionHead.astro';
+import Icon from '../components/Icon.astro';
+import ComparisonTable from '../components/ComparisonTable.astro';
+import Faq, { type FaqItem } from '../components/sections/Faq.astro';
+import CtaBand from '../components/sections/CtaBand.astro';
+import { breadcrumbs, softwareApplication } from '../lib/jsonld';
+import {
+  solo,
+  studio,
+  founding,
+  marketingAddOn,
+  reminderFairUse,
+  trialDays,
+  studioIncludedMembers,
+  extraMemberPrice,
+  usd,
+  yearlyTotal,
+} from '../config/pricing';
+
+const title = `Pricing | Happli booking software from ${usd(solo.monthly)} a month`;
+const description = `Solo ${usd(solo.monthly)} a month, Studio ${usd(studio.monthly)} a month per location, every feature on both. No setup fee, no cut of your sales. Founding Studios get ${founding.discountPercent}% off.`;
+
+const foundingRows = [solo, studio].flatMap((p) => {
+  const per = p.id === 'studio' ? ', per location' : '';
+  return [
+    {
+      label: `${p.name}, monthly${per}`,
+      cells: [`${usd(p.monthly)}/mo`, `${usd(p.founding.monthly)}/mo`, `${usd(yearlyTotal(p.founding.monthly))}/yr`],
+    },
+    {
+      label: `${p.name}, billed yearly${per}`,
+      cells: [
+        `${usd(p.yearly)}/mo (${usd(yearlyTotal(p.yearly))}/yr)`,
+        `${usd(p.founding.yearly)}/mo`,
+        `${usd(yearlyTotal(p.founding.yearly))}/yr`,
+      ],
+    },
+  ];
+});
+
+const foundingRules = [
+  ['Monthly or yearly plans.', 'The discount applies to both billing options.'],
+  ['Carries over when you grow.', `Moving from Solo to Studio keeps the ${founding.discountPercent}% off.`],
+  ['For as long as you stay subscribed.', 'It ends only if you cancel. A returning studio pays the normal price.'],
+  ['Plans only.', `The ${marketingAddOn.name} stays at ${usd(marketingAddOn.price)} a month.`],
+  ['A "Founding Studio" badge in the app,', 'marking you as one of the first studios on Happli.'],
+];
+
+// TODO confirm: "Is there a contract / how do I cancel?" (not on the live site)
+const faq: FaqItem[] = [
+  {
+    q: 'Should I pick Solo or Studio?',
+    a: `It depends on how many team members take bookings. Solo is for 1 team member who takes bookings, usually the owner. Studio includes up to ${studioIncludedMembers} team members who take bookings at each location, then ${usd(extraMemberPrice)} a month for each extra one. Front desk and admin logins with roles are always free, and both plans have every feature.`,
+  },
+  {
+    q: 'Is there a free trial?',
+    a: `Yes. Happli is free until your studio goes live, for up to ${trialDays} days. Setup and client import are free too.`,
+  },
+  {
+    q: 'What is the Founding Studio offer?',
+    a: `The first ${founding.maxStudios} studios, or studios that join in the first ${founding.days} days after launch (whichever comes first), get ${founding.discountPercent}% off Solo or Studio for as long as they stay subscribed. That's ${usd(solo.founding.monthly)} a month for Solo or ${usd(studio.founding.monthly)} a month per location for Studio, with lower prices when billed yearly. It works on monthly and yearly plans and carries over if you move from Solo to Studio. It ends if you cancel, and a returning studio pays the normal price. The ${marketingAddOn.name} isn't discounted.`,
+  },
+  {
+    q: `What's in the ${marketingAddOn.name}?`,
+    a: `Text and email campaigns to bring clients back, for ${usd(marketingAddOn.price)} a month on either plan. It includes ${marketingAddOn.texts.toLocaleString('en-US')} marketing texts and ${marketingAddOn.emails.toLocaleString('en-US')} emails a month. Extra texts are ${marketingAddOn.extraTextCents}¢ each.`,
+  },
+  {
+    q: 'Do you charge for reminder texts?',
+    a: `No. Appointment reminder texts are included on every plan, with fair use of about ${reminderFairUse.toLocaleString('en-US')} a month. Marketing texts come with the ${marketingAddOn.name}.`,
+  },
+  {
+    q: 'Do you take a cut of my card payments?',
+    a: "No. Card payments run at Stripe's standard rate, with no Happli markup. Stripe's fees go to Stripe, and Happli takes no cut of your sales.",
+  },
+  {
+    q: 'Is there a setup fee?',
+    a: "No. Setup is free, and so is client import. We bring your clients, services, team and appointments over from CSV.",
+  },
+  {
+    q: 'Do I need a new website?',
+    a: 'No. Happli booking pages plug into the website you already have, or you can share the link on its own.',
+  },
+];
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  jsonLd={[
+    softwareApplication(),
+    breadcrumbs([{ name: 'Home', href: '/' }, { name: 'Pricing', href: '/pricing/' }]),
+  ]}
+>
+  <PageIntro
+    eyebrow="Pricing"
+    title="Simple pricing. No cut of your sales."
+    lede="Two plans, with every feature on both. You pay for the team members who take bookings, never for logins, and card payments run at Stripe's standard rate."
+    cta={false}
+  />
+
+  <PricingPlans foundingHref="#founding" />
+
+  <section class="section" id="founding" aria-labelledby="founding-title">
+    <div class="wrap">
+      <SectionHead
+        eyebrow="Founding Studio offer"
+        title={`${founding.discountPercent}% off, for as long as you stay subscribed.`}
+        id="founding-title"
+      >
+        <p>
+          A thank-you for joining early. Open to the first {founding.maxStudios} studios or the first {founding.days} days
+          after launch, whichever comes first.
+        </p>
+      </SectionHead>
+      <div class="founding-grid">
+        <div class="table">
+          <ComparisonTable
+            caption="Founding Studio prices"
+            corner="Plan"
+            columns={['Normal price', 'Founding price', 'Founding, per year']}
+            rows={foundingRows}
+          />
+        </div>
+        <ul class="checks rules">
+          {foundingRules.map(([lead, rest]) => <li><Icon name="check" size={16} strokeWidth={2} /><span><b>{lead}</b> {rest}</span></li>)}
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="fees-title">
+    <div class="wrap">
+      <SectionHead eyebrow="Payments" title="What you pay for payments" id="fees-title" />
+      {/* TODO confirm: PR #297 for the Stripe fee lines. */}
+      <ul class="checks fees">
+        <li><Icon name="check" size={16} strokeWidth={2} /><span><b>Happli fee on payments:</b> none. No processing markup, no cut of your sales.</span></li>
+        <li><Icon name="check" size={16} strokeWidth={2} /><span><b>Stripe processing fees:</b> paid by your studio directly to Stripe, at Stripe's standard rates for your account.</span></li>
+        <li><Icon name="check" size={16} strokeWidth={2} /><span><b>Payouts:</b> from Stripe to your bank on your Stripe schedule.</span></li>
+      </ul>
+    </div>
+  </section>
+
+  <Faq items={faq} title="Pricing FAQ" id="pricing-faq" />
+
+  <CtaBand
+    title="Not sure which plan fits?"
+    body="Book a 30-minute call and we'll walk through your studio."
+    secondary={{ label: 'Get started', href: '/signup/' }}
+  />
+</BaseLayout>
+
+<style>
+  #founding {
+    scroll-margin-top: var(--nav-h);
+  }
+  .founding-grid {
+    display: grid;
+    /* the table gets the full row so no column is clipped; minmax(0, 1fr) lets it scroll in its own box on phones */
+    grid-template-columns: minmax(0, 1fr);
+    gap: 40px;
+    margin-top: 32px;
+  }
+  .rules {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px 48px;
+  }
+  .fees {
+    margin-top: 32px;
+    max-width: 44em;
+  }
+  @media (max-width: 960px) {
+    .founding-grid {
+      gap: 32px;
+    }
+    .rules {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+</style>

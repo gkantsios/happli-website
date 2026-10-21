@@ -1,0 +1,340 @@
+---
+// Solo and Studio plans, the Marketing add-on and the pricing terms (all numbers live in src/config/pricing.ts).
+import Icon from '../Icon.astro';
+import { site } from '../../config/site';
+import {
+  plans,
+  founding,
+  marketingAddOn,
+  reminderFairUse,
+  trialDays,
+  includedEverywhere,
+  usd,
+  yearlyTotal,
+} from '../../config/pricing';
+
+interface Props {
+  /** Show the "Included on every plan" list below the cards. */
+  included?: boolean;
+  /** Where the plan buttons go: the signup page, or straight to the book-a-call link (used on /signup/ itself). */
+  cta?: 'signup' | 'call';
+  /** Where the Founding Studio badge links for the full rules. */
+  foundingHref?: string;
+}
+const { included = true, cta = 'signup', foundingHref = '/pricing/#founding' } = Astro.props;
+
+const terms = [
+  { big: '$0', title: 'No setup fee', body: 'Setup and client import are free.' },
+  { big: '+0%', title: 'No processing markup', body: "Card payments run at Stripe's standard rate. No cut of your sales." },
+  { big: String(trialDays), title: 'Free until live', body: `Free until your studio goes live, for up to ${trialDays} days.` },
+];
+---
+
+<section class="plans-section" aria-labelledby="plans-title">
+  <div class="wrap">
+    <h2 id="plans-title" class="visually-hidden">Plans</h2>
+    <p class="founding">
+      <span class="badge">Founding Studio offer</span>
+      <span>
+        {founding.discountPercent}% off for as long as you stay subscribed. First {founding.maxStudios} studios or first{' '}
+        {founding.days} days after launch.
+        <a href={foundingHref}>See how it works</a>
+      </span>
+    </p>
+    <div class="plans" data-reveal-stagger>
+      {
+        plans.map((plan) => (
+          <article class:list={['plan', { featured: plan.featured }]} aria-labelledby={`plan-${plan.id}`}>
+            <h3 id={`plan-${plan.id}`}>{plan.name}</h3>
+            <p class="for">{plan.forWho}</p>
+            <div class="prices">
+              <p class="price">
+                <span class="amount">{usd(plan.monthly)}</span>
+                <span class="unit">{plan.unit}</span>
+              </p>
+              <p class="yearly">
+                or {usd(plan.yearly)}{plan.unitShort} billed yearly ({usd(yearlyTotal(plan.yearly))}/yr)
+              </p>
+            </div>
+            <div class="fp">
+              <p class="fp-label">
+                <span class="badge badge-sage">Founding Studio</span> {founding.discountPercent}% off
+              </p>
+              <p class="fp-prices">
+                <b>{usd(plan.founding.monthly)}{plan.unitShort}</b> monthly, or{' '}
+                <b>{usd(plan.founding.yearly)}{plan.unitShort}</b> billed yearly ({usd(yearlyTotal(plan.founding.yearly))}/yr)
+              </p>
+            </div>
+            <ul class="checks">
+              {plan.points.map((p) => <li><Icon name="check" size={16} strokeWidth={2} /><span>{p}</span></li>)}
+            </ul>
+            {cta === 'call' ? (
+              <a class:list={['btn', plan.featured ? 'btn-coral' : 'btn-ghost']} href={site.cta.href} rel="noopener">
+                Book a call to start {plan.name}
+              </a>
+            ) : (
+              <a class:list={['btn', plan.featured ? 'btn-coral' : 'btn-ghost']} href={plan.href}>
+                Get started with {plan.name}
+              </a>
+            )}
+          </article>
+        ))
+      }
+    </div>
+
+    <div class="addon">
+      <div class="addon-price">
+        <p class="price">
+          <span class="amount">{usd(marketingAddOn.price)}</span>
+          <span class="unit">/mo</span>
+        </p>
+        <p class="muted">Optional, on either plan</p>
+      </div>
+      <div>
+        <h3>{marketingAddOn.name}</h3>
+        <p class="addon-body">Text and email campaigns to bring clients back.</p>
+        <ul class="addon-list">
+          <li>{marketingAddOn.texts.toLocaleString('en-US')} marketing texts/mo</li>
+          <li>{marketingAddOn.emails.toLocaleString('en-US')} emails/mo</li>
+          <li>Extra texts {marketingAddOn.extraTextCents}¢ each</li>
+        </ul>
+      </div>
+    </div>
+    <p class="note">
+      Appointment reminder texts are included on every plan (fair use of about {reminderFairUse.toLocaleString('en-US')} a
+      month). The Founding Studio discount applies to plans, not the add-on.
+    </p>
+
+    {
+      included && (
+        <div class="included">
+          <h3>Included on every plan</h3>
+          <ul class="checks inc-list">
+            {includedEverywhere.map((p) => <li><Icon name="check" size={16} strokeWidth={2} /><span>{typeof p === 'string' ? p : <>{p.label} <span class="badge">{p.status}</span></>}</span></li>)}
+          </ul>
+          <p class="more">
+            Booking pages plug into the website you already have. <a href="/features/">See every feature</a>
+          </p>
+        </div>
+      )
+    }
+
+    <ul class="terms" aria-label="Terms">
+      {
+        terms.map((t) => (
+          <li>
+            <span class="big" aria-hidden="true">{t.big}</span>
+            <b>{t.title}</b>
+            <span>{t.body}</span>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>
+
+<style>
+  .plans-section {
+    padding-top: var(--space-block);
+  }
+  .founding {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    flex-wrap: wrap;
+    font-size: 15px;
+    color: var(--ink-2);
+  }
+  .founding a,
+  .more a {
+    color: var(--coral-ink);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .plans {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    margin-top: 24px;
+  }
+  .plan {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    padding: 32px 28px;
+    border-radius: var(--radius-lg);
+    background: var(--surface);
+    border: 1px solid var(--line-strong);
+  }
+  .plan.featured {
+    border-color: var(--coral);
+    box-shadow: var(--shadow-card);
+  }
+  h3 {
+    font-size: 24px;
+  }
+  .for {
+    margin-top: -10px;
+    color: var(--ink-2);
+    font-size: 16px;
+  }
+  .price {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .amount {
+    font-family: var(--serif);
+    font-size: 52px;
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+  .unit,
+  .muted {
+    color: var(--muted);
+    font-size: 16px;
+  }
+  .yearly {
+    margin-top: 8px;
+    font-size: 16px;
+    color: var(--ink-2);
+  }
+  .fp {
+    padding: 14px 16px;
+    border-radius: var(--radius);
+    background: var(--blush-2);
+  }
+  .fp-label {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--ink);
+  }
+  .fp-prices {
+    margin-top: 6px;
+    font-size: 16px;
+    color: var(--ink-2);
+  }
+  .fp-prices b {
+    color: var(--ink);
+  }
+  .plan .btn {
+    margin-top: auto;
+  }
+  .addon {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    gap: 28px;
+    align-items: center;
+    margin-top: 20px;
+    padding: 28px;
+    border-radius: var(--radius-lg);
+    background: var(--surface);
+    border: 1px solid var(--line-strong);
+  }
+  .addon h3 {
+    font-family: var(--sans);
+    font-size: 18px;
+    font-weight: 600;
+  }
+  .addon-body {
+    margin-top: 6px;
+    color: var(--ink-2);
+    font-size: 15px;
+  }
+  .addon-list {
+    list-style: none;
+    margin: 14px 0 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .addon-list li {
+    padding: 5px 12px;
+    border-radius: var(--radius-pill);
+    background: var(--sand);
+    font-size: 14px;
+    color: var(--ink);
+  }
+  .note {
+    margin-top: 16px;
+    max-width: 52em;
+    font-size: 14px;
+    color: var(--muted);
+  }
+  .included {
+    margin-top: 48px;
+  }
+  .included .badge {
+    font-size: 10px;
+    padding: 2px 7px;
+    margin-left: 2px;
+    vertical-align: 1px;
+  }
+  .included h3 {
+    font-family: var(--sans);
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 18px;
+  }
+  .inc-list {
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    column-gap: 24px;
+  }
+  .more {
+    margin-top: 18px;
+    font-size: 15px;
+    color: var(--ink-2);
+  }
+  .terms {
+    list-style: none;
+    margin: 48px 0 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+  .terms li {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding-top: 18px;
+    border-top: 1px solid var(--line-strong);
+    font-size: 15px;
+    color: var(--ink-2);
+  }
+  .terms .big {
+    font-family: var(--serif);
+    font-size: 40px;
+    line-height: 1.1;
+    color: var(--coral-ink);
+  }
+  .terms b {
+    color: var(--ink);
+    font-weight: 600;
+  }
+  @media (max-width: 860px) {
+    .plans,
+    .terms {
+      grid-template-columns: 1fr;
+    }
+    .addon {
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+  }
+  @media (max-width: 520px) {
+    .plan,
+    .addon {
+      padding: 24px 20px;
+    }
+    .amount {
+      font-size: 44px;
+    }
+    .inc-list {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      column-gap: 12px;
+    }
+  }
+</style>

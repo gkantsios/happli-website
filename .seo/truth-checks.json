@@ -1,0 +1,27 @@
+[
+  {
+    "_comment": "Happli guardrails: one competitor is banned from every page, keyword, brief and table. It is identified only by this pattern, so a repo-wide search for its name stays empty. Run: python3 .claude/skills/seo/scripts/truth_check.py --root .",
+    "claim": "The banned competitor is never named",
+    "paths": [
+      "src/**/*.astro",
+      "src/**/*.md",
+      "src/**/*.mdx",
+      "src/**/*.ts",
+      "public/llms.txt",
+      "public/robots.txt",
+      ".seo/keyword-map.csv",
+      ".seo/briefs/**/*.md",
+      ".seo/roadmap.md",
+      ".seo/content-ledger.md"
+    ],
+    "must_not_match": ["my\\s*sun\\s*less"],
+    "must_match": [],
+    "flags": "i"
+  },
+  {
+    "claim": "The legal entity is Happy Industries, Inc. dba Happli",
+    "paths": ["src/legal/privacy.html", "src/legal/terms.html", "src/legal/dpa.html", "public/llms.txt"],
+    "must_not_match": ["Happli,? LLC", "Happli Inc\\b"],
+    "must_match": ["Happy Industries, Inc\\. dba Happli"]
+  }
+]

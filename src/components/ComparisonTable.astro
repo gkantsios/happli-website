@@ -1,0 +1,118 @@
+---
+// A table that stays readable on a phone: it scrolls sideways inside its own box, and the first
+// column stays put while you scroll.
+export type Cell = string | { text: string; href: string };
+
+interface Props {
+  caption: string;
+  columns: string[]; // header for each column after the first (the row label column)
+  rows: { label: string; cells: Cell[] }[];
+  corner?: string;
+  /** Highlight the first body row (our own row). */
+  highlightFirst?: boolean;
+  class?: string;
+}
+const { caption, columns, rows, corner = '', highlightFirst = false, class: cls } = Astro.props;
+---
+
+<div class:list={['table-wrap', cls, { hl: highlightFirst }]} role="region" aria-label={caption} tabindex="0">
+  <table>
+    <caption class="visually-hidden">{caption}</caption>
+    <thead>
+      <tr>
+        <th scope="col">{corner}</th>
+        {columns.map((c) => <th scope="col">{c}</th>)}
+      </tr>
+    </thead>
+    <tbody>
+      {
+        rows.map((r) => (
+          <tr>
+            <th scope="row">{r.label}</th>
+            {r.cells.map((c) => (
+              <td>{typeof c === 'string' ? c : <a href={c.href} rel="noopener">{c.text}</a>}</td>
+            ))}
+          </tr>
+        ))
+      }
+    </tbody>
+  </table>
+</div>
+
+<style>
+  .table-wrap {
+    overflow-x: auto;
+    border-radius: var(--radius);
+    border: 1px solid var(--line);
+    background: var(--surface);
+  }
+  table {
+    width: 100%;
+    min-width: 720px;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: 14px;
+  }
+  th,
+  td {
+    text-align: left;
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--line);
+    vertical-align: top;
+    background: var(--surface);
+  }
+  tbody tr:last-child th,
+  tbody tr:last-child td {
+    border-bottom: 0;
+  }
+  thead th {
+    font-weight: 600;
+  }
+  tbody th {
+    font-weight: 600;
+    color: var(--ink);
+  }
+  td {
+    color: var(--ink-2);
+  }
+  .hl tbody tr:first-child th,
+  .hl tbody tr:first-child td {
+    background: var(--blush-2);
+    color: var(--ink);
+    font-weight: 600;
+  }
+  /* price column gets the room so prices don't break across lines */
+  .prices table {
+    min-width: 940px;
+  }
+  .prices td:nth-child(2),
+  .prices td:nth-child(4) {
+    white-space: nowrap;
+  }
+  td a {
+    color: var(--coral-ink);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  /* first column stays in view while the rest scrolls */
+  th:first-child {
+    position: sticky;
+    left: 0;
+    z-index: 1;
+    min-width: 120px;
+    box-shadow: 1px 0 0 var(--line);
+  }
+  @media (max-width: 699.98px) {
+    table {
+      min-width: 560px;
+    }
+    th,
+    td {
+      padding: 12px;
+    }
+    th:first-child {
+      min-width: 104px;
+      max-width: 120px;
+    }
+  }
+</style>
