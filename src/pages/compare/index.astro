@@ -15,7 +15,7 @@ const pages = await getPublished('compare');
 // that date whenever the row is re-verified against its source.
 const checked = 'Oct 21, 2026';
 const rows: { label: string; cells: Cell[] }[] = [
-  { label: 'Happli', cells: [`Solo ${usd(solo.monthly)}/mo, Studio ${usd(studio.monthly)}/mo per location (less yearly)`, `Until you go live, up to ${trialDays} days`, { text: 'gohappli.com/pricing', href: '/pricing/' }, 'Current'] },
+  { label: 'Happli', cells: [`Solo ${usd(solo.monthly)}/mo, Studio ${usd(studio.monthly)}/mo, 1 location included (less yearly)`, `Until you go live, up to ${trialDays} days`, { text: 'gohappli.com/pricing', href: '/pricing/' }, 'Current'] },
   { label: 'Square Appointments', cells: ['Free, Plus $49/mo, Premium $149/mo per location', 'Free plan; 30-day trial on Plus and Premium', { text: 'squareup.com/appointments/pricing', href: 'https://squareup.com/us/en/appointments/pricing' }, checked] },
   { label: 'Mangomint', cells: ['$120/mo per location + $10/mo per user', 'Offered (length not stated)', { text: 'mangomint.com/pricing', href: 'https://www.mangomint.com/pricing/' }, checked] },
   { label: 'GlossGenius', cells: ['Standard $28/mo, Gold $56, Platinum $168 (less yearly)', '14 days', { text: 'glossgenius.com/pricing', href: 'https://glossgenius.com/pricing' }, checked] },

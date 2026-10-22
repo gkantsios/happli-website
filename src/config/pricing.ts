@@ -5,6 +5,7 @@
 //
 // Stripe: the old Payment Links were for the old 1/2/3-location prices, so they are no longer linked.
 // New Payment Links are needed for Solo and Studio (monthly and yearly, normal and founding prices).
+// Extra-location prices need their own Payment Links too (follow-up).
 // Until they exist, plan buttons go to /signup/, which offers the book-a-call link.
 
 export const signupHref = '/signup/';
@@ -30,25 +31,42 @@ export type Plan = PlanPrices & {
   id: 'solo' | 'studio';
   name: string;
   forWho: string;
-  /** Text after the big price, e.g. "/ month per location". */
+  /** Text after the big price, e.g. "/mo". */
   unit: string;
-  /** Short unit for inline prices, e.g. "/mo per location". */
+  /** Short unit for inline prices, e.g. "/mo". */
   unitShort: string;
   points: string[];
   href: string;
   featured?: boolean;
   founding: PlanPrices;
+  /** Each extra location beyond the one included: half the plan price, rounded down to a whole dollar. */
+  extraLocation: PlanPrices & { founding: PlanPrices };
 };
 
-/** Studio includes this many team members who take bookings per location. */
+/** Every plan includes this many locations. */
+export const includedLocations = 1;
+
+// Extra location: half the plan price, rounded DOWN so "half price" is never more than half.
+// Founding extra = half the Founding plan price, rounded down (same result as 25% off the regular extra).
+export const extraLocationPrice = (planPrice: number) => Math.floor(planPrice / 2);
+
+/** Studio includes this many team members who take bookings at each location. */
 export const studioIncludedMembers = 10;
 /** Each team member who takes bookings beyond the included ones, per month. */
 export const extraMemberPrice = 10;
 
-const plan = (p: Omit<Plan, 'founding'>): Plan => ({
-  ...p,
-  founding: { monthly: foundingPrice(p.monthly), yearly: foundingPrice(p.yearly) },
-});
+const plan = (p: Omit<Plan, 'founding' | 'extraLocation'>): Plan => {
+  const f = { monthly: foundingPrice(p.monthly), yearly: foundingPrice(p.yearly) };
+  return {
+    ...p,
+    founding: f,
+    extraLocation: {
+      monthly: extraLocationPrice(p.monthly),
+      yearly: extraLocationPrice(p.yearly),
+      founding: { monthly: extraLocationPrice(f.monthly), yearly: extraLocationPrice(f.yearly) },
+    },
+  };
+};
 
 export const solo = plan({
   id: 'solo',
@@ -65,13 +83,13 @@ export const solo = plan({
 export const studio = plan({
   id: 'studio',
   name: 'Studio',
-  forWho: 'For teams, priced per location.',
+  forWho: 'For teams with more than one person taking bookings.',
   monthly: 149,
   yearly: 129,
-  unit: '/mo per location',
-  unitShort: '/mo per location',
+  unit: '/mo',
+  unitShort: '/mo',
   points: [
-    `Up to ${studioIncludedMembers} team members who take bookings, then +$${extraMemberPrice}/mo each`,
+    `Up to ${studioIncludedMembers} team members who take bookings at each location, then +$${extraMemberPrice}/mo each`,
     'Every feature included',
     "Unlimited free logins for team members who don't take bookings",
   ],

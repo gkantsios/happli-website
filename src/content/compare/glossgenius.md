@@ -18,7 +18,7 @@ GlossGenius is all-in-one booking, payments and business management software for
 | | Happli | GlossGenius |
 |---|---|---|
 | Starting price | Solo: $69/month ($59/month billed yearly) | Standard: $28/month billed monthly ($24/month billed annually)[^g-price] |
-| Plan structure | Two plans with the same features: Solo $69/month, Studio $149/month per location ($129 billed yearly) | By feature tier: Standard, Gold ($56/month, up to 9 staff), Platinum ($168/month)[^g-price] |
+| Plan structure | Two plans with the same features: Solo $69/month, Studio $149/month ($129 billed yearly), 1 location included on each | By feature tier: Standard, Gold ($56/month, up to 9 staff), Platinum ($168/month)[^g-price] |
 | Free trial | Free until you go live, up to 30 days | 14 days, no credit card required, per its FAQ[^g-price] |
 | Online booking | Yes, booking pages that plug into your existing website | Yes, 24/7 online booking and a custom booking website[^g-price] |
 | Reminders | Yes, text, email or both, with your own wording | Unlimited client notifications on every tier[^g-price] |
@@ -32,7 +32,7 @@ GlossGenius is all-in-one booking, payments and business management software for
 
 GlossGenius charges by tier. **Standard** is $28/month billed monthly, or $24/month billed annually. **Gold** is $56/month ($48 annually) and is aimed at businesses with up to 9 staff. **Platinum** is $168/month ($148 annually) for established businesses and teams of 10 or more. Additional locations are charged the plan price at a 15% discount. Deposits and cancellation and no-show policies are on every tier; text marketing includes 500 text credits on Gold and 2,500 on Platinum.[^g-price]
 
-Happli has two plans with the same features. **Solo** is $69/month ($59/month billed yearly) for one team member who takes bookings. **Studio** is $149/month per location ($129/month billed yearly) and includes up to 10 team members who take bookings, then $10/month each. Front desk and admin logins are free on both. Setup and client import are free, and Founding Studios get 25% off for as long as they stay subscribed. See the [pricing page](/pricing/) for details.[^happli]
+Happli has two plans with the same features. **Solo** is $69/month ($59/month billed yearly) for one team member who takes bookings. **Studio** is $149/month ($129/month billed yearly) and includes up to 10 team members who take bookings at each location, then $10/month each. Each plan includes 1 location, and extra locations are half the plan price. Front desk and admin logins are free on both. Setup and client import are free, and Founding Studios get 25% off for as long as they stay subscribed. See the [pricing page](/pricing/) for details.[^happli]
 
 On sticker price, GlossGenius's Standard plan is cheaper than Happli Solo. The right comparison is what you need: GlossGenius puts forms and waivers, the automated waitlist and Google booking on the Gold tier, so a studio that wants those will compare Gold ($56/month) with Happli.[^g-price]
 

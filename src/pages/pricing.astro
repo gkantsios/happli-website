@@ -17,26 +17,39 @@ import {
   trialDays,
   studioIncludedMembers,
   extraMemberPrice,
+  includedLocations,
   usd,
   yearlyTotal,
 } from '../config/pricing';
 
 const title = `Pricing | Happli booking software from ${usd(solo.monthly)} a month`;
-const description = `Solo ${usd(solo.monthly)} a month, Studio ${usd(studio.monthly)} a month per location, every feature on both. No setup fee, no cut of your sales. Founding Studios get ${founding.discountPercent}% off.`;
+const description = `Solo ${usd(solo.monthly)} a month, Studio ${usd(studio.monthly)} a month, each with 1 location included, every feature on both. No setup fee, no cut of your sales. Founding Studios get ${founding.discountPercent}% off.`;
 
 const foundingRows = [solo, studio].flatMap((p) => {
-  const per = p.id === 'studio' ? ', per location' : '';
+  const x = p.extraLocation;
   return [
     {
-      label: `${p.name}, monthly${per}`,
+      label: `${p.name}, monthly`,
       cells: [`${usd(p.monthly)}/mo`, `${usd(p.founding.monthly)}/mo`, `${usd(yearlyTotal(p.founding.monthly))}/yr`],
     },
     {
-      label: `${p.name}, billed yearly${per}`,
+      label: `${p.name}, monthly, each extra location`,
+      cells: [`${usd(x.monthly)}/mo`, `${usd(x.founding.monthly)}/mo`, `${usd(yearlyTotal(x.founding.monthly))}/yr`],
+    },
+    {
+      label: `${p.name}, billed yearly`,
       cells: [
         `${usd(p.yearly)}/mo (${usd(yearlyTotal(p.yearly))}/yr)`,
         `${usd(p.founding.yearly)}/mo`,
         `${usd(yearlyTotal(p.founding.yearly))}/yr`,
+      ],
+    },
+    {
+      label: `${p.name}, billed yearly, each extra location`,
+      cells: [
+        `${usd(x.yearly)}/mo (${usd(yearlyTotal(x.yearly))}/yr)`,
+        `${usd(x.founding.yearly)}/mo`,
+        `${usd(yearlyTotal(x.founding.yearly))}/yr`,
       ],
     },
   ];
@@ -46,6 +59,7 @@ const foundingRules = [
   ['Monthly or yearly plans.', 'The discount applies to both billing options.'],
   ['Carries over when you grow.', `Moving from Solo to Studio keeps the ${founding.discountPercent}% off.`],
   ['For as long as you stay subscribed.', 'It ends only if you cancel. A returning studio pays the normal price.'],
+  ['Extra locations stay locked.', 'Every location you add later keeps your Founding extra-location price.'],
   ['Plans only.', `The ${marketingAddOn.name} stays at ${usd(marketingAddOn.price)} a month.`],
   ['A "Founding Studio" badge in the app,', 'marking you as one of the first studios on Happli.'],
 ];
@@ -57,12 +71,16 @@ const faq: FaqItem[] = [
     a: `It depends on how many team members take bookings. Solo is for 1 team member who takes bookings, usually the owner. Studio includes up to ${studioIncludedMembers} team members who take bookings at each location, then ${usd(extraMemberPrice)} a month for each extra one. Front desk and admin logins with roles are always free, and both plans have every feature.`,
   },
   {
+    q: 'How do extra locations work?',
+    a: `Every plan includes ${includedLocations} location. Each extra location is half your plan's price: ${usd(solo.extraLocation.monthly)} a month on Solo or ${usd(studio.extraLocation.monthly)} on Studio, billed monthly (Founding Studios pay ${usd(solo.extraLocation.founding.monthly)} or ${usd(studio.extraLocation.founding.monthly)}). Billed yearly, it's ${usd(solo.extraLocation.yearly)} or ${usd(studio.extraLocation.yearly)} a month (Founding Studios pay ${usd(solo.extraLocation.founding.yearly)} or ${usd(studio.extraLocation.founding.yearly)}).`,
+  },
+  {
     q: 'Is there a free trial?',
     a: `Yes. Happli is free until your studio goes live, for up to ${trialDays} days. Setup and client import are free too.`,
   },
   {
     q: 'What is the Founding Studio offer?',
-    a: `The first ${founding.maxStudios} studios, or studios that join in the first ${founding.days} days after launch (whichever comes first), get ${founding.discountPercent}% off Solo or Studio for as long as they stay subscribed. That's ${usd(solo.founding.monthly)} a month for Solo or ${usd(studio.founding.monthly)} a month per location for Studio, with lower prices when billed yearly. It works on monthly and yearly plans and carries over if you move from Solo to Studio. It ends if you cancel, and a returning studio pays the normal price. The ${marketingAddOn.name} isn't discounted.`,
+    a: `The first ${founding.maxStudios} studios, or studios that join in the first ${founding.days} days after launch (whichever comes first), get ${founding.discountPercent}% off Solo or Studio for as long as they stay subscribed. That's ${usd(solo.founding.monthly)} a month for Solo or ${usd(studio.founding.monthly)} a month for Studio, with lower prices when billed yearly. Founding Studios also lock in their extra-location price (${usd(solo.extraLocation.founding.monthly)} a month on Solo, ${usd(studio.extraLocation.founding.monthly)} on Studio) for every location they add later. It works on monthly and yearly plans and carries over if you move from Solo to Studio. It ends if you cancel, and a returning studio pays the normal price. The ${marketingAddOn.name} isn't discounted.`,
   },
   {
     q: `What's in the ${marketingAddOn.name}?`,
