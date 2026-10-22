@@ -3,7 +3,7 @@
 /privacy.html /privacy/ 301
 /terms.html /terms/ 301
 /security.html /security/ 301
-# The stub pages in public/privacy.html etc. would otherwise be served at /privacy, /terms and /security.
+# Slashless legal URLs go straight to the canonical trailing-slash pages with a 301 too.
 /privacy /privacy/ 301
 /terms /terms/ 301
 /security /security/ 301

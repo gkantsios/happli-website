@@ -1,0 +1,36 @@
+# Happli
+
+> Happli is booking software for spray tan studios and beauty pros, with AI built in. Clients book online, pay deposits and get reminders on their own, and anything that needs the owner (open gaps, waitlist matches, drafted texts to approve) lands in one short list. Payments go to the studio's own Stripe account; Happli takes no cut of sales.
+
+Happli is made by Happy Industries, Inc. dba Happli (Charlotte, North Carolina). The studio app runs in the browser at https://app.gohappli.com, on desktop and phone. Drafted texts, like gap offers, wait for the owner's approval before they send.
+
+## Product
+
+- [Features](https://gohappli.com/features/): online booking, deposits, card checkout, tips and tax, no-show fees, packages, waitlist and gap offers, reminders, client import, and the AI features
+- [Pricing](https://gohappli.com/pricing/): Solo and Studio plans, every feature on both, no setup fee, Founding Studio offer
+- [Spray tan studio software](https://gohappli.com/spray-tan-studio-software/): how Happli fits spray tan studios and mobile spray tan artists
+- [Happli on your phone](https://gohappli.com/phone/): running the day from a phone browser
+- [Roadmap](https://gohappli.com/roadmap/): what's being built now, next and later
+
+## Comparisons
+
+- [Compare](https://gohappli.com/compare/): dated, sourced comparisons of Happli with Mangomint, GlossGenius and Vagaro
+
+## Help
+
+- [Help center](https://support.gohappli.com/): how-to articles for studios using Happli
+- [Help and contact](https://gohappli.com/help/): email hello@gohappli.com
+
+## Legal
+
+- [Privacy](https://gohappli.com/privacy/)
+- [Terms of Service](https://gohappli.com/terms/)
+- [Security](https://gohappli.com/security/)
+- [Data Processing Addendum](https://gohappli.com/dpa/)
+
+## Optional
+
+- [Acceptable use](https://gohappli.com/acceptable-use/)
+- [Refunds](https://gohappli.com/refunds/)
+- [SMS terms](https://gohappli.com/sms-terms/)
+- [Cookies](https://gohappli.com/cookies/)

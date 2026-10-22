@@ -1,4 +1,4 @@
-# Happli (gohappli.com) crawler policy. Rationale and the full list: seo/robots.md
+# Happli (gohappli.com) crawler policy. Rationale and the full list: .seo/robots.md
 #
 # Policy: search engines and AI answer/search crawlers may read the site, so Happli can be found and
 # cited. Crawlers that collect content only to train models are blocked.

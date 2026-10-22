@@ -1,6 +1,6 @@
 import { getCollection, type CollectionEntry } from 'astro:content';
 
-export type PostCollection = 'blog' | 'compare';
+export type PostCollection = 'blog' | 'compare' | 'guides' | 'for' | 'alternatives';
 
 /**
  * Published entries, newest first. Drafts are visible in `astro dev` so you can

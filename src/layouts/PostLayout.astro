@@ -7,9 +7,10 @@ import { blogPosting, breadcrumbs, type Crumb } from '../lib/jsonld';
 import { formatDate } from '../lib/posts';
 import { site } from '../config/site';
 import type { CollectionEntry } from 'astro:content';
+import type { PostCollection } from '../lib/posts';
 
 interface Props {
-  entry: CollectionEntry<'blog'> | CollectionEntry<'compare'>;
+  entry: CollectionEntry<PostCollection>;
   section: Crumb;
 }
 const { entry, section } = Astro.props;

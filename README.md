@@ -33,11 +33,11 @@ npm run build && npx wrangler deploy --dry-run
 | `src/components/mocks/` | Product illustrations shared by the walkthrough, the home feature cards and the /features rows (NeedsList, CheckoutSheet, PhoneBooking, ReminderPreview) |
 | `src/components/StickyCta.astro` | The phone-only "Book a demo" bar (below 700px): it shows whenever none of the page's own "Book a demo" buttons is visible: a button counts as gone once its bottom edge passes under the sticky header, or once the zoom hero's copy fades below 40% opacity. On pages without one it shows from the first screen, footer included. The header's button is hidden on phones (it's in the menu), so exactly one shows at every scroll position. The hero's phone demo keeps its buttons and sheet above the bar |
 | `src/pages/` | One file per route: home, /features/, /pricing/, /phone/, /spray-tan-studio-software/, /signup/, /help/, /compare/ (index plus `src/content/compare/*.md`), and the legal pages |
-| `seo/` | Keyword map, article briefs, page templates, Search Console tracking steps, AEO notes and the robots.txt rationale (see `seo/README.md`) |
+| `.seo/` | SEO workspace: keyword map, article briefs, page templates, Search Console tracking steps, AEO notes, the robots.txt rationale and the `/seo` skill's state (see `.seo/README.md` and `.seo/GUARDRAILS.md`) |
 | `docs/screenshots/` | Full-page screenshots of key pages at 375, 768 and 1280px |
 | `src/legal/` | Privacy, terms and security page bodies (HTML, ported word-for-word from the old site) |
 | `src/content/blog/`, `src/content/compare/` | Markdown posts |
-| `public/` | Files served as-is: logos, favicons (`favicon.ico` is made by `node scripts/generate-favicon.mjs`), `robots.txt`, the default social image, `_redirects` (Cloudflare edge redirects) and fallback redirect pages for the old `privacy.html` / `terms.html` / `security.html` URLs |
+| `public/` | Files served as-is: logos, favicons (`favicon.ico` is made by `node scripts/generate-favicon.mjs`), `robots.txt`, the default social image, `_redirects` (Cloudflare edge redirects) |
 | `wrangler.jsonc` | Cloudflare Worker config: the Worker `happli-website` serves `dist/` as static assets and runs `worker/` only for `/api/*` |
 | `worker/` | The Worker script: `POST /api/waitlist` (the Marketing add-on waitlist on /pricing/; see below) |
 | `TODO.md` | Launch blockers, claims to confirm and placeholders to fill |
@@ -125,7 +125,7 @@ Each post gets Open Graph and Twitter tags and `BlogPosting` and `BreadcrumbList
 - `@astrojs/sitemap` writes `sitemap-index.xml` on every build, and `public/robots.txt` points to it.
 - Every page sets a unique title and meta description, a canonical URL (on `https://gohappli.com`, with a trailing slash), and Open Graph and Twitter tags. The default share image is `public/og-default.png` (regenerate it with `node scripts/generate-og.mjs`).
 - Every page has `Organization` and `WebSite` JSON-LD (added in `BaseLayout`). Home, /pricing/ and the niche page add `SoftwareApplication` with the Solo and Studio `offers`; any page that renders an FAQ gets `FAQPage`; other pages get `BreadcrumbList`.
-- `public/robots.txt` allows search and AI-answer crawlers and blocks training-only crawlers. See `seo/robots.md`.
+- `public/robots.txt` allows search and AI-answer crawlers and blocks training-only crawlers. See `.seo/robots.md`.
 
 ## Deploy
 
@@ -145,7 +145,7 @@ Workers Builds installs dependencies with `npm` (from `package-lock.json`) and u
 
 One-time launch step: point gohappli.com at the Worker. In Cloudflare, open the `happli-website` Worker and go to **Settings → Domains & Routes → Add → Custom Domain**, then add `gohappli.com` (and `www.gohappli.com` if wanted). The gohappli.com zone must be on Cloudflare, and Cloudflare won't create a Custom Domain on a hostname that already has a CNAME record, so delete the old GitHub Pages DNS records for those hostnames first. Cloudflare then creates the DNS records and certificate.
 
-**URLs and redirects.** Pages live at trailing-slash URLs (`/features/`), and Cloudflare redirects `/features` to `/features/`. `public/_redirects` sends the old `/privacy.html`, `/terms.html` and `/security.html` URLs (and `/privacy`, `/terms`, `/security`) straight to `/privacy/`, `/terms/` and `/security/` with a 301. The `public/*.html` redirect pages stay as a fallback for any host that doesn't read `_redirects`.
+**URLs and redirects.** Pages live at trailing-slash URLs (`/features/`), and Cloudflare redirects `/features` to `/features/`. `public/_redirects` sends the old `/privacy.html`, `/terms.html` and `/security.html` URLs (and `/privacy`, `/terms`, `/security`) straight to `/privacy/`, `/terms/` and `/security/` with a 301.
 
 ## Marketing add-on waitlist
 
