@@ -2,13 +2,15 @@
 // Needs you list (illustration): an open gap and a waitlist match.
 // interactive: real buttons and the data-* hooks for the walkthrough's script.
 // Otherwise the buttons are drawn as plain labels (home feature card).
+// strip: a 3-up day strip (the open hour between two bookings) above the closing line (walkthrough).
 // app: the Needs you rail as the owner app draws it (cards with no buttons, same style as the
 // hero's app screen), for /features.
 interface Props {
   interactive?: boolean;
   app?: boolean;
+  strip?: boolean;
 }
-const { interactive = false, app = false } = Astro.props;
+const { interactive = false, app = false, strip = false } = Astro.props;
 const Btn = interactive ? 'button' : 'span';
 ---
 
@@ -56,6 +58,13 @@ const Btn = interactive ? 'button' : 'span';
     </div>
     <em class="done-tag" data-wl-tag={interactive ? '' : undefined}>Booked</em>
   </div>
+  {strip && (
+    <div class="day-strip" aria-hidden="true">
+      <div class="ap rose"><b>Ana O.</b><span>Custom spray tan · 11:00</span></div>
+      <div class="ap open"><b>Open · 1 hr</b><span>1:15 – 2:15</span></div>
+      <div class="ap sage"><b>Tess M.</b><span>Rapid tan · 2:30</span></div>
+    </div>
+  )}
   <p class="need-empty">Nothing else needs you. Enjoy your coffee.</p>
 </div>
 )}
@@ -172,6 +181,46 @@ const Btn = interactive ? 'button' : 'span';
     display: inline-block;
     white-space: nowrap;
   }
+  .day-strip {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+    margin: 0 -24px;
+    padding: 16px 24px;
+    background: var(--blush-2);
+    border-bottom: 1px solid var(--line);
+  }
+  .ap {
+    padding: 8px 10px;
+    border-radius: var(--radius-sm);
+    border-left: 3px solid transparent;
+    font-size: 12px;
+    line-height: 1.35;
+  }
+  .ap b {
+    display: block;
+    font-weight: 600;
+  }
+  .ap span {
+    color: var(--ink-2);
+  }
+  .ap.rose {
+    background: var(--ap-rose);
+    border-color: var(--ap-rose-edge);
+  }
+  .ap.sage {
+    background: var(--ap-sage);
+    border-color: var(--ap-sage-edge);
+  }
+  .ap.open {
+    background: var(--surface);
+    border: 1px dashed var(--coral);
+    border-left: 3px dashed var(--coral);
+  }
+  .ap.open b,
+  .ap.open span {
+    color: var(--coral-ink);
+  }
   .need-empty {
     padding-top: 18px;
     color: var(--muted);
@@ -180,8 +229,30 @@ const Btn = interactive ? 'button' : 'span';
   .need.all .need-empty {
     color: var(--ink);
   }
-  /* phones: the walkthrough's real buttons get full-size tap targets */
-  @media (max-width: 699.98px) {
+  /* phones: the walkthrough's rows stack, with full-size buttons below the text */
+  @media (max-width: 767px) {
+    .need:not(.static) .need-row {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 10px;
+    }
+    .need:not(.static) .need-row > div:first-child {
+      width: 100%;
+    }
+    .day-strip {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .day-strip .ap:last-child {
+      display: none;
+    }
+  }
+  @media (max-width: 480px) {
+    .day-strip {
+      margin: 0 -16px;
+      padding: 14px 16px;
+    }
+  }
+  @media (max-width: 767px) {
     .need:not(.static) .mini {
       min-height: 44px;
       padding: 0 16px;
