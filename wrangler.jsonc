@@ -1,0 +1,10 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  // Static-assets-only Worker for gohappli.com. The name must match the Cloudflare project.
+  "name": "happli-website",
+  "compatibility_date": "2026-09-30",
+  "assets": {
+    // The site is plain HTML at the repo root. Non-site files are excluded via .assetsignore.
+    "directory": "./"
+  }
+}
