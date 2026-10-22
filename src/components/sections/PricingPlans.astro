@@ -12,6 +12,7 @@ import {
   includedEverywhere,
   studioIncludedMembers,
   extraMemberPrice,
+  includedLocations,
   yearlySavePercent,
   usd,
   yearlyTotal,
@@ -38,14 +39,20 @@ const terms = [
 const [soloPlan, studioPlan] = plans;
 const perYear = (n: number) => `${usd(n)}/mo (${usd(yearlyTotal(n))}/yr)`;
 const compareRows: { label: string; cells: [string, string] | 'check' }[] = [
-  { label: 'Team members who take bookings', cells: ['1 (you)', `Up to ${studioIncludedMembers}, then +${usd(extraMemberPrice)}/mo each`] },
+  { label: 'Team members who take bookings', cells: ['1 (you)', `Up to ${studioIncludedMembers} at each location, then +${usd(extraMemberPrice)}/mo each`] },
   { label: 'Front desk and admin logins', cells: ['Free', 'Free, unlimited'] },
   { label: 'All features', cells: 'check' },
   { label: 'Client import', cells: ['Included', 'Included'] },
-  { label: 'Priced', cells: ['Per studio', 'Per location'] },
+  { label: 'Locations included', cells: [String(includedLocations), String(includedLocations)] },
+  { label: 'Extra locations', cells: ['Half the plan price', 'Half the plan price'] },
   { label: 'Founding Studio, monthly', cells: [`${usd(soloPlan.founding.monthly)}/mo`, `${usd(studioPlan.founding.monthly)}/mo`] },
+  { label: 'Founding Studio, monthly, each extra location', cells: [`${usd(soloPlan.extraLocation.founding.monthly)}/mo`, `${usd(studioPlan.extraLocation.founding.monthly)}/mo`] },
   { label: 'Founding Studio, billed yearly', cells: [perYear(soloPlan.founding.yearly), perYear(studioPlan.founding.yearly)] },
+  { label: 'Founding Studio, billed yearly, each extra location', cells: [perYear(soloPlan.extraLocation.founding.yearly), perYear(studioPlan.extraLocation.founding.yearly)] },
+  { label: 'Regular, monthly', cells: [`${usd(soloPlan.monthly)}/mo`, `${usd(studioPlan.monthly)}/mo`] },
+  { label: 'Regular, monthly, each extra location', cells: [`${usd(soloPlan.extraLocation.monthly)}/mo`, `${usd(studioPlan.extraLocation.monthly)}/mo`] },
   { label: 'Regular, billed yearly', cells: [perYear(soloPlan.yearly), perYear(studioPlan.yearly)] },
+  { label: 'Regular, billed yearly, each extra location', cells: [perYear(soloPlan.extraLocation.yearly), perYear(studioPlan.extraLocation.yearly)] },
 ];
 
 // Turnstile's public site key, set at build time. Without it the form still renders, and the
@@ -96,6 +103,12 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY;
                 </p>
               </div>
             </div>
+            <div class="locs">
+              <p class="inc">Includes {includedLocations} location</p>
+              <p class="xl m">Extra locations: half price ({usd(plan.extraLocation.founding.monthly)}/mo)</p>
+              <p class="xl y">Extra locations: half price ({usd(plan.extraLocation.founding.yearly)}/mo billed yearly)</p>
+              <p class="fn">Founding Studios lock this price for every location they add later, as long as they stay subscribed.</p>
+            </div>
             <ul class="checks">
               {plan.points.map((p) => <li><Icon name="check" size={16} strokeWidth={2} /><span>{p}</span></li>)}
             </ul>
@@ -136,6 +149,10 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY;
         </table>
       </div>
     </details>
+    <p class="locs-note">
+      Founding Studios keep their extra-location price for every location they add later, as long as they stay
+      subscribed. The {founding.discountPercent}% Founding Studio discount applies to plans, not the {marketingAddOn.name}.
+    </p>
 
     <div class:list={['addon', { 'with-form': waitlist }]} id="marketing">
       <div>
@@ -502,6 +519,32 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY;
   }
   .was s {
     margin-right: 6px;
+  }
+  .locs {
+    margin-top: 18px;
+    padding-top: 16px;
+    border-top: 1px solid var(--line);
+    font-size: 14px;
+  }
+  .locs p {
+    margin: 0;
+  }
+  .locs .inc {
+    font-weight: 600;
+  }
+  .locs .xl {
+    margin-top: 4px;
+  }
+  .locs .fn {
+    margin-top: 6px;
+    color: var(--muted);
+    font-size: 13px;
+  }
+  .locs-note {
+    margin-top: 16px;
+    max-width: 52em;
+    font-size: 14px;
+    color: var(--muted);
   }
   .plan .checks {
     margin: 24px 0 28px;

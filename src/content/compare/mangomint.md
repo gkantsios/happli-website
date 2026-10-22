@@ -20,7 +20,7 @@ Mangomint is a booking and payments system with a pricing model built on locatio
 | | Happli | Mangomint |
 |---|---|---|
 | Starting price | Solo: $69/month ($59/month billed yearly) | $120/month per location, plus $10/month per user[^m-price] |
-| How it scales | Studio: $149/month per location ($129 billed yearly), up to 10 team members who take bookings, then $10/month each. Logins for everyone else are free | Per location and per user[^m-price] |
+| How it scales | Studio: $149/month ($129 billed yearly) with 1 location included, up to 10 team members who take bookings at each location, then $10/month each. Logins for everyone else are free | Per location and per user[^m-price] |
 | Contract | See [our pricing page](/pricing/) | "No contracts," cancel any time[^m-price] |
 | Free trial | Free until you go live, up to 30 days | Offered (length not stated)[^m-price][^m-trial] |
 | Online booking | Yes, booking pages that plug into your existing website | Yes, no fee on appointments booked online[^m-price] |
@@ -35,7 +35,7 @@ Mangomint is a booking and payments system with a pricing model built on locatio
 
 Mangomint's pricing page shows no named plans. You build a price from a per-location fee and a per-user fee: **$120/month per location** and **$10/month per user**, where anyone with a profile counts as a user. Optional add-ons include a phone line ($70/month per line), marketing (from $30/month) and payroll ($50/month plus $8 per worker). The page lists free onboarding and free data transfer.[^m-price]
 
-Happli has two plans with the same features. **Solo** is $69/month ($59/month billed yearly) for one team member who takes bookings. **Studio** is $149/month per location ($129/month billed yearly) and includes up to 10 team members who take bookings, then $10/month each. Front desk and admin logins are free on both. An optional Marketing add-on is $39/month. Founding Studios get 25% off the plans for as long as they stay subscribed. See the [pricing page](/pricing/) for details.[^happli]
+Happli has two plans with the same features. **Solo** is $69/month ($59/month billed yearly) for one team member who takes bookings. **Studio** is $149/month ($129/month billed yearly) and includes up to 10 team members who take bookings at each location, then $10/month each. Each plan includes 1 location, and extra locations are half the plan price. Front desk and admin logins are free on both. An optional Marketing add-on is $39/month. Founding Studios get 25% off the plans for as long as they stay subscribed. See the [pricing page](/pricing/) for details.[^happli]
 
 For a solo artist with one location, Happli Solo costs less than Mangomint's $120 location fee plus $10 for the user. For a team at one location, Happli Studio covers up to 10 team members who take bookings for $149, and logins for everyone else are free; with Mangomint, add $10 for each user to the $120 location fee.[^m-price]
 

@@ -58,7 +58,7 @@ export function softwareApplication() {
       offerCount: String(plans.length),
       offers: plans.map((p) => ({
         '@type': 'Offer',
-        name: p.id === 'studio' ? `${p.name} (per location)` : p.name,
+        name: p.name,
         price: String(p.monthly),
         priceCurrency: 'USD',
         priceSpecification: {

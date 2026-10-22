@@ -21,7 +21,7 @@ Vagaro is a general-purpose booking platform for salons, spas and other business
 | | Happli | Vagaro |
 |---|---|---|
 | Starting price | Solo: $69/month ($59/month billed yearly) | $23.99/month as an exclusive rate for the first 6 months, with $30.00 shown struck through beside it[^v-price] |
-| How it scales | Studio: $149/month per location ($129 billed yearly), up to 10 team members who take bookings, then $10/month each. Logins for everyone else are free | $10 (US) per bookable calendar license, up to seven per location; multiple locations are custom-priced[^v-price] |
+| How it scales | Studio: $149/month ($129 billed yearly) with 1 location included, up to 10 team members who take bookings at each location, then $10/month each. Logins for everyone else are free | $10 (US) per bookable calendar license, up to seven per location; multiple locations are custom-priced[^v-price] |
 | Free trial | Free until you go live, up to 30 days | 30 days, without email marketing, text marketing or the branded app[^v-price] |
 | Online booking | Yes, booking pages that plug into your existing website | Included in every plan, also on Instagram, Facebook and Apple Maps[^v-price] |
 | Reminders | Yes, text, email or both, with your own wording | Unlimited notifications and appointment reminders included; text marketing is an add-on from $20/month[^v-price] |
@@ -36,7 +36,7 @@ Vagaro's pricing page lists **$23.99/month** for one location as an exclusive ra
 
 Some tools are paid add-ons on the same page: text marketing from $20/month, forms at $10/month, and payroll at $34/month plus $5 per employee. Email marketing is free to start, with 1,000 free emails a month included.[^v-price]
 
-Happli has two plans with the same features. **Solo** is $69/month ($59/month billed yearly) for one team member who takes bookings. **Studio** is $149/month per location ($129/month billed yearly) and includes up to 10 team members who take bookings, then $10/month each. Setup and client import are free, and Founding Studios get 25% off for as long as they stay subscribed. See the [pricing page](/pricing/) for details.[^happli]
+Happli has two plans with the same features. **Solo** is $69/month ($59/month billed yearly) for one team member who takes bookings. **Studio** is $149/month ($129/month billed yearly) and includes up to 10 team members who take bookings at each location, then $10/month each. Each plan includes 1 location, and extra locations are half the plan price. Setup and client import are free, and Founding Studios get 25% off for as long as they stay subscribed. See the [pricing page](/pricing/) for details.[^happli]
 
 Vagaro is clearly the cheaper starting point. Happli costs more and aims to earn it back through fewer no-shows, fewer empty gaps and less time at the front desk.
 
