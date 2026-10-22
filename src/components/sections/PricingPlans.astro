@@ -100,7 +100,7 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY;
               {plan.points.map((p) => <li><Icon name="check" size={16} strokeWidth={2} /><span>{p}</span></li>)}
             </ul>
             {cta === 'call' ? (
-              <a class:list={['btn', plan.featured ? 'btn-coral' : 'btn-ghost']} href={site.cta.href} rel="noopener">
+              <a class:list={['btn', plan.featured ? 'btn-coral' : 'btn-ghost']} href={site.cta.href} target="_blank" rel="noopener">
                 Book a call to start {plan.name}
               </a>
             ) : (

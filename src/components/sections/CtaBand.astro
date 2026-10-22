@@ -20,7 +20,7 @@ const { eyebrow = site.cta.label, title, body, secondary } = Astro.props;
         {body && <p class="body">{body}</p>}
       </div>
       <div class="btn-row actions">
-        <a class="btn btn-coral" href={site.cta.href}>{site.cta.label}</a>
+        <a class="btn btn-coral" href={site.cta.href} target="_blank" rel="noopener">{site.cta.label}</a>
         {site.demo.enabled && <a class="btn btn-ghost" href={site.demo.href}>{site.demo.label}</a>}
         {secondary && <a class="btn btn-ghost" href={secondary.href}>{secondary.label}</a>}
       </div>

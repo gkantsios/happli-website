@@ -23,7 +23,7 @@ const { items, title = 'Frequently asked questions', id = 'faq' } = Astro.props;
         <p class="help-title">Still have a question?</p>
         <p class="help-body">We're happy to walk you through it.</p>
         <div class="help-actions">
-          <a class="btn btn-ghost" href={site.cta.href}>{site.cta.label}</a>
+          <a class="btn btn-ghost" href={site.cta.href} target="_blank" rel="noopener">{site.cta.label}</a>
           <a class="mail" href={`mailto:${site.contactEmail}`}>{site.contactEmail}</a>
         </div>
       </div>
