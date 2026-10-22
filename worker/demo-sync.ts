@@ -3,11 +3,11 @@
 // TidyCal has no webhooks, so this polls GET https://tidycal.com/api/bookings. That endpoint can't
 // filter by booking type or creation time (both are ignored), but it does filter by `starts_at`
 // (bookings starting at or after that time), and pages are newest-start first, 100 a page. So:
-//   1. ask for bookings starting from LOOKBACK ago onward (a new demo is always in the future),
-//   2. keep those with booking_type_id === TIDYCAL_BOOKING_TYPE_ID, no cancelled_at / deleted_at,
+//   1. ask for bookings starting from LOOKBACK (24h) ago onward (a new demo is always in the future),
+//   2. keep those with booking_type_id === TIDYCAL_BOOKING_TYPE_ID, no cancelled_at / deleted_at (TidyCal's field names),
 //      and created_at within the last LOOKBACK,
 //   3. subscribe each contact to the Kit v3 tag KIT_DEMO_TAG_ID.
-// The 30-minute window overlaps six runs, so a run that fails is retried by the next ones. Kit's tag
+// The 24-hour window overlaps 288 runs, so an outage or paused cron shorter than a day loses nothing. Kit's tag
 // subscribe is idempotent (a known email that already has the tag is a 200), so repeats are harmless
 // and no state (KV) is needed.
 // Logs hold only counts and status codes: never an email, name or booking id.
@@ -25,12 +25,14 @@ export interface DemoSyncResult {
   tagged: number;
   failed: number;
   reason?: string;
+  truncated?: boolean;
 }
 
 const TIDYCAL_API = 'https://tidycal.com/api';
 const KIT_API = 'https://api.convertkit.com/v3';
-export const LOOKBACK_MS = 30 * 60 * 1000;
-const MAX_PAGES = 10;
+export const LOOKBACK_MS = 24 * 60 * 60 * 1000;
+export const MAX_PAGES = 25;
+export const FETCH_TIMEOUT_MS = 10_000;
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
 interface Booking {
@@ -64,11 +66,13 @@ export async function syncDemoBookings(env: DemoSyncEnv, now: Date = new Date())
   const startsFrom = new Date(since).toISOString().replace(/\.\d{3}Z$/, 'Z');
   const found = new Map<string, string>(); // email -> first name
 
+  let truncated = false;
   for (let page = 1; page <= MAX_PAGES; page++) {
     const url = `${TIDYCAL_API}/bookings?starts_at=${encodeURIComponent(startsFrom)}&page=${page}`;
     let data: Page;
     try {
       const res = await fetch(url, {
+        signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
         headers: { Authorization: `Bearer ${env.TIDYCAL_API_TOKEN!.trim()}`, Accept: 'application/json' },
       });
       if (!res.ok) {
@@ -89,7 +93,9 @@ export async function syncDemoBookings(env: DemoSyncEnv, now: Date = new Date())
       if (!found.has(email)) found.set(email, (b.contact?.name ?? '').trim().split(/\s+/)[0]?.slice(0, 100) ?? '');
     }
     if (!data.next_page_url) break;
+    if (page === MAX_PAGES) truncated = true;
   }
+  if (truncated) console.warn(`demo-sync: warning, stopped at the ${MAX_PAGES}-page cap with more pages left (1 truncated run)`);
 
   let tagged = 0;
   let failed = 0;
@@ -98,6 +104,7 @@ export async function syncDemoBookings(env: DemoSyncEnv, now: Date = new Date())
     try {
       const res = await fetch(`${KIT_API}/tags/${tagId}/subscribe`, {
         method: 'POST',
+        signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
         headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
         body: JSON.stringify({ api_key: env.KIT_API_KEY!.trim(), email, ...(firstName ? { first_name: firstName } : {}) }),
       });
@@ -113,5 +120,5 @@ export async function syncDemoBookings(env: DemoSyncEnv, now: Date = new Date())
   }
   const tail = statuses.length ? ` (kit statuses ${[...new Set(statuses)].join(', ')})` : '';
   console.log(`demo-sync: matched ${found.size}, tagged ${tagged}, failed ${failed}${tail}`);
-  return { ok: failed === 0, matched: found.size, tagged, failed };
+  return { ok: failed === 0 && !truncated, matched: found.size, tagged, failed, ...(truncated ? { truncated } : {}) };
 }

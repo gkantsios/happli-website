@@ -1,6 +1,6 @@
 import { test, afterEach } from 'node:test';
 import assert from 'node:assert/strict';
-import { syncDemoBookings, LOOKBACK_MS } from '../demo-sync.ts';
+import { syncDemoBookings, LOOKBACK_MS, MAX_PAGES } from '../demo-sync.ts';
 
 const NOW = new Date('2026-10-22T12:00:00Z');
 const env = { TIDYCAL_API_TOKEN: 'tc', TIDYCAL_BOOKING_TYPE_ID: '2132151', KIT_API_KEY: 'kk', KIT_DEMO_TAG_ID: '24907991' };
@@ -11,14 +11,16 @@ const bk = (o: Record<string, unknown>) => ({ booking_type_id: 2132151, created_
 const realFetch = globalThis.fetch;
 const realLog = console.log;
 const realErr = console.error;
+const realWarn = console.warn;
 let logs: string[] = [];
-afterEach(() => { globalThis.fetch = realFetch; console.log = realLog; console.error = realErr; });
+afterEach(() => { globalThis.fetch = realFetch; console.log = realLog; console.error = realErr; console.warn = realWarn; });
 
 function mock(pages: unknown[][], kitStatus = 200) {
   const calls: { url: string; init?: RequestInit }[] = [];
   logs = [];
   console.log = (m: string) => logs.push(m);
   console.error = (m: string) => logs.push(m);
+  console.warn = (m: string) => logs.push(m);
   globalThis.fetch = (async (input: string, init?: RequestInit) => {
     const url = String(input);
     calls.push({ url, init });
@@ -38,7 +40,9 @@ test('tags a new demo booking and sends the right request', async () => {
   const r = await syncDemoBookings(env, NOW);
   assert.deepEqual(r, { ok: true, matched: 1, tagged: 1, failed: 0 });
   const tc = calls[0];
-  assert.match(tc.url, /starts_at=2026-10-22T11%3A30%3A00Z/);
+  assert.match(tc.url, /starts_at=2026-10-21T12%3A00%3A00Z/);
+  assert.ok(tc.init!.signal instanceof AbortSignal);
+  assert.ok(kitCalls(calls)[0].init!.signal instanceof AbortSignal);
   assert.equal((tc.init!.headers as Record<string, string>).Authorization, 'Bearer tc');
   const k = kitCalls(calls)[0];
   assert.equal(k.url, 'https://api.convertkit.com/v3/tags/24907991/subscribe');
@@ -90,4 +94,21 @@ test('counts Kit failures and never logs PII or secrets', async () => {
   const all = logs.join('\n');
   assert.match(all, /422/);
   for (const s of ['a@example.com', 'Ann', 'kk', 'Bearer']) assert.ok(!all.includes(s), s);
+});
+
+test('a booking created 23 hours ago is still tagged', async () => {
+  mock([[bk({ created_at: new Date(NOW.getTime() - 23 * 3600 * 1000).toISOString() })]]);
+  assert.equal((await syncDemoBookings(env, NOW)).tagged, 1);
+});
+
+test('warns with a count when the page cap is hit', async () => {
+  const pages = Array.from({ length: MAX_PAGES + 2 }, () => [] as unknown[]);
+  pages[0] = [bk({})];
+  const calls = mock(pages);
+  const r = await syncDemoBookings(env, NOW);
+  assert.equal(calls.filter((c) => c.url.includes('tidycal')).length, MAX_PAGES);
+  assert.equal(r.truncated, true);
+  assert.equal(r.ok, false);
+  assert.equal(r.tagged, 1);
+  assert.ok(logs.some((l) => /page cap/.test(l) && !l.includes('@')));
 });

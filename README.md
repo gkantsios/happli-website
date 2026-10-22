@@ -160,7 +160,7 @@ Sign-ups are rate-limited to 5 a minute per IP (the `WAITLIST_RATE_LIMITER` bind
 
 ### Demo bookings → Kit (cron)
 
-Every 5 minutes (`triggers.crons` in `wrangler.jsonc`) the Worker's `scheduled` handler (`worker/demo-sync.ts`) reads TidyCal bookings that start from 30 minutes ago onward (`GET https://tidycal.com/api/bookings?starts_at=…`, paged), keeps the **Happli Demo** ones created in the last 30 minutes that aren't cancelled or deleted, and tags each contact **Happli demo** in Kit. The windows overlap and Kit's tag subscribe is idempotent, so no state is stored and a failed run is retried by the next one. Only counts and status codes are logged. If a secret or variable is missing it does nothing and logs which names are missing.
+Every 5 minutes (`triggers.crons` in `wrangler.jsonc`) the Worker's `scheduled` handler (`worker/demo-sync.ts`) reads TidyCal bookings that started in the last 24 hours or start later (`GET https://tidycal.com/api/bookings?starts_at=…`, paged), keeps the **Happli Demo** ones created in the last 24 hours that aren't canceled or deleted, and tags each contact **Happli demo** in Kit. The windows overlap and Kit's tag subscribe is idempotent, so no state is stored and an outage shorter than a day loses nothing. It reads at most 25 pages per run and logs a warning count if it hits that cap. Only counts and status codes are logged. If a secret or variable is missing it does nothing and logs which names are missing.
 
 Environment variables:
 

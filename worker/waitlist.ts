@@ -24,6 +24,7 @@ export interface WaitlistEnv {
 type Code = 'invalid_email' | 'verification_failed' | 'server' | 'rate_limited' | 'too_large';
 
 const KIT_API = 'https://api.convertkit.com/v3';
+const FETCH_TIMEOUT_MS = 10_000; // per outside call (Turnstile, Kit)
 const SITEVERIFY = 'https://challenges.cloudflare.com/turnstile/v0/siteverify';
 const MAX_BODY_BYTES = 8 * 1024;
 // Hostnames a Turnstile token may have been solved on: production, plus the workers.dev preview
@@ -137,7 +138,7 @@ export async function handleWaitlist(request: Request, env: WaitlistEnv): Promis
     body.set('response', token);
     const ip = request.headers.get('cf-connecting-ip');
     if (ip) body.set('remoteip', ip);
-    const res = await fetch(SITEVERIFY, { method: 'POST', body });
+    const res = await fetch(SITEVERIFY, { method: 'POST', body, signal: AbortSignal.timeout(FETCH_TIMEOUT_MS) });
     const outcome = (await res.json()) as { success?: boolean; hostname?: string; 'error-codes'?: string[] };
     if (!outcome.success) {
       console.warn(`waitlist: turnstile rejected (${(outcome['error-codes'] ?? []).join(', ') || 'no code'})`);
@@ -167,6 +168,7 @@ async function subscribe(env: WaitlistEnv, email: string, firstName: string): Pr
   // Adds the tag, creating the subscriber if needed. A known email or an existing tag is a 200.
   const res = await fetch(`${KIT_API}/tags/${encodeURIComponent(tagId)}/subscribe`, {
     method: 'POST',
+    signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
     headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
     body: JSON.stringify({ api_key: env.KIT_API_KEY, email, ...(firstName ? { first_name: firstName } : {}) }),
   });
