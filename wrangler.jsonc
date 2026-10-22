@@ -25,8 +25,13 @@
   // Non-secret Worker variables.
   "vars": {
     // Kit tag "Happli Marketing waitlist".
-    "KIT_WAITLIST_TAG_ID": "24908051"
-  }
+    "KIT_WAITLIST_TAG_ID": "24908051",
+    // TidyCal booking type "Happli Demo" and the Kit tag "Happli demo" (worker/demo-sync.ts).
+    "TIDYCAL_BOOKING_TYPE_ID": "2132151",
+    "KIT_DEMO_TAG_ID": "24907991"
+  },
+  // Every 5 minutes: tag new Happli Demo bookings in Kit (the Worker's scheduled handler).
+  "triggers": { "crons": ["*/5 * * * *"] }
   // Secrets (set with `npx wrangler secret put NAME` or in the dashboard, never in this file):
-  // TURNSTILE_SECRET_KEY and KIT_API_KEY (a Kit v3 API key). See the README.
+  // TURNSTILE_SECRET_KEY, KIT_API_KEY (a Kit v3 API key) and TIDYCAL_API_TOKEN. See the README.
 }

@@ -158,6 +158,10 @@ The Marketing add-on card on /pricing/ has a "Get notified when it launches" for
 
 Sign-ups are rate-limited to 5 a minute per IP (the `WAITLIST_RATE_LIMITER` binding in `wrangler.jsonc`). Nothing personal (email, IP, token) is logged. If the server-side variables are missing, the endpoint answers `503` and the form shows its "Something went wrong" message.
 
+### Demo bookings → Kit (cron)
+
+Every 5 minutes (`triggers.crons` in `wrangler.jsonc`) the Worker's `scheduled` handler (`worker/demo-sync.ts`) reads TidyCal bookings that start from 30 minutes ago onward (`GET https://tidycal.com/api/bookings?starts_at=…`, paged), keeps the **Happli Demo** ones created in the last 30 minutes that aren't cancelled or deleted, and tags each contact **Happli demo** in Kit. The windows overlap and Kit's tag subscribe is idempotent, so no state is stored and a failed run is retried by the next one. Only counts and status codes are logged. If a secret or variable is missing it does nothing and logs which names are missing.
+
 Environment variables:
 
 | Name | Where | Required | What it is |
@@ -166,11 +170,15 @@ Environment variables:
 | `TURNSTILE_SECRET_KEY` | Worker **secret** (Settings → Variables and Secrets, or `npx wrangler secret put TURNSTILE_SECRET_KEY`) | Yes | The Turnstile widget's secret key |
 | `KIT_API_KEY` | Worker secret | Yes | A Kit **v3** API key (Kit → Settings → Developer; the API key, not the API secret) |
 | `KIT_WAITLIST_TAG_ID` | Worker variable in `wrangler.jsonc` (`vars`) | Yes | The id of the Kit tag "Happli Marketing waitlist" (`24908051`). It isn't secret |
+| `TIDYCAL_API_TOKEN` | Worker **secret** (`npx wrangler secret put TIDYCAL_API_TOKEN`) | Yes, for the demo cron | TidyCal API token, read-only use of `GET /api/bookings` |
+| `TIDYCAL_BOOKING_TYPE_ID` | Worker variable in `wrangler.jsonc` | Yes, for the demo cron | TidyCal booking type "Happli Demo" (`2132151`) |
+| `KIT_DEMO_TAG_ID` | Worker variable in `wrangler.jsonc` | Yes, for the demo cron | Kit tag "Happli demo" (`24907991`) |
 
 Add `gohappli.com` (and any preview hostnames) to the Turnstile widget's allowed hostnames. To try it locally, Turnstile's [test keys](https://developers.cloudflare.com/turnstile/troubleshooting/testing/) always pass:
 
 ```sh
 PUBLIC_TURNSTILE_SITE_KEY=1x00000000000000000000AA npm run build
+# Demo-booking cron: run `npx wrangler dev --test-scheduled`, then open /__scheduled?cron=*/5+*+*+*+*
 npx wrangler dev --var TURNSTILE_SECRET_KEY:1x0000000000000000000000000000000AA --var KIT_API_KEY:<a test key>
 ```
 
