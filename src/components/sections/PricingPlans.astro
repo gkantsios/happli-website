@@ -106,8 +106,8 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY;
             <div class="locs">
               <p class="inc">Includes {includedLocations} location</p>
               <p class="xl m">Extra locations: half price ({usd(plan.extraLocation.founding.monthly)}/mo)</p>
-              <p class="xl y">Extra locations: half price ({usd(plan.extraLocation.founding.yearly)}/mo)</p>
-              <p class="fn">Founding Studios lock this price for every location they add later.</p>
+              <p class="xl y">Extra locations: half price ({usd(plan.extraLocation.founding.yearly)}/mo billed yearly)</p>
+              <p class="fn">Founding Studios lock this price for every location they add later, as long as they stay subscribed.</p>
             </div>
             <ul class="checks">
               {plan.points.map((p) => <li><Icon name="check" size={16} strokeWidth={2} /><span>{p}</span></li>)}

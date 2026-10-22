@@ -48,7 +48,7 @@ export type Plan = PlanPrices & {
 export const includedLocations = 1;
 
 // Extra location: half the plan price, rounded DOWN so "half price" is never more than half.
-// Founding extra = half the Founding plan price, rounded down (same result as 25% off the regular extra).
+// Founding extra = half the Founding plan price, rounded down to the whole dollar.
 export const extraLocationPrice = (planPrice: number) => Math.floor(planPrice / 2);
 
 /** Studio includes this many team members who take bookings at each location. */
