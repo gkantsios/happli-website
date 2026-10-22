@@ -12,8 +12,10 @@ section.plans-section { background: var(--blush-band); }
 main > section#payments { background: var(--sage-band); }
 .eyebrow { color: var(--coral-ink); }
 main > section#payments .eyebrow { color: var(--sage-ink); }
-.steps .num { background: var(--coral-soft, #ffe1e3); color: var(--coral-ink); border-color: transparent; }
 /* A plain section that runs into a tinted band gets its full bottom padding, so its cards sit clear of the edge. */
 main > section:has(+ section[aria-labelledby="problem-title"]),
+main > section:has(+ script + section[aria-labelledby="problem-title"]),
 main > section:has(+ section[aria-labelledby="testimonials-title"]),
-main > section:has(+ section#payments) { padding-bottom: var(--space-section); }
+main > section:has(+ script + section[aria-labelledby="testimonials-title"]),
+main > section:has(+ section#payments),
+main > section:has(+ script + section#payments) { padding-bottom: var(--space-section); }
