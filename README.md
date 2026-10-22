@@ -1,6 +1,6 @@
 # happli-website
 
-The marketing site for Happli, at [gohappli.com](https://gohappli.com). It's built with [Astro](https://astro.build) as a static site and deployed to Cloudflare Workers as static assets.
+The marketing site for Happli, at [gohappli.com](https://gohappli.com). It's built with [Astro](https://astro.build) as a static site and deployed to Cloudflare Workers as static assets, with one small Worker endpoint for the Marketing add-on waitlist.
 
 ## Run it locally
 
@@ -38,7 +38,8 @@ npm run build && npx wrangler deploy --dry-run
 | `src/legal/` | Privacy, terms and security page bodies (HTML, ported word-for-word from the old site) |
 | `src/content/blog/`, `src/content/compare/` | Markdown posts |
 | `public/` | Files served as-is: logos, favicons (`favicon.ico` is made by `node scripts/generate-favicon.mjs`), `robots.txt`, the default social image, `_redirects` (Cloudflare edge redirects) and fallback redirect pages for the old `privacy.html` / `terms.html` / `security.html` URLs |
-| `wrangler.jsonc` | Cloudflare Worker config: a static-assets-only Worker named `happli-website` that serves `dist/` |
+| `wrangler.jsonc` | Cloudflare Worker config: the Worker `happli-website` serves `dist/` as static assets and runs `worker/` only for `/api/*` |
+| `worker/` | The Worker script: `POST /api/waitlist` (the Marketing add-on waitlist on /pricing/; see below) |
 | `TODO.md` | Launch blockers, claims to confirm and placeholders to fill |
 
 ## Homepage hero
@@ -128,7 +129,7 @@ Each post gets Open Graph and Twitter tags and `BlogPosting` and `BreadcrumbList
 
 ## Deploy
 
-The site runs on **Cloudflare Workers** as a static-assets-only Worker (no Worker script). `wrangler.jsonc` names the Worker `happli-website` (it must match the Cloudflare project name), serves `./dist`, and uses `dist/404.html` for unknown paths.
+The site runs on **Cloudflare Workers**. `wrangler.jsonc` names the Worker `happli-website` (it must match the Cloudflare project name), serves `./dist` as static assets, and uses `dist/404.html` for unknown paths. Pages never run the Worker script: only `/api/*` does (`run_worker_first`), for the waitlist below.
 
 Cloudflare Workers Builds is connected to this GitHub repo and deploys on every push to the production branch (`main`). Build settings in the Cloudflare dashboard (**Workers & Pages → happli-website → Settings → Build**):
 
@@ -145,3 +146,31 @@ Workers Builds installs dependencies with `npm` (from `package-lock.json`) and u
 One-time launch step: point gohappli.com at the Worker. In Cloudflare, open the `happli-website` Worker and go to **Settings → Domains & Routes → Add → Custom Domain**, then add `gohappli.com` (and `www.gohappli.com` if wanted). The gohappli.com zone must be on Cloudflare, and Cloudflare won't create a Custom Domain on a hostname that already has a CNAME record, so delete the old GitHub Pages DNS records for those hostnames first. Cloudflare then creates the DNS records and certificate.
 
 **URLs and redirects.** Pages live at trailing-slash URLs (`/features/`), and Cloudflare redirects `/features` to `/features/`. `public/_redirects` sends the old `/privacy.html`, `/terms.html` and `/security.html` URLs (and `/privacy`, `/terms`, `/security`) straight to `/privacy/`, `/terms/` and `/security/` with a 301. The `public/*.html` redirect pages stay as a fallback for any host that doesn't read `_redirects`.
+
+## Marketing add-on waitlist
+
+The Marketing add-on card on /pricing/ has a "Get notified when it launches" form. It posts to `/api/waitlist` (`worker/waitlist.ts`), which:
+
+1. returns a silent success if the hidden honeypot field (`company`) is filled,
+2. validates the email on the server,
+3. verifies the [Cloudflare Turnstile](https://developers.cloudflare.com/turnstile/) token (the widget is invisible unless Cloudflare needs the visitor to click),
+4. subscribes the email in [Kit](https://kit.com) and tags it **Marketing waitlist** (an email that's already in Kit counts as success).
+
+Sign-ups are rate-limited to 5 a minute per IP (the `WAITLIST_RATE_LIMITER` binding in `wrangler.jsonc`). Nothing personal (email, IP, token) is logged. If the server-side variables are missing, the endpoint answers `503` and the form shows its "Something went wrong" message.
+
+Environment variables:
+
+| Name | Where | Required | What it is |
+|---|---|---|---|
+| `PUBLIC_TURNSTILE_SITE_KEY` | **Build** variable (Workers & Pages → happli-website → Settings → Build → Variables), or `.env` locally | Yes | The Turnstile widget's site key. It's public and is baked into /pricing/ at build time, so rebuild after changing it |
+| `TURNSTILE_SECRET_KEY` | Worker **secret** (Settings → Variables and Secrets, or `npx wrangler secret put TURNSTILE_SECRET_KEY`) | Yes | The Turnstile widget's secret key |
+| `KIT_API_KEY` | Worker secret | Yes | A Kit v4 API key |
+| `KIT_WAITLIST_TAG_ID` | Worker secret or variable | No | The id of the Kit tag "Marketing waitlist". If it isn't set, the tag is found by name (and created if it doesn't exist) |
+| `KIT_WAITLIST_TAG_NAME` | Worker variable | No | Use a different tag name when `KIT_WAITLIST_TAG_ID` isn't set (default `Marketing waitlist`) |
+
+Add `gohappli.com` (and any preview hostnames) to the Turnstile widget's allowed hostnames. To try it locally, Turnstile's [test keys](https://developers.cloudflare.com/turnstile/troubleshooting/testing/) always pass:
+
+```sh
+PUBLIC_TURNSTILE_SITE_KEY=1x00000000000000000000AA npm run build
+npx wrangler dev --var TURNSTILE_SECRET_KEY:1x0000000000000000000000000000000AA --var KIT_API_KEY:<a test key>
+```
