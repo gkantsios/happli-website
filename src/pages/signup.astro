@@ -30,6 +30,7 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY;
 <BaseLayout
   title={title}
   description={description}
+  stickyCta={false}
   jsonLd={[breadcrumbs([{ name: 'Home', href: '/' }, { name: 'Get started', href: '/signup/' }])]}
 >
   <PageIntro
@@ -69,12 +70,15 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY;
 
       <label class="check" data-founding-row>
         <input type="checkbox" name="founding" checked />
-        <span>Join as a Founding Studio ({founding.discountPercent}% off, locked while subscribed)</span>
+        <span>Join as a Founding Studio: {founding.discountPercent}% off plans for as long as you stay subscribed, and your extra-location price stays locked.</span>
       </label>
+      <p class="hint" data-founding-hint>Open to the first 50 studios or the first 90 days after launch.</p>
 
-      <div class="total" aria-live="polite">
-        <p class="sum" data-total></p>
-        <p class="hint" data-breakdown></p>
+      <div class="total">
+        <div aria-live="polite" aria-atomic="true">
+          <p class="sum" data-total></p>
+          <p class="hint" data-breakdown></p>
+        </div>
         <p class="hint">No charge today. Your first payment starts when your studio goes live, or after {trialDays} days.</p>
       </div>
 
@@ -130,7 +134,7 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY;
       founding_full: 'Founding Studio spots are full. You can continue at regular prices.',
       server: 'Something went wrong on our end. Try again in a minute, or book a call.',
     };
-    function money(n) { return '$' + n.toLocaleString('en-US'); }
+    function money(n) { return '$' + n.toLocaleString('en-US', { maximumFractionDigits: 2 }); }
     function val(name) { var el = form.querySelector('[name="' + name + '"]:checked'); return el ? el.value : ''; }
     function count() {
       var n = Math.round(Number(loc.value));
@@ -138,13 +142,18 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY;
       if (n > max) n = max;
       return n;
     }
+    var decBtn = form.querySelector('[data-step="-1"]');
+    var incBtn = form.querySelector('[data-step="1"]');
     function render() {
       var plan = val('plan'), period = val('period'), n = count();
       var p = prices[plan + ':' + period + ':' + (founding.checked && !foundingRow.hidden ? 1 : 0)];
       var unit = period === 'yearly' ? '/yr' : '/mo';
       var extra = n - 1;
       var name = plan === 'solo' ? 'Solo' : 'Studio';
-      totalEl.textContent = money(p.plan + extra * p.extra) + unit;
+      var sum = p.plan + extra * p.extra;
+      totalEl.textContent = money(sum) + unit + (period === 'yearly' ? ' (' + money(sum / 12) + '/mo)' : '');
+      decBtn.disabled = n <= 1;
+      incBtn.disabled = n >= max;
       breakdown.textContent = name + ' ' + money(p.plan) + (extra > 0 ? ' + ' + extra + ' extra location' + (extra > 1 ? 's' : '') + ' × ' + money(p.extra) : '') + unit;
     }
     function setMsg(code) {
@@ -212,6 +221,8 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY;
         if (code === 'founding_full') {
           founding.checked = false;
           foundingRow.hidden = true;
+          var fh = form.querySelector('[data-founding-hint]');
+          if (fh) fh.hidden = true;
           render();
         }
         setMsg(code);
@@ -320,6 +331,8 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY;
     cursor: pointer;
   }
   .stepper input {
+    appearance: textfield;
+    -moz-appearance: textfield;
     width: 72px;
     height: 48px;
     text-align: center;
@@ -329,6 +342,15 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY;
     border-radius: 12px;
     color: var(--ink);
     background: transparent;
+  }
+  .stepper input::-webkit-inner-spin-button,
+  .stepper input::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  .step:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
   }
   .check {
     display: flex;
