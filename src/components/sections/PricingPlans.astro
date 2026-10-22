@@ -139,7 +139,7 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY;
 
     <div class:list={['addon', { 'with-form': waitlist }]} id="marketing">
       <div>
-        <h3>{marketingAddOn.name} <span class="badge">Coming soon</span></h3>
+        <h3>{marketingAddOn.name.replace('-', '\u2011')} <span class="badge">Coming soon</span></h3>
         <p class="price">
           <span class="amount">{usd(marketingAddOn.price)}</span>
           <span class="unit">/mo</span>
@@ -264,6 +264,7 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY;
           msg.setAttribute('role', 'alert');
           msg.classList.add('err');
           msg.textContent = errors[code] || errors.server;
+          if (msg.scrollIntoView) msg.scrollIntoView({ block: 'nearest' });
           if (code === 'invalid_email') {
             input.setAttribute('aria-invalid', 'true');
             input.focus();
@@ -714,7 +715,7 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY;
   .hint {
     min-height: 20px;
     margin-top: 8px;
-    font-size: 13px;
+    font-size: 14px;
     color: var(--muted);
   }
   .hint.err {
@@ -763,7 +764,7 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY;
     margin-top: 48px;
   }
   .included .badge {
-    font-size: 10px;
+    font-size: 12px;
     padding: 2px 7px;
     margin-left: 2px;
     vertical-align: 1px;
