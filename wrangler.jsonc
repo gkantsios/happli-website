@@ -21,7 +21,12 @@
       "namespace_id": "1001",
       "simple": { "limit": 5, "period": 60 }
     }
-  ]
+  ],
+  // Non-secret Worker variables.
+  "vars": {
+    // Kit tag "Happli Marketing waitlist".
+    "KIT_WAITLIST_TAG_ID": "24908051"
+  }
   // Secrets (set with `npx wrangler secret put NAME` or in the dashboard, never in this file):
-  // TURNSTILE_SECRET_KEY, KIT_API_KEY, and optionally KIT_WAITLIST_TAG_ID. See the README.
+  // TURNSTILE_SECRET_KEY and KIT_API_KEY (a Kit v3 API key). See the README.
 }

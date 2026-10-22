@@ -154,7 +154,7 @@ The Marketing add-on card on /pricing/ has a "Get notified when it launches" for
 1. returns a silent success if the hidden honeypot field (`company`) is filled,
 2. validates the email on the server,
 3. verifies the [Cloudflare Turnstile](https://developers.cloudflare.com/turnstile/) token (the widget is invisible unless Cloudflare needs the visitor to click),
-4. subscribes the email in [Kit](https://kit.com) and tags it **Marketing waitlist** (an email that's already in Kit counts as success).
+4. subscribes the email in [Kit](https://kit.com) (v3 API) and tags it **Happli Marketing waitlist** (an email that's already in Kit counts as success).
 
 Sign-ups are rate-limited to 5 a minute per IP (the `WAITLIST_RATE_LIMITER` binding in `wrangler.jsonc`). Nothing personal (email, IP, token) is logged. If the server-side variables are missing, the endpoint answers `503` and the form shows its "Something went wrong" message.
 
@@ -164,9 +164,8 @@ Environment variables:
 |---|---|---|---|
 | `PUBLIC_TURNSTILE_SITE_KEY` | **Build** variable (Workers & Pages → happli-website → Settings → Build → Variables), or `.env` locally | Yes | The Turnstile widget's site key. It's public and is baked into /pricing/ at build time, so rebuild after changing it |
 | `TURNSTILE_SECRET_KEY` | Worker **secret** (Settings → Variables and Secrets, or `npx wrangler secret put TURNSTILE_SECRET_KEY`) | Yes | The Turnstile widget's secret key |
-| `KIT_API_KEY` | Worker secret | Yes | A Kit v4 API key |
-| `KIT_WAITLIST_TAG_ID` | Worker secret or variable | No | The id of the Kit tag "Marketing waitlist". If it isn't set, the tag is found by name (and created if it doesn't exist) |
-| `KIT_WAITLIST_TAG_NAME` | Worker variable | No | Use a different tag name when `KIT_WAITLIST_TAG_ID` isn't set (default `Marketing waitlist`) |
+| `KIT_API_KEY` | Worker secret | Yes | A Kit **v3** API key (Kit → Settings → Developer; the API key, not the API secret) |
+| `KIT_WAITLIST_TAG_ID` | Worker variable in `wrangler.jsonc` (`vars`) | Yes | The id of the Kit tag "Happli Marketing waitlist" (`24908051`). It isn't secret |
 
 Add `gohappli.com` (and any preview hostnames) to the Turnstile widget's allowed hostnames. To try it locally, Turnstile's [test keys](https://developers.cloudflare.com/turnstile/troubleshooting/testing/) always pass:
 
@@ -174,3 +173,5 @@ Add `gohappli.com` (and any preview hostnames) to the Turnstile widget's allowed
 PUBLIC_TURNSTILE_SITE_KEY=1x00000000000000000000AA npm run build
 npx wrangler dev --var TURNSTILE_SECRET_KEY:1x0000000000000000000000000000000AA --var KIT_API_KEY:<a test key>
 ```
+
+`npm test` runs the Worker tests. They mock `fetch`, so nothing reaches Kit or Cloudflare.
