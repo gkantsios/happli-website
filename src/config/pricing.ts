@@ -58,12 +58,7 @@ export const solo = plan({
   yearly: 59,
   unit: '/mo',
   unitShort: '/mo',
-  points: [
-    '1 team member who takes bookings (you, the owner)',
-    'Free front desk and admin logins with roles',
-    'All features included',
-    'Client import included',
-  ],
+  points: ['1 team member who takes bookings (you, the owner)', 'Every feature included', 'Free front desk and admin logins'],
   href: signupHref,
 });
 
@@ -77,9 +72,8 @@ export const studio = plan({
   unitShort: '/mo per location',
   points: [
     `Up to ${studioIncludedMembers} team members who take bookings, then +$${extraMemberPrice}/mo each`,
+    'Every feature included',
     "Unlimited free logins for team members who don't take bookings",
-    'All features included',
-    'Client import included',
   ],
   href: signupHref,
   featured: true,
@@ -123,6 +117,9 @@ export const includedEverywhere: Included[] = [
 
 export const usd = (n: number) => `$${n.toLocaleString('en-US')}`;
 export const yearlyTotal = (perMonth: number) => perMonth * 12;
+
+/** Billing yearly saves up to this much, in whole percent, rounded down ("save up to 14%"). */
+export const yearlySavePercent = Math.floor(Math.max(...plans.map((p) => (1 - p.yearly / p.monthly) * 100)));
 
 export const lowPrice = Math.min(...plans.map((p) => p.monthly));
 export const highPrice = Math.max(...plans.map((p) => p.monthly));
