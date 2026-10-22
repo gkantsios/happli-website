@@ -21,11 +21,43 @@ export interface WaitlistEnv {
   WAITLIST_RATE_LIMITER?: { limit(options: { key: string }): Promise<{ success: boolean }> };
 }
 
-type Code = 'invalid_email' | 'verification_failed' | 'server' | 'rate_limited';
+type Code = 'invalid_email' | 'verification_failed' | 'server' | 'rate_limited' | 'too_large';
 
 const KIT_API = 'https://api.convertkit.com/v3';
 const SITEVERIFY = 'https://challenges.cloudflare.com/turnstile/v0/siteverify';
 const MAX_BODY_BYTES = 8 * 1024;
+// Hostnames a Turnstile token may have been solved on: production, plus the workers.dev preview
+// host and its per-branch and per-version aliases (e.g. feat-site-polish-happli-website.…).
+const TURNSTILE_HOSTS = new Set(['gohappli.com', 'www.gohappli.com', 'happli-website.gkantsios.workers.dev']);
+const PREVIEW_HOST_SUFFIX = '-happli-website.gkantsios.workers.dev';
+
+export function isAllowedTurnstileHost(hostname: string | undefined): boolean {
+  if (!hostname) return false;
+  const host = hostname.toLowerCase();
+  return TURNSTILE_HOSTS.has(host) || (host.endsWith(PREVIEW_HOST_SUFFIX) && /^[a-z0-9-]+$/.test(host.slice(0, -PREVIEW_HOST_SUFFIX.length)));
+}
+
+/** Reads the body, giving up as soon as it passes `max` bytes (null), whatever Content-Length says. */
+async function readCapped(request: Request, max: number): Promise<Uint8Array | null> {
+  if (!request.body) return new Uint8Array();
+  const reader = request.body.getReader();
+  const chunks: Uint8Array[] = [];
+  let size = 0;
+  for (;;) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    size += value.byteLength;
+    if (size > max) {
+      await reader.cancel().catch(() => {});
+      return null;
+    }
+    chunks.push(value);
+  }
+  const out = new Uint8Array(size);
+  let at = 0;
+  for (const c of chunks) { out.set(c, at); at += c.byteLength; }
+  return out;
+}
 const EMAIL = /^[^\s@<>()[\]\\,;:"]+@[^\s@<>()[\]\\,;:"]+\.[^\s@<>()[\]\\,;:".]{2,}$/;
 
 export function isValidEmail(email: string): boolean {
@@ -49,17 +81,23 @@ export async function handleWaitlist(request: Request, env: WaitlistEnv): Promis
     return Response.json({ ok: false, code: 'server' }, { status: 405, headers: { Allow: 'POST', 'Cache-Control': 'no-store' } });
   }
 
-  // Only our own pages post here.
+  // Only our own pages post here. Browsers send Origin on every POST; the one exception allowed
+  // is a plain HTML form post (no JavaScript), recognized by its urlencoded content type.
   const origin = request.headers.get('origin');
-  if (origin && URL.parse(origin)?.host !== new URL(request.url).host) {
+  const contentType = (request.headers.get('content-type') ?? '').toLowerCase();
+  const plainFormPost = !wantsJson && contentType.startsWith('application/x-www-form-urlencoded');
+  if (origin ? URL.parse(origin)?.host !== new URL(request.url).host : !plainFormPost) {
     return Response.json({ ok: false, code: 'server' }, { status: 403, headers: { 'Cache-Control': 'no-store' } });
   }
 
-  if (env.WAITLIST_RATE_LIMITER) {
-    const ip = request.headers.get('cf-connecting-ip') ?? 'unknown';
-    const { success } = await env.WAITLIST_RATE_LIMITER.limit({ key: `waitlist:${ip}` });
-    if (!success) return reply(429, { ok: false, code: 'rate_limited' });
+  // Fail closed: no rate limiter, no sign-ups.
+  if (!env.WAITLIST_RATE_LIMITER) {
+    console.error('waitlist: not configured, missing WAITLIST_RATE_LIMITER binding');
+    return reply(503, { ok: false, code: 'server', message: 'The waitlist is not configured yet.' });
   }
+  const ip = request.headers.get('cf-connecting-ip') ?? 'unknown';
+  const { success } = await env.WAITLIST_RATE_LIMITER.limit({ key: `waitlist:${ip}` });
+  if (!success) return reply(429, { ok: false, code: 'rate_limited' });
 
   const missing = (['TURNSTILE_SECRET_KEY', 'KIT_API_KEY', 'KIT_WAITLIST_TAG_ID'] as const).filter((name) => !env[name]?.trim());
   if (missing.length) {
@@ -68,11 +106,13 @@ export async function handleWaitlist(request: Request, env: WaitlistEnv): Promis
   }
 
   const length = Number(request.headers.get('content-length') ?? 0);
-  if (length > MAX_BODY_BYTES) return reply(413, { ok: false, code: 'invalid_email' });
+  if (length > MAX_BODY_BYTES) return reply(413, { ok: false, code: 'too_large' });
+  const bytes = await readCapped(request, MAX_BODY_BYTES);
+  if (!bytes) return reply(413, { ok: false, code: 'too_large' });
 
   let form: FormData;
   try {
-    form = await request.formData();
+    form = await new Response(bytes, { headers: { 'content-type': contentType } }).formData();
   } catch {
     return reply(400, { ok: false, code: 'invalid_email' });
   }
@@ -98,9 +138,13 @@ export async function handleWaitlist(request: Request, env: WaitlistEnv): Promis
     const ip = request.headers.get('cf-connecting-ip');
     if (ip) body.set('remoteip', ip);
     const res = await fetch(SITEVERIFY, { method: 'POST', body });
-    const outcome = (await res.json()) as { success?: boolean; 'error-codes'?: string[] };
+    const outcome = (await res.json()) as { success?: boolean; hostname?: string; 'error-codes'?: string[] };
     if (!outcome.success) {
       console.warn(`waitlist: turnstile rejected (${(outcome['error-codes'] ?? []).join(', ') || 'no code'})`);
+      return reply(403, { ok: false, code: 'verification_failed' });
+    }
+    if (!isAllowedTurnstileHost(outcome.hostname)) {
+      console.warn('waitlist: turnstile token solved on a hostname not in the allowlist');
       return reply(403, { ok: false, code: 'verification_failed' });
     }
   } catch {

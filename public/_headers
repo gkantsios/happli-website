@@ -1,11 +1,13 @@
 # Cloudflare Workers static assets: response headers for every page (read by Cloudflare, not served).
 # The CSP's script hashes are filled in after `astro build` by scripts/csp-hashes.mjs, which hashes
 # every inline <script> in dist/ (the build fails if this placeholder is missing).
-# Everything loads from this site only: no third-party scripts, styles, fonts, frames or trackers.
+# Everything loads from this site only, with one exception: Cloudflare Turnstile (the waitlist form's
+# spam check on /pricing/) needs its script and iframe from https://challenges.cloudflare.com.
+# No other third-party scripts, styles, fonts, frames or trackers.
 # style-src allows inline styles: Astro inlines the page CSS and a few components set style="".
 # font-src allows data: because the build inlines the smallest font subsets into that CSS.
 /*
-  Content-Security-Policy: default-src 'self'; script-src 'self' {{INLINE_SCRIPT_HASHES}}; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self' data:; connect-src 'self'; manifest-src 'self'; frame-src 'none'; frame-ancestors 'none'; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests
+  Content-Security-Policy: default-src 'self'; script-src 'self' https://challenges.cloudflare.com {{INLINE_SCRIPT_HASHES}}; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self' data:; connect-src 'self'; manifest-src 'self'; frame-src https://challenges.cloudflare.com; frame-ancestors 'none'; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests
   X-Content-Type-Options: nosniff
   X-Frame-Options: DENY
   Referrer-Policy: strict-origin-when-cross-origin
