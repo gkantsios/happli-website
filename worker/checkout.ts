@@ -15,9 +15,18 @@
 //
 // Secret: STRIPE_CHECKOUT_KEY, a restricted key with Checkout Sessions: Write, Prices: Read and
 // Subscriptions: Read. Vars: SITE_URL (success/cancel host) and FOUNDING_ENDS_AT (ISO date-time).
+//
+// Host guard: the Worker answers only on the SITE_URL host (https only), and the key mode must
+// match that host: a live key only on gohappli.com, a test key everywhere else. Preview versions
+// share production secrets, so this is what stops a preview URL from creating live checkouts.
+//
+// Founding cap bound: the count is Founding subscriptions (active or trialing) plus open Founding
+// Checkout Sessions, and every session expires after 30 minutes. What can still overshoot 50 is the
+// requests that pass the check inside one 60s cache window per isolate (plus Stripe search lag,
+// usually under a minute), each limited to 10 per minute per IP. It is small, but not zero.
 import { founding, trialDays } from '../src/config/pricing';
 import { lineItems, maxOnlineLocations, type CheckoutChoice } from '../src/lib/checkout';
-import { isAllowedTurnstileHost, readCapped } from './waitlist';
+import { readCapped } from './waitlist';
 
 export interface CheckoutEnv {
   STRIPE_CHECKOUT_KEY?: string;
@@ -36,6 +45,7 @@ const SITEVERIFY = 'https://challenges.cloudflare.com/turnstile/v0/siteverify';
 const FETCH_TIMEOUT_MS = 10_000;
 const MAX_BODY_BYTES = 4 * 1024;
 const FOUNDING_CACHE_MS = 60_000;
+const SESSION_TTL_S = 30 * 60;
 const PRODUCTION_HOSTS = new Set(['gohappli.com', 'www.gohappli.com']);
 const ALLOWED_FIELDS = new Set(['plan', 'period', 'locations', 'founding', 'token']);
 
@@ -55,9 +65,9 @@ export function validateBody(body: unknown): Validated {
   return { ok: true, choice: { plan, period, locations, founding: f }, token };
 }
 
-/** A live key may only run on production, and a test key never on production. */
-export function keyMatchesSite(key: string, siteUrl: string): boolean {
-  const host = URL.parse(siteUrl)?.hostname.toLowerCase();
+/** A live key may only run on production, and a test key never on production. Takes a URL or a bare host. */
+export function keyMatchesSite(key: string, siteUrlOrHost: string): boolean {
+  const host = (siteUrlOrHost.includes('://') ? URL.parse(siteUrlOrHost)?.hostname : siteUrlOrHost)?.toLowerCase();
   if (!host) return false;
   const live = /^(sk|rk)_live_/.test(key);
   const test = /^(sk|rk)_test_/.test(key);
@@ -74,7 +84,7 @@ let foundingCache: { count: number; at: number } | null = null;
 /** For tests. */
 export function resetFoundingCache(): void { foundingCache = null; }
 
-async function stripe(key: string, method: 'GET' | 'POST', path: string, params: URLSearchParams): Promise<any> {
+async function stripe(key: string, method: 'GET' | 'POST', path: string, params: URLSearchParams, idempotencyKey?: string): Promise<any> {
   const url = method === 'GET' ? `${STRIPE_API}${path}?${params}` : `${STRIPE_API}${path}`;
   const res = await fetch(url, {
     method,
@@ -82,15 +92,34 @@ async function stripe(key: string, method: 'GET' | 'POST', path: string, params:
     headers: {
       Authorization: `Bearer ${key}`,
       ...(method === 'POST' ? { 'Content-Type': 'application/x-www-form-urlencoded' } : {}),
+      ...(idempotencyKey ? { 'Idempotency-Key': idempotencyKey } : {}),
     },
     body: method === 'POST' ? params.toString() : undefined,
   });
   const json = (await res.json().catch(() => ({}))) as any;
-  if (!res.ok) throw new Error(`${method} ${path} ${res.status} ${json?.error?.code ?? ''} ${json?.error?.message ?? ''}`.trim());
+  // Only Stripe's status, code and type: messages can echo customer details or key fragments.
+  if (!res.ok) throw new Error(`stripe ${method} ${path} ${res.status} ${safeToken(json?.error?.code)} ${safeToken(json?.error?.type)}`.trim());
   return json;
 }
 
-/** Active + trialing subscriptions marked happli_founding=true, cached for a minute. Stops counting at the cap. */
+function safeToken(v: unknown): string {
+  return typeof v === 'string' && /^[a-z0-9_]{1,64}$/.test(v) ? v : '';
+}
+
+/** Turnstile tokens must be solved on the host this Worker is answering for, nowhere else. */
+export function turnstileHostOk(solvedOn: string | undefined, siteHost: string): boolean {
+  return !!solvedOn && solvedOn.toLowerCase() === siteHost;
+}
+
+async function sha256Hex(text: string): Promise<string> {
+  const d = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
+  return [...new Uint8Array(d)].map((b) => b.toString(16).padStart(2, '0')).join('');
+}
+
+/**
+ * Founding subscriptions (active + trialing) plus open Founding Checkout Sessions, cached for a
+ * minute. Stops counting at the cap.
+ */
 async function foundingCount(key: string, now: number): Promise<number> {
   if (foundingCache && now - foundingCache.at < FOUNDING_CACHE_MS) return foundingCache.count;
   let count = 0;
@@ -103,6 +132,17 @@ async function foundingCount(key: string, now: number): Promise<number> {
       count += (r.data ?? []).length;
       page = r.has_more ? r.next_page : undefined;
     } while (page && count < founding.maxStudios);
+  }
+  // Open sessions can't be searched by metadata, so list them and filter. They expire in 30 minutes.
+  let after: string | undefined;
+  while (count < founding.maxStudios) {
+    const params = new URLSearchParams({ status: 'open', limit: '100' });
+    if (after) params.set('starting_after', after);
+    const r = await stripe(key, 'GET', '/checkout/sessions', params);
+    const data: Array<{ id: string; metadata?: Record<string, string> }> = r.data ?? [];
+    count += data.filter((s) => s.metadata?.happli_founding === 'true').length;
+    if (!r.has_more || !data.length) break;
+    after = data[data.length - 1].id;
   }
   foundingCache = { count, at: now };
   return count;
@@ -133,8 +173,19 @@ export async function handleCheckout(request: Request, env: CheckoutEnv, now = D
   }
   const key = env.STRIPE_CHECKOUT_KEY!.trim();
   const site = env.SITE_URL!.trim().replace(/\/+$/, '');
-  if (!keyMatchesSite(key, site)) {
-    console.error('checkout: Stripe key mode does not match SITE_URL (live key off production, or test key on production)');
+  const siteUrl = URL.parse(site);
+  if (!siteUrl || siteUrl.protocol !== 'https:') {
+    console.error('checkout: SITE_URL must be an https URL');
+    return fail(503, 'server');
+  }
+  const siteHost = siteUrl.hostname.toLowerCase();
+  const requestHost = new URL(request.url).hostname.toLowerCase();
+  if (requestHost !== siteHost) {
+    console.error('checkout: host mismatch (request host is not the SITE_URL host)');
+    return fail(503, 'server');
+  }
+  if (!keyMatchesSite(key, requestHost)) {
+    console.error('checkout: Stripe key mode does not match the host (live key off production, or test key on production)');
     return fail(503, 'server');
   }
 
@@ -159,7 +210,7 @@ export async function handleCheckout(request: Request, env: CheckoutEnv, now = D
     if (request.headers.get('cf-connecting-ip')) body.set('remoteip', request.headers.get('cf-connecting-ip')!);
     const res = await fetch(SITEVERIFY, { method: 'POST', body, signal: AbortSignal.timeout(FETCH_TIMEOUT_MS) });
     const outcome = (await res.json()) as { success?: boolean; hostname?: string };
-    if (!outcome.success || !isAllowedTurnstileHost(outcome.hostname)) return fail(403, 'verification_failed');
+    if (!outcome.success || !turnstileHostOk(outcome.hostname, siteHost)) return fail(403, 'verification_failed');
   } catch {
     console.error('checkout: turnstile siteverify unreachable');
     return fail(502, 'server');
@@ -176,7 +227,7 @@ export async function handleCheckout(request: Request, env: CheckoutEnv, now = D
     const lookup = new URLSearchParams({ active: 'true', limit: '10' });
     for (const i of items) lookup.append('lookup_keys[]', i.lookupKey);
     const prices = (await stripe(key, 'GET', '/prices', lookup)).data as Array<{
-      id: string; lookup_key: string; unit_amount: number | null; currency: string; recurring?: { interval?: string } | null;
+      id: string; lookup_key: string; unit_amount: number | null; currency: string; recurring?: { interval?: string; interval_count?: number } | null;
     }>;
     const interval = choice.period === 'yearly' ? 'year' : 'month';
 
@@ -185,6 +236,8 @@ export async function handleCheckout(request: Request, env: CheckoutEnv, now = D
       billing_address_collection: 'required',
       payment_method_collection: 'always',
       allow_promotion_codes: 'false',
+      expires_at: String(Math.floor(now / 1000) + SESSION_TTL_S),
+      'metadata[happli_founding]': String(choice.founding),
       success_url: `${site}/signup/thanks/?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${site}/signup/?canceled=1&plan=${choice.plan}&period=${choice.period}&locations=${choice.locations}${choice.founding ? '&founding=1' : ''}`,
       'subscription_data[trial_period_days]': String(trialDays),
@@ -198,19 +251,21 @@ export async function handleCheckout(request: Request, env: CheckoutEnv, now = D
     items.forEach((item, n) => {
       const price = prices.find((p) => p.lookup_key === item.lookupKey);
       if (!price) throw new Error(`price missing for lookup key ${item.lookupKey}`);
-      if (price.unit_amount !== item.unitAmountCents || price.currency !== 'usd' || price.recurring?.interval !== interval) {
+      if (price.unit_amount !== item.unitAmountCents || price.currency !== 'usd' || price.recurring?.interval !== interval || price.recurring?.interval_count !== 1) {
         throw new Error(`price ${item.lookupKey} is ${price.unit_amount} ${price.currency}/${price.recurring?.interval}, expected ${item.unitAmountCents} usd/${interval}`);
       }
       session.set(`line_items[${n}][price]`, price.id);
       session.set(`line_items[${n}][quantity]`, String(item.quantity));
     });
 
-    const created = await stripe(key, 'POST', '/checkout/sessions', session);
+    // Same Turnstile token + same choice = same session if the request is retried.
+    const idem = await sha256Hex(`${token}|${choice.plan}|${choice.period}|${choice.locations}|${choice.founding}`);
+    const created = await stripe(key, 'POST', '/checkout/sessions', session, `checkout-${idem}`);
     const url = typeof created.url === 'string' ? created.url : '';
     if (!url.startsWith('https://checkout.stripe.com/')) throw new Error('session has no checkout.stripe.com url');
     return Response.json({ ok: true, url }, { status: 200, headers });
   } catch (err) {
-    console.error(`checkout: ${err instanceof Error ? err.message : 'unknown error'}`);
+    console.error(`checkout: ${err instanceof Error && err.message.startsWith('stripe ') ? err.message : err instanceof Error && err.message.startsWith('price') ? err.message : 'request failed'}`);
     return fail(503, 'server');
   }
 }

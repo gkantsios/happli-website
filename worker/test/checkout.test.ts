@@ -1,7 +1,7 @@
 // POST /api/checkout (worker/checkout.ts). fetch is mocked: nothing reaches Stripe or Cloudflare.
 import { test, beforeEach, afterEach } from 'node:test';
 import assert from 'node:assert/strict';
-import { handleCheckout, validateBody, keyMatchesSite, foundingDateOpen, resetFoundingCache, type CheckoutEnv } from '../checkout.ts';
+import { handleCheckout, validateBody, keyMatchesSite, foundingDateOpen, resetFoundingCache, turnstileHostOk, type CheckoutEnv } from '../checkout.ts';
 import { lineItems } from '../../src/lib/checkout.ts';
 
 const PREVIEW = 'https://feat-astro-rebuild-happli-website.gkantsios.workers.dev';
@@ -16,6 +16,9 @@ const env: CheckoutEnv = {
 type Call = { url: string; init?: RequestInit };
 let calls: Call[];
 let foundingSubs: number;
+let openFounding: number;
+let intervalCount: number;
+let turnstileHost: string;
 let amountOverride: Record<string, number>;
 let missingKeys: Set<string>;
 const realFetch = globalThis.fetch;
@@ -23,13 +26,16 @@ const realFetch = globalThis.fetch;
 beforeEach(() => {
   calls = [];
   foundingSubs = 0;
+  openFounding = 0;
+  intervalCount = 1;
+  turnstileHost = 'feat-astro-rebuild-happli-website.gkantsios.workers.dev';
   amountOverride = {};
   missingKeys = new Set();
   resetFoundingCache();
   globalThis.fetch = (async (url: string | URL, init?: RequestInit) => {
     const u = String(url);
     calls.push({ url: u, init });
-    if (u.includes('siteverify')) return Response.json({ success: true, hostname: 'feat-astro-rebuild-happli-website.gkantsios.workers.dev' });
+    if (u.includes('siteverify')) return Response.json({ success: true, hostname: turnstileHost });
     if (u.includes('/subscriptions/search')) {
       const status = new URL(u).searchParams.get('query')!.includes("'active'") ? 'active' : 'trialing';
       const n = status === 'active' ? foundingSubs : 0;
@@ -41,8 +47,11 @@ beforeEach(() => {
         const yearly = k.endsWith('_yearly');
         const all = [true, false].flatMap((f) => (['solo', 'studio'] as const).flatMap((plan) => lineItems({ plan, period: yearly ? 'yearly' : 'monthly', locations: 2, founding: f })));
         const amt = amountOverride[k] ?? all.find((i) => i.lookupKey === k)!.unitAmountCents;
-        return { id: `price_${k}`, lookup_key: k, unit_amount: amt, currency: 'usd', recurring: { interval: yearly ? 'year' : 'month' } };
+        return { id: `price_${k}`, lookup_key: k, unit_amount: amt, currency: 'usd', recurring: { interval: yearly ? 'year' : 'month', interval_count: intervalCount } };
       }) });
+    }
+    if (u.includes('/checkout/sessions') && (init?.method ?? 'GET') === 'GET') {
+      return Response.json({ data: Array.from({ length: openFounding }, (_, i) => ({ id: `cs_${i}`, metadata: { happli_founding: 'true' } })).concat([{ id: 'cs_x', metadata: { happli_founding: 'false' } }]), has_more: false });
     }
     if (u.includes('/checkout/sessions')) return Response.json({ id: 'cs_test_1', url: 'https://checkout.stripe.com/c/pay/cs_test_1' });
     return new Response('unexpected', { status: 500 });
@@ -212,4 +221,84 @@ test('Stripe amount different from pricing.ts fails closed', async () => {
   const res = await handleCheckout(post(good), env, NOW);
   assert.equal(res.status, 503);
   assert.ok(!calls.some((c) => c.url.includes('/checkout/sessions')));
+});
+
+const PROD = 'https://gohappli.com';
+function postTo(base: string, body: unknown = good) {
+  return new Request(`${base}/api/checkout`, { method: 'POST', body: JSON.stringify(body), headers: { 'content-type': 'application/json', origin: base } });
+}
+
+test('M1: live key with SITE_URL=prod, request on a preview host is refused', async () => {
+  const res = await handleCheckout(postTo(PREVIEW), { ...env, STRIPE_CHECKOUT_KEY: 'rk_live_abc', SITE_URL: PROD }, NOW);
+  assert.equal(res.status, 503);
+  assert.ok(!calls.some((c) => c.url.includes('stripe.com')));
+});
+
+test('M1: test key with SITE_URL=preview, request on gohappli.com is refused', async () => {
+  const res = await handleCheckout(postTo(PROD), { ...env, SITE_URL: PREVIEW }, NOW);
+  assert.equal(res.status, 503);
+  assert.ok(!calls.some((c) => c.url.includes('stripe.com')));
+});
+
+test('M1: test key on gohappli.com with SITE_URL=prod is refused; live key there works', async () => {
+  assert.equal((await handleCheckout(postTo(PROD), { ...env, SITE_URL: PROD }, NOW)).status, 503);
+  turnstileHost = 'gohappli.com';
+  assert.equal((await handleCheckout(postTo(PROD), { ...env, SITE_URL: PROD, STRIPE_CHECKOUT_KEY: 'rk_live_abc' }, NOW)).status, 200);
+});
+
+test('N2: SITE_URL must be https', async () => {
+  const http = PREVIEW.replace('https:', 'http:');
+  assert.equal((await handleCheckout(postTo(http), { ...env, SITE_URL: http }, NOW)).status, 503);
+});
+
+test('N4: Turnstile must be solved on the SITE_URL host', async () => {
+  assert.equal(turnstileHostOk('gohappli.com', 'gohappli.com'), true);
+  assert.equal(turnstileHostOk('feat-x-happli-website.gkantsios.workers.dev', 'gohappli.com'), false);
+  turnstileHost = 'other-happli-website.gkantsios.workers.dev';
+  assert.equal((await handleCheckout(post(good), env, NOW)).status, 403);
+});
+
+test('N3: interval_count other than 1 fails closed', async () => {
+  intervalCount = 3;
+  assert.equal((await handleCheckout(post(good), env, NOW)).status, 503);
+});
+
+test('L1: session expires in 30 minutes and carries Founding metadata', async () => {
+  await handleCheckout(post({ ...good, founding: true }), env, NOW);
+  const p = new URLSearchParams(String(calls.find((c) => c.init?.method === 'POST' && c.url.includes('/checkout/sessions'))!.init!.body));
+  assert.equal(p.get('expires_at'), String(Math.floor(NOW / 1000) + 1800));
+  assert.equal(p.get('metadata[happli_founding]'), 'true');
+});
+
+test('L1: open Founding sessions count toward the cap', async () => {
+  foundingSubs = 40;
+  openFounding = 10;
+  assert.equal((await handleCheckout(post({ ...good, founding: true }), env, NOW)).status, 409);
+  resetFoundingCache();
+  openFounding = 9;
+  assert.equal((await handleCheckout(post({ ...good, founding: true }), env, NOW)).status, 200);
+});
+
+test('N1: session create sends a stable Idempotency-Key', async () => {
+  await handleCheckout(post(good), env, NOW);
+  await handleCheckout(post(good), env, NOW);
+  const keys = calls.filter((c) => c.init?.method === 'POST' && c.url.includes('/checkout/sessions')).map((c) => (c.init!.headers as Record<string, string>)['Idempotency-Key']);
+  assert.equal(keys.length, 2);
+  assert.match(keys[0], /^checkout-[0-9a-f]{64}$/);
+  assert.equal(keys[0], keys[1]);
+});
+
+test('L3: logs carry only Stripe status, code and type', async () => {
+  const logs: string[] = [];
+  const orig = console.error;
+  console.error = (m: string) => { logs.push(String(m)); };
+  globalThis.fetch = (async (u: string) => {
+    if (String(u).includes('siteverify')) return Response.json({ success: true, hostname: turnstileHost });
+    return Response.json({ error: { code: 'parameter_invalid', type: 'invalid_request_error', message: 'Invalid email jane@ex.com sk_test_SECRET' } }, { status: 400 });
+  }) as typeof fetch;
+  try {
+    assert.equal((await handleCheckout(post(good), env, NOW)).status, 503);
+  } finally { console.error = orig; }
+  assert.ok(logs.some((l) => l.includes('400 parameter_invalid invalid_request_error')));
+  assert.ok(!logs.some((l) => l.includes('jane@') || l.includes('SECRET')));
 });
