@@ -1,6 +1,7 @@
 // Happli pricing: two plans and one add-on. This is the single source for every price on the site
 // (/pricing, /signup, the home and niche pages, the compare index and the SoftwareApplication JSON-LD).
-// The compare articles in src/content/compare/ repeat these numbers by hand, so update them too.
+// The compare articles in src/content/compare/ and the Terms (src/legal/terms.html) repeat these numbers
+// by hand, so update them too.
 // Set by Grant on Oct 19, 2026. Don't add other prices, trials or discounts without Grant's say-so.
 //
 // Stripe: the old Payment Links were for the old 1/2/3-location prices, so they are no longer linked.
