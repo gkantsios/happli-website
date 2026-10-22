@@ -1,7 +1,9 @@
 ---
 // Solo and Studio plans, the Marketing add-on and the pricing terms (all numbers live in src/config/pricing.ts).
-// The Monthly / Billed yearly toggle is two native radios; CSS swaps the figures, so it needs no script.
+// The Monthly / Billed yearly toggle is two native radios; CSS swaps the figures. A small script keeps the
+// plan buttons' /signup/ links on the chosen billing (they default to monthly without JS).
 import Icon from '../Icon.astro';
+import { signupHref } from '../../lib/signup-query';
 import { site } from '../../config/site';
 import {
   plans,
@@ -117,7 +119,7 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY;
                 Book a call to start {plan.name}
               </a>
             ) : (
-              <a class:list={['btn', plan.featured ? 'btn-coral' : 'btn-ghost']} href={plan.href}>
+              <a class:list={['btn', plan.featured ? 'btn-coral' : 'btn-ghost']} href={signupHref(plan.id, 'monthly')} data-plan-cta={plan.id}>
                 Get started with {plan.name}
               </a>
             )}
@@ -242,6 +244,24 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY;
     </ul>
   </div>
 </section>
+
+{cta === 'signup' && (
+  <script is:inline>
+    (function () {
+      function sync() {
+        var y = document.querySelector('input[name="billing"][value="yearly"]');
+        var billing = y && y.checked ? 'yearly' : 'monthly';
+        document.querySelectorAll('a[data-plan-cta]').forEach(function (a) {
+          var plan = a.getAttribute('data-plan-cta');
+          if (plan === 'solo' || plan === 'studio') a.setAttribute('href', '/signup/?plan=' + plan + '&billing=' + billing);
+        });
+      }
+      document.addEventListener('change', function (e) { if (e.target && e.target.name === 'billing') sync(); });
+      window.addEventListener('pageshow', sync);
+      sync();
+    })();
+  </script>
+)}
 
 {
   waitlist && turnstileSiteKey && (

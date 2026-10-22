@@ -239,7 +239,7 @@ export async function handleCheckout(request: Request, env: CheckoutEnv, now = D
       expires_at: String(Math.floor(now / 1000) + SESSION_TTL_S),
       'metadata[happli_founding]': String(choice.founding),
       success_url: `${site}/signup/thanks/?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${site}/signup/?canceled=1&plan=${choice.plan}&period=${choice.period}&locations=${choice.locations}${choice.founding ? '&founding=1' : ''}`,
+      cancel_url: `${site}/signup/?canceled=1&plan=${choice.plan}&billing=${choice.period}&locations=${choice.locations}${choice.founding ? '&founding=1' : ''}`,
       'subscription_data[trial_period_days]': String(trialDays),
       'subscription_data[trial_settings][end_behavior][missing_payment_method]': 'cancel',
       'subscription_data[metadata][happli_plan]': choice.plan,

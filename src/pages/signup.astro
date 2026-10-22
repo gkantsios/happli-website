@@ -25,6 +25,7 @@ for (const p of plans) {
   }
 }
 const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY;
+import { parseSignupQuery } from '../lib/signup-query';
 ---
 
 <BaseLayout
@@ -109,6 +110,7 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY;
 </BaseLayout>
 
 {turnstileSiteKey && <script is:inline src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>}
+<script is:inline set:html={`window.happliParseSignupQuery = ${parseSignupQuery.toString()};`} />
 <script is:inline>
   (function () {
     var form = document.querySelector('[data-checkout]');
@@ -162,13 +164,11 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY;
     }
 
     // Choices come back from /pricing (?plan=) or a canceled checkout.
-    var q = new URLSearchParams(location.search);
-    var qp = form.querySelector('[name="plan"][value="' + q.get('plan') + '"]');
-    if (qp) qp.checked = true;
-    var qd = form.querySelector('[name="period"][value="' + q.get('period') + '"]');
-    if (qd) qd.checked = true;
-    if (q.get('locations')) loc.value = String(Math.min(max, Math.max(1, Math.round(Number(q.get('locations'))) || 1)));
-    if (q.get('canceled')) founding.checked = q.get('founding') === '1';
+    var q = window.happliParseSignupQuery(location.search);
+    if (q.plan) form.querySelector('[name="plan"][value="' + q.plan + '"]').checked = true;
+    if (q.billing) form.querySelector('[name="period"][value="' + q.billing + '"]').checked = true;
+    if (q.locations) loc.value = String(q.locations);
+    if (q.founding !== undefined) founding.checked = q.founding;
 
     form.addEventListener('change', render);
     loc.addEventListener('input', render);
