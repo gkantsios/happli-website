@@ -1,0 +1,9 @@
+{
+  "name": "happli-website",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Static site for gohappli.com",
+  "scripts": {
+    "build": "echo \"Static site: no build step\""
+  }
+}
