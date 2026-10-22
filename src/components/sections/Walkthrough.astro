@@ -36,24 +36,26 @@ const titles = ['Needs you', 'The book · Thursday', 'Appointment · Maria K.', 
               tabindex={i === 0 ? '0' : '-1'}
               data-step={i}
             >
-              <b>
-                {s.time} · {s.title}
-              </b>
-              <span>{s.body}</span>
+              <span class="time">{s.time}</span>
+              <b>{s.title}</b>
+              <span class="body">{s.body}</span>
               <i aria-hidden="true" />
             </li>
           ))
         }
       </ol>
 
+      <div class="stage">
       <div class="demo" role="tabpanel" id="walk-panel" aria-labelledby="walk-tab-0" data-titles={JSON.stringify(titles)}>
         <div class="demo-bar">
           <div class="dots" aria-hidden="true"><i></i><i></i><i></i></div>
           <span class="demo-title" data-title>{titles[0]}</span>
+          {/* how many rows still need you on the Needs you scene (CSS follows the rows' done state) */}
+          <span class="count" aria-hidden="true"><span class="c2">2</span><span class="c1">1</span></span>
         </div>
 
         <div class="scene on" data-scene="0">
-          <NeedsList interactive />
+          <NeedsList interactive strip />
         </div>
 
         <div class="scene" data-scene="1" inert>
@@ -98,6 +100,7 @@ const titles = ['Needs you', 'The book · Thursday', 'Appointment · Maria K.', 
             <p class="rebook-done"><b>Booked</b> · confirmation sent</p>
           </div>
         </div>
+      </div>
       </div>
     </div>
   </div>
@@ -267,26 +270,48 @@ const titles = ['Needs you', 'The book · Thursday', 'Appointment · Maria K.', 
 <style>
   .walk-in {
     display: grid;
-    grid-template-columns: 0.9fr 1.4fr;
+    grid-template-columns: minmax(0, 4fr) minmax(0, 7fr);
     gap: 56px;
-    margin-top: 56px;
-    align-items: start;
+    margin-top: var(--space-block);
+    align-items: stretch;
   }
 
-  /* steps */
+  /* steps: a vertical timeline */
   .steps {
+    position: relative;
     list-style: none;
     margin: 0;
-    padding: 0;
-    display: grid;
-    gap: 4px;
+    padding: 0 0 0 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .steps::before {
+    content: '';
+    position: absolute;
+    left: 7px;
+    top: 22px;
+    bottom: 22px;
+    width: 1px;
+    background: var(--line-strong);
   }
   .step {
     position: relative;
-    padding: 16px 18px 18px;
+    min-height: 44px;
+    padding: 16px 18px 20px;
     border-radius: var(--radius);
     cursor: pointer;
-    transition: background 0.2s;
+  }
+  .step::before {
+    content: '';
+    position: absolute;
+    left: -26px;
+    top: 22px;
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    background: var(--bg);
+    border: 1.5px solid var(--faint);
   }
   .step:hover {
     background: rgba(27, 22, 20, 0.04);
@@ -295,12 +320,24 @@ const titles = ['Needs you', 'The book · Thursday', 'Appointment · Maria K.', 
     outline: 2px solid var(--ink);
     outline-offset: 2px;
   }
+  .step .time {
+    display: block;
+    font-size: var(--fs-eyebrow);
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+  }
   .step b {
     display: block;
-    font-weight: 600;
-    font-size: 16px;
+    margin-top: 2px;
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: 21px;
+    line-height: 1.25;
   }
-  .step span {
+  .step .body {
     display: block;
     margin-top: 4px;
     font-size: 14px;
@@ -322,19 +359,28 @@ const titles = ['Needs you', 'The book · Thursday', 'Appointment · Maria K.', 
     content: '';
     position: absolute;
     inset: 0;
-    background: var(--ink);
+    background: var(--coral);
     transform: scaleX(0);
     transform-origin: 0 0;
   }
   .step.on {
     background: var(--surface);
-    box-shadow: 0 1px 0 var(--line), 0 8px 24px -16px rgba(27, 22, 20, 0.25);
+    box-shadow: var(--shadow-card);
+  }
+  .step.on::before {
+    background: var(--coral);
+    border-color: var(--coral);
   }
   .step.on i {
     opacity: 1;
   }
-  .step.on.playing i::after {
-    animation: progress 7s linear forwards;
+  @media (prefers-reduced-motion: no-preference) {
+    .step {
+      transition: background 0.2s;
+    }
+    .step.on.playing i::after {
+      animation: progress 7s linear forwards;
+    }
   }
   @keyframes progress {
     to {
@@ -342,14 +388,25 @@ const titles = ['Needs you', 'The book · Thursday', 'Appointment · Maria K.', 
     }
   }
 
-  /* demo window */
+  /* the app window sits on a blush panel, like the payments section */
+  .stage {
+    display: grid;
+    align-items: center;
+    padding: 48px;
+    border-radius: var(--radius-lg);
+    background:
+      radial-gradient(70% 80% at 20% 0%, #f8dad6 0%, rgba(248, 218, 214, 0) 70%),
+      linear-gradient(160deg, var(--blush-2), var(--blush));
+  }
+  /* all scenes share one grid cell, so the window is as tall as its tallest scene and keeps one
+     size whichever scene shows (nothing below it shifts) */
   .demo {
     position: relative;
+    display: grid;
+    grid-template-rows: auto 1fr;
     background: var(--surface);
-    border: 1px solid var(--line-strong);
     border-radius: var(--radius-lg);
-    box-shadow: 0 30px 80px -30px rgba(27, 22, 20, 0.22);
-    min-height: 480px;
+    box-shadow: var(--shadow-card);
     overflow: hidden;
   }
   .demo-bar {
@@ -373,20 +430,53 @@ const titles = ['Needs you', 'The book · Thursday', 'Appointment · Maria K.', 
     border-radius: 50%;
     background: rgba(27, 22, 20, 0.12);
   }
+  .count {
+    display: none;
+    margin-left: auto;
+    min-width: 24px;
+    height: 24px;
+    padding: 0 8px;
+    border-radius: var(--radius-pill);
+    background: var(--coral-soft);
+    color: var(--coral-ink);
+    font-size: 12px;
+    line-height: 24px;
+    text-align: center;
+  }
+  .demo:has(.scene[data-scene='0'].on) .count {
+    display: inline-block;
+  }
+  .demo:has(.need.all) .count,
+  .count .c1,
+  .demo:has(.need-row.done) .count .c2 {
+    display: none;
+  }
+  .demo:has(.need-row.done) .count .c1 {
+    display: inline;
+  }
   .scene {
-    position: absolute;
-    inset: 44px 0 0;
+    grid-area: 2 / 1;
+    position: relative;
     padding: 24px;
+    visibility: hidden;
     opacity: 0;
-    transform: translateY(8px);
-    transition: opacity 0.35s ease, transform 0.35s ease;
     pointer-events: none;
     font-size: 14px;
   }
   .scene.on {
+    visibility: visible;
     opacity: 1;
-    transform: none;
     pointer-events: auto;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .scene {
+      transform: translateY(8px);
+      transition: opacity 0.35s ease, transform 0.35s ease, visibility 0s 0.35s;
+    }
+    .scene.on {
+      transform: none;
+      transition-delay: 0s;
+    }
   }
 
   .rebook-done {
@@ -454,7 +544,6 @@ const titles = ['Needs you', 'The book · Thursday', 'Appointment · Maria K.', 
     min-height: 64px;
     border: 1px dashed var(--coral);
     color: var(--coral-ink);
-    transition: background 0.4s, border-color 0.4s;
   }
   .gap-open :global(b),
   .gap-open :global(span) {
@@ -579,15 +668,12 @@ const titles = ['Needs you', 'The book · Thursday', 'Appointment · Maria K.', 
     margin-top: 16px;
   }
 
-  @media (prefers-reduced-motion: reduce) {
-    .step,
-    .scene,
+  @media (prefers-reduced-motion: no-preference) {
     .gap-open {
-      transition: none;
+      transition: background 0.4s, border-color 0.4s;
     }
-    .scene {
-      transform: none;
-    }
+  }
+  @media (prefers-reduced-motion: reduce) {
     .step i {
       display: none;
     }
@@ -595,29 +681,39 @@ const titles = ['Needs you', 'The book · Thursday', 'Appointment · Maria K.', 
 
   @media (max-width: 860px) {
     .walk-in {
-      grid-template-columns: 1fr;
+      grid-template-columns: minmax(0, 1fr);
       gap: 24px;
     }
     .gapview {
       grid-template-columns: 1fr;
     }
-    /* all scenes share one grid cell, so the panel is as tall as the tallest scene and never
-       changes size when the scene changes (nothing below it shifts) */
-    .demo {
-      min-height: 0;
-      display: grid;
-      grid-template-rows: auto 1fr;
+  }
+  /* phones: the steps become a row of cards that scrolls sideways */
+  @media (max-width: 767px) {
+    .steps {
+      flex-direction: row;
+      gap: 10px;
+      padding: 0 0 8px;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      scrollbar-width: none;
     }
-    .scene {
-      grid-area: 2 / 1;
-      position: relative;
-      inset: auto;
-      opacity: 1;
-      transform: none;
-      visibility: hidden;
+    .steps::before,
+    .step::before {
+      display: none;
     }
-    .scene.on {
-      visibility: visible;
+    .step {
+      flex: 0 0 72%;
+      scroll-snap-align: start;
+      background: var(--surface);
+      border: 1px solid var(--line);
+    }
+    .step.on {
+      border-color: var(--coral);
+      box-shadow: none;
+    }
+    .stage {
+      padding: 20px;
     }
   }
   @media (max-width: 480px) {

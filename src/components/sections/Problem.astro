@@ -1,57 +1,134 @@
 ---
 import SectionHead from './SectionHead.astro';
 
+// Each pain has a small "evidence" chip: sample UI, drawn as an illustration.
+// TODO confirm: the sample text in the chips is new (Grant approved the layout).
 const pains = [
-  'Texting back and forth to find a time that works.',
-  "Clients who book, forget and don't show up.",
-  "Empty spots you only notice once it's too late to fill them.",
-];
+  { text: 'Texting back and forth to find a time that works.', chip: 'texts' },
+  { text: "Clients who book, forget and don't show up.", chip: 'noshow' },
+  { text: "Empty spots you only notice once it's too late to fill them.", chip: 'gap' },
+] as const;
 ---
 
 <section class="section" aria-labelledby="problem-title">
-  <div class="wrap problem">
-    <SectionHead eyebrow="The problem" title="You got into this work for the clients, not the admin." id="problem-title">
-      <p>But the day fills up with it anyway:</p>
-    </SectionHead>
+  <div class="wrap">
+    <div class="head">
+      <SectionHead eyebrow="The problem" title="You got into this work for the clients, not the admin." id="problem-title">
+        <p>But the day fills up with it anyway:</p>
+      </SectionHead>
+    </div>
     <ul class="pains" data-reveal-stagger>
-      {pains.map((p, i) => <li><span aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>{p}</li>)}
+      {
+        pains.map((p, i) => (
+          <li>
+            <span class="n" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+            <p>{p.text}</p>
+            <div class="chip" aria-hidden="true">
+              {p.chip === 'texts' && (
+                <>
+                  <div class="row"><span class="muted">"Does Thursday work?"</span></div>
+                  <div class="row"><span class="muted">"How about 2?" · "Actually…"</span></div>
+                </>
+              )}
+              {p.chip === 'noshow' && (
+                <div class="row"><span>Tess M. · 2:30</span><span class="pill coral">No-show</span></div>
+              )}
+              {p.chip === 'gap' && (
+                <div class="row"><span>Thu 1:15 – 2:15</span><span class="pill sand">Open</span></div>
+              )}
+            </div>
+          </li>
+        ))
+      }
     </ul>
   </div>
 </section>
 
 <style>
-  .problem {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 64px;
-    align-items: end;
+  /* the heading runs the full width (one line on desktop); the lede keeps its own measure */
+  .head :global(.section-head) {
+    max-width: none;
   }
   .pains {
     list-style: none;
-    margin: 0;
+    margin: var(--space-block) 0 0;
     padding: 0;
-    border-top: 1px solid var(--line);
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 24px;
   }
   .pains li {
     display: flex;
-    gap: 18px;
-    padding: 16px 0;
-    border-bottom: 1px solid var(--line);
-    font-size: 16px;
-    color: var(--ink-2);
+    flex-direction: column;
+    gap: 20px;
+    min-height: 260px;
+    padding: 32px;
+    border-radius: var(--radius-lg);
+    background: var(--surface);
+    border: 1px solid var(--line);
   }
-  .pains span {
+  .n {
     font-family: var(--serif);
-    font-size: 15px;
+    font-weight: 300;
+    font-size: 56px;
+    line-height: 1;
     color: var(--coral-ink);
     font-variant-numeric: tabular-nums;
-    flex: none;
-    width: 1.6em;
   }
-  @media (max-width: 860px) {
-    .problem {
-      grid-template-columns: 1fr;
-      gap: 40px;
+  .pains p {
+    font-family: var(--serif);
+    font-size: 22px;
+    line-height: 1.3;
+    color: var(--ink);
+    text-wrap: pretty;
+  }
+  .chip {
+    margin-top: auto;
+    padding: 6px 16px;
+    border-radius: var(--radius);
+    background: var(--blush-2);
+    border: 1px solid var(--line);
+    font-size: 13px;
+  }
+  .row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 0;
+  }
+  .row + .row {
+    border-top: 1px solid var(--line);
+  }
+  .muted {
+    color: var(--muted);
+  }
+  .pill {
+    flex: none;
+    padding: 3px 10px;
+    border-radius: var(--radius-pill);
+    font-size: 12px;
+    font-weight: 600;
+  }
+  .pill.coral {
+    background: var(--coral-soft);
+    color: var(--coral-ink);
+  }
+  .pill.sand {
+    background: var(--sand);
+    color: #6e5420;
+  }
+  @media (max-width: 767px) {
+    .pains {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 16px;
+    }
+    .pains li {
+      min-height: 0;
+      padding: 24px;
+    }
+    .n {
+      font-size: 44px;
     }
   }
 </style>

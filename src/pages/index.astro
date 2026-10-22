@@ -4,8 +4,7 @@ import HeroZoom from '../components/sections/HeroZoom.astro';
 import HeroStatic from '../components/sections/HeroStatic.astro';
 import Walkthrough from '../components/sections/Walkthrough.astro';
 import Problem from '../components/sections/Problem.astro';
-import SectionHead from '../components/sections/SectionHead.astro';
-import FeatureGrid, { type Feature } from '../components/sections/FeatureGrid.astro';
+import Audience from '../components/sections/Audience.astro';
 import FeatureCards from '../components/sections/FeatureCards.astro';
 import Steps from '../components/sections/Steps.astro';
 import PaymentsTrust from '../components/sections/PaymentsTrust.astro';
@@ -19,13 +18,6 @@ import { lowPrice, founding, usd } from '../config/pricing';
 const title = 'Happli | Booking software for spray tan and beauty studios, with AI built in';
 const description =
   'Booking software for spray tan and beauty studios, with AI built in. Clients book, pay deposits and get reminders on their own; what needs you lands in one list.';
-
-const audience: Feature[] = [
-  { icon: 'sun', title: 'Spray tan studios', body: 'that want online booking, deposits and prep reminders without the phone tag.' },
-  { icon: 'car', title: 'Mobile spray tan artists', body: 'who travel to clients. Happli supports mobile locations and can draft an "I\'m on my way" text for you to approve.' },
-  { icon: 'brush', title: 'Estheticians, lash and brow artists, and other appointment-based beauty pros', body: 'who want one place for booking, payments and client history.' },
-  { icon: 'users', title: 'Small teams and multi-location studios', body: "that need a shared calendar, each person's hours, and a booking page for each location." },
-];
 
 const faq: FaqItem[] = [
   { q: 'Does Happli take a cut of my payments?', a: 'No. Happli never takes a cut of your payments. Card processing fees go to Stripe.' },
@@ -49,12 +41,7 @@ const faq: FaqItem[] = [
   <Steps />
   <PaymentsTrust />
 
-  <section class="section" aria-labelledby="who-title">
-    <div class="wrap">
-      <SectionHead title="Who it's for" id="who-title" />
-      <FeatureGrid items={audience} columns={2} />
-    </div>
-  </section>
+  <Audience />
 
   <Testimonials />
   <Faq items={faq} />

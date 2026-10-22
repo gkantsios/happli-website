@@ -56,7 +56,7 @@ Choose GlossGenius if you're just starting out and want the lowest monthly price
 
 ## Who should pick Happli
 
-Choose Happli if you are a spray tan studio or beauty pro who wants booking, deposits and reminders plus a short daily list of what needs you, and you'd rather have every feature on one plan than climb feature tiers. [Book a demo](https://tidycal.com/gkantsios/30-minute-meeting) to see it with your own schedule.
+Choose Happli if you are a spray tan studio or beauty pro who wants booking, deposits and reminders plus a short daily list of what needs you, and you'd rather have every feature on one plan than climb feature tiers. <a href="https://tidycal.com/gkantsios/happli-demo" target="_blank" rel="noopener">Book a demo</a> to see it with your own schedule.
 
 ## Sources
 

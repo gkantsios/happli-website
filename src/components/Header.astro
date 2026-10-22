@@ -21,7 +21,7 @@ const isCurrent = (href: string) => current === href;
     <div class="nav-cta">
       <a class="signin" href={site.signInUrl}>Sign in</a>
       {site.demo.enabled && <a class="demo" href={site.demo.href}>{site.demo.label}</a>}
-      <a class="btn btn-primary" href={site.cta.href}>{site.cta.label}</a>
+      <a class="btn btn-primary" href={site.cta.href} target="_blank" rel="noopener">{site.cta.label}</a>
       <details class="menu">
         <summary>Menu</summary>
         <nav class="menu-panel" aria-label="Mobile">
@@ -29,7 +29,7 @@ const isCurrent = (href: string) => current === href;
           {site.demo.enabled && <a href={site.demo.href}>{site.demo.label}</a>}
           <a href="/signup/">Get started</a>
           <a href={site.signInUrl}>Sign in</a>
-          <a class="menu-cta" href={site.cta.href}>{site.cta.label}</a>
+          <a class="menu-cta" href={site.cta.href} target="_blank" rel="noopener">{site.cta.label}</a>
         </nav>
       </details>
     </div>
@@ -72,6 +72,9 @@ const isCurrent = (href: string) => current === href;
   }
   .logo {
     flex: none;
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
     border-radius: 4px;
   }
   .nav-links {

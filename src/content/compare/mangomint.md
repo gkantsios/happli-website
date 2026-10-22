@@ -57,7 +57,7 @@ Choose Mangomint if you run a larger salon or spa and want payroll and a phone s
 
 ## Who should pick Happli
 
-Choose Happli if you are a spray tan studio or beauty pro who wants online booking, deposits and reminders without paying for every login, and a short list of the few things each day that need you. If you'd like to see it with your own schedule first, [book a demo](https://tidycal.com/gkantsios/30-minute-meeting).
+Choose Happli if you are a spray tan studio or beauty pro who wants online booking, deposits and reminders without paying for every login, and a short list of the few things each day that need you. If you'd like to see it with your own schedule first, <a href="https://tidycal.com/gkantsios/happli-demo" target="_blank" rel="noopener">book a demo</a>.
 
 ## Sources
 

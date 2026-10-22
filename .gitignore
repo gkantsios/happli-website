@@ -22,3 +22,6 @@ npm-debug.log*
 
 # local verification output
 lighthouse/
+
+# wrangler local secrets
+.dev.vars*

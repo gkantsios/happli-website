@@ -59,7 +59,7 @@ Choose Vagaro if price is your top concern, if you want a marketplace to help ne
 
 ## Who should pick Happli
 
-Choose Happli if you run a spray tan studio or beauty business and want a simpler product with hands-on setup and a daily short list of what needs you. [Book a demo](https://tidycal.com/gkantsios/30-minute-meeting) to see it with your own schedule.
+Choose Happli if you run a spray tan studio or beauty business and want a simpler product with hands-on setup and a daily short list of what needs you. <a href="https://tidycal.com/gkantsios/happli-demo" target="_blank" rel="noopener">Book a demo</a> to see it with your own schedule.
 
 ## Sources
 

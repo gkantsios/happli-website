@@ -1,6 +1,7 @@
 ---
 import SectionHead from './SectionHead.astro';
 import { faqPage } from '../../lib/jsonld';
+import { site } from '../../config/site';
 
 export type FaqItem = { q: string; a: string; comingSoon?: boolean };
 
@@ -15,7 +16,18 @@ const { items, title = 'Frequently asked questions', id = 'faq' } = Astro.props;
 <script type="application/ld+json" set:html={JSON.stringify(faqPage(items))} />
 <section class="section" aria-labelledby={`${id}-title`}>
   <div class="wrap faq-in">
-    <SectionHead eyebrow="FAQ" title={title} id={`${id}-title`} />
+    <div class="side">
+      <SectionHead eyebrow="FAQ" title={title} id={`${id}-title`} />
+      {/* TODO confirm: new copy ("Still have a question?"), approved by Grant with the redesign. */}
+      <div class="help" data-reveal>
+        <p class="help-title">Still have a question?</p>
+        <p class="help-body">We're happy to walk you through it.</p>
+        <div class="help-actions">
+          <a class="btn btn-ghost" href={site.cta.href} target="_blank" rel="noopener">{site.cta.label}</a>
+          <a class="mail" href={`mailto:${site.contactEmail}`}>{site.contactEmail}</a>
+        </div>
+      </div>
+    </div>
     <div class="faq" data-reveal-stagger>
       {
         items.map((item) => (
@@ -37,22 +49,66 @@ const { items, title = 'Frequently asked questions', id = 'faq' } = Astro.props;
 <style>
   .faq-in {
     display: grid;
-    grid-template-columns: 0.8fr 1.2fr;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
     gap: 64px;
     align-items: start;
   }
-  .faq {
-    border-top: 1px solid var(--line);
+  /* fills the space under the heading; the closing CTA band owns the coral button */
+  .help {
+    margin-top: 32px;
+    padding: 24px;
+    border-radius: var(--radius-lg);
+    background: var(--blush-2);
+    border: 1px solid var(--line);
   }
-  details {
-    border-bottom: 1px solid var(--line);
+  .help-title {
+    font-family: var(--serif);
+    font-size: 21px;
+    line-height: 1.25;
+  }
+  .help-body {
+    margin-top: 4px;
+    color: var(--muted);
+  }
+  .help-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px 16px;
+    margin-top: 16px;
+  }
+  .help-actions .btn {
+    background: var(--surface);
+  }
+  .mail {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    font-weight: 600;
+    font-size: 15px;
+    text-decoration: underline;
+    text-decoration-color: var(--line-strong);
+    text-underline-offset: 4px;
+  }
+  .mail:hover {
+    text-decoration-color: var(--ink);
+  }
+  .faq {
+    padding: 8px 28px;
+    border-radius: var(--radius-lg);
+    background: var(--surface);
+    border: 1px solid var(--line);
+  }
+  details + details {
+    border-top: 1px solid var(--line);
   }
   summary {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 20px;
-    padding: 20px 0;
+    gap: 16px;
+    min-height: 64px;
+    padding: 14px 0;
     cursor: pointer;
     list-style: none;
     border-radius: 4px;
@@ -65,25 +121,26 @@ const { items, title = 'Frequently asked questions', id = 'faq' } = Astro.props;
     font-size: 17px;
     font-weight: 600;
     letter-spacing: 0;
-    line-height: 1.4;
+    line-height: 1.35;
   }
   .plus {
     position: relative;
     flex: none;
-    width: 14px;
-    height: 14px;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--blush-2);
   }
   .plus::before,
   .plus::after {
     content: '';
     position: absolute;
-    left: 0;
-    right: 0;
+    left: 10px;
+    right: 10px;
     top: 50%;
     height: 1.5px;
     margin-top: -0.75px;
     background: var(--ink);
-    transition: transform 0.2s ease;
   }
   .plus::after {
     transform: rotate(90deg);
@@ -91,16 +148,28 @@ const { items, title = 'Frequently asked questions', id = 'faq' } = Astro.props;
   details[open] .plus::after {
     transform: rotate(0deg);
   }
+  @media (prefers-reduced-motion: no-preference) {
+    .plus::after {
+      transition: transform 0.2s ease;
+    }
+  }
   details p {
-    padding: 0 32px 22px 0;
-    color: var(--ink-2);
-    font-size: 15px;
+    margin-top: -4px;
+    padding: 0 48px 22px 0;
+    color: var(--muted);
+    font-size: 16px;
     max-width: 60ch;
   }
-  @media (max-width: 860px) {
+  @media (max-width: 767px) {
     .faq-in {
-      grid-template-columns: 1fr;
-      gap: 32px;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 28px;
+    }
+    .faq {
+      padding: 4px 18px;
+    }
+    details p {
+      padding-right: 0;
     }
   }
 </style>

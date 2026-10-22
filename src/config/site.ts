@@ -27,7 +27,7 @@ export const site = {
   cta: {
     label: 'Book a demo',
     // Primary CTA for every "Book a demo" button on the site.
-    href: 'https://tidycal.com/gkantsios/30-minute-meeting',
+    href: 'https://tidycal.com/gkantsios/happli-demo',
   },
 
   // "Try the demo" button. It renders in the header, the home hero and the final CTA band only when

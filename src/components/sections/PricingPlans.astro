@@ -1,5 +1,6 @@
 ---
 // Solo and Studio plans, the Marketing add-on and the pricing terms (all numbers live in src/config/pricing.ts).
+// The Monthly / Billed yearly toggle is two native radios; CSS swaps the figures, so it needs no script.
 import Icon from '../Icon.astro';
 import { site } from '../../config/site';
 import {
@@ -9,6 +10,9 @@ import {
   reminderFairUse,
   trialDays,
   includedEverywhere,
+  studioIncludedMembers,
+  extraMemberPrice,
+  yearlySavePercent,
   usd,
   yearlyTotal,
 } from '../../config/pricing';
@@ -18,58 +22,85 @@ interface Props {
   included?: boolean;
   /** Where the plan buttons go: the signup page, or straight to the book-a-call link (used on /signup/ itself). */
   cta?: 'signup' | 'call';
-  /** Where the Founding Studio badge links for the full rules. */
+  /** Where the Founding Studio pill links for the full rules. */
   foundingHref?: string;
+  /** Show the Marketing add-on waitlist form (on /pricing/ only, where the Turnstile script loads). */
+  waitlist?: boolean;
 }
-const { included = true, cta = 'signup', foundingHref = '/pricing/#founding' } = Astro.props;
+const { included = true, cta = 'signup', foundingHref = '/pricing/#founding', waitlist = false } = Astro.props;
 
 const terms = [
   { big: '$0', title: 'No setup fee', body: 'Setup and client import are free.' },
   { big: '+0%', title: 'No processing markup', body: "Card payments run at Stripe's standard rate. No cut of your sales." },
   { big: String(trialDays), title: 'Free until live', body: `Free until your studio goes live, for up to ${trialDays} days.` },
 ];
+
+const [soloPlan, studioPlan] = plans;
+const perYear = (n: number) => `${usd(n)}/mo (${usd(yearlyTotal(n))}/yr)`;
+const compareRows: { label: string; cells: [string, string] | 'check' }[] = [
+  { label: 'Team members who take bookings', cells: ['1 (you)', `Up to ${studioIncludedMembers}, then +${usd(extraMemberPrice)}/mo each`] },
+  { label: 'Front desk and admin logins', cells: ['Free', 'Free, unlimited'] },
+  { label: 'All features', cells: 'check' },
+  { label: 'Client import', cells: ['Included', 'Included'] },
+  { label: 'Priced', cells: ['Per studio', 'Per location'] },
+  { label: 'Founding Studio, monthly', cells: [`${usd(soloPlan.founding.monthly)}/mo`, `${usd(studioPlan.founding.monthly)}/mo`] },
+  { label: 'Founding Studio, billed yearly', cells: [perYear(soloPlan.founding.yearly), perYear(studioPlan.founding.yearly)] },
+  { label: 'Regular, billed yearly', cells: [perYear(soloPlan.yearly), perYear(studioPlan.yearly)] },
+];
+
+// Turnstile's public site key, set at build time. Without it the form still renders, and the
+// server answers with its "not configured" error.
+const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY;
 ---
 
 <section class="plans-section" aria-labelledby="plans-title">
   <div class="wrap">
     <h2 id="plans-title" class="visually-hidden">Plans</h2>
+    <fieldset class="billing">
+      <legend class="visually-hidden">Billing</legend>
+      <label><input type="radio" name="billing" value="monthly" checked /><span>Monthly</span></label>
+      <label><input type="radio" name="billing" value="yearly" /><span>Billed yearly · save up to {yearlySavePercent}%</span></label>
+    </fieldset>
     <p class="founding">
-      <span class="badge">Founding Studio offer</span>
+      <span class="badge">Founding Studio</span>
       <span>
-        {founding.discountPercent}% off for as long as you stay subscribed. First {founding.maxStudios} studios or first{' '}
-        {founding.days} days after launch.
-        <a href={foundingHref}>See how it works</a>
+        {founding.discountPercent}% off plans for as long as you stay subscribed. First {founding.maxStudios} studios or
+        first {founding.days} days. <a href={foundingHref}>See how it works</a>
       </span>
     </p>
     <div class="plans" data-reveal-stagger>
       {
         plans.map((plan) => (
           <article class:list={['plan', { featured: plan.featured }]} aria-labelledby={`plan-${plan.id}`}>
+            {/* TODO confirm: "Most studios pick this" is new copy (Grant approved Studio as the recommendation). */}
+            {plan.featured && <p class="flag">Most studios pick this</p>}
             <h3 id={`plan-${plan.id}`}>{plan.name}</h3>
             <p class="for">{plan.forWho}</p>
             <div class="prices">
-              <p class="price">
-                <span class="amount">{usd(plan.monthly)}</span>
-                <span class="unit">{plan.unit}</span>
-              </p>
-              <p class="yearly">
-                or {usd(plan.yearly)}{plan.unitShort} billed yearly ({usd(yearlyTotal(plan.yearly))}/yr)
-              </p>
-            </div>
-            <div class="fp">
-              <p class="fp-label">
-                <span class="badge badge-sage">Founding Studio</span> {founding.discountPercent}% off
-              </p>
-              <p class="fp-prices">
-                <b>{usd(plan.founding.monthly)}{plan.unitShort}</b> monthly, or{' '}
-                <b>{usd(plan.founding.yearly)}{plan.unitShort}</b> billed yearly ({usd(yearlyTotal(plan.founding.yearly))}/yr)
-              </p>
+              <div class="m">
+                <p class="price">
+                  <span class="amount">{usd(plan.founding.monthly)}</span>
+                  <span class="unit">{plan.unit}</span>
+                </p>
+                <p class="was">
+                  <s><span class="visually-hidden">Regular price </span>{usd(plan.monthly)}</s> Founding Studio price
+                </p>
+              </div>
+              <div class="y">
+                <p class="price">
+                  <span class="amount">{usd(plan.founding.yearly)}</span>
+                  <span class="unit">{plan.unit}, billed yearly</span>
+                </p>
+                <p class="was">
+                  <s><span class="visually-hidden">Regular price </span>{usd(plan.yearly)}</s> Founding Studio price
+                </p>
+              </div>
             </div>
             <ul class="checks">
               {plan.points.map((p) => <li><Icon name="check" size={16} strokeWidth={2} /><span>{p}</span></li>)}
             </ul>
             {cta === 'call' ? (
-              <a class:list={['btn', plan.featured ? 'btn-coral' : 'btn-ghost']} href={site.cta.href} rel="noopener">
+              <a class:list={['btn', plan.featured ? 'btn-coral' : 'btn-ghost']} href={site.cta.href} target="_blank" rel="noopener">
                 Book a call to start {plan.name}
               </a>
             ) : (
@@ -82,23 +113,85 @@ const terms = [
       }
     </div>
 
-    <div class="addon">
-      <div class="addon-price">
+    <details class="compare">
+      <summary><span>Compare plans and yearly prices</span><span class="plus" aria-hidden="true"></span></summary>
+      <div class="table-wrap" role="region" aria-label="Compare plans" tabindex="0">
+        <table>
+          <caption class="visually-hidden">Solo and Studio compared, with yearly prices</caption>
+          <thead>
+            <tr><td></td><th scope="col">{soloPlan.name}</th><th scope="col">{studioPlan.name}</th></tr>
+          </thead>
+          <tbody>
+            {
+              compareRows.map((r) => (
+                <tr>
+                  <th scope="row">{r.label}</th>
+                  {r.cells === 'check'
+                    ? [0, 1].map(() => <td><Icon name="check" size={16} strokeWidth={2} class="tick" /><span class="visually-hidden">Included</span></td>)
+                    : r.cells.map((c) => <td>{c}</td>)}
+                </tr>
+              ))
+            }
+          </tbody>
+        </table>
+      </div>
+    </details>
+
+    <div class:list={['addon', { 'with-form': waitlist }]} id="marketing">
+      <div>
+        <h3>{marketingAddOn.name.replace('-', '\u2011')} <span class="badge">Coming soon</span></h3>
         <p class="price">
           <span class="amount">{usd(marketingAddOn.price)}</span>
           <span class="unit">/mo</span>
         </p>
-        <p class="muted">Optional, on either plan</p>
+        <p class="addon-body">Text and email campaigns to bring clients back. Optional, on either plan.</p>
+        <p class="addon-limits">
+          {marketingAddOn.texts.toLocaleString('en-US')} marketing texts/mo · {marketingAddOn.emails.toLocaleString('en-US')} emails/mo
+          · Extra texts {marketingAddOn.extraTextCents}¢ each
+        </p>
       </div>
-      <div>
-        <h3>{marketingAddOn.name}</h3>
-        <p class="addon-body">Text and email campaigns to bring clients back.</p>
-        <ul class="addon-list">
-          <li>{marketingAddOn.texts.toLocaleString('en-US')} marketing texts/mo</li>
-          <li>{marketingAddOn.emails.toLocaleString('en-US')} emails/mo</li>
-          <li>Extra texts {marketingAddOn.extraTextCents}¢ each</li>
-        </ul>
-      </div>
+      {
+        waitlist && (
+          <div class="wl" data-waitlist>
+            {/* TODO confirm: all waitlist copy is new (label, helper, button, errors, success); approved by Grant. */}
+            <form action="/api/waitlist" method="post" novalidate>
+              <label class="wl-label" for="wl-email">Get notified when it launches</label>
+              <div class="wl-field">
+                <input
+                  id="wl-email"
+                  name="email"
+                  type="email"
+                  autocomplete="email"
+                  inputmode="email"
+                  placeholder="you@studio.com"
+                  maxlength="254"
+                  required
+                  aria-describedby="wl-msg"
+                />
+                <button class="btn btn-primary" type="submit">
+                  <span class="spin" aria-hidden="true" />
+                  <span data-wl-label>Join the waitlist</span>
+                </button>
+              </div>
+              <div class="hp" aria-hidden="true">
+                <label>Company<input name="company" tabindex="-1" autocomplete="off" /></label>
+              </div>
+              {turnstileSiteKey && (
+                <div
+                  class="cf-turnstile ts"
+                  data-turnstile
+                  data-sitekey={turnstileSiteKey}
+                  data-appearance="interaction-only"
+                  data-size="flexible"
+                  data-refresh-expired="auto"
+                />
+              )}
+              <p id="wl-msg" class="hint" aria-live="polite">We'll email you once when it launches. No spam.</p>
+            </form>
+            <div class="wl-done" aria-live="polite" data-wl-done />
+          </div>
+        )
+      }
     </div>
     <p class="note">
       Appointment reminder texts are included on every plan (fair use of about {reminderFairUse.toLocaleString('en-US')} a
@@ -133,17 +226,208 @@ const terms = [
   </div>
 </section>
 
+{
+  waitlist && turnstileSiteKey && (
+    <script is:inline src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+  )
+}
+{
+  waitlist && (
+    <script is:inline>
+      (function () {
+        var root = document.querySelector('[data-waitlist]');
+        if (!root || !window.fetch || !window.FormData) return;
+        var form = root.querySelector('form');
+        var input = form.querySelector('#wl-email');
+        var btn = form.querySelector('button[type="submit"]');
+        var label = btn.querySelector('[data-wl-label]');
+        var msg = form.querySelector('#wl-msg');
+        var done = root.querySelector('[data-wl-done]');
+        var ts = form.querySelector('[data-turnstile]');
+        var hint = msg.textContent;
+        var idle = label.textContent;
+        var errors = {
+          invalid_email: 'Enter an email like name@studio.com.',
+          verification_failed: "We couldn't verify the request. Please try again.",
+          server: 'Something went wrong on our end. Try again in a minute.',
+        };
+        var EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@.]{2,}$/;
+
+        function setError(code) {
+          if (!code) {
+            msg.removeAttribute('role');
+            msg.classList.remove('err');
+            msg.textContent = hint;
+            input.removeAttribute('aria-invalid');
+            return;
+          }
+          msg.setAttribute('role', 'alert');
+          msg.classList.add('err');
+          msg.textContent = errors[code] || errors.server;
+          if (msg.scrollIntoView) msg.scrollIntoView({ block: 'nearest' });
+          if (code === 'invalid_email') {
+            input.setAttribute('aria-invalid', 'true');
+            input.focus();
+          }
+        }
+        function busy(on) {
+          btn.disabled = on;
+          if (on) btn.setAttribute('aria-busy', 'true');
+          else btn.removeAttribute('aria-busy');
+          label.textContent = on ? 'Joining…' : idle;
+        }
+        function turnstile() {
+          return ts && window.turnstile ? window.turnstile : null;
+        }
+        // Turnstile usually has a token ready before anyone submits; wait briefly if it doesn't yet.
+        function token() {
+          return new Promise(function (resolve) {
+            var waited = 0;
+            (function check() {
+              var t = turnstile() ? turnstile().getResponse(ts) : '';
+              if (t || !ts || waited >= 6000) return resolve(t || '');
+              waited += 200;
+              setTimeout(check, 200);
+            })();
+          });
+        }
+        function success(email) {
+          var card = document.createElement('div');
+          card.className = 'wl-ok';
+          card.setAttribute('role', 'status');
+          card.tabIndex = -1;
+          var tick = document.createElement('span');
+          tick.className = 'wl-tick';
+          tick.setAttribute('aria-hidden', 'true');
+          tick.textContent = '✓';
+          var text = document.createElement('div');
+          var b = document.createElement('b');
+          b.textContent = "You're on the list.";
+          var p = document.createElement('p');
+          p.textContent = email
+            ? "We'll email you at " + email + ' when the Marketing add-on launches.'
+            : "We'll email you when the Marketing add-on launches.";
+          text.append(b, p);
+          card.append(tick, text);
+          form.remove();
+          done.append(card);
+          card.focus();
+        }
+
+        form.addEventListener('submit', function (e) {
+          e.preventDefault();
+          if (btn.disabled) return;
+          var email = input.value.trim();
+          if (!EMAIL.test(email) || email.length > 254) return setError('invalid_email');
+          setError(null);
+          busy(true);
+          token()
+            .then(function (t) {
+              var data = new FormData(form);
+              data.set('email', email);
+              if (t) data.set('cf-turnstile-response', t);
+              return fetch(form.action, { method: 'POST', body: data, headers: { Accept: 'application/json' } });
+            })
+            .then(function (res) {
+              return res.json().catch(function () {
+                return { ok: false, code: 'server' };
+              });
+            })
+            .catch(function () {
+              return { ok: false, code: 'server' };
+            })
+            .then(function (reply) {
+              busy(false);
+              if (reply && reply.ok) return success(email);
+              // a token works once, so every failed try gets a fresh one
+              if (turnstile()) turnstile().reset(ts);
+              setError((reply && reply.code) || 'server');
+            });
+        });
+        input.addEventListener('input', function () {
+          if (input.getAttribute('aria-invalid')) setError(null);
+        });
+
+        // a plain form post (no JavaScript at submit time) comes back as ?waitlist=<result>
+        var result = new URLSearchParams(location.search).get('waitlist');
+        if (result === 'ok') success('');
+        else if (result) setError(result === 'invalid_email' || result === 'verification_failed' ? result : 'server');
+      })();
+    </script>
+  )
+}
+
 <style>
   .plans-section {
     padding-top: var(--space-block);
   }
+
+  /* Monthly / Billed yearly */
+  .billing {
+    display: inline-flex;
+    margin: 0;
+    padding: 2px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-pill);
+    background: var(--surface);
+  }
+  .billing label {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0 18px;
+    border-radius: var(--radius-pill);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .billing input {
+    position: absolute;
+    inset: 0;
+    margin: 0;
+    opacity: 0;
+    cursor: pointer;
+  }
+  .billing label:has(:checked) {
+    background: var(--ink);
+    color: #fff;
+  }
+  .billing label:has(:focus-visible) {
+    outline: 2px solid var(--ink);
+    outline-offset: 3px;
+  }
+  .y {
+    display: none;
+  }
+  .plans-section:has(input[value='yearly']:checked) .y {
+    display: block;
+  }
+  .plans-section:has(input[value='yearly']:checked) .m {
+    display: none;
+  }
+
   .founding {
     display: flex;
-    gap: 12px;
+    width: fit-content;
+    max-width: 100%;
+    gap: 10px;
     align-items: center;
-    flex-wrap: wrap;
-    font-size: 15px;
-    color: var(--ink-2);
+    margin-top: 16px;
+    padding: 6px 16px 6px 6px;
+    border-radius: var(--radius-pill);
+    background: var(--blush-2);
+    border: 1px solid var(--line);
+    font-size: 14px;
+    color: var(--ink);
+  }
+  .founding .badge {
+    flex: none;
+    text-transform: none;
+    letter-spacing: 0;
+    font-weight: 600;
+    padding: 3px 10px;
+    vertical-align: 0;
   }
   .founding a,
   .more a {
@@ -151,111 +435,324 @@ const terms = [
     text-decoration: underline;
     text-underline-offset: 3px;
   }
+
   .plans {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 20px;
-    margin-top: 24px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 24px;
+    margin-top: 40px;
   }
   .plan {
+    position: relative;
     display: flex;
     flex-direction: column;
-    gap: 18px;
-    padding: 32px 28px;
+    padding: 36px;
     border-radius: var(--radius-lg);
     background: var(--surface);
-    border: 1px solid var(--line-strong);
+    border: 1px solid var(--line);
   }
   .plan.featured {
-    border-color: var(--coral);
+    border: 1.5px solid var(--coral);
     box-shadow: var(--shadow-card);
+  }
+  .flag {
+    position: absolute;
+    top: -13px;
+    left: 36px;
+    padding: 4px 12px;
+    border-radius: var(--radius-pill);
+    background: var(--coral-strong);
+    color: #fff;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
   }
   h3 {
     font-size: 24px;
   }
   .for {
-    margin-top: -10px;
-    color: var(--ink-2);
+    margin-top: 6px;
+    color: var(--muted);
     font-size: 16px;
+  }
+  .prices {
+    margin-top: 20px;
   }
   .price {
     display: flex;
     align-items: baseline;
     flex-wrap: wrap;
-    gap: 6px;
+    gap: 2px 6px;
   }
   .amount {
     font-family: var(--serif);
-    font-size: 52px;
+    font-size: 56px;
     line-height: 1;
     letter-spacing: -0.02em;
   }
-  .unit,
-  .muted {
+  .unit {
     color: var(--muted);
-    font-size: 16px;
+    font-size: 15px;
+    font-weight: 500;
   }
-  .yearly {
-    margin-top: 8px;
-    font-size: 16px;
-    color: var(--ink-2);
-  }
-  .fp {
-    padding: 14px 16px;
-    border-radius: var(--radius);
-    background: var(--blush-2);
-  }
-  .fp-label {
-    font-size: 16px;
-    font-weight: 600;
-    color: var(--ink);
-  }
-  .fp-prices {
+  .was {
     margin-top: 6px;
-    font-size: 16px;
-    color: var(--ink-2);
+    font-size: 14px;
+    color: var(--muted);
   }
-  .fp-prices b {
-    color: var(--ink);
+  .was s {
+    margin-right: 6px;
+  }
+  .plan .checks {
+    margin: 24px 0 28px;
+    gap: 10px;
   }
   .plan .btn {
     margin-top: auto;
+    width: 100%;
   }
-  .addon {
-    display: grid;
-    grid-template-columns: 220px 1fr;
-    gap: 28px;
-    align-items: center;
-    margin-top: 20px;
-    padding: 28px;
+
+  /* compare plans */
+  .compare {
+    margin-top: 24px;
     border-radius: var(--radius-lg);
     background: var(--surface);
-    border: 1px solid var(--line-strong);
+    border: 1px solid var(--line);
   }
-  .addon h3 {
-    font-family: var(--sans);
-    font-size: 18px;
+  .compare summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    min-height: 60px;
+    padding: 0 28px;
     font-weight: 600;
+    cursor: pointer;
+    list-style: none;
+    border-radius: var(--radius-lg);
+  }
+  .compare summary::-webkit-details-marker {
+    display: none;
+  }
+  .plus {
+    position: relative;
+    flex: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--blush-2);
+  }
+  .plus::before,
+  .plus::after {
+    content: '';
+    position: absolute;
+    left: 10px;
+    right: 10px;
+    top: 50%;
+    height: 1.5px;
+    margin-top: -0.75px;
+    background: var(--ink);
+  }
+  .plus::after {
+    transform: rotate(90deg);
+  }
+  .compare[open] .plus::after {
+    transform: rotate(0deg);
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .plus::after {
+      transition: transform 0.2s ease;
+    }
+  }
+  .table-wrap {
+    overflow-x: auto;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 15px;
+  }
+  th,
+  td {
+    padding: 14px 28px;
+    border-top: 1px solid var(--line);
+    text-align: left;
+    vertical-align: top;
+  }
+  thead th {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--muted);
+  }
+  tbody th {
+    font-weight: 500;
+    color: var(--ink-2);
+  }
+  td,
+  thead th {
+    text-align: center;
+  }
+  td :global(.tick) {
+    display: inline-block;
+    color: var(--ink);
+  }
+
+  /* Marketing add-on */
+  .addon {
+    margin-top: 24px;
+    padding: 36px;
+    border-radius: var(--radius-lg);
+    background: var(--blush-2);
+    border: 1px solid var(--line);
+  }
+  .addon.with-form {
+    display: grid;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+    gap: 40px;
+    align-items: center;
+  }
+  .addon h3 .badge {
+    margin-left: 6px;
+    font-family: var(--sans);
+  }
+  .addon .price {
+    margin-top: 12px;
+  }
+  .addon .amount {
+    font-size: 40px;
   }
   .addon-body {
     margin-top: 6px;
-    color: var(--ink-2);
-    font-size: 15px;
+    color: var(--muted);
   }
-  .addon-list {
-    list-style: none;
-    margin: 14px 0 0;
-    padding: 0;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-  }
-  .addon-list li {
-    padding: 5px 12px;
-    border-radius: var(--radius-pill);
-    background: var(--sand);
+  .addon-limits {
+    margin-top: 10px;
     font-size: 14px;
+    color: var(--muted);
+  }
+  .wl {
+    position: relative;
+  }
+  .wl-label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 14px;
+    font-weight: 600;
+  }
+  .wl-field {
+    display: flex;
+    gap: 10px;
+  }
+  .wl-field input {
+    flex: 1;
+    min-width: 0;
+    height: 48px;
+    padding: 0 16px;
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius);
+    background: var(--surface);
     color: var(--ink);
+    font: 16px var(--sans);
+  }
+  .wl-field input::placeholder {
+    color: var(--muted);
+  }
+  .wl-field input:focus-visible {
+    outline: 2px solid var(--ink);
+    outline-offset: 2px;
+  }
+  .wl-field input[aria-invalid='true'] {
+    border-color: var(--coral-strong);
+    box-shadow: 0 0 0 3px rgba(191, 68, 80, 0.15);
+  }
+  .wl-field .btn {
+    flex: none;
+    min-height: 48px;
+  }
+  .wl-field .btn:disabled {
+    cursor: default;
+    opacity: 0.85;
+    transform: none;
+  }
+  .spin {
+    display: none;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: #fff;
+  }
+  .btn[aria-busy='true'] .spin {
+    display: inline-block;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .spin {
+      width: 16px;
+      height: 16px;
+      background: none;
+      border: 2px solid rgba(255, 255, 255, 0.4);
+      border-top-color: #fff;
+      animation: spin 0.8s linear infinite;
+    }
+  }
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  /* off-screen for people, still in the form for bots */
+  .hp {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+  /* Turnstile runs invisibly; it only takes room if it needs the visitor to click */
+  .ts:has(iframe) {
+    margin-top: 8px;
+  }
+  .hint {
+    min-height: 20px;
+    margin-top: 8px;
+    font-size: 14px;
+    color: var(--muted);
+  }
+  .hint.err {
+    color: var(--coral-strong);
+    font-weight: 600;
+  }
+  .wl-done :global(.wl-ok) {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    padding: 16px;
+    border-radius: var(--radius);
+    background: var(--surface);
+    border: 1px solid var(--line);
+  }
+  .wl-done :global(.wl-ok:focus) {
+    outline: none;
+  }
+  .wl-done :global(.wl-tick) {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--sage);
+    color: var(--sage-ink);
+    font-weight: 700;
+  }
+  .wl-done :global(.wl-ok b) {
+    font-weight: 600;
+  }
+  .wl-done :global(.wl-ok p) {
+    margin-top: 2px;
+    font-size: 14px;
+    color: var(--muted);
+    overflow-wrap: anywhere;
   }
   .note {
     margin-top: 16px;
@@ -267,7 +764,7 @@ const terms = [
     margin-top: 48px;
   }
   .included .badge {
-    font-size: 10px;
+    font-size: 12px;
     padding: 2px 7px;
     margin-left: 2px;
     vertical-align: 1px;
@@ -315,23 +812,56 @@ const terms = [
     font-weight: 600;
   }
   @media (max-width: 860px) {
-    .plans,
     .terms {
       grid-template-columns: 1fr;
     }
-    .addon {
-      grid-template-columns: 1fr;
-      gap: 16px;
+  }
+  @media (max-width: 767px) {
+    .plans {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 32px;
+    }
+    .plan {
+      padding: 28px 22px;
+    }
+    .flag {
+      left: 22px;
+    }
+    .amount {
+      font-size: 48px;
+    }
+    .billing label {
+      padding: 0 14px;
+    }
+    .founding {
+      border-radius: var(--radius);
+      align-items: flex-start;
+    }
+    .compare summary {
+      padding: 0 20px;
+    }
+    th,
+    td {
+      padding: 12px 14px;
+      font-size: 14px;
+    }
+    .addon,
+    .addon.with-form {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 28px;
+      padding: 24px 20px;
+    }
+    .wl-field {
+      flex-direction: column;
+    }
+    .wl-field input {
+      flex: none;
+    }
+    .wl-field .btn {
+      width: 100%;
     }
   }
   @media (max-width: 520px) {
-    .plan,
-    .addon {
-      padding: 24px 20px;
-    }
-    .amount {
-      font-size: 44px;
-    }
     .inc-list {
       grid-template-columns: repeat(2, minmax(0, 1fr));
       column-gap: 12px;

@@ -74,7 +74,7 @@ const appHeight = Math.round((APP_WIDTH * (MONITOR.y1 - MONITOR.y0)) / (MONITOR.
           texts to approve) lands in one short list.
         </p>
         <div class="btn-row hero-actions">
-          <a class="btn btn-coral" href={site.cta.href}>{site.cta.label}</a>
+          <a class="btn btn-coral" href={site.cta.href} target="_blank" rel="noopener">{site.cta.label}</a>
           {site.demo.enabled && <a class="btn btn-ghost" href={site.demo.href}>{site.demo.label}</a>}
           <a class="btn btn-ghost" href="#walkthrough">See a day in Happli</a>
         </div>
