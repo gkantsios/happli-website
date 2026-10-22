@@ -1,0 +1,28 @@
+---
+// After Stripe Checkout. Static: the session_id in the URL is not read or trusted for anything.
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageIntro from '../../components/sections/PageIntro.astro';
+import { site } from '../../config/site';
+---
+
+<BaseLayout title="You're in | Happli" description="Thanks for joining Happli." noindex>
+  <PageIntro
+    eyebrow="Welcome to Happli"
+    title="You're in."
+    lede="We'll email you within 1 business day to set up Happli. Nothing is charged until your studio goes live."
+    cta={false}
+  >
+    <p class="more">Questions? Email <a href={`mailto:${site.contactEmail}`}>{site.contactEmail}</a>.</p>
+  </PageIntro>
+</BaseLayout>
+
+<style>
+  .more {
+    margin-top: 24px;
+    color: var(--ink-2);
+  }
+  .more a {
+    color: var(--coral-ink);
+    text-decoration: underline;
+  }
+</style>

@@ -20,6 +20,12 @@
       "name": "WAITLIST_RATE_LIMITER",
       "namespace_id": "1001",
       "simple": { "limit": 5, "period": 60 }
+    },
+    // Per-IP limit on signup checkout sessions (/api/checkout): 10 a minute.
+    {
+      "name": "CHECKOUT_RATE_LIMITER",
+      "namespace_id": "1002",
+      "simple": { "limit": 10, "period": 60 }
     }
   ],
   // Non-secret Worker variables.
@@ -28,10 +34,18 @@
     "KIT_WAITLIST_TAG_ID": "24908051",
     // TidyCal booking type "Happli Demo" and the Kit tag "Happli demo" (worker/demo-sync.ts).
     "TIDYCAL_BOOKING_TYPE_ID": "2132151",
-    "KIT_DEMO_TAG_ID": "24907991"
+    "KIT_DEMO_TAG_ID": "24907991",
+    // Signup checkout (worker/checkout.ts). Stripe's success and cancel URLs use SITE_URL, never the
+    // request's host. While the new site is on the preview this is the preview host; switch it to
+    // https://gohappli.com at go-live, together with a live STRIPE_CHECKOUT_KEY.
+    "SITE_URL": "https://feat-astro-rebuild-happli-website.gkantsios.workers.dev",
+    // End of the Founding Studio offer (ISO 8601, e.g. "2027-01-20T23:59:59-05:00"): launch + 90 days.
+    // Empty means the Founding offer is closed, so Founding checkouts are refused.
+    "FOUNDING_ENDS_AT": ""
   },
   // Every 5 minutes: tag new Happli Demo bookings in Kit (the Worker's scheduled handler).
   "triggers": { "crons": ["*/5 * * * *"] }
   // Secrets (set with `npx wrangler secret put NAME` or in the dashboard, never in this file):
-  // TURNSTILE_SECRET_KEY, KIT_API_KEY (a Kit v3 API key) and TIDYCAL_API_TOKEN. See the README.
+  // TURNSTILE_SECRET_KEY, KIT_API_KEY (a Kit v3 API key), TIDYCAL_API_TOKEN and STRIPE_CHECKOUT_KEY
+  // (a restricted Stripe key: Checkout Sessions Write, Prices Read, Subscriptions Read). See the README.
 }

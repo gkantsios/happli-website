@@ -1,14 +1,30 @@
 ---
+// Signup: pick a plan, billing period and number of locations, then pay in Stripe Checkout.
+// The totals here are for display only. POST /api/checkout (worker/checkout.ts) decides the prices,
+// whether Founding applies, and what Stripe charges. Without JavaScript the form stays hidden and
+// the "Book a call" link is the way in.
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PageIntro from '../components/sections/PageIntro.astro';
-import PricingPlans from '../components/sections/PricingPlans.astro';
 import SectionHead from '../components/sections/SectionHead.astro';
 import { breadcrumbs } from '../lib/jsonld';
 import { site } from '../config/site';
-import { solo, founding, trialDays, usd } from '../config/pricing';
+import { plans, solo, founding, trialDays, usd } from '../config/pricing';
+import { maxOnlineLocations, unitPrices } from '../lib/checkout';
 
 const title = 'Get Started | Join Happli as a Founding Studio';
 const description = `Join Happli from ${usd(solo.monthly)} a month, with ${founding.discountPercent}% off for Founding Studios. Free until you go live. Booking software for spray tan and beauty studios, with AI built in.`;
+
+// Display prices per billing period, keyed "plan:period:founding", read by the page script.
+const prices: Record<string, { plan: number; extra: number }> = {};
+for (const p of plans) {
+  for (const period of ['monthly', 'yearly'] as const) {
+    for (const f of [false, true]) {
+      const u = unitPrices({ plan: p.id, period, founding: f });
+      prices[`${p.id}:${period}:${f ? 1 : 0}`] = { plan: u.plan, extra: u.extraLocation };
+    }
+  }
+}
+const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY;
 ---
 
 <BaseLayout
@@ -19,34 +35,355 @@ const description = `Join Happli from ${usd(solo.monthly)} a month, with ${found
   <PageIntro
     eyebrow="Get started"
     title="Join as a Founding Studio."
-    lede={`Pick Solo or Studio, then book a call and we'll set you up for free. Happli is free until your studio goes live, for up to ${trialDays} days.`}
+    lede={`Pick your plan and how many locations you have, then add a card. Happli is free until your studio goes live, for up to ${trialDays} days, and we set you up for free.`}
     cta={false}
   >
-    <div class="btn-row call">
+    <form class="co" data-checkout data-prices={JSON.stringify(prices)} data-max={maxOnlineLocations} hidden novalidate>
+      <fieldset class="seg">
+        <legend>Plan</legend>
+        {plans.map((p, i) => (
+          <label>
+            <input type="radio" name="plan" value={p.id} checked={p.featured ?? false} />
+            <span><b>{p.name}</b> <small>{p.forWho}</small></span>
+          </label>
+        ))}
+      </fieldset>
+
+      <fieldset class="seg two">
+        <legend>Billing</legend>
+        <label><input type="radio" name="period" value="monthly" checked /><span>Monthly</span></label>
+        <label><input type="radio" name="period" value="yearly" /><span>Billed yearly</span></label>
+      </fieldset>
+
+      <div class="row">
+        <label class="lbl" for="co-locations">Locations</label>
+        <div class="stepper">
+          <button type="button" class="step" data-step="-1" aria-label="One fewer location">−</button>
+          <input id="co-locations" name="locations" type="number" inputmode="numeric" min="1" max={maxOnlineLocations} value="1" aria-describedby="co-loc-hint" />
+          <button type="button" class="step" data-step="1" aria-label="One more location">+</button>
+        </div>
+        <p class="hint" id="co-loc-hint">
+          1 location is included. More than {maxOnlineLocations}? <a href={site.cta.href} target="_blank" rel="noopener">Book a call</a>.
+        </p>
+      </div>
+
+      <label class="check" data-founding-row>
+        <input type="checkbox" name="founding" checked />
+        <span>Join as a Founding Studio ({founding.discountPercent}% off, locked while subscribed)</span>
+      </label>
+
+      <div class="total" aria-live="polite">
+        <p class="sum" data-total></p>
+        <p class="hint" data-breakdown></p>
+        <p class="hint">No charge today. Your first payment starts when your studio goes live, or after {trialDays} days.</p>
+      </div>
+
+      {turnstileSiteKey && <div class="cf-turnstile ts" data-turnstile data-sitekey={turnstileSiteKey} data-size="flexible"></div>}
+
+      <p class="msg" id="co-msg" data-msg></p>
+      <button class="btn btn-coral go" type="submit"><span data-label>Continue to payment</span></button>
+      <p class="hint">Payment is handled by Stripe. Questions first? <a href={site.cta.href} target="_blank" rel="noopener">Book a call</a>.</p>
+    </form>
+
+    <div class="btn-row call" data-nojs>
       <a class="btn btn-coral" href={site.cta.href} target="_blank" rel="noopener">Book a call</a>
       {site.demo.enabled && <a class="btn btn-ghost" href={site.demo.href}>{site.demo.label}</a>}
     </div>
   </PageIntro>
 
-  <PricingPlans included={false} cta="call" />
-
   <section class="section" aria-labelledby="next-title">
     <div class="wrap">
-      <SectionHead eyebrow="What happens next" title="From your first call to your first booking." id="next-title" />
-      {/* TODO confirm: the exact onboarding steps and timing. Online checkout comes back once the new Stripe Payment Links exist. */}
+      <SectionHead eyebrow="What happens next" title="From checkout to your first booking." id="next-title" />
       <ol class="next">
-        <li><b>Book a call.</b> Pick a time and tell us about your studio and team.</li>
-        <li><b>Set up your studio, free.</b> Add services, team and hours, and we bring your clients over from CSV if you're switching. There's no setup fee.</li>
-        <li><b>Go live.</b> Happli is free until your studio goes live, for up to {trialDays} days. Then you pay for Solo or Studio, monthly or yearly.</li>
+        <li><b>Add your card.</b> Pick your plan and locations and add a card in Stripe. Nothing is charged yet.</li>
+        <li><b>Set up your studio, free.</b> We email you within 1 business day. We add services, team and hours, and bring your clients over from CSV if you're switching. There's no setup fee.</li>
+        <li><b>Go live.</b> Happli is free until your studio goes live, for up to {trialDays} days. Then you pay for your plan and locations, monthly or yearly.</li>
       </ol>
       <p class="help">Questions first? <a href="/pricing/">See pricing details</a>, <a href="/help/">visit Help</a> or email <a href={`mailto:${site.contactEmail}`}>{site.contactEmail}</a>.</p>
     </div>
   </section>
 </BaseLayout>
 
+{turnstileSiteKey && <script is:inline src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>}
+<script is:inline>
+  (function () {
+    var form = document.querySelector('[data-checkout]');
+    if (!form || !window.fetch) return;
+    form.hidden = false;
+    var nojs = document.querySelector('[data-nojs]');
+    if (nojs) nojs.hidden = true;
+    var prices = JSON.parse(form.getAttribute('data-prices'));
+    var max = Number(form.getAttribute('data-max'));
+    var loc = form.querySelector('#co-locations');
+    var founding = form.querySelector('[name="founding"]');
+    var foundingRow = form.querySelector('[data-founding-row]');
+    var totalEl = form.querySelector('[data-total]');
+    var breakdown = form.querySelector('[data-breakdown]');
+    var msg = form.querySelector('[data-msg]');
+    var btn = form.querySelector('button[type="submit"]');
+    var label = btn.querySelector('[data-label]');
+    var ts = form.querySelector('[data-turnstile]');
+    var errors = {
+      invalid: 'Check your choices and try again.',
+      verification_failed: "We couldn't verify the request. Please try again.",
+      rate_limited: 'Too many tries. Wait a minute and try again.',
+      founding_full: 'Founding Studio spots are full. You can continue at regular prices.',
+      server: 'Something went wrong on our end. Try again in a minute, or book a call.',
+    };
+    function money(n) { return '$' + n.toLocaleString('en-US'); }
+    function val(name) { var el = form.querySelector('[name="' + name + '"]:checked'); return el ? el.value : ''; }
+    function count() {
+      var n = Math.round(Number(loc.value));
+      if (!isFinite(n) || n < 1) n = 1;
+      if (n > max) n = max;
+      return n;
+    }
+    function render() {
+      var plan = val('plan'), period = val('period'), n = count();
+      var p = prices[plan + ':' + period + ':' + (founding.checked && !foundingRow.hidden ? 1 : 0)];
+      var unit = period === 'yearly' ? '/yr' : '/mo';
+      var extra = n - 1;
+      var name = plan === 'solo' ? 'Solo' : 'Studio';
+      totalEl.textContent = money(p.plan + extra * p.extra) + unit;
+      breakdown.textContent = name + ' ' + money(p.plan) + (extra > 0 ? ' + ' + extra + ' extra location' + (extra > 1 ? 's' : '') + ' × ' + money(p.extra) : '') + unit;
+    }
+    function setMsg(code) {
+      msg.textContent = code ? errors[code] || errors.server : '';
+      if (code) msg.setAttribute('role', 'alert'); else msg.removeAttribute('role');
+    }
+
+    // Choices come back from /pricing (?plan=) or a canceled checkout.
+    var q = new URLSearchParams(location.search);
+    var qp = form.querySelector('[name="plan"][value="' + q.get('plan') + '"]');
+    if (qp) qp.checked = true;
+    var qd = form.querySelector('[name="period"][value="' + q.get('period') + '"]');
+    if (qd) qd.checked = true;
+    if (q.get('locations')) loc.value = String(Math.min(max, Math.max(1, Math.round(Number(q.get('locations'))) || 1)));
+    if (q.get('canceled')) founding.checked = q.get('founding') === '1';
+
+    form.addEventListener('change', render);
+    loc.addEventListener('input', render);
+    loc.addEventListener('blur', function () { loc.value = String(count()); render(); });
+    form.querySelectorAll('[data-step]').forEach(function (b) {
+      b.addEventListener('click', function () {
+        loc.value = String(Math.min(max, Math.max(1, count() + Number(b.getAttribute('data-step')))));
+        render();
+      });
+    });
+    render();
+
+    function token() {
+      return new Promise(function (resolve) {
+        var waited = 0;
+        (function check() {
+          var t = ts && window.turnstile ? window.turnstile.getResponse(ts) : '';
+          if (t || !ts || waited >= 6000) return resolve(t || '');
+          waited += 200;
+          setTimeout(check, 200);
+        })();
+      });
+    }
+    function busy(on) {
+      btn.disabled = on;
+      if (on) btn.setAttribute('aria-busy', 'true'); else btn.removeAttribute('aria-busy');
+      label.textContent = on ? 'Opening checkout…' : 'Continue to payment';
+    }
+
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      setMsg('');
+      loc.value = String(count());
+      render();
+      busy(true);
+      token().then(function (t) {
+        return fetch('/api/checkout', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+          body: JSON.stringify({ plan: val('plan'), period: val('period'), locations: count(), founding: founding.checked && !foundingRow.hidden, token: t || 'none' }),
+        });
+      }).then(function (res) {
+        return res.json().catch(function () { return { ok: false, code: 'server' }; });
+      }).then(function (body) {
+        if (body && body.ok && typeof body.url === 'string' && body.url.indexOf('https://checkout.stripe.com/') === 0) {
+          location.href = body.url;
+          return;
+        }
+        var code = (body && body.code) || 'server';
+        if (code === 'founding_full') {
+          founding.checked = false;
+          foundingRow.hidden = true;
+          render();
+        }
+        setMsg(code);
+        if (ts && window.turnstile) window.turnstile.reset(ts);
+        busy(false);
+      }).catch(function () {
+        setMsg('server');
+        busy(false);
+      });
+    });
+  })();
+</script>
+
 <style>
   .call {
     margin-top: 28px;
+  }
+  .co {
+    margin-top: 32px;
+    max-width: 560px;
+    display: grid;
+    gap: 22px;
+    padding: clamp(20px, 3vw, 32px);
+    background: var(--surface, #fff);
+    border: 1px solid var(--line-strong);
+    border-radius: 20px;
+  }
+  .co[hidden],
+  [data-nojs][hidden],
+  [data-founding-row][hidden] {
+    display: none;
+  }
+  .seg {
+    border: 0;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 10px;
+  }
+  .seg.two {
+    grid-template-columns: 1fr 1fr;
+  }
+  legend,
+  .lbl {
+    font-weight: 700;
+    font-size: 15px;
+    color: var(--ink);
+    margin-bottom: 10px;
+    padding: 0;
+  }
+  .seg legend {
+    grid-column: 1 / -1;
+  }
+  .seg label {
+    position: relative;
+    display: block;
+    cursor: pointer;
+  }
+  .seg input {
+    position: absolute;
+    opacity: 0;
+    inset: 0;
+    margin: 0;
+  }
+  .seg span {
+    display: block;
+    min-height: 48px;
+    padding: 12px 16px;
+    border: 1px solid var(--line-strong);
+    border-radius: 14px;
+    font-size: 16px;
+    color: var(--ink);
+  }
+  .seg small {
+    display: block;
+    color: var(--ink-2);
+    font-size: 14px;
+    margin-top: 2px;
+  }
+  .seg input:checked + span {
+    border-color: var(--ink);
+    box-shadow: inset 0 0 0 1px var(--ink);
+    background: var(--coral-soft);
+  }
+  .seg input:focus-visible + span {
+    outline: 2px solid var(--ink);
+    outline-offset: 2px;
+  }
+  .row {
+    display: grid;
+  }
+  .stepper {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .step {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    border: 1px solid var(--line-strong);
+    background: transparent;
+    color: var(--ink);
+    font-size: 22px;
+    line-height: 1;
+    cursor: pointer;
+  }
+  .stepper input {
+    width: 72px;
+    height: 48px;
+    text-align: center;
+    font: inherit;
+    font-size: 16px;
+    border: 1px solid var(--line-strong);
+    border-radius: 12px;
+    color: var(--ink);
+    background: transparent;
+  }
+  .check {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    font-size: 16px;
+    color: var(--ink);
+    cursor: pointer;
+    min-height: 44px;
+  }
+  .check input {
+    width: 22px;
+    height: 22px;
+    margin: 1px 0 0;
+    flex: none;
+    accent-color: var(--coral-strong);
+  }
+  .total {
+    border-top: 1px solid var(--line-strong);
+    padding-top: 18px;
+  }
+  .sum {
+    margin: 0;
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--ink);
+    letter-spacing: -0.02em;
+  }
+  .hint {
+    margin: 6px 0 0;
+    font-size: 14px;
+    color: var(--ink-2);
+  }
+  .hint a,
+  .help a {
+    color: var(--coral-ink);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .msg {
+    margin: 0;
+    font-size: 15px;
+    color: var(--coral-ink);
+  }
+  .msg:empty {
+    display: none;
+  }
+  .go {
+    justify-self: start;
+    min-height: 48px;
+  }
+  @media (max-width: 480px) {
+    .go {
+      justify-self: stretch;
+    }
   }
   .next {
     margin: 32px 0 0;
@@ -63,10 +400,5 @@ const description = `Join Happli from ${usd(solo.monthly)} a month, with ${found
     margin-top: 32px;
     font-size: 15px;
     color: var(--ink-2);
-  }
-  .help a {
-    color: var(--coral-ink);
-    text-decoration: underline;
-    text-underline-offset: 3px;
   }
 </style>
