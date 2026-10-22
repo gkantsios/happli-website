@@ -1,21 +1,19 @@
-/* Color direction A: "Warm bands". Coral stays the one action color; sections alternate
-   on blush and apricot tints, accents go warm apricot. */
-:root {
-  --apricot: #f6b48a;            /* decorative only */
-  --apricot-tint: #fdeee2;
-  --blush-band: #fbe9e6;
-  --apricot-ink: #9a4f1f;        /* text on tints, >= 5:1 */
-}
-html body { background: #fcf8f4; }
-html body main > section[aria-labelledby="problem-title"],
-html body main > section#how,
-html body main > section[aria-labelledby="testimonials-title"],
-html body section.plans-section { background: var(--blush-band); padding-bottom: var(--space-section); }
-html body main > section#payments,
-html body main > section[aria-labelledby="who-title"] { background: var(--apricot-tint); padding-bottom: var(--space-section); }
-html body main > section + section { margin-top: 0; }
-html body .eyebrow { color: var(--apricot-ink); }
-html body .steps .num { background: var(--apricot); color: #3a1d0c; border-color: transparent; }
-html body .cta-in { background: linear-gradient(135deg, #fbe0dc 0%, #fde6d2 100%); border-radius: var(--radius-xl); }
-html body .footer { background: #f7eadf; border-top-color: transparent; }
-html body .plan.featured { box-shadow: 0 30px 80px -30px rgba(191, 68, 80, .45), 0 0 0 2px var(--coral-strong); }
+/* Warm bands: tinted bands alternate with the neutral page so two tints never meet,
+   with equal top and bottom padding so no card touches a band edge. Coral stays the only action color. */
+body { background: var(--page); }
+main > section + section { margin-top: 0; }
+main > section[aria-labelledby="problem-title"],
+main > section[aria-labelledby="testimonials-title"],
+main > section#payments,
+section.plans-section { padding-block: var(--space-section); }
+main > section[aria-labelledby="problem-title"],
+main > section[aria-labelledby="testimonials-title"],
+section.plans-section { background: var(--blush-band); }
+main > section#payments { background: var(--sage-band); }
+.eyebrow { color: var(--coral-ink); }
+main > section#payments .eyebrow { color: var(--sage-ink); }
+.steps .num { background: var(--coral-soft, #ffe1e3); color: var(--coral-ink); border-color: transparent; }
+/* A plain section that runs into a tinted band gets its full bottom padding, so its cards sit clear of the edge. */
+main > section:has(+ section[aria-labelledby="problem-title"]),
+main > section:has(+ section[aria-labelledby="testimonials-title"]),
+main > section:has(+ section#payments) { padding-bottom: var(--space-section); }
