@@ -112,7 +112,7 @@ export async function handleWaitlist(request: Request, env: WaitlistEnv): Promis
 
   let form: FormData;
   try {
-    form = await new Response(bytes, { headers: { 'content-type': contentType } }).formData();
+    form = await new Response(new Uint8Array(bytes), { headers: { 'content-type': contentType } }).formData();
   } catch {
     return reply(400, { ok: false, code: 'invalid_email' });
   }
