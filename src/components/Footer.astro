@@ -101,7 +101,7 @@ const year = new Date().getFullYear();
   }
   /* phones: room for the sticky "Book a demo" bar (StickyCta) so it never covers footer content */
   @media (max-width: 699.98px) {
-    .footer {
+    body:has(.sticky-cta) .footer {
       padding-bottom: calc(40px + 72px + env(safe-area-inset-bottom, 0px));
     }
   }

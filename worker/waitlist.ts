@@ -39,7 +39,7 @@ export function isAllowedTurnstileHost(hostname: string | undefined): boolean {
 }
 
 /** Reads the body, giving up as soon as it passes `max` bytes (null), whatever Content-Length says. */
-async function readCapped(request: Request, max: number): Promise<Uint8Array | null> {
+export async function readCapped(request: Request, max: number): Promise<Uint8Array | null> {
   if (!request.body) return new Uint8Array();
   const reader = request.body.getReader();
   const chunks: Uint8Array[] = [];

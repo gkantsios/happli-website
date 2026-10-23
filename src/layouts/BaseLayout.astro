@@ -20,6 +20,8 @@ interface Props {
   type?: 'website' | 'article';
   jsonLd?: object[];
   noindex?: boolean;
+  /** Phone "Book a demo" bar. Off on pages whose own form is the action (e.g. /signup/). */
+  stickyCta?: boolean;
   publishedTime?: Date;
   modifiedTime?: Date;
 }
@@ -32,6 +34,7 @@ const {
   type = 'website',
   jsonLd = [],
   noindex = false,
+  stickyCta = true,
   publishedTime,
   modifiedTime,
 } = Astro.props;
@@ -88,7 +91,7 @@ const ogImage = new URL(image, site.url).href;
       <slot />
     </main>
     <Footer />
-    <StickyCta />
+    {stickyCta && <StickyCta />}
     {/* scroll motion below the hero (public/motion/reveal.js): loaded on the first scroll, or 3s after
         the page has loaded, so it never competes with the first paint */}
     <script is:inline>

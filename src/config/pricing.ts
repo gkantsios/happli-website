@@ -4,10 +4,9 @@
 // by hand, so update them too.
 // Set by Grant on Oct 19, 2026. Don't add other prices, trials or discounts without Grant's say-so.
 //
-// Stripe: the old Payment Links were for the old 1/2/3-location prices, so they are no longer linked.
-// New Payment Links are needed for Solo and Studio (monthly and yearly, normal and founding prices).
-// Extra-location prices need their own Payment Links too (follow-up).
-// Until they exist, plan buttons go to /signup/, which offers the book-a-call link.
+// Stripe: /signup/ sells these through Stripe Checkout (worker/checkout.ts). Each price exists in Stripe
+// under a lookup key (src/lib/checkout.ts), and the Worker refuses to start a checkout if a Stripe amount
+// differs from the numbers here, so change both together.
 
 export const signupHref = '/signup/';
 
