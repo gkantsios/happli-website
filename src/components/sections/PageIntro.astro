@@ -7,11 +7,12 @@ interface Props {
   lede?: string;
   cta?: boolean;
   secondary?: { label: string; href: string };
+  center?: boolean;
 }
-const { eyebrow, title, lede, cta = true, secondary } = Astro.props;
+const { eyebrow, title, lede, cta = true, secondary, center = false } = Astro.props;
 ---
 
-<section class="intro">
+<section class:list={["intro", { center }]}>
   <div class="wrap">
     {eyebrow && <p class="eyebrow">{eyebrow}</p>}
     <h1>{title}</h1>
@@ -46,5 +47,19 @@ const { eyebrow, title, lede, cta = true, secondary } = Astro.props;
   }
   .actions {
     margin-top: 30px;
+  }
+  .center .wrap {
+    text-align: center;
+  }
+  .center h1,
+  .center .lede {
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .center .lede {
+    max-width: 36em;
+  }
+  .center .actions {
+    justify-content: center;
   }
 </style>
