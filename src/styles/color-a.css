@@ -7,8 +7,9 @@ main > section[aria-labelledby="testimonials-title"],
 main > section#payments,
 section.plans-section { padding-block: var(--space-section); }
 main > section[aria-labelledby="problem-title"],
-main > section[aria-labelledby="testimonials-title"],
-section.plans-section { background: var(--blush-band); }
+main > section[aria-labelledby="testimonials-title"] { background: var(--blush-band); }
+/* Pricing stays clean: white band, cards separated by border and shadow. */
+section.plans-section { background: var(--surface); border-block: 1px solid var(--line); }
 main > section#payments { background: var(--sage-band); }
 .eyebrow { color: var(--coral-ink); }
 main > section#payments .eyebrow { color: var(--sage-ink); }

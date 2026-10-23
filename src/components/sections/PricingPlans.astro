@@ -466,11 +466,12 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY;
     padding: 36px;
     border-radius: var(--radius-lg);
     background: var(--surface);
-    border: 1px solid var(--line);
+    border: 1px solid rgba(27, 22, 20, 0.12);
+    box-shadow: 0 1px 2px rgb(27 22 20 / 0.04), 0 12px 32px -16px rgb(27 22 20 / 0.12);
   }
   .plan.featured {
     border-color: transparent;
-    box-shadow: 0 30px 80px -30px rgb(191 68 80 / 0.45), 0 0 0 2px var(--coral-strong);
+    box-shadow: 0 24px 60px -28px rgb(27 22 20 / 0.22), 0 0 0 2px var(--coral-strong);
   }
   .flag {
     position: absolute;
@@ -645,7 +646,7 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY;
     margin-top: 24px;
     padding: 36px;
     border-radius: var(--radius-lg);
-    background: var(--blush-2);
+    background: var(--page);
     border: 1px solid var(--line);
   }
   .addon.with-form {
