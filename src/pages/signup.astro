@@ -1,14 +1,14 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PageIntro from '../components/sections/PageIntro.astro';
-import PricingPlans from '../components/sections/PricingPlans.astro';
+import OnePlan from '../components/sections/OnePlan.astro';
 import SectionHead from '../components/sections/SectionHead.astro';
 import { breadcrumbs } from '../lib/jsonld';
 import { site } from '../config/site';
-import { solo, founding, trialDays, usd } from '../config/pricing';
+import { plan, trialDays, usd } from '../config/pricing';
 
-const title = 'Get Started | Join Happli as a Founding Studio';
-const description = `Join Happli from ${usd(solo.monthly)} a month, with ${founding.discountPercent}% off for Founding Studios. Free until you go live. Booking software for spray tan and beauty studios, with AI built in.`;
+const title = 'Get Started | Join Happli at launch pricing';
+const description = `Join Happli at launch pricing: ${usd(plan.launch.monthly)} a month, or ${usd(plan.launch.yearly)} a month billed yearly. One plan with everything, plus a website we build for you. Free until you go live. Booking software for beauty businesses, with AI built in.`;
 ---
 
 <BaseLayout
@@ -18,8 +18,8 @@ const description = `Join Happli from ${usd(solo.monthly)} a month, with ${found
 >
   <PageIntro
     eyebrow="Get started"
-    title="Join as a Founding Studio."
-    lede={`Pick Solo or Studio, then book a call and we'll set you up for free. Happli is free until your studio goes live, for up to ${trialDays} days.`}
+    title="Join Happli at launch pricing."
+    lede={`One plan with everything. Book a call and we'll set you up for free. Happli is free until your studio goes live, for up to ${trialDays} days.`}
     cta={false}
   >
     <div class="btn-row call">
@@ -28,7 +28,7 @@ const description = `Join Happli from ${usd(solo.monthly)} a month, with ${found
     </div>
   </PageIntro>
 
-  <PricingPlans included={false} cta="call" />
+  <OnePlan calculator={false} addon={false} cta="call" />
 
   <section class="section" aria-labelledby="next-title">
     <div class="wrap">
@@ -37,7 +37,7 @@ const description = `Join Happli from ${usd(solo.monthly)} a month, with ${found
       <ol class="next">
         <li><b>Book a call.</b> Pick a time and tell us about your studio and team.</li>
         <li><b>Set up your studio, free.</b> Add services, team and hours, and we bring your clients over from CSV if you're switching. There's no setup fee.</li>
-        <li><b>Go live.</b> Happli is free until your studio goes live, for up to {trialDays} days. Then you pay for Solo or Studio, monthly or yearly.</li>
+        <li><b>Go live.</b> Happli is free until your studio goes live, for up to {trialDays} days. Then you pay one plan price, monthly or yearly, and keep launch pricing for as long as you stay subscribed.</li>
       </ol>
       <p class="help">Questions first? <a href="/pricing/">See pricing details</a>, <a href="/help/">visit Help</a> or email <a href={`mailto:${site.contactEmail}`}>{site.contactEmail}</a>.</p>
     </div>

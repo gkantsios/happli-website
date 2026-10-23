@@ -1,55 +1,70 @@
 ---
-// One plan at launch pricing, the price calculator and the Marketing add-on (with its waitlist form).
+// The one plan at launch pricing, the price calculator and the Marketing add-on (with its waitlist form).
+// Every number comes from src/config/pricing.ts.
 import Icon from '../Icon.astro';
+import { site } from '../../config/site';
+import { plan, marketingAddOn, yearlySavePercent, usd, yearlyTotal } from '../../config/pricing';
 
-const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY;
-const features = [
-  'Online booking and calendar',
-  'Clients, notes and forms',
-  'Payments, packages and memberships',
-  'Texting and reminders',
-  'Reports',
-  'Free front desk and admin logins',
-];
-const packs = [
-  { credits: 2000, price: 19 },
-  { credits: 5000, price: 39 },
-  { credits: 12000, price: 79 },
-  { credits: 30000, price: 159 },
-];
+interface Props {
+  /** Show the "What would you pay?" calculator. */
+  calculator?: boolean;
+  /** Show the Marketing add-on with its waitlist form (the Turnstile script loads with it). */
+  addon?: boolean;
+  /** Where the plan button goes: the signup page, or straight to the book-a-call link (used on /signup/ itself). */
+  cta?: 'signup' | 'call';
+}
+const { calculator = true, addon = true, cta = 'signup' } = Astro.props;
+
+const turnstileSiteKey = addon && import.meta.env.PUBLIC_TURNSTILE_SITE_KEY;
+const { launch, regular, extraMember } = plan;
+const pack = marketingAddOn.packs.find((p) => p.credits === marketingAddOn.defaultCredits)!;
+const m = marketingAddOn;
+const cover = (c: number) => ({
+  txt: Math.floor(c / m.creditsPerText / 10) * 10,
+  em: c * m.emailsPerCredit,
+  pic: Math.floor(c / m.creditsPerPictureText / 10) * 10,
+});
+const c0 = cover(pack.credits);
+const n = (x: number) => x.toLocaleString('en-US');
+const calcData = JSON.stringify({ launch, regular, extraMember, share: plan.extraLocationShare, m });
 ---
 
-<section class="plans-section" aria-labelledby="plan-title" data-oneplan>
+<section class="plans-section" aria-labelledby="plan-title" data-oneplan data-pricing={calcData}>
   <div class="wrap">
     <fieldset class="billing">
       <legend class="visually-hidden">Billing</legend>
       <label><input type="radio" name="billing" value="monthly" /><span>Monthly</span></label>
-      <label><input type="radio" name="billing" value="yearly" checked /><span>Yearly <em>Save 14%</em></span></label>
+      <label><input type="radio" name="billing" value="yearly" checked /><span>Yearly <em>Save {yearlySavePercent}%</em></span></label>
     </fieldset>
 
     <article class="plan">
       <div>
-        <h2 id="plan-title">Happli</h2>
-        <p class="for">Everything, for 1 team member who takes bookings</p>
+        <h2 id="plan-title">{plan.name}</h2>
+        <p class="for">{plan.forWho}</p>
         <span class="badge">Launch price</span>
         <p class="price">
-          <span class="m"><span class="amount">$52</span><span class="unit">/mo</span><s><span class="visually-hidden">Regular price </span>$69</s></span>
-          <span class="y"><span class="amount">$44</span><span class="unit">/mo</span><s><span class="visually-hidden">Regular price </span>$59</s></span>
+          <span class="m"><span class="amount">{usd(launch.monthly)}</span><span class="unit">/mo</span><s><span class="visually-hidden">Regular price </span>{usd(regular.monthly)}</s></span>
+          <span class="y"><span class="amount">{usd(launch.yearly)}</span><span class="unit">/mo</span><s><span class="visually-hidden">Regular price </span>{usd(regular.yearly)}</s></span>
         </p>
-        <p class="bill"><span class="m">Billed monthly</span><span class="y">Billed yearly ($528/yr)</span></p>
+        <p class="bill"><span class="m">Billed monthly</span><span class="y">Billed yearly ({usd(yearlyTotal(launch.yearly))}/yr)</span></p>
         <p class="lock">Lock in launch pricing for as long as you stay subscribed.</p>
-        <p class="per"><b><span class="m">+$10/mo</span><span class="y">+$8.60/mo</span></b> for each extra team member who takes bookings</p>
+        <p class="per"><b><span class="m">+{usd(extraMember.monthly)}/mo</span><span class="y">+{usd(extraMember.yearly)}/mo</span></b> for each extra team member who takes bookings</p>
       </div>
       <div>
         <p class="site">Your website is included<span>Built by gohappybeauty, synced with Happli</span></p>
         <ul class="checks">
-          {features.map((f) => <li><Icon name="check" size={16} strokeWidth={2} /><span>{f}</span></li>)}
+          {plan.features.map((f) => <li><Icon name="check" size={16} strokeWidth={2} /><span>{f}</span></li>)}
         </ul>
-        <a class="btn btn-coral" href="/signup/">Get started</a>
+        {cta === 'call' ? (
+          <a class="btn btn-coral" href={site.cta.href} target="_blank" rel="noopener">Book a call to get started</a>
+        ) : (
+          <a class="btn btn-coral" href={plan.href}>Get started</a>
+        )}
       </div>
     </article>
     <p class="extras"><span><b>Extra location:</b> half price</span><span><b>Front desk and admin:</b> always free</span></p>
 
+    {calculator && (<>
     <div class="block-head">
       <h2 id="calc-title">What would you pay?</h2>
       <p>Count only the team members who take bookings.</p>
@@ -73,39 +88,42 @@ const packs = [
       </div>
       <div class="tot">
         <div>
-          <p class="big" data-out="total" aria-live="polite">$44<span class="unit">/mo</span><s>$59</s></p>
-          <p class="bill" data-out="bill">Billed yearly ($528/yr)</p>
+          <p class="big" data-out="total" aria-live="polite">{usd(launch.yearly)}<span class="unit">/mo</span><s>{usd(regular.yearly)}</s></p>
+          <p class="bill" data-out="bill">Billed yearly ({usd(yearlyTotal(launch.yearly))}/yr)</p>
         </div>
         <span class="badge">Launch price</span>
       </div>
     </div>
+    </>)}
 
+    {addon && (
     <div class="addon" id="marketing">
       <div class="addon-top">
         <div>
-          <span class="badge badge-soon">Coming soon</span>
-          <h3>Marketing add&#8209;on</h3>
+          <span class="badge badge-soon">{m.status}</span>
+          <h3>{m.name.replace('-', '\u2011')}</h3>
           <p>Text and email campaigns to bring clients back. Optional on any plan. Pick the credit pack that fits.</p>
         </div>
-        <p class="amt"><span data-out="mk">$39</span><span class="unit">/mo</span></p>
+        <p class="amt"><span data-out="mk">{usd(pack.price)}</span><span class="unit">/mo</span></p>
       </div>
       <fieldset class="seg">
         <legend class="visually-hidden">Credit pack</legend>
-        {packs.map((p) => (
-          <label><input type="radio" name="pack" value={p.credits} data-p={p.price} checked={p.credits === 5000} /><span>{p.credits.toLocaleString('en-US')}</span></label>
+        {m.packs.map((p) => (
+          <label><input type="radio" name="pack" value={p.credits} data-p={p.price} checked={p.credits === m.defaultCredits} /><span>{p.credits.toLocaleString('en-US')}</span></label>
         ))}
       </fieldset>
       <p class="segl">credits a month</p>
       <div class="cov">
-        <div><b data-out="txt">~1,660</b><span>texts</span></div>
+        <div><b data-out="txt">~{n(c0.txt)}</b><span>texts</span></div>
         <span class="or">or</span>
-        <div><b data-out="em">~10,000</b><span>emails</span></div>
+        <div><b data-out="em">~{n(c0.em)}</b><span>emails</span></div>
         <span class="or">or</span>
-        <div><b data-out="pic">~710</b><span>picture texts</span></div>
+        <div><b data-out="pic">~{n(c0.pic)}</b><span>picture texts</span></div>
       </div>
       <p class="note">
-        1 credit = 2 emails. 1 text = 3 credits. 1 picture text = 7 credits. Texts count per 160-character segment.
-        Need more one month? Extra credits are 1¢ each. Appointment reminder texts stay included free on every plan.
+        1 credit = {m.emailsPerCredit} emails. 1 text = {m.creditsPerText} credits. 1 picture text = {m.creditsPerPictureText} credits.
+        Texts count per 160-character segment. Need more one month? Extra credits are {m.extraCreditCents}¢ each. Appointment
+        reminder texts stay included free on every plan.
       </p>
           <div class="wl" data-waitlist>
             <form action="/api/waitlist" method="post" novalidate>
@@ -145,6 +163,7 @@ const packs = [
             <div class="wl-done" aria-live="polite" data-wl-done />
           </div>
     </div>
+    )}
   </div>
 </section>
 
@@ -157,17 +176,19 @@ const packs = [
   (function () {
     var root = document.querySelector('[data-oneplan]');
     if (!root) return;
+    var cfg = JSON.parse(root.dataset.pricing);
     var T = 1, L = 1;
     var out = function (k) { return root.querySelector('[data-out="' + k + '"]'); };
     var f = function (n) { return '$' + Math.round(n).toLocaleString('en-US'); };
     function yearly() { return root.querySelector('input[name="billing"][value="yearly"]').checked; }
     function render() {
-      var Y = yearly(), lb = Y ? 44 : 52, rb = Y ? 59 : 69, ex = Y ? 8.6 : 10, mult = 1 + (L - 1) * 0.5;
-      var lt = (lb + (T - 1) * ex) * mult, rt = (rb + (T - 1) * ex) * mult;
+      if (!out('total')) return;
+      var b = yearly() ? 'yearly' : 'monthly', mult = 1 + (L - 1) * cfg.share;
+      var lt = (cfg.launch[b] + (T - 1) * cfg.extraMember[b]) * mult, rt = (cfg.regular[b] + (T - 1) * cfg.extraMember[b]) * mult;
       out('t').textContent = T;
       out('l').textContent = L;
       out('total').innerHTML = f(lt) + '<span class="unit">/mo</span><s>' + f(rt) + '</s>';
-      out('bill').textContent = Y ? 'Billed yearly (' + f(lt * 12) + '/yr)' : 'Billed monthly';
+      out('bill').textContent = b === 'yearly' ? 'Billed yearly (' + f(lt * 12) + '/yr)' : 'Billed monthly';
     }
     root.querySelectorAll('.step button').forEach(function (b) {
       b.addEventListener('click', function () {
@@ -180,17 +201,18 @@ const packs = [
     root.querySelectorAll('input[name="billing"]').forEach(function (i) { i.addEventListener('change', render); });
     root.querySelectorAll('input[name="pack"]').forEach(function (i) {
       i.addEventListener('change', function () {
-        var c = +i.value;
+        var c = +i.value, m = cfg.m;
         out('mk').textContent = '$' + i.dataset.p;
-        out('txt').textContent = '~' + (Math.floor(c / 3 / 10) * 10).toLocaleString('en-US');
-        out('em').textContent = '~' + (c * 2).toLocaleString('en-US');
-        out('pic').textContent = '~' + (Math.floor(c / 7 / 10) * 10).toLocaleString('en-US');
+        out('txt').textContent = '~' + (Math.floor(c / m.creditsPerText / 10) * 10).toLocaleString('en-US');
+        out('em').textContent = '~' + (c * m.emailsPerCredit).toLocaleString('en-US');
+        out('pic').textContent = '~' + (Math.floor(c / m.creditsPerPictureText / 10) * 10).toLocaleString('en-US');
       });
     });
     render();
   })();
 </script>
-    <script is:inline>
+    {addon && (
+<script is:inline>
       (function () {
         var root = document.querySelector('[data-waitlist]');
         if (!root || !window.fetch || !window.FormData) return;
@@ -311,6 +333,7 @@ const packs = [
         else if (result) setError(result === 'invalid_email' || result === 'verification_failed' ? result : 'server');
       })();
     </script>
+)}
 
 <style>
   .plans-section { padding-block: clamp(32px, 4vw, 48px) 0; }

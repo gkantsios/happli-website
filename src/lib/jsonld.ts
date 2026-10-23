@@ -1,5 +1,5 @@
 import { site } from '../config/site';
-import { plans, lowPrice, highPrice } from '../config/pricing';
+import { plan } from '../config/pricing';
 
 const abs = (path: string) => new URL(path, site.url).href;
 
@@ -39,7 +39,7 @@ export function faqPage(items: { q: string; a: string }[]) {
   };
 }
 
-// Offers are the Solo and Studio plans at their normal monthly prices (src/config/pricing.ts).
+// Offers are the one plan at its launch prices, monthly and billed yearly (src/config/pricing.ts).
 // No aggregateRating until there are real reviews.
 export function softwareApplication() {
   return {
@@ -53,17 +53,17 @@ export function softwareApplication() {
     offers: {
       '@type': 'AggregateOffer',
       priceCurrency: 'USD',
-      lowPrice: String(lowPrice),
-      highPrice: String(highPrice),
-      offerCount: String(plans.length),
-      offers: plans.map((p) => ({
+      lowPrice: String(plan.launch.yearly),
+      highPrice: String(plan.launch.monthly),
+      offerCount: '2',
+      offers: (['monthly', 'yearly'] as const).map((b) => ({
         '@type': 'Offer',
-        name: p.name,
-        price: String(p.monthly),
+        name: b === 'monthly' ? `${plan.name}, billed monthly` : `${plan.name}, billed yearly`,
+        price: String(plan.launch[b]),
         priceCurrency: 'USD',
         priceSpecification: {
           '@type': 'UnitPriceSpecification',
-          price: String(p.monthly),
+          price: String(plan.launch[b]),
           priceCurrency: 'USD',
           billingDuration: 1,
           unitCode: 'MON',

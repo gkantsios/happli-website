@@ -6,11 +6,13 @@ import SectionHead from '../components/sections/SectionHead.astro';
 import Faq, { type FaqItem } from '../components/sections/Faq.astro';
 import CtaBand from '../components/sections/CtaBand.astro';
 import { breadcrumbs, softwareApplication } from '../lib/jsonld';
-import { reminderFairUse, trialDays } from '../config/pricing';
+import { plan, marketingAddOn, monthlyTotal, reminderFairUse, trialDays, usd, yearlyTotal } from '../config/pricing';
 
-const title = 'Pricing | Happli booking software, one plan from $44 a month';
-const description =
-  'One plan with everything, plus a website we build for you. Launch price $52 a month, or $44 a month billed yearly. +$10 a month per extra team member who takes bookings. No contracts, no hidden fees.';
+const { launch, regular, extraMember } = plan;
+const xl = (b: 'monthly' | 'yearly') => usd(monthlyTotal(1, 2, b) - monthlyTotal(1, 1, b));
+const packs = marketingAddOn.packs;
+const title = `Pricing | Happli booking software, one plan from ${usd(launch.yearly)} a month`;
+const description = `One plan with everything, plus a website we build for you. Launch price ${usd(launch.monthly)} a month, or ${usd(launch.yearly)} a month billed yearly. +${usd(extraMember.monthly)} a month per extra team member who takes bookings. No contracts, no hidden fees.`;
 
 const why = [
   { h: 'Real people set you up', p: "Our team does your import and setup for you, so you don't start from scratch." },
@@ -24,11 +26,11 @@ const why = [
 const faq: FaqItem[] = [
   {
     q: 'How does pricing work for a team?',
-    a: "There's one plan with every feature. The launch price is $52 a month, or $44 a month billed yearly ($528 a year), for 1 team member who takes bookings. Each extra team member who takes bookings is +$10 a month, or +$8.60 a month billed yearly. Front desk and admin logins are always free.",
+    a: `There's one plan with every feature. The launch price is ${usd(launch.monthly)} a month, or ${usd(launch.yearly)} a month billed yearly (${usd(yearlyTotal(launch.yearly))} a year), for 1 team member who takes bookings. Each extra team member who takes bookings is +${usd(extraMember.monthly)} a month, or +${usd(extraMember.yearly)} a month billed yearly. Front desk and admin logins are always free.`,
   },
   {
     q: 'How do extra locations work?',
-    a: 'Each extra location is half price. For a location with 1 team member who takes bookings, that is $26 a month, or $22 a month billed yearly. Use the calculator above to see your total.',
+    a: `Each extra location is half price. For a location with 1 team member who takes bookings, that is ${xl('monthly')} a month, or ${xl('yearly')} a month billed yearly. Use the calculator above to see your total.`,
   },
   {
     q: 'Is there a free trial?',
@@ -36,7 +38,7 @@ const faq: FaqItem[] = [
   },
   {
     q: 'What is launch pricing?',
-    a: 'Studios that join at launch pay $52 a month instead of $69, or $44 a month instead of $59 billed yearly. You keep launch pricing for as long as you stay subscribed. It ends only if you cancel.',
+    a: `Studios that join at launch pay ${usd(launch.monthly)} a month instead of ${usd(regular.monthly)}, or ${usd(launch.yearly)} a month instead of ${usd(regular.yearly)} billed yearly. You keep launch pricing for as long as you stay subscribed. It ends only if you cancel.`,
   },
   {
     q: 'Is there a contract?',
@@ -44,7 +46,7 @@ const faq: FaqItem[] = [
   },
   {
     q: "What's in the Marketing add-on?",
-    a: 'Text and email campaigns to bring clients back. It is coming soon and optional on any plan. You pick a monthly credit pack, from $19 for 2,000 credits to $159 for 30,000. 1 credit is 2 emails, a text is 3 credits and a picture text is 7 credits. Extra credits are 1¢ each.',
+    a: `Text and email campaigns to bring clients back. It is coming soon and optional on any plan. You pick a monthly credit pack, from ${usd(packs[0].price)} for ${packs[0].credits.toLocaleString('en-US')} credits to ${usd(packs[packs.length - 1].price)} for ${packs[packs.length - 1].credits.toLocaleString('en-US')}. 1 credit is ${marketingAddOn.emailsPerCredit} emails, a text is ${marketingAddOn.creditsPerText} credits and a picture text is ${marketingAddOn.creditsPerPictureText} credits. Extra credits are ${marketingAddOn.extraCreditCents}¢ each.`,
   },
   {
     q: 'Do you charge for reminder texts?',
