@@ -81,3 +81,6 @@ export const yearlySavePercent = Math.floor((1 - plan.launch.yearly / plan.launc
 
 /** Lowest advertised price: the launch price billed yearly. */
 export const lowPrice = plan.launch.yearly;
+
+/** Grant's launch-pricing rule (Oct 23, 2026). Shown on /pricing and /signup. */
+export const launchLock = 'Launch pricing is locked for the features in your plan for as long as you stay subscribed. New features added later may cost more.';

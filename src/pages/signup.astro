@@ -5,7 +5,7 @@ import OnePlan from '../components/sections/OnePlan.astro';
 import SectionHead from '../components/sections/SectionHead.astro';
 import { breadcrumbs } from '../lib/jsonld';
 import { site } from '../config/site';
-import { plan, trialDays, usd } from '../config/pricing';
+import { plan, launchLock, trialDays, usd } from '../config/pricing';
 
 const title = 'Get Started | Join Happli at launch pricing';
 const description = `Join Happli at launch pricing: ${usd(plan.launch.monthly)} a month, or ${usd(plan.launch.yearly)} a month billed yearly. One plan with everything, plus a website we build for you. Free until you go live. Booking software for beauty businesses, with AI built in.`;
@@ -37,7 +37,7 @@ const description = `Join Happli at launch pricing: ${usd(plan.launch.monthly)} 
       <ol class="next">
         <li><b>Book a call.</b> Pick a time and tell us about your studio and team.</li>
         <li><b>Set up your studio, free.</b> Add services, team and hours, and we bring your clients over from CSV if you're switching. There's no setup fee.</li>
-        <li><b>Go live.</b> Happli is free until your studio goes live, for up to {trialDays} days. Then you pay one plan price, monthly or yearly, and keep launch pricing for as long as you stay subscribed.</li>
+        <li><b>Go live.</b> Happli is free until your studio goes live, for up to {trialDays} days. Then you pay one plan price, monthly or yearly. {launchLock}</li>
       </ol>
       <p class="help">Questions first? <a href="/pricing/">See pricing details</a>, <a href="/help/">visit Help</a> or email <a href={`mailto:${site.contactEmail}`}>{site.contactEmail}</a>.</p>
     </div>

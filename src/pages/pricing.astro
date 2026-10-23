@@ -6,7 +6,7 @@ import SectionHead from '../components/sections/SectionHead.astro';
 import Faq, { type FaqItem } from '../components/sections/Faq.astro';
 import CtaBand from '../components/sections/CtaBand.astro';
 import { breadcrumbs, softwareApplication } from '../lib/jsonld';
-import { plan, marketingAddOn, monthlyTotal, reminderFairUse, trialDays, usd, yearlyTotal } from '../config/pricing';
+import { plan, launchLock, marketingAddOn, monthlyTotal, reminderFairUse, trialDays, usd, yearlyTotal } from '../config/pricing';
 
 const { launch, regular, extraMember } = plan;
 const xl = (b: 'monthly' | 'yearly') => usd(monthlyTotal(1, 2, b) - monthlyTotal(1, 1, b));
@@ -38,7 +38,7 @@ const faq: FaqItem[] = [
   },
   {
     q: 'What is launch pricing?',
-    a: `Studios that join at launch pay ${usd(launch.monthly)} a month instead of ${usd(regular.monthly)}, or ${usd(launch.yearly)} a month instead of ${usd(regular.yearly)} billed yearly. You keep launch pricing for as long as you stay subscribed. It ends only if you cancel.`,
+    a: `Studios that join at launch pay ${usd(launch.monthly)} a month instead of ${usd(regular.monthly)}, or ${usd(launch.yearly)} a month instead of ${usd(regular.yearly)} billed yearly. ${launchLock} It ends if you cancel.`,
   },
   {
     q: 'Is there a contract?',

@@ -36,7 +36,7 @@ Vagaro's pricing page lists **$23.99/month** for one location as an exclusive ra
 
 Some tools are paid add-ons on the same page: text marketing from $20/month, forms at $10/month, and payroll at $34/month plus $5 per employee. Email marketing is free to start, with 1,000 free emails a month included.[^v-price]
 
-Happli has one plan with every feature. At launch pricing it's $52/month ($44/month billed yearly) for one team member who takes bookings, plus $10/month for each extra one. Each plan includes 1 location, and extra locations are half price. Front desk and admin logins are free, and your website is included. Setup and client import are free, there are no contracts, and you keep launch pricing for as long as you stay subscribed. See the [pricing page](/pricing/) for details.[^happli]
+Happli has one plan with every feature. At launch pricing it's $52/month ($44/month billed yearly) for one team member who takes bookings, plus $10/month for each extra one. Each plan includes 1 location, and extra locations are half price. Front desk and admin logins are free, and your website is included. Setup and client import are free, there are no contracts, and launch pricing is locked for the features in your plan for as long as you stay subscribed. New features added later may cost more. See the [pricing page](/pricing/) for details.[^happli]
 
 Vagaro is clearly the cheaper starting point. Happli costs more and aims to earn it back through fewer no-shows, fewer empty gaps and less time at the front desk.
 

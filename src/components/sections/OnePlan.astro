@@ -3,7 +3,7 @@
 // Every number comes from src/config/pricing.ts.
 import Icon from '../Icon.astro';
 import { site } from '../../config/site';
-import { plan, marketingAddOn, yearlySavePercent, usd, yearlyTotal } from '../../config/pricing';
+import { plan, launchLock, marketingAddOn, yearlySavePercent, usd, yearlyTotal } from '../../config/pricing';
 
 interface Props {
   /** Show the "What would you pay?" calculator. */
@@ -47,7 +47,7 @@ const calcData = JSON.stringify({ launch, regular, extraMember, share: plan.extr
           <span class="y"><span class="amount">{usd(launch.yearly)}</span><span class="unit">/mo</span><s><span class="visually-hidden">Regular price </span>{usd(regular.yearly)}</s></span>
         </p>
         <p class="bill"><span class="m">Billed monthly</span><span class="y">Billed yearly ({usd(yearlyTotal(launch.yearly))}/yr)</span></p>
-        <p class="lock">Lock in launch pricing for as long as you stay subscribed.</p>
+        <p class="lock">{launchLock}</p>
         <p class="per"><b><span class="m">+{usd(extraMember.monthly)}/mo</span><span class="y">+{usd(extraMember.yearly)}/mo</span></b> for each extra team member who takes bookings</p>
       </div>
       <div>

@@ -32,7 +32,7 @@ GlossGenius is all-in-one booking, payments and business management software for
 
 GlossGenius charges by tier. **Standard** is $28/month billed monthly, or $24/month billed annually. **Gold** is $56/month ($48 annually) and is aimed at businesses with up to 9 staff. **Platinum** is $168/month ($148 annually) for established businesses and teams of 10 or more. Additional locations are charged the plan price at a 15% discount. Deposits and cancellation and no-show policies are on every tier; text marketing includes 500 text credits on Gold and 2,500 on Platinum.[^g-price]
 
-Happli has one plan with every feature. At launch pricing it's $52/month ($44/month billed yearly) for one team member who takes bookings, plus $10/month for each extra one. Each plan includes 1 location, and extra locations are half price. Front desk and admin logins are free, and your website is included. Setup and client import are free, there are no contracts, and you keep launch pricing for as long as you stay subscribed. See the [pricing page](/pricing/) for details.[^happli]
+Happli has one plan with every feature. At launch pricing it's $52/month ($44/month billed yearly) for one team member who takes bookings, plus $10/month for each extra one. Each plan includes 1 location, and extra locations are half price. Front desk and admin logins are free, and your website is included. Setup and client import are free, there are no contracts, and launch pricing is locked for the features in your plan for as long as you stay subscribed. New features added later may cost more. See the [pricing page](/pricing/) for details.[^happli]
 
 On sticker price, GlossGenius's Standard plan is cheaper than Happli. The right comparison is what you need: GlossGenius puts forms and waivers, the automated waitlist and Google booking on the Gold tier, so a studio that wants those will compare Gold ($56/month) with Happli.[^g-price]
 
@@ -48,7 +48,7 @@ On sticker price, GlossGenius's Standard plan is cheaper than Happli. The right 
 - **Spray tan first.** Deposits, prep-instruction messages and mobile appointments with "on my way" texts are part of how Happli works.[^happli]
 - **The Needs you list and gap offers.** Open gaps and waitlist matches collect in one list. Happli drafts a text offering the time to the client you choose, and sends it only after you approve it.[^happli]
 - **Money goes straight to you.** Charges are made on your own Stripe account at Stripe's standard rate, with no Happli markup.[^happli]
-- **Every feature on both plans.** Nothing is locked behind a higher tier; you pay for the team members who take bookings.[^happli]
+- **Every feature in one plan.** Nothing is locked behind a higher tier; you pay for the team members who take bookings.[^happli]
 
 ## Who should pick GlossGenius
 
