@@ -124,11 +124,11 @@ p {
   outline-offset: 3px;
 }
 .btn-primary {
-  background: var(--ink);
+  background: var(--coral-strong);
   color: #fff;
 }
 .btn-primary:hover {
-  background: #000;
+  background: var(--coral-strong-hover);
 }
 .btn-coral {
   background: var(--coral-strong);

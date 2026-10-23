@@ -1,6 +1,12 @@
 /* Design tokens: colors, fonts, spacing. Based on site-mockup.html, with text colors
    adjusted so every text/background pair passes WCAG AA (4.5:1). */
 :root {
+  --page: #fcf8f4;
+  --blush-band: #fbe9e6;
+  --sage-band: #eef0e6;
+  --sage-ink: #4e5a34;
+  --footer-sand: #f5efe8;
+  --cta-band: linear-gradient(135deg, #fbe0dc 0%, #f6ece4 100%);
   /* surfaces */
   --bg: #fbfaf8;
   --surface: #ffffff;

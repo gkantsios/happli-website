@@ -1,0 +1,21 @@
+/* Warm bands: tinted bands alternate with the neutral page so two tints never meet,
+   with equal top and bottom padding so no card touches a band edge. Coral stays the only action color. */
+body { background: var(--page); }
+main > section + section { margin-top: 0; }
+main > section[aria-labelledby="problem-title"],
+main > section[aria-labelledby="testimonials-title"],
+main > section#payments,
+section.plans-section { padding-block: var(--space-section); }
+main > section[aria-labelledby="problem-title"],
+main > section[aria-labelledby="testimonials-title"],
+section.plans-section { background: var(--blush-band); }
+main > section#payments { background: var(--sage-band); }
+.eyebrow { color: var(--coral-ink); }
+main > section#payments .eyebrow { color: var(--sage-ink); }
+/* A plain section that runs into a tinted band gets its full bottom padding, so its cards sit clear of the edge. */
+main > section:has(+ section[aria-labelledby="problem-title"]),
+main > section:has(+ script + section[aria-labelledby="problem-title"]),
+main > section:has(+ section[aria-labelledby="testimonials-title"]),
+main > section:has(+ script + section[aria-labelledby="testimonials-title"]),
+main > section:has(+ section#payments),
+main > section:has(+ script + section#payments) { padding-bottom: var(--space-section); }
