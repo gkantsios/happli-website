@@ -1,0 +1,551 @@
+---
+// One plan at launch pricing, the price calculator and the Marketing add-on (with its waitlist form).
+import Icon from '../Icon.astro';
+
+const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY;
+const features = [
+  'Online booking and calendar',
+  'Clients, notes and forms',
+  'Payments, packages and memberships',
+  'Texting and reminders',
+  'Reports',
+  'Free front desk and admin logins',
+];
+const packs = [
+  { credits: 2000, price: 19 },
+  { credits: 5000, price: 39 },
+  { credits: 12000, price: 79 },
+  { credits: 30000, price: 159 },
+];
+---
+
+<section class="plans-section" aria-labelledby="plan-title" data-oneplan>
+  <div class="wrap">
+    <fieldset class="billing">
+      <legend class="visually-hidden">Billing</legend>
+      <label><input type="radio" name="billing" value="monthly" /><span>Monthly</span></label>
+      <label><input type="radio" name="billing" value="yearly" checked /><span>Yearly <em>Save 14%</em></span></label>
+    </fieldset>
+
+    <article class="plan">
+      <div>
+        <h2 id="plan-title">Happli</h2>
+        <p class="for">Everything, for 1 team member who takes bookings</p>
+        <span class="badge">Launch price</span>
+        <p class="price">
+          <span class="m"><span class="amount">$52</span><span class="unit">/mo</span><s><span class="visually-hidden">Regular price </span>$69</s></span>
+          <span class="y"><span class="amount">$44</span><span class="unit">/mo</span><s><span class="visually-hidden">Regular price </span>$59</s></span>
+        </p>
+        <p class="bill"><span class="m">Billed monthly</span><span class="y">Billed yearly ($528/yr)</span></p>
+        <p class="lock">Lock in launch pricing for as long as you stay subscribed.</p>
+        <p class="per"><b><span class="m">+$10/mo</span><span class="y">+$8.60/mo</span></b> for each extra team member who takes bookings</p>
+      </div>
+      <div>
+        <p class="site">Your website is included<span>Built by gohappybeauty, synced with Happli</span></p>
+        <ul class="checks">
+          {features.map((f) => <li><Icon name="check" size={16} strokeWidth={2} /><span>{f}</span></li>)}
+        </ul>
+        <a class="btn btn-coral" href="/signup/">Get started</a>
+      </div>
+    </article>
+    <p class="extras"><span><b>Extra location:</b> half price</span><span><b>Front desk and admin:</b> always free</span></p>
+
+    <div class="block-head">
+      <h2 id="calc-title">What would you pay?</h2>
+      <p>Count only the team members who take bookings.</p>
+    </div>
+    <div class="calc" aria-labelledby="calc-title">
+      <div class="row">
+        <p class="rl" id="cl-t">Team members who take bookings<span>First one included</span></p>
+        <div class="step" role="group" aria-labelledby="cl-t">
+          <button type="button" data-k="t" data-d="-1" aria-label="Fewer team members">−</button>
+          <output data-out="t" aria-live="polite">1</output>
+          <button type="button" data-k="t" data-d="1" aria-label="More team members">+</button>
+        </div>
+      </div>
+      <div class="row">
+        <p class="rl" id="cl-l">Locations<span>Each extra is half price</span></p>
+        <div class="step" role="group" aria-labelledby="cl-l">
+          <button type="button" data-k="l" data-d="-1" aria-label="Fewer locations">−</button>
+          <output data-out="l" aria-live="polite">1</output>
+          <button type="button" data-k="l" data-d="1" aria-label="More locations">+</button>
+        </div>
+      </div>
+      <div class="tot">
+        <div>
+          <p class="big" data-out="total" aria-live="polite">$44<span class="unit">/mo</span><s>$59</s></p>
+          <p class="bill" data-out="bill">Billed yearly ($528/yr)</p>
+        </div>
+        <span class="badge">Launch price</span>
+      </div>
+    </div>
+
+    <div class="addon" id="marketing">
+      <div class="addon-top">
+        <div>
+          <span class="badge badge-soon">Coming soon</span>
+          <h3>Marketing add&#8209;on</h3>
+          <p>Text and email campaigns to bring clients back. Optional on any plan. Pick the credit pack that fits.</p>
+        </div>
+        <p class="amt"><span data-out="mk">$39</span><span class="unit">/mo</span></p>
+      </div>
+      <fieldset class="seg">
+        <legend class="visually-hidden">Credit pack</legend>
+        {packs.map((p) => (
+          <label><input type="radio" name="pack" value={p.credits} data-p={p.price} checked={p.credits === 5000} /><span>{p.credits.toLocaleString('en-US')}</span></label>
+        ))}
+      </fieldset>
+      <p class="segl">credits a month</p>
+      <div class="cov">
+        <div><b data-out="txt">~1,660</b><span>texts</span></div>
+        <span class="or">or</span>
+        <div><b data-out="em">~10,000</b><span>emails</span></div>
+        <span class="or">or</span>
+        <div><b data-out="pic">~710</b><span>picture texts</span></div>
+      </div>
+      <p class="note">
+        1 credit = 2 emails. 1 text = 3 credits. 1 picture text = 7 credits. Texts count per 160-character segment.
+        Need more one month? Extra credits are 1¢ each. Appointment reminder texts stay included free on every plan.
+      </p>
+          <div class="wl" data-waitlist>
+            <form action="/api/waitlist" method="post" novalidate>
+              <label class="wl-label" for="wl-email">Get notified when it launches</label>
+              <div class="wl-field">
+                <input
+                  id="wl-email"
+                  name="email"
+                  type="email"
+                  autocomplete="email"
+                  inputmode="email"
+                  placeholder="you@studio.com"
+                  maxlength="254"
+                  required
+                  aria-describedby="wl-msg"
+                />
+                <button class="btn btn-primary" type="submit">
+                  <span class="spin" aria-hidden="true" />
+                  <span data-wl-label>Join the waitlist</span>
+                </button>
+              </div>
+              <div class="hp" aria-hidden="true">
+                <label>Company<input name="company" tabindex="-1" autocomplete="off" /></label>
+              </div>
+              {turnstileSiteKey && (
+                <div
+                  class="cf-turnstile ts"
+                  data-turnstile
+                  data-sitekey={turnstileSiteKey}
+                  data-appearance="interaction-only"
+                  data-size="flexible"
+                  data-refresh-expired="auto"
+                />
+              )}
+              <p id="wl-msg" class="hint" aria-live="polite">We'll email you once when it launches. No spam.</p>
+            </form>
+            <div class="wl-done" aria-live="polite" data-wl-done />
+          </div>
+    </div>
+  </div>
+</section>
+
+{
+  turnstileSiteKey && (
+    <script is:inline src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+  )
+}
+<script is:inline>
+  (function () {
+    var root = document.querySelector('[data-oneplan]');
+    if (!root) return;
+    var T = 1, L = 1;
+    var out = function (k) { return root.querySelector('[data-out="' + k + '"]'); };
+    var f = function (n) { return '$' + Math.round(n).toLocaleString('en-US'); };
+    function yearly() { return root.querySelector('input[name="billing"][value="yearly"]').checked; }
+    function render() {
+      var Y = yearly(), lb = Y ? 44 : 52, rb = Y ? 59 : 69, ex = Y ? 8.6 : 10, mult = 1 + (L - 1) * 0.5;
+      var lt = (lb + (T - 1) * ex) * mult, rt = (rb + (T - 1) * ex) * mult;
+      out('t').textContent = T;
+      out('l').textContent = L;
+      out('total').innerHTML = f(lt) + '<span class="unit">/mo</span><s>' + f(rt) + '</s>';
+      out('bill').textContent = Y ? 'Billed yearly (' + f(lt * 12) + '/yr)' : 'Billed monthly';
+    }
+    root.querySelectorAll('.step button').forEach(function (b) {
+      b.addEventListener('click', function () {
+        var d = +b.dataset.d;
+        if (b.dataset.k === 't') T = Math.min(20, Math.max(1, T + d));
+        else L = Math.min(10, Math.max(1, L + d));
+        render();
+      });
+    });
+    root.querySelectorAll('input[name="billing"]').forEach(function (i) { i.addEventListener('change', render); });
+    root.querySelectorAll('input[name="pack"]').forEach(function (i) {
+      i.addEventListener('change', function () {
+        var c = +i.value;
+        out('mk').textContent = '$' + i.dataset.p;
+        out('txt').textContent = '~' + (Math.floor(c / 3 / 10) * 10).toLocaleString('en-US');
+        out('em').textContent = '~' + (c * 2).toLocaleString('en-US');
+        out('pic').textContent = '~' + (Math.floor(c / 7 / 10) * 10).toLocaleString('en-US');
+      });
+    });
+    render();
+  })();
+</script>
+    <script is:inline>
+      (function () {
+        var root = document.querySelector('[data-waitlist]');
+        if (!root || !window.fetch || !window.FormData) return;
+        var form = root.querySelector('form');
+        var input = form.querySelector('#wl-email');
+        var btn = form.querySelector('button[type="submit"]');
+        var label = btn.querySelector('[data-wl-label]');
+        var msg = form.querySelector('#wl-msg');
+        var done = root.querySelector('[data-wl-done]');
+        var ts = form.querySelector('[data-turnstile]');
+        var hint = msg.textContent;
+        var idle = label.textContent;
+        var errors = {
+          invalid_email: 'Enter an email like name@studio.com.',
+          verification_failed: "We couldn't verify the request. Please try again.",
+          server: 'Something went wrong on our end. Try again in a minute.',
+        };
+        var EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@.]{2,}$/;
+
+        function setError(code) {
+          if (!code) {
+            msg.removeAttribute('role');
+            msg.classList.remove('err');
+            msg.textContent = hint;
+            input.removeAttribute('aria-invalid');
+            return;
+          }
+          msg.setAttribute('role', 'alert');
+          msg.classList.add('err');
+          msg.textContent = errors[code] || errors.server;
+          if (msg.scrollIntoView) msg.scrollIntoView({ block: 'nearest' });
+          if (code === 'invalid_email') {
+            input.setAttribute('aria-invalid', 'true');
+            input.focus();
+          }
+        }
+        function busy(on) {
+          btn.disabled = on;
+          if (on) btn.setAttribute('aria-busy', 'true');
+          else btn.removeAttribute('aria-busy');
+          label.textContent = on ? 'Joining…' : idle;
+        }
+        function turnstile() {
+          return ts && window.turnstile ? window.turnstile : null;
+        }
+        // Turnstile usually has a token ready before anyone submits; wait briefly if it doesn't yet.
+        function token() {
+          return new Promise(function (resolve) {
+            var waited = 0;
+            (function check() {
+              var t = turnstile() ? turnstile().getResponse(ts) : '';
+              if (t || !ts || waited >= 6000) return resolve(t || '');
+              waited += 200;
+              setTimeout(check, 200);
+            })();
+          });
+        }
+        function success(email) {
+          var card = document.createElement('div');
+          card.className = 'wl-ok';
+          card.setAttribute('role', 'status');
+          card.tabIndex = -1;
+          var tick = document.createElement('span');
+          tick.className = 'wl-tick';
+          tick.setAttribute('aria-hidden', 'true');
+          tick.textContent = '✓';
+          var text = document.createElement('div');
+          var b = document.createElement('b');
+          b.textContent = "You're on the list.";
+          var p = document.createElement('p');
+          p.textContent = email
+            ? "We'll email you at " + email + ' when the Marketing add-on launches.'
+            : "We'll email you when the Marketing add-on launches.";
+          text.append(b, p);
+          card.append(tick, text);
+          form.remove();
+          done.append(card);
+          card.focus();
+        }
+
+        form.addEventListener('submit', function (e) {
+          e.preventDefault();
+          if (btn.disabled) return;
+          var email = input.value.trim();
+          if (!EMAIL.test(email) || email.length > 254) return setError('invalid_email');
+          setError(null);
+          busy(true);
+          token()
+            .then(function (t) {
+              var data = new FormData(form);
+              data.set('email', email);
+              if (t) data.set('cf-turnstile-response', t);
+              return fetch(form.action, { method: 'POST', body: data, headers: { Accept: 'application/json' } });
+            })
+            .then(function (res) {
+              return res.json().catch(function () {
+                return { ok: false, code: 'server' };
+              });
+            })
+            .catch(function () {
+              return { ok: false, code: 'server' };
+            })
+            .then(function (reply) {
+              busy(false);
+              if (reply && reply.ok) return success(email);
+              // a token works once, so every failed try gets a fresh one
+              if (turnstile()) turnstile().reset(ts);
+              setError((reply && reply.code) || 'server');
+            });
+        });
+        input.addEventListener('input', function () {
+          if (input.getAttribute('aria-invalid')) setError(null);
+        });
+
+        // a plain form post (no JavaScript at submit time) comes back as ?waitlist=<result>
+        var result = new URLSearchParams(location.search).get('waitlist');
+        if (result === 'ok') success('');
+        else if (result) setError(result === 'invalid_email' || result === 'verification_failed' ? result : 'server');
+      })();
+    </script>
+
+<style>
+  .plans-section { padding-block: clamp(32px, 4vw, 48px) 0; }
+  .plans-section > .wrap { display: flex; flex-direction: column; align-items: center; }
+  .billing {
+    display: inline-flex; margin: 0 0 28px; padding: 2px; border: 1px solid var(--line);
+    border-radius: var(--radius-pill); background: var(--surface);
+  }
+  .billing label {
+    position: relative; display: inline-flex; align-items: center; min-height: 44px; padding: 0 20px;
+    border-radius: var(--radius-pill); font-size: 14px; font-weight: 600; cursor: pointer; color: var(--muted);
+  }
+  .billing em { font-style: normal; font-size: 12px; color: var(--coral-ink); margin-left: 6px; }
+  .billing input { position: absolute; inset: 0; margin: 0; opacity: 0; cursor: pointer; }
+  .billing label:has(:checked) { background: var(--ink); color: #fff; }
+  .billing label:has(:checked) em { color: #ffc9cd; }
+  .billing label:has(:focus-visible) { outline: 2px solid var(--ink); outline-offset: 3px; }
+  .y { display: none; }
+  .plans-section:has(input[value='yearly']:checked) .y { display: inline; }
+  .plans-section:has(input[value='yearly']:checked) .m { display: none; }
+
+  .plan, .calc, .addon { width: 100%; max-width: 780px; }
+  .plan {
+    display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 40px; padding: 44px;
+    background: var(--surface); border: 2px solid var(--coral); border-radius: var(--radius-xl); box-shadow: var(--shadow-card);
+  }
+  .plan h2 { font-size: 34px; letter-spacing: -0.02em; }
+  .for { margin-top: 6px; color: var(--muted); }
+  .plan .badge { margin-top: 16px; }
+  .price { margin-top: 16px; font-family: var(--serif); line-height: 1; }
+  .amount { font-size: 64px; letter-spacing: -0.02em; }
+  .unit { font: 500 16px var(--sans); color: var(--muted); }
+  .price s, .big s { margin-left: 10px; font: 500 20px var(--sans); color: var(--faint); }
+  .bill { margin-top: 8px; font-size: 14px; color: var(--muted); }
+  .lock { margin-top: 18px; font-size: 14px; color: var(--ink); }
+  .per { margin-top: 18px; padding-top: 18px; border-top: 1px solid var(--line); font-size: 15px; color: var(--muted); }
+  .per b { color: var(--ink); font-weight: 600; }
+  .site {
+    padding: 14px 16px; margin-bottom: 20px; border-radius: var(--radius); background: var(--blush-2);
+    font-weight: 600; font-size: 15px; color: var(--ink);
+  }
+  .site span { display: block; font-weight: 400; font-size: 14px; color: var(--muted); }
+  .plan .checks { gap: 10px; margin-bottom: 28px; }
+  .plan .checks li { font-size: 15px; }
+  .plan .btn { width: 100%; }
+  .extras { display: flex; justify-content: center; flex-wrap: wrap; gap: 8px 40px; margin-top: 28px; font-size: 15px; color: var(--muted); }
+  .extras b { color: var(--ink); font-weight: 600; }
+
+  .block-head { margin-top: var(--space-block); text-align: center; max-width: 36em; }
+  .block-head h2 { font-size: var(--fs-h2); line-height: 1.08; letter-spacing: -0.02em; }
+  .block-head p { margin-top: 12px; color: var(--muted); }
+  .calc { margin-top: 28px; padding: 32px 40px; border-radius: var(--radius-xl); background: var(--page); }
+  .row { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 16px 0; border-bottom: 1px solid var(--line); }
+  .rl { font-weight: 600; color: var(--ink); }
+  .rl span { display: block; font-weight: 400; font-size: 14px; color: var(--muted); }
+  .step { display: flex; align-items: center; gap: 6px; flex: none; }
+  .step button {
+    width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--line-strong); background: var(--surface);
+    font-size: 20px; color: var(--ink); cursor: pointer;
+  }
+  .step button:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+  .step output { min-width: 36px; text-align: center; font-weight: 700; font-size: 18px; }
+  .tot { display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 16px; padding-top: 24px; }
+  .big { font-family: var(--serif); font-size: 48px; line-height: 1; }
+  .big :global(.unit) { font: 500 16px var(--sans); color: var(--muted); }
+  .big :global(s) { margin-left: 10px; font: 500 20px var(--sans); color: var(--faint); }
+
+  .addon {
+    margin-top: var(--space-block); padding: 36px 40px; border: 1px solid var(--line); border-radius: var(--radius-xl); background: var(--page);
+  }
+  .addon-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; }
+  .addon-top > div { flex: 1; min-width: 0; }
+  .addon h3 { margin-top: 12px; font-size: 28px; letter-spacing: -0.01em; }
+  .addon-top p { margin-top: 6px; color: var(--muted); }
+  .badge-soon { background: var(--surface); color: var(--muted); border: 1px solid var(--line-strong); }
+  .amt { flex: 0 0 130px; text-align: right; font-family: var(--serif); font-size: 40px; line-height: 1; }
+  .seg {
+    display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); margin: 24px 0 0; padding: 4px;
+    border: 1px solid var(--line); border-radius: var(--radius-pill); background: var(--surface);
+  }
+  .seg label {
+    position: relative; display: flex; align-items: center; justify-content: center; min-height: 44px;
+    border-radius: var(--radius-pill); font-weight: 600; font-size: 15px; color: var(--muted); cursor: pointer;
+  }
+  .seg input { position: absolute; inset: 0; margin: 0; opacity: 0; cursor: pointer; }
+  .seg label:has(:checked) { background: var(--ink); color: #fff; }
+  .seg label:has(:focus-visible) { outline: 2px solid var(--ink); outline-offset: 2px; }
+  .segl { margin: 8px 0 18px; text-align: center; font-size: 14px; color: var(--muted); }
+  .cov {
+    display: flex; justify-content: center; align-items: center; gap: 20px; padding: 18px; margin-bottom: 18px;
+    border-radius: var(--radius-lg); background: var(--surface); text-align: center;
+  }
+  .cov b { display: block; font-family: var(--serif); font-weight: 500; font-size: 26px; }
+  .cov span, .cov .or { font-size: 14px; color: var(--muted); }
+  .note { margin-bottom: 20px; font-size: 14px; color: var(--muted); }
+
+  .wl {
+    position: relative;
+  }
+  .wl-label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 14px;
+    font-weight: 600;
+  }
+  .wl-field {
+    display: flex;
+    gap: 10px;
+  }
+  .wl-field input {
+    flex: 1;
+    min-width: 0;
+    height: 48px;
+    padding: 0 16px;
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius);
+    background: var(--surface);
+    color: var(--ink);
+    font: 16px var(--sans);
+  }
+  .wl-field input::placeholder {
+    color: var(--muted);
+  }
+  .wl-field input:focus-visible {
+    outline: 2px solid var(--ink);
+    outline-offset: 2px;
+  }
+  .wl-field input[aria-invalid='true'] {
+    border-color: var(--coral-strong);
+    box-shadow: 0 0 0 3px rgba(191, 68, 80, 0.15);
+  }
+  .wl-field .btn {
+    flex: none;
+    min-height: 48px;
+  }
+  .wl-field .btn:disabled {
+    cursor: default;
+    opacity: 0.85;
+    transform: none;
+  }
+  .spin {
+    display: none;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: #fff;
+  }
+  .btn[aria-busy='true'] .spin {
+    display: inline-block;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .spin {
+      width: 16px;
+      height: 16px;
+      background: none;
+      border: 2px solid rgba(255, 255, 255, 0.4);
+      border-top-color: #fff;
+      animation: spin 0.8s linear infinite;
+    }
+  }
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  /* off-screen for people, still in the form for bots */
+  .hp {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+  /* Turnstile runs invisibly; it only takes room if it needs the visitor to click */
+  .ts:has(iframe) {
+    margin-top: 8px;
+  }
+  .hint {
+    min-height: 20px;
+    margin-top: 8px;
+    font-size: 14px;
+    color: var(--muted);
+  }
+  .hint.err {
+    color: var(--coral-strong);
+    font-weight: 600;
+  }
+  .wl-done :global(.wl-ok) {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    padding: 16px;
+    border-radius: var(--radius);
+    background: var(--surface);
+    border: 1px solid var(--line);
+  }
+  .wl-done :global(.wl-ok:focus) {
+    outline: none;
+  }
+  .wl-done :global(.wl-tick) {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--sage);
+    color: var(--sage-ink);
+    font-weight: 700;
+  }
+  .wl-done :global(.wl-ok b) {
+    font-weight: 600;
+  }
+  .wl-done :global(.wl-ok p) {
+    margin-top: 2px;
+    font-size: 14px;
+    color: var(--muted);
+    overflow-wrap: anywhere;
+  }
+
+  @media (max-width: 760px) {
+    .plan { grid-template-columns: minmax(0, 1fr); gap: 24px; padding: 28px 22px; }
+    .amount { font-size: 56px; }
+    .calc { padding: 24px 20px; }
+    .big { font-size: 40px; }
+    .addon { padding: 28px 20px; }
+    .addon-top { flex-direction: column-reverse; gap: 4px; }
+    .amt { flex: none; text-align: left; }
+    .cov { gap: 10px; padding: 14px 8px; }
+    .cov b { font-size: 20px; }
+    .seg label { font-size: 14px; }
+    .extras { flex-direction: column; align-items: center; text-align: center; }
+    .wl-field { flex-direction: column; }
+    .wl-field input { flex: none; }
+    .wl-field .btn { width: 100%; }
+  }
+</style>

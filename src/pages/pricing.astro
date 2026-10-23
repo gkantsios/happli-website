@@ -1,94 +1,54 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PageIntro from '../components/sections/PageIntro.astro';
-import PricingPlans from '../components/sections/PricingPlans.astro';
+import OnePlan from '../components/sections/OnePlan.astro';
 import SectionHead from '../components/sections/SectionHead.astro';
-import Icon from '../components/Icon.astro';
-import ComparisonTable from '../components/ComparisonTable.astro';
 import Faq, { type FaqItem } from '../components/sections/Faq.astro';
 import CtaBand from '../components/sections/CtaBand.astro';
 import { breadcrumbs, softwareApplication } from '../lib/jsonld';
-import {
-  solo,
-  studio,
-  founding,
-  marketingAddOn,
-  reminderFairUse,
-  trialDays,
-  studioIncludedMembers,
-  extraMemberPrice,
-  includedLocations,
-  usd,
-  yearlyTotal,
-} from '../config/pricing';
+import { reminderFairUse, trialDays } from '../config/pricing';
 
-const title = `Pricing | Happli booking software from ${usd(solo.monthly)} a month`;
-const description = `Solo ${usd(solo.monthly)} a month, Studio ${usd(studio.monthly)} a month, each with 1 location included, every feature on both. No setup fee, no cut of your sales. Founding Studios get ${founding.discountPercent}% off.`;
+const title = 'Pricing | Happli booking software, one plan from $44 a month';
+const description =
+  'One plan with everything, plus a website we build for you. Launch price $52 a month, or $44 a month billed yearly. +$10 a month per extra team member who takes bookings. No contracts, no hidden fees.';
 
-const foundingRows = [solo, studio].flatMap((p) => {
-  const x = p.extraLocation;
-  return [
-    {
-      label: `${p.name}, monthly`,
-      cells: [`${usd(p.monthly)}/mo`, `${usd(p.founding.monthly)}/mo`, `${usd(yearlyTotal(p.founding.monthly))}/yr`],
-    },
-    {
-      label: `${p.name}, monthly, each extra location`,
-      cells: [`${usd(x.monthly)}/mo`, `${usd(x.founding.monthly)}/mo`, `${usd(yearlyTotal(x.founding.monthly))}/yr`],
-    },
-    {
-      label: `${p.name}, billed yearly`,
-      cells: [
-        `${usd(p.yearly)}/mo (${usd(yearlyTotal(p.yearly))}/yr)`,
-        `${usd(p.founding.yearly)}/mo`,
-        `${usd(yearlyTotal(p.founding.yearly))}/yr`,
-      ],
-    },
-    {
-      label: `${p.name}, billed yearly, each extra location`,
-      cells: [
-        `${usd(x.yearly)}/mo (${usd(yearlyTotal(x.yearly))}/yr)`,
-        `${usd(x.founding.yearly)}/mo`,
-        `${usd(yearlyTotal(x.founding.yearly))}/yr`,
-      ],
-    },
-  ];
-});
-
-const foundingRules = [
-  ['Monthly or yearly plans.', 'The discount applies to both billing options.'],
-  ['Carries over when you grow.', `Moving from Solo to Studio keeps the ${founding.discountPercent}% off.`],
-  ['For as long as you stay subscribed.', 'It ends only if you cancel. A returning studio pays the normal price.'],
-  ['Extra locations stay locked.', 'Every location you add later keeps your Founding extra-location price.'],
-  ['Plans only.', `The ${marketingAddOn.name} stays at ${usd(marketingAddOn.price)} a month.`],
-  ['A "Founding Studio" badge in the app,', 'marking you as one of the first studios on Happli.'],
+const why = [
+  { h: 'Real people set you up', p: "Our team does your import and setup for you, so you don't start from scratch." },
+  { h: 'No hidden fees', p: 'Everything you need to run your studio is in one price. Marketing is the only optional extra.' },
+  { h: 'Made for every beauty business', p: 'Lashes, brows, facials, nails, tanning and more.' },
+  { h: 'No contracts', p: "Stay because you love it, not because you're locked in. Cancel anytime." },
+  { h: 'Your data is yours', p: 'Export all of it anytime, including clients, bookings, history, forms and sales. No asking, no waiting.' },
+  { h: 'Open API', soon: true, p: 'Connect your favorite email and marketing tools to Happli.' },
 ];
 
-// TODO confirm: "Is there a contract / how do I cancel?" (not on the live site)
 const faq: FaqItem[] = [
   {
-    q: 'Should I pick Solo or Studio?',
-    a: `It depends on how many team members take bookings. Solo is for 1 team member who takes bookings, usually the owner. Studio includes up to ${studioIncludedMembers} team members who take bookings at each location, then ${usd(extraMemberPrice)} a month for each extra one. Front desk and admin logins with roles are always free, and both plans have every feature.`,
+    q: 'How does pricing work for a team?',
+    a: "There's one plan with every feature. The launch price is $52 a month, or $44 a month billed yearly ($528 a year), for 1 team member who takes bookings. Each extra team member who takes bookings is +$10 a month, or +$8.60 a month billed yearly. Front desk and admin logins are always free.",
   },
   {
     q: 'How do extra locations work?',
-    a: `Every plan includes ${includedLocations} location. Each extra location is half your plan's price: ${usd(solo.extraLocation.monthly)} a month on Solo or ${usd(studio.extraLocation.monthly)} on Studio, billed monthly (Founding Studios pay ${usd(solo.extraLocation.founding.monthly)} or ${usd(studio.extraLocation.founding.monthly)}). Billed yearly, it's ${usd(solo.extraLocation.yearly)} or ${usd(studio.extraLocation.yearly)} a month (Founding Studios pay ${usd(solo.extraLocation.founding.yearly)} or ${usd(studio.extraLocation.founding.yearly)}).`,
+    a: 'Each extra location is half price. For a location with 1 team member who takes bookings, that is $26 a month, or $22 a month billed yearly. Use the calculator above to see your total.',
   },
   {
     q: 'Is there a free trial?',
     a: `Yes. Happli is free until your studio goes live, for up to ${trialDays} days. Setup and client import are free too.`,
   },
   {
-    q: 'What is the Founding Studio offer?',
-    a: `The first ${founding.maxStudios} studios, or studios that join in the first ${founding.days} days after launch (whichever comes first), get ${founding.discountPercent}% off Solo or Studio for as long as they stay subscribed. That's ${usd(solo.founding.monthly)} a month for Solo or ${usd(studio.founding.monthly)} a month for Studio, with lower prices when billed yearly. Founding Studios also lock in their extra-location price (${usd(solo.extraLocation.founding.monthly)} a month on Solo, ${usd(studio.extraLocation.founding.monthly)} on Studio) for every location they add later. It works on monthly and yearly plans and carries over if you move from Solo to Studio. It ends if you cancel, and a returning studio pays the normal price. The ${marketingAddOn.name} isn't discounted.`,
+    q: 'What is launch pricing?',
+    a: 'Studios that join at launch pay $52 a month instead of $69, or $44 a month instead of $59 billed yearly. You keep launch pricing for as long as you stay subscribed. It ends only if you cancel.',
   },
   {
-    q: `What's in the ${marketingAddOn.name}?`,
-    a: `Text and email campaigns to bring clients back, for ${usd(marketingAddOn.price)} a month on either plan. It includes ${marketingAddOn.texts.toLocaleString('en-US')} marketing texts and ${marketingAddOn.emails.toLocaleString('en-US')} emails a month. Extra texts are ${marketingAddOn.extraTextCents}¢ each.`,
+    q: 'Is there a contract?',
+    a: "No. There are no contracts. You can cancel anytime, and you can export all of your data whenever you like.",
+  },
+  {
+    q: "What's in the Marketing add-on?",
+    a: 'Text and email campaigns to bring clients back. It is coming soon and optional on any plan. You pick a monthly credit pack, from $19 for 2,000 credits to $159 for 30,000. 1 credit is 2 emails, a text is 3 credits and a picture text is 7 credits. Extra credits are 1¢ each.',
   },
   {
     q: 'Do you charge for reminder texts?',
-    a: `No. Appointment reminder texts are included on every plan, with fair use of about ${reminderFairUse.toLocaleString('en-US')} a month. Marketing texts come with the ${marketingAddOn.name}.`,
+    a: `No. Appointment reminder texts are included on every plan, with fair use of about ${reminderFairUse.toLocaleString('en-US')} a month. Marketing texts come with the Marketing add-on.`,
   },
   {
     q: 'Do you take a cut of my card payments?',
@@ -96,11 +56,11 @@ const faq: FaqItem[] = [
   },
   {
     q: 'Is there a setup fee?',
-    a: "No. Setup is free, and so is client import. We bring your clients, services, team and appointments over from CSV.",
+    a: 'No. Setup is free, and so is client import. We bring your clients, services, team and appointments over from CSV.',
   },
   {
-    q: 'Do I need a new website?',
-    a: 'No. Happli booking pages plug into the website you already have, or you can share the link on its own.',
+    q: 'Is a website really included?',
+    a: "Yes. Our team at gohappybeauty builds your website, and it stays in sync with Happli. Need ecommerce or online courses? We'll quote the difference. Happy with the site you have? Happli booking pages plug right into it.",
   },
 ];
 ---
@@ -115,88 +75,101 @@ const faq: FaqItem[] = [
 >
   <PageIntro
     eyebrow="Pricing"
-    title="Simple pricing. No cut of your sales."
-    lede="Two plans, with every feature on both. You pay for the team members who take bookings, never for logins, and card payments run at Stripe's standard rate."
+    title="One plan. Everything you need to run your studio."
+    lede="Booking, clients, forms, payments and texting, plus a website we build for you. No tiers. No hidden fees."
     cta={false}
   />
 
-  <PricingPlans foundingHref="#founding" waitlist />
+  <OnePlan />
 
-  <section class="section" id="founding" aria-labelledby="founding-title">
+  <section class="section" aria-labelledby="why-title">
     <div class="wrap">
-      <SectionHead
-        eyebrow="Founding Studio offer"
-        title={`${founding.discountPercent}% off, for as long as you stay subscribed.`}
-        id="founding-title"
-      >
-        <p>
-          A thank-you for joining early. Open to the first {founding.maxStudios} studios or the first {founding.days} days
-          after launch, whichever comes first.
-        </p>
-      </SectionHead>
-      <div class="founding-grid">
-        <div class="table">
-          <ComparisonTable
-            caption="Founding Studio prices"
-            corner="Plan"
-            columns={['Normal price', 'Founding price', 'Founding, per year']}
-            rows={foundingRows}
-          />
+      <SectionHead eyebrow="Why Happli" title="What sets us apart" id="why-title" center />
+      <div class="why">
+        <div class="w lead">
+          <h3>Your website is included</h3>
+          <p>
+            Built by our team at gohappybeauty and always in sync with Happli. Change a service, a price or your hours
+            once, and your booking and website update everywhere.
+          </p>
         </div>
-        <ul class="checks rules">
-          {foundingRules.map(([lead, rest]) => <li><Icon name="check" size={16} strokeWidth={2} /><span><b>{lead}</b> {rest}</span></li>)}
-        </ul>
+        {why.map((w) => (
+          <div class="w">
+            <h3>{w.h} {w.soon && <span class="badge badge-soon">Coming soon</span>}</h3>
+            <p>{w.p}</p>
+          </div>
+        ))}
       </div>
-    </div>
-  </section>
-
-  <section class="section" aria-labelledby="fees-title">
-    <div class="wrap">
-      <SectionHead eyebrow="Payments" title="What you pay for payments" id="fees-title" />
-      {/* TODO confirm: PR #297 for the Stripe fee lines. */}
-      <ul class="checks fees">
-        <li><Icon name="check" size={16} strokeWidth={2} /><span><b>Happli fee on payments:</b> none. No processing markup, no cut of your sales.</span></li>
-        <li><Icon name="check" size={16} strokeWidth={2} /><span><b>Stripe processing fees:</b> paid by your studio directly to Stripe, at Stripe's standard rates for your account.</span></li>
-        <li><Icon name="check" size={16} strokeWidth={2} /><span><b>Payouts:</b> from Stripe to your bank on your Stripe schedule.</span></li>
-      </ul>
+      <p class="fine">Need ecommerce or online courses on your site? We'll quote the difference.</p>
     </div>
   </section>
 
   <Faq items={faq} title="Pricing FAQ" id="pricing-faq" />
 
   <CtaBand
-    title="Not sure which plan fits?"
+    title="Not sure where to start?"
     body="Book a 30-minute call and we'll walk through your studio."
     secondary={{ label: 'Get started', href: '/signup/' }}
   />
 </BaseLayout>
 
 <style>
-  #founding {
-    scroll-margin-top: var(--nav-h);
-  }
-  .founding-grid {
+  .why {
     display: grid;
-    /* the table gets the full row so no column is clipped; minmax(0, 1fr) lets it scroll in its own box on phones */
-    grid-template-columns: minmax(0, 1fr);
-    gap: 40px;
-    margin-top: 32px;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 20px;
+    margin-top: 40px;
   }
-  .rules {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 14px 48px;
+  .w {
+    padding: 28px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-xl);
+    background: var(--surface);
   }
-  .fees {
-    margin-top: 32px;
+  .w.lead {
+    grid-column: 1 / -1;
+    padding: 40px;
+    border: 0;
+    background: var(--cta-band);
+  }
+  .w h3 {
+    font-size: 23px;
+    letter-spacing: -0.01em;
+    margin-bottom: 8px;
+  }
+  .w.lead h3 {
+    font-size: 30px;
+  }
+  .w p {
+    color: var(--muted);
+  }
+  .w.lead p {
     max-width: 44em;
+    color: var(--ink-2);
+  }
+  .badge-soon {
+    vertical-align: middle;
+    background: var(--surface);
+    color: var(--muted);
+    border: 1px solid var(--line-strong);
+  }
+  .fine {
+    margin-top: 40px;
+    text-align: center;
+    font-size: 15px;
+    color: var(--muted);
   }
   @media (max-width: 960px) {
-    .founding-grid {
-      gap: 32px;
+    .why {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
     }
-    .rules {
+  }
+  @media (max-width: 640px) {
+    .why {
       grid-template-columns: minmax(0, 1fr);
+    }
+    .w.lead {
+      padding: 28px;
     }
   }
 </style>
