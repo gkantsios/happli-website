@@ -393,6 +393,12 @@ p {
     width: 36%;
     font-size: 12.5px;
   }
+  /* capitalized brand headers skip hyphenation, so tighten the header cells to keep names
+     (e.g. "GlossGenius") on one line instead of breaking mid-word */
+  .prose.compare table thead th {
+    padding-inline: 6px;
+    letter-spacing: 0;
+  }
 }
 
 /* source footnotes on compare posts: a numbered marker after each claim, and the numbered list
