@@ -364,18 +364,34 @@ p {
   .prose.compare table th,
   .prose.compare table td {
     min-width: 0;
-    overflow-wrap: anywhere;
+    overflow-wrap: break-word;
     hyphens: auto;
-    font-size: 13px;
-    padding: 8px 9px;
+    font-size: 14px;
+    padding: 10px 8px;
   }
   .prose.compare table th:first-child,
   .prose.compare table td:first-child {
     position: static;
-    width: 26%;
+    width: 32%;
     min-width: 0;
     max-width: none;
     box-shadow: none;
+    /* the label column is slightly smaller than the compared cells so long single-word labels
+       (e.g. "Memberships") still wrap whole instead of mid-word on narrow phones */
+    font-size: 13px;
+  }
+}
+/* very narrow phones: step the compared columns down a notch so they still fit, and give the label
+   column a touch more room so long labels (e.g. "Memberships") wrap whole instead of mid-word */
+@media (max-width: 359.98px) {
+  .prose.compare table th,
+  .prose.compare table td {
+    font-size: 13px;
+  }
+  .prose.compare table th:first-child,
+  .prose.compare table td:first-child {
+    width: 36%;
+    font-size: 12.5px;
   }
 }
 
@@ -386,7 +402,11 @@ p {
   line-height: 0;
 }
 .prose sup a {
-  padding: 0 2px;
+  display: inline-block;
+  min-width: 24px;
+  padding: 12px 4px;
+  margin: -12px -4px;
+  text-align: center;
   text-decoration: none;
   font-weight: 600;
   color: var(--coral-ink);

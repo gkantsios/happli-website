@@ -48,7 +48,16 @@ const checkedText = (v: string) => (/\d/.test(v) ? `Checked ${v}` : v);
             <td data-label="Free trial">{r.trial}</td>
             <td data-label="Source" class="source">
               <a href={r.source.href} rel="noopener">
-                {r.source.text}
+                {r.source.text.split('/').map((part, i) => (
+                  <>
+                    {i > 0 && (
+                      <>
+                        /<wbr />
+                      </>
+                    )}
+                    {part}
+                  </>
+                ))}
               </a>
               <span class="checked">{checkedText(r.checked)}</span>
             </td>
@@ -77,13 +86,13 @@ const checkedText = (v: string) => (/\d/.test(v) ? `Checked ${v}` : v);
     width: 17%;
   }
   col.c-price {
-    width: 33%;
+    width: 31%;
   }
   col.c-trial {
-    width: 25%;
+    width: 22%;
   }
   col.c-source {
-    width: 25%;
+    width: 30%;
   }
   th,
   td {
@@ -91,7 +100,7 @@ const checkedText = (v: string) => (/\d/.test(v) ? `Checked ${v}` : v);
     padding: 14px 16px;
     border-bottom: 1px solid var(--line);
     vertical-align: top;
-    overflow-wrap: anywhere;
+    overflow-wrap: break-word;
   }
   tbody tr:last-child th,
   tbody tr:last-child td {
@@ -102,7 +111,8 @@ const checkedText = (v: string) => (/\d/.test(v) ? `Checked ${v}` : v);
     color: var(--ink);
     font-size: 13px;
     letter-spacing: 0.01em;
-    background: var(--blush-2);
+    background: var(--bg);
+    border-bottom-color: var(--line-strong);
   }
   tbody th {
     font-weight: 600;
@@ -112,15 +122,19 @@ const checkedText = (v: string) => (/\d/.test(v) ? `Checked ${v}` : v);
     color: var(--ink-2);
   }
   .source a {
+    display: inline-block;
+    padding-block: 11px;
+    margin-block: -11px;
     color: var(--coral-ink);
     text-decoration: underline;
     text-underline-offset: 3px;
     font-weight: 600;
+    overflow-wrap: anywhere;
   }
   .source .checked {
     display: block;
     margin-top: 4px;
-    font-size: 12.5px;
+    font-size: 13px;
     color: var(--muted);
     font-weight: 400;
   }
@@ -178,12 +192,14 @@ const checkedText = (v: string) => (/\d/.test(v) ? `Checked ${v}` : v);
       grid-template-columns: minmax(96px, 34%) 1fr;
       gap: 12px;
       align-items: baseline;
+      font-size: 16px;
+      line-height: 1.45;
     }
     td::before {
       content: attr(data-label);
       color: var(--muted);
       font-weight: 600;
-      font-size: 12.5px;
+      font-size: 13px;
       text-transform: uppercase;
       letter-spacing: 0.03em;
     }
