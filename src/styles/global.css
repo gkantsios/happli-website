@@ -353,6 +353,31 @@ p {
 .prose.compare table thead th {
   background: var(--blush-2);
 }
+/* phones: keep the two compared columns side by side but fit the width instead of scrolling */
+@media (max-width: 640px) {
+  .prose.compare table {
+    display: table;
+    table-layout: fixed;
+    width: 100%;
+    min-width: 0;
+  }
+  .prose.compare table th,
+  .prose.compare table td {
+    min-width: 0;
+    overflow-wrap: anywhere;
+    hyphens: auto;
+    font-size: 13px;
+    padding: 8px 9px;
+  }
+  .prose.compare table th:first-child,
+  .prose.compare table td:first-child {
+    position: static;
+    width: 26%;
+    min-width: 0;
+    max-width: none;
+    box-shadow: none;
+  }
+}
 
 /* source footnotes on compare posts: a numbered marker after each claim, and the numbered list
    under the page's Sources heading (the processor's own "Footnotes" heading is .sr-only) */

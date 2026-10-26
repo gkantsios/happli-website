@@ -1,0 +1,205 @@
+---
+// At-a-glance price table for /compare/. Desktop and tablet keep real table semantics with balanced,
+// fixed column widths so nothing scrolls sideways; phones fold each row into a stacked card. Source
+// and check date share one column (and one small line on phones) so the claim stays sourced and dated.
+export interface PriceRow {
+  name: string;
+  price: string;
+  trial: string;
+  source: { text: string; href: string };
+  /** Check date as listed, or 'Current' for our own row. */
+  checked: string;
+  highlight?: boolean;
+}
+
+interface Props {
+  caption: string;
+  rows: PriceRow[];
+  class?: string;
+}
+const { caption, rows, class: cls } = Astro.props;
+
+const checkedText = (v: string) => (/\d/.test(v) ? `Checked ${v}` : v);
+---
+
+<div class:list={['price-table', cls]}>
+  <table>
+    <caption class="visually-hidden">{caption}</caption>
+    <colgroup>
+      <col class="c-name" />
+      <col class="c-price" />
+      <col class="c-trial" />
+      <col class="c-source" />
+    </colgroup>
+    <thead>
+      <tr>
+        <th scope="col">Company</th>
+        <th scope="col">Price as listed</th>
+        <th scope="col">Free trial</th>
+        <th scope="col">Source</th>
+      </tr>
+    </thead>
+    <tbody>
+      {
+        rows.map((r) => (
+          <tr class:list={{ hl: r.highlight }}>
+            <th scope="row">{r.name}</th>
+            <td data-label="Price as listed">{r.price}</td>
+            <td data-label="Free trial">{r.trial}</td>
+            <td data-label="Source" class="source">
+              <a href={r.source.href} rel="noopener">
+                {r.source.text}
+              </a>
+              <span class="checked">{checkedText(r.checked)}</span>
+            </td>
+          </tr>
+        ))
+      }
+    </tbody>
+  </table>
+</div>
+
+<style>
+  .price-table {
+    border-radius: var(--radius);
+    border: 1px solid var(--line);
+    background: var(--surface);
+    overflow: hidden;
+  }
+  table {
+    width: 100%;
+    table-layout: fixed;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: 14px;
+  }
+  col.c-name {
+    width: 17%;
+  }
+  col.c-price {
+    width: 33%;
+  }
+  col.c-trial {
+    width: 25%;
+  }
+  col.c-source {
+    width: 25%;
+  }
+  th,
+  td {
+    text-align: left;
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--line);
+    vertical-align: top;
+    overflow-wrap: anywhere;
+  }
+  tbody tr:last-child th,
+  tbody tr:last-child td {
+    border-bottom: 0;
+  }
+  thead th {
+    font-weight: 600;
+    color: var(--ink);
+    font-size: 13px;
+    letter-spacing: 0.01em;
+    background: var(--blush-2);
+  }
+  tbody th {
+    font-weight: 600;
+    color: var(--ink);
+  }
+  td {
+    color: var(--ink-2);
+  }
+  .source a {
+    color: var(--coral-ink);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    font-weight: 600;
+  }
+  .source .checked {
+    display: block;
+    margin-top: 4px;
+    font-size: 12.5px;
+    color: var(--muted);
+    font-weight: 400;
+  }
+  tr.hl th,
+  tr.hl td {
+    background: var(--blush-2);
+    color: var(--ink);
+    font-weight: 600;
+  }
+  tr.hl td {
+    color: var(--ink);
+  }
+
+  /* Phones: fold each row into a stacked card. The header row is hidden from sight but kept in the
+     accessibility tree, and each cell carries its own visible label. */
+  @media (max-width: 640px) {
+    table,
+    tbody,
+    tr,
+    th,
+    td {
+      display: block;
+      width: auto;
+    }
+    thead {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+    tbody tr {
+      border-bottom: 1px solid var(--line);
+      padding: 4px 0;
+    }
+    tbody tr:last-child {
+      border-bottom: 0;
+    }
+    th,
+    td {
+      border-bottom: 0;
+      padding: 6px 18px;
+    }
+    tbody th {
+      padding-top: 16px;
+      padding-bottom: 10px;
+      font-size: 16px;
+    }
+    td {
+      display: grid;
+      grid-template-columns: minmax(96px, 34%) 1fr;
+      gap: 12px;
+      align-items: baseline;
+    }
+    td::before {
+      content: attr(data-label);
+      color: var(--muted);
+      font-weight: 600;
+      font-size: 12.5px;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+    .source .checked {
+      grid-column: 2;
+      margin-top: 2px;
+    }
+    tbody tr:last-child td:last-child {
+      padding-bottom: 16px;
+    }
+    tr.hl {
+      background: var(--blush-2);
+    }
+    tr.hl th,
+    tr.hl td {
+      background: transparent;
+    }
+  }
+</style>

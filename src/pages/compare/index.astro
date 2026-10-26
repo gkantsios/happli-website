@@ -2,7 +2,7 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import PageIntro from '../../components/sections/PageIntro.astro';
 import SectionHead from '../../components/sections/SectionHead.astro';
-import ComparisonTable, { type Cell } from '../../components/ComparisonTable.astro';
+import PriceTable, { type PriceRow } from '../../components/PriceTable.astro';
 import CtaBand from '../../components/sections/CtaBand.astro';
 import { getPublished } from '../../lib/posts';
 import { breadcrumbs } from '../../lib/jsonld';
@@ -14,12 +14,12 @@ const pages = await getPublished('compare');
 // Prices as listed on each company's own pricing page. Each row says when it was last checked; update
 // that date whenever the row is re-verified against its source.
 const checked = 'Oct 21, 2026';
-const rows: { label: string; cells: Cell[] }[] = [
-  { label: 'Happli', cells: [`One plan, ${usd(plan.launch.monthly)}/mo launch price (${usd(plan.launch.yearly)}/mo yearly), +${usd(plan.extraMember.monthly)}/mo per extra team member`, `Until you go live, up to ${trialDays} days`, { text: 'gohappli.com/pricing', href: '/pricing/' }, 'Current'] },
-  { label: 'Square Appointments', cells: ['Free, Plus $49/mo, Premium $149/mo per location', 'Free plan; 30-day trial on Plus and Premium', { text: 'squareup.com/appointments/pricing', href: 'https://squareup.com/us/en/appointments/pricing' }, checked] },
-  { label: 'Mangomint', cells: ['$120/mo per location + $10/mo per user', 'Offered (length not stated)', { text: 'mangomint.com/pricing', href: 'https://www.mangomint.com/pricing/' }, checked] },
-  { label: 'GlossGenius', cells: ['Standard $28/mo, Gold $56, Platinum $168 (less yearly)', '14 days', { text: 'glossgenius.com/pricing', href: 'https://glossgenius.com/pricing' }, checked] },
-  { label: 'Vagaro', cells: ['$23.99/mo for the first 6 months, + $10 per calendar license (up to 7)', '30 days', { text: 'vagaro.com/pro/pricing', href: 'https://www.vagaro.com/pro/pricing' }, checked] },
+const rows: PriceRow[] = [
+  { name: 'Happli', price: `One plan, ${usd(plan.launch.monthly)}/mo launch price (${usd(plan.launch.yearly)}/mo yearly), +${usd(plan.extraMember.monthly)}/mo per extra team member`, trial: `Until you go live, up to ${trialDays} days`, source: { text: 'gohappli.com/pricing', href: '/pricing/' }, checked: 'Current', highlight: true },
+  { name: 'Square Appointments', price: 'Free, Plus $49/mo, Premium $149/mo per location', trial: 'Free plan; 30-day trial on Plus and Premium', source: { text: 'squareup.com/appointments/pricing', href: 'https://squareup.com/us/en/appointments/pricing' }, checked },
+  { name: 'Mangomint', price: '$120/mo per location + $10/mo per user', trial: 'Offered (length not stated)', source: { text: 'mangomint.com/pricing', href: 'https://www.mangomint.com/pricing/' }, checked },
+  { name: 'GlossGenius', price: 'Standard $28/mo, Gold $56, Platinum $168 (less yearly)', trial: '14 days', source: { text: 'glossgenius.com/pricing', href: 'https://glossgenius.com/pricing' }, checked },
+  { name: 'Vagaro', price: '$23.99/mo for the first 6 months, + $10 per calendar license (up to 7)', trial: '30 days', source: { text: 'vagaro.com/pro/pricing', href: 'https://www.vagaro.com/pro/pricing' }, checked },
 ];
 ---
 
@@ -42,12 +42,9 @@ const rows: { label: string; cells: Cell[] }[] = [
         <p>From each company's public pricing page, checked {checked}. Pricing models differ, so read the full comparison before you decide.</p>
       </SectionHead>
       <div class="table">
-        <ComparisonTable
+        <PriceTable
           caption="Starting prices and free trials, as listed by each company"
-          columns={['Price as listed', 'Free trial', 'Source', 'Checked']}
           rows={rows}
-          highlightFirst
-          class="prices"
         />
       </div>
     </div>
