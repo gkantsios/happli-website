@@ -2,14 +2,14 @@
 // the only source for the page's words: edit it, never the page. worker/test/roadmap-copy.test.ts checks the
 // built page against it.
 //
-//   ## Now                                      a column (Now, Next, Later)
-//   - **Title**: one short line                 a note
-//   - **Title** · Coming soon: one short line   a note with a tag
+//   A line before any heading                   the intro line above the board
+//   ## In progress                              a column (In progress, Planned)
+//   - **Title**: one short line                 a card
 //   ## Shipped
 //   ### Booking                                 a Shipped area
-//   - What shipped — Sep 2026                   a shipped note and when it shipped
+//   - What shipped — Sep 2026                   a shipped item and when it shipped
 
-export type Note = { title: string; line: string; tag?: string };
+export type Note = { title: string; line: string };
 export type Column = { id: string; label: string; notes: Note[] };
 export type ShippedNote = { text: string; when: string };
 export type Area = { id: string; label: string; notes: ShippedNote[] };
@@ -20,7 +20,8 @@ const slug = (s: string) =>
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-|-$/g, '');
 
-export function parseRoadmap(md: string): { columns: Column[]; shipped: Area[] } {
+export function parseRoadmap(md: string): { intro: string; columns: Column[]; shipped: Area[] } {
+  let intro = '';
   const columns: Column[] = [];
   const shipped: Area[] = [];
   let inShipped = false;
@@ -38,15 +39,17 @@ export function parseRoadmap(md: string): { columns: Column[]; shipped: Area[] }
       const area = shipped.at(-1);
       if (!area) throw new Error(`roadmap: shipped note before any area: ${line}`);
       area.notes.push({ text: m[1], when: m[2] });
-    } else if (!inShipped && (m = line.match(/^- \*\*(.+?)\*\*(?: · (.+?))?: (.+)$/))) {
+    } else if (!inShipped && (m = line.match(/^- \*\*(.+?)\*\*: (.+)$/))) {
       const column = columns.at(-1);
-      if (!column) throw new Error(`roadmap: note before any column: ${line}`);
-      column.notes.push({ title: m[1], line: m[3], ...(m[2] ? { tag: m[2] } : {}) });
+      if (!column) throw new Error(`roadmap: card before any column: ${line}`);
+      column.notes.push({ title: m[1], line: m[2] });
+    } else if (!columns.length && !inShipped && !intro && !line.startsWith('-') && !line.startsWith('#')) {
+      intro = line;
     } else {
       throw new Error(`roadmap: can't read this line: ${line}`);
     }
   }
-  return { columns, shipped };
+  return { intro, columns, shipped };
 }
 
 const months: Record<string, string> = { Jan: '01', Feb: '02', Mar: '03', Apr: '04', May: '05', Jun: '06', Jul: '07', Aug: '08', Sep: '09', Oct: '10', Nov: '11', Dec: '12' };

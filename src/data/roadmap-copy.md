@@ -1,18 +1,18 @@
-## Now
-- **Approve win-back texts first**: Win-back texts wait for a team member to say send.
-- **Text opt-out and quiet hours**: Clients can reply STOP anytime, and marketing texts only go out during the day.
+Planned is what we'll build next. In progress is what we're building now. Shipped is live.
+
+## In progress
 - **Revenue by source**: See which channels bring in your best clients.
+- **Memberships**: Monthly plans that bill automatically, with member perks at checkout. Turning on studio by studio.
+
+## Planned
+- **Win-back texts you approve**: Win-back texts wait for a team member to say send.
+- **Text opt-out and quiet hours**: Clients can reply STOP anytime, and marketing texts only go out during the day.
 - **Approve online bookings**: Choose to review online requests before they're booked.
 - **Add-ons in reports**: See how often clients add extras to their visit.
-- **Memberships, rolling out**: Monthly plans that bill automatically, with member perks at checkout.
-
-## Next
 - **Calendar sync**: Each team member gets a private link to see their appointments in Google, Apple or Outlook Calendar.
 - **Sign up online**: Start your studio from our website.
 - **Referrals**: Reward clients who bring in friends.
-- **Square payments** · Coming soon: Take payments through Square if that's what you already use.
-
-## Later
+- **Square payments**: Take payments through Square if that's what you already use.
 - **A texting number for each studio**: Your own number for client texts, so replies come straight to you.
 - **Edit your website in Happli**: Update your studio site from the same place you run your day.
 
