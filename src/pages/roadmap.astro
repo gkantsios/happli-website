@@ -1,41 +1,18 @@
 ---
+// The roadmap as sticky notes: Now, Next and Later, then everything shipped, grouped by area. Every word on
+// the notes comes from src/data/roadmap-copy.md (Grant's final copy); worker/test/roadmap-copy.test.ts checks
+// the built page against it.
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PageIntro from '../components/sections/PageIntro.astro';
 import { breadcrumbs } from '../lib/jsonld';
+import { isoMonth, parseRoadmap } from '../lib/roadmap';
 import { site } from '../config/site';
+import copy from '../data/roadmap-copy.md?raw';
 
 const title = 'Roadmap | What we are building next at Happli';
 const description = "What's coming to Happli: what we're building now, what's next and what's later. Suggest a feature anytime.";
 
-const columns = [
-  {
-    id: 'now',
-    label: 'Now',
-    items: [
-      { title: 'Booking on your own website', body: 'Clients book in a window right on your site, without leaving it.' },
-      { title: 'Deposits with Apple Pay and Google Pay', body: 'Clients pay their deposit in a tap, right on the booking page.' },
-      { title: 'Google Business Profile connect', body: 'Connect your Google listing to Happli in a few clicks.' },
-    ],
-  },
-  {
-    id: 'next',
-    label: 'Next',
-    items: [
-      { title: 'Memberships', body: 'Monthly plans that bill automatically and keep regulars coming back.' },
-      { title: 'Rewards and referrals', body: 'Thank loyal clients and reward the ones who bring friends.' },
-      { title: 'Square payments', body: "Take payments through Square if that's what you already use." },
-    ],
-  },
-  {
-    id: 'later',
-    label: 'Later',
-    items: [
-      { title: 'AI COO chat', body: 'Ask about your business and get a simple plan for the day.' },
-      { title: 'A texting number for each studio', body: 'Your own number for client texts, so replies come straight to you.' },
-      { title: 'Edit your website in Happli', body: 'Update your studio site from the same place you run your day.' },
-    ],
-  },
-];
+const { columns, shipped } = parseRoadmap(copy);
 const mailto = `mailto:${site.contactEmail}?subject=${encodeURIComponent('Feature suggestion')}`;
 ---
 
@@ -50,17 +27,20 @@ const mailto = `mailto:${site.contactEmail}?subject=${encodeURIComponent('Featur
     lede="A quick look at what's on the way. Tell us what would help your studio most."
     cta={false}
   />
-  <div class="wrap">
+  <div class="wrap" data-roadmap>
     <div class="cols">
       {
         columns.map((c) => (
-          <section class="col" aria-labelledby={`rm-${c.id}`}>
-            <h2 id={`rm-${c.id}`}><span class:list={['dot', c.id]} aria-hidden="true"></span>{c.label}</h2>
-            <ul>
-              {c.items.map((i) => (
-                <li>
-                  <h3>{i.title}</h3>
-                  <p>{i.body}</p>
+          <section class:list={['col', c.id]} aria-labelledby={`rm-${c.id}`}>
+            <h2 id={`rm-${c.id}`}>{c.label}</h2>
+            <ul class="notes">
+              {c.notes.map((n) => (
+                <li class="note">
+                  <p class="title">
+                    <strong>{n.title}</strong>
+                    {n.tag && <span class="tag">{n.tag}</span>}
+                  </p>
+                  <p class="line">{n.line}</p>
                 </li>
               ))}
             </ul>
@@ -68,89 +48,246 @@ const mailto = `mailto:${site.contactEmail}?subject=${encodeURIComponent('Featur
         ))
       }
     </div>
+
+    <section class="shipped" aria-labelledby="rm-shipped">
+      <h2 id="rm-shipped">Shipped</h2>
+      {
+        shipped.map((a) => (
+          <section class="area" aria-labelledby={`rm-area-${a.id}`} data-area>
+            <h3 id={`rm-area-${a.id}`}>{a.label}</h3>
+            <ul class="notes" id={`rm-list-${a.id}`}>
+              {a.notes.map((n) => {
+                const iso = isoMonth(n.when);
+                return (
+                  <li class="note">
+                    <p class="title">
+                      <strong>{n.text}</strong>
+                    </p>
+                    {iso ? <time class="when" datetime={iso}>{n.when}</time> : <span class="when">{n.when}</span>}
+                  </li>
+                );
+              })}
+            </ul>
+          </section>
+        ))
+      }
+    </section>
+
     <div class="foot">
       <a class="btn btn-coral" href={mailto}>Suggest a feature</a>
-      <p class="note">Plans can change. Studios on launch pricing get early access.</p>
+      <p class="note-foot">Plans can change. Studios on launch pricing get early access.</p>
     </div>
   </div>
 </BaseLayout>
+
+<script is:inline>
+  // Phones: each Shipped area folds behind a button in its heading (aria-expanded, aria-controls). Without
+  // JavaScript, and on wider screens, every area stays open.
+  (function () {
+    var root = document.querySelector('[data-roadmap]');
+    if (!root) return;
+    var phone = window.matchMedia('(max-width: 699.98px)');
+    var areas = root.querySelectorAll('[data-area]');
+    function apply() {
+      areas.forEach(function (area) {
+        var heading = area.querySelector('h3');
+        var list = area.querySelector('ul');
+        var button = heading.querySelector('button');
+        if (phone.matches && !button) {
+          button = document.createElement('button');
+          button.type = 'button';
+          button.className = 'area-toggle';
+          button.textContent = heading.textContent;
+          button.setAttribute('aria-expanded', 'false');
+          button.setAttribute('aria-controls', list.id);
+          button.addEventListener('click', function () {
+            var open = button.getAttribute('aria-expanded') !== 'true';
+            button.setAttribute('aria-expanded', String(open));
+            list.hidden = !open;
+          });
+          heading.textContent = '';
+          heading.append(button);
+          list.hidden = true;
+        } else if (!phone.matches && button) {
+          heading.textContent = button.textContent;
+          list.hidden = false;
+        }
+      });
+    }
+    phone.addEventListener('change', apply);
+    apply();
+  })();
+</script>
 
 <style>
   .cols {
     margin-top: var(--space-block);
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 24px;
-  }
-  .col {
-    padding: 28px;
-    border-radius: var(--radius-lg);
-    background: var(--blush-2);
-    border: 1px solid var(--line);
+    gap: 28px;
+    align-items: start;
   }
   h2 {
-    display: flex;
-    align-items: center;
-    gap: 10px;
     font-size: 28px;
   }
-  .dot {
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    background: var(--coral);
+  /* Sticky notes: one color per column, Shipped in a fourth. Each text color passes AA on its note:
+     --ink and --ink-2 are 8:1 or better on all four, --muted (the month) 4.7:1 or better. */
+  .now {
+    --note: var(--ap-rose);
   }
-  .dot.next {
-    background: var(--ap-sand-edge);
+  .next {
+    --note: var(--ap-sand);
   }
-  .dot.later {
-    background: var(--ap-sage-edge);
+  .later {
+    --note: var(--ap-sage);
   }
-  ul {
+  .shipped {
+    --note: var(--blush-2);
+  }
+  .notes {
     list-style: none;
     margin: 20px 0 0;
     padding: 0;
     display: grid;
-    gap: 14px;
+    gap: 18px;
   }
-  li {
-    padding: 18px 20px;
-    border-radius: var(--radius);
-    background: var(--surface);
-    border: 1px solid var(--line);
+  .note {
+    padding: 18px 20px 20px;
+    border-radius: 4px;
+    background: var(--note);
+    box-shadow: 0 1px 2px rgba(27, 22, 20, 0.08), 0 10px 22px -14px rgba(27, 22, 20, 0.35);
+    transform: rotate(-1.2deg);
   }
-  h3 {
-    font-family: var(--sans);
+  /* A fixed tilt pattern by position, within about 1.5 degrees either way, so it's the same on every load. */
+  .note:nth-child(4n + 2) {
+    transform: rotate(0.9deg);
+  }
+  .note:nth-child(4n + 3) {
+    transform: rotate(-0.5deg);
+  }
+  .note:nth-child(4n + 4) {
+    transform: rotate(1.5deg);
+  }
+  .title {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px 10px;
     font-size: 17px;
-    font-weight: 700;
     line-height: 1.35;
+    color: var(--ink);
   }
-  li p {
+  .title strong {
+    font-weight: 700;
+  }
+  .tag {
+    padding: 2px 10px;
+    border: 1px solid var(--coral);
+    border-radius: var(--radius-pill);
+    background: var(--surface);
+    color: var(--coral-ink);
+    font-size: 13px;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+  .line {
     margin-top: 6px;
     font-size: 16px;
-    color: var(--ink-2);
     line-height: 1.5;
+    color: var(--ink-2);
   }
-  .foot .btn {
-    font-size: 16px;
+  .when {
+    display: block;
+    margin-top: 8px;
+    font-size: 14px;
+    color: var(--muted);
   }
+
+  .shipped {
+    margin-top: var(--space-block);
+  }
+  .area {
+    margin-top: 36px;
+  }
+  .area h3 {
+    font-family: var(--sans);
+    font-size: 20px;
+    font-weight: 700;
+  }
+  .shipped .notes {
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    margin-top: 16px;
+  }
+  .shipped .notes[hidden] {
+    display: none;
+  }
+
   .foot {
-    margin-top: 40px;
+    margin-top: 48px;
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     gap: 16px 24px;
   }
-  .note {
+  .foot .btn {
+    font-size: 16px;
+  }
+  .note-foot {
     font-size: 16px;
     color: var(--muted);
   }
+
   @media (max-width: 960px) {
     .cols {
       grid-template-columns: minmax(0, 1fr);
     }
-    .col {
-      padding: 20px 16px;
+  }
+  /* Phones: every text is at least 16px. */
+  @media (max-width: 699.98px) {
+    .title,
+    .when {
+      font-size: 16px;
+    }
+    .tag {
+      font-size: 16px;
+      font-weight: 600;
+    }
+    .note {
+      padding: 16px 18px 18px;
+    }
+    .shipped .notes {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .area {
+      margin-top: 12px;
+    }
+    .area h3 :global(.area-toggle) {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      width: 100%;
+      min-height: 48px;
+      padding: 10px 4px;
+      border: 0;
+      border-bottom: 1px solid var(--line-strong);
+      background: none;
+      color: var(--ink);
+      font: inherit;
+      text-align: left;
+      cursor: pointer;
+    }
+    .area h3 :global(.area-toggle)::after {
+      content: '';
+      flex: none;
+      width: 9px;
+      height: 9px;
+      border-right: 2px solid currentColor;
+      border-bottom: 2px solid currentColor;
+      transform: translateY(-3px) rotate(45deg);
+    }
+    .area h3 :global(.area-toggle[aria-expanded='true'])::after {
+      transform: translateY(2px) rotate(-135deg);
     }
   }
 </style>
