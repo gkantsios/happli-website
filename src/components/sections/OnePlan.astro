@@ -3,7 +3,7 @@
 // Every number comes from src/config/pricing.ts.
 import Icon from '../Icon.astro';
 import { site } from '../../config/site';
-import { plan, launchLock, marketingAddOn, yearlySavePercent, usd, yearlyTotal } from '../../config/pricing';
+import { plan, launchLock, marketingAddOn, addOnCoverage, addOnLaunchNote, yearlySavePercent, usd, yearlyTotal } from '../../config/pricing';
 
 interface Props {
   /** Show the "What would you pay?" calculator. */
@@ -17,16 +17,8 @@ const { calculator = true, addon = true, cta = 'signup' } = Astro.props;
 
 const turnstileSiteKey = addon && import.meta.env.PUBLIC_TURNSTILE_SITE_KEY;
 const { launch, regular, extraMember } = plan;
-const pack = marketingAddOn.packs.find((p) => p.credits === marketingAddOn.defaultCredits)!;
 const m = marketingAddOn;
-const cover = (c: number) => ({
-  txt: Math.floor(c / m.creditsPerText / 10) * 10,
-  em: c * m.emailsPerCredit,
-  pic: Math.floor(c / m.creditsPerPictureText / 10) * 10,
-});
-const c0 = cover(pack.credits);
-const n = (x: number) => x.toLocaleString('en-US');
-const calcData = JSON.stringify({ launch, regular, extraMember, share: plan.extraLocationShare, m });
+const calcData = JSON.stringify({ launch, regular, extraMember, share: plan.extraLocationShare });
 ---
 
 <section class="plans-section" aria-labelledby="plan-title" data-oneplan data-pricing={calcData}>
@@ -102,29 +94,23 @@ const calcData = JSON.stringify({ launch, regular, extraMember, share: plan.extr
         <div>
           <span class="badge badge-soon">{m.status}</span>
           <h3>{m.name.replace('-', '\u2011')}</h3>
-          <p>Text and email campaigns to bring clients back. Optional on any plan. Pick the credit pack that fits.</p>
+          <p>Text and email campaigns to bring clients back. Optional on any plan.</p>
         </div>
-        <p class="amt"><span data-out="mk">{usd(pack.price)}</span><span class="unit">/mo</span></p>
+        <p class="amt"><span class="from">Starts at</span>{usd(m.starter.price)}<span class="unit">/mo</span></p>
       </div>
-      <fieldset class="seg">
-        <legend class="visually-hidden">Credit pack</legend>
-        {m.packs.map((p) => (
-          <label><input type="radio" name="pack" value={p.credits} data-p={p.price} checked={p.credits === m.defaultCredits} /><span>{p.credits.toLocaleString('en-US')}</span></label>
-        ))}
-      </fieldset>
-      <p class="segl">credits a month</p>
-      <div class="cov">
-        <div><b data-out="txt">~{n(c0.txt)}</b><span>texts</span></div>
-        <span class="or">or</span>
-        <div><b data-out="em">~{n(c0.em)}</b><span>emails</span></div>
-        <span class="or">or</span>
-        <div><b data-out="pic">~{n(c0.pic)}</b><span>picture texts</span></div>
-      </div>
-      <p class="note">
-        1 credit = {m.emailsPerCredit} emails. 1 text = {m.creditsPerText} credits. 1 picture text = {m.creditsPerPictureText} credits.
-        Texts count per 160-character segment. Need more one month? Extra credits are {m.extraCreditCents}¢ each. Appointment
-        reminder texts stay included free on every plan.
+      <p class="pack">
+        <b>{m.starter.credits.toLocaleString('en-US')} credits a month:</b> {addOnCoverage}. <b>Credits don't roll over.</b>
       </p>
+      <ul class="note">
+        <li>1 credit = {m.emailsPerCredit} emails.</li>
+        <li>1 text = {m.creditsPerText} credits.</li>
+        <li>1 picture text = {m.creditsPerPictureText} credits.</li>
+        <li>Texts count per 160-character segment.</li>
+        <li>Extra credits are {m.extraCreditCents}¢ each. Larger packs cost more.</li>
+        <li>Email comes first. Marketing texts start once your studio's own number is registered.</li>
+        <li>Appointment reminder texts stay free on every plan.</li>
+        {addOnLaunchNote.split(/(?<=\.) /).map((sentence) => <li>{sentence}</li>)}
+      </ul>
           <div class="wl" data-waitlist>
             <form action="/api/waitlist" method="post" novalidate>
               <label class="wl-label" for="wl-email">Get notified when it launches</label>
@@ -199,15 +185,6 @@ const calcData = JSON.stringify({ launch, regular, extraMember, share: plan.extr
       });
     });
     root.querySelectorAll('input[name="billing"]').forEach(function (i) { i.addEventListener('change', render); });
-    root.querySelectorAll('input[name="pack"]').forEach(function (i) {
-      i.addEventListener('change', function () {
-        var c = +i.value, m = cfg.m;
-        out('mk').textContent = '$' + i.dataset.p;
-        out('txt').textContent = '~' + (Math.floor(c / m.creditsPerText / 10) * 10).toLocaleString('en-US');
-        out('em').textContent = '~' + (c * m.emailsPerCredit).toLocaleString('en-US');
-        out('pic').textContent = '~' + (Math.floor(c / m.creditsPerPictureText / 10) * 10).toLocaleString('en-US');
-      });
-    });
     render();
   })();
 </script>
@@ -410,25 +387,12 @@ const calcData = JSON.stringify({ launch, regular, extraMember, share: plan.extr
   .addon-top p { margin-top: 6px; color: var(--muted); }
   .badge-soon { background: var(--surface); color: var(--muted); border: 1px solid var(--line-strong); }
   .amt { flex: 0 0 130px; text-align: right; font-family: var(--serif); font-size: 40px; line-height: 1; }
-  .seg {
-    display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); margin: 24px 0 0; padding: 4px;
-    border: 1px solid var(--line); border-radius: var(--radius-pill); background: var(--surface);
+  .amt .from { display: block; margin-bottom: 6px; font: 600 13px var(--sans); color: var(--muted); }
+  .pack {
+    margin: 22px 0 16px; padding: 16px 18px; border-radius: var(--radius-lg); background: var(--surface); font-size: 15px;
   }
-  .seg label {
-    position: relative; display: flex; align-items: center; justify-content: center; min-height: 44px;
-    border-radius: var(--radius-pill); font-weight: 600; font-size: 15px; color: var(--muted); cursor: pointer;
-  }
-  .seg input { position: absolute; inset: 0; margin: 0; opacity: 0; cursor: pointer; }
-  .seg label:has(:checked) { background: var(--ink); color: #fff; }
-  .seg label:has(:focus-visible) { outline: 2px solid var(--ink); outline-offset: 2px; }
-  .segl { margin: 8px 0 18px; text-align: center; font-size: 14px; color: var(--muted); }
-  .cov {
-    display: flex; justify-content: center; align-items: center; gap: 20px; padding: 18px; margin-bottom: 18px;
-    border-radius: var(--radius-lg); background: var(--surface); text-align: center;
-  }
-  .cov b { display: block; font-family: var(--serif); font-weight: 500; font-size: 26px; }
-  .cov span, .cov .or { font-size: 14px; color: var(--muted); }
-  .note { margin-bottom: 20px; font-size: 14px; color: var(--muted); }
+  .pack b:last-child { white-space: nowrap; }
+  .note { display: grid; gap: 6px; margin: 0 0 20px; padding: 0; list-style: none; font-size: 14px; color: var(--muted); }
 
   .wl {
     position: relative;
@@ -563,9 +527,6 @@ const calcData = JSON.stringify({ launch, regular, extraMember, share: plan.extr
     .addon { padding: 28px 20px; }
     .addon-top { flex-direction: column-reverse; gap: 4px; }
     .amt { flex: none; text-align: left; }
-    .cov { gap: 10px; padding: 14px 8px; }
-    .cov b { font-size: 20px; }
-    .seg label { font-size: 14px; }
     .extras { flex-direction: column; align-items: center; text-align: center; }
     .wl-field { flex-direction: column; }
     .wl-field input { flex: none; }

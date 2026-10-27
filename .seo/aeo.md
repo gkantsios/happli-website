@@ -34,7 +34,7 @@ One sentence, used in the home hero, meta, OG, schema and the footer: **"Booking
 AI answers repeat what pages say. Wrong or stale facts spread.
 
 - Features copy only describes what is built; unconfirmed items are marked `TODO confirm` in source.
-- Pricing: only the prices in `src/config/pricing.ts` (Solo, Studio, the Marketing add-on and the Founding Studio offer). No invented trials or discounts. Don't market a free website, and don't say "for life" without "while subscribed".
+- Pricing: only the prices in `src/config/pricing.ts` (the one plan, launch pricing and the Marketing add-on, which starts at $19/mo). No invented trials or discounts. Don't market a free website, and don't say "for life" without "while subscribed".
 - Phone: say "mobile-friendly web app." There's no App Store app.
 - Re-check the competitor pages each quarter.
 - **Reconcile the draft AI-instructions page before using it.** It describes Happli as an AI layer on top of an existing booking system (Square, Vagaro). The site now positions Happli as booking software with an AI COO. Any brand-facts page must match the site.

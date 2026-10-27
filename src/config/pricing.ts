@@ -3,8 +3,8 @@
 // the compare index and the SoftwareApplication JSON-LD).
 // The compare articles in src/content/compare/, the Terms (src/legal/terms.html), the refund policy
 // (src/legal/refunds.html) and public/llms.txt repeat these numbers by hand, so update them too.
-// Set by Grant on Oct 23, 2026 (one plan, launch pricing). Don't add other prices, trials or discounts
-// without Grant's say-so.
+// Set by Grant on Oct 23, 2026 (one plan, launch pricing); Marketing add-on model Oct 26, 2026. Don't add
+// other prices, trials or discounts without Grant's say-so.
 //
 // Stripe: plan buttons go to /signup/, which offers the book-a-call link, until new Payment Links exist.
 
@@ -47,22 +47,19 @@ export function monthlyTotal(teamMembers: number, locations: number, billing: ke
   return base * (1 + (locations - 1) * plan.extraLocationShare);
 }
 
-/** Marketing add-on: monthly credit packs. */
+/** Marketing add-on: monthly credit packs. Only the smallest pack is published; larger packs cost more,
+ * so the copy always says "starts at", never a flat price. */
 export const marketingAddOn = {
   name: 'Marketing add-on',
   status: 'Coming soon',
-  packs: [
-    { credits: 2000, price: 19 },
-    { credits: 5000, price: 39 },
-    { credits: 12000, price: 79 },
-    { credits: 30000, price: 159 },
-  ],
-  defaultCredits: 5000,
+  starter: { credits: 2000, price: 19 },
   /** Credits per message. One credit covers 2 emails. */
   emailsPerCredit: 2,
   creditsPerText: 3,
   creditsPerPictureText: 7,
   extraCreditCents: 1,
+  /** Unused credits expire at the end of each monthly billing period. */
+  rollover: false,
 };
 
 /** Appointment reminder texts are included on every plan, with a fair-use cap of about this many a month. */
@@ -84,3 +81,13 @@ export const lowPrice = plan.launch.yearly;
 
 /** Grant's launch-pricing rule (Oct 23, 2026). Shown on /pricing and /signup. */
 export const launchLock = 'Launch pricing is locked for the features in your plan for as long as you stay subscribed. New features added later may cost more.';
+
+/** "Starts at $19/mo": the add-on's price wording everywhere. */
+export const addOnStartsAt = `Starts at ${usd(marketingAddOn.starter.price)}/mo`;
+
+/** What the starter pack covers, rounded down like the old pack picker: "about 4,000 emails or about 660 texts". */
+export const addOnCoverage = `about ${(marketingAddOn.starter.credits * marketingAddOn.emailsPerCredit).toLocaleString('en-US')} emails or about ${(Math.floor(marketingAddOn.starter.credits / marketingAddOn.creditsPerText / 10) * 10).toLocaleString('en-US')} texts`;
+
+/** Grant's rule for the add-on (Oct 26, 2026). The Terms and the refund policy repeat this sentence word for
+ * word (worker/test/addon-copy.test.ts checks it), and /pricing shows it. */
+export const addOnLaunchNote = "Launch pricing and its price protection don't apply to the Marketing add-on or extra credits. Add-on prices may change with at least 30 days' notice.";
