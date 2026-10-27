@@ -1,18 +1,19 @@
 ---
-// The roadmap as a three-column board: In progress, Planned, and Shipped folded by area in native
-// <details>. Every word comes from src/data/roadmap-copy.md (Grant's final copy);
-// worker/test/roadmap-copy.test.ts checks the built page against it. No script on this page.
+// The roadmap as a three-column board, left to right as work moves toward done: Planned, In progress,
+// and Completed folded by area in native <details>. Every word comes from src/data/roadmap-copy.md
+// (Grant's final copy); worker/test/roadmap-copy.test.ts checks the built page against it. No script on
+// this page.
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PageIntro from '../components/sections/PageIntro.astro';
 import { breadcrumbs } from '../lib/jsonld';
-import { isoMonth, parseRoadmap } from '../lib/roadmap';
+import { parseRoadmap } from '../lib/roadmap';
 import { site } from '../config/site';
 import copy from '../data/roadmap-copy.md?raw';
 
 const title = 'Roadmap | What we are building next at Happli';
-const description = "What's happening at Happli: what's in progress, what's planned and what's shipped. Suggest a feature anytime.";
+const description = "What's happening at Happli: what's planned, what's in progress and what's completed. Suggest a feature anytime.";
 
-const { intro, columns, shipped } = parseRoadmap(copy);
+const { intro, columns, completed } = parseRoadmap(copy);
 const mailto = `mailto:${site.contactEmail}?subject=${encodeURIComponent('Feature suggestion')}`;
 ---
 
@@ -49,30 +50,26 @@ const mailto = `mailto:${site.contactEmail}?subject=${encodeURIComponent('Featur
           </section>
         ))
       }
-      <section class="col shipped" aria-labelledby="rm-shipped">
+      <section class="col completed" aria-labelledby="rm-completed">
         <div class="col-head">
           <span class="dot" aria-hidden="true" />
-          <h2 id="rm-shipped">Shipped</h2>
-          <span class="count" aria-hidden="true" data-count>{shipped.reduce((n, a) => n + a.notes.length, 0)}</span>
+          <h2 id="rm-completed">Completed</h2>
+          <span class="count" aria-hidden="true" data-count>{completed.reduce((n, a) => n + a.notes.length, 0)}</span>
         </div>
         <div class="areas">
           {
-            shipped.map((a) => (
+            completed.map((a) => (
               <details class="area">
                 <summary>
                   <span class="area-name">{a.label}</span>
                   <span class="count" aria-hidden="true" data-count>{a.notes.length}</span>
                 </summary>
                 <ul class="done">
-                  {a.notes.map((n) => {
-                    const iso = isoMonth(n.when);
-                    return (
-                      <li>
-                        <span class="what">{n.text}</span>
-                        {iso ? <time class="when" datetime={iso}>{n.when}</time> : <span class="when">{n.when}</span>}
-                      </li>
-                    );
-                  })}
+                  {a.notes.map((n) => (
+                    <li>
+                      <span class="what">{n.text}</span>
+                    </li>
+                  ))}
                 </ul>
               </details>
             ))
@@ -95,7 +92,8 @@ const mailto = `mailto:${site.contactEmail}?subject=${encodeURIComponent('Featur
     font-size: 16px;
     color: var(--ink-2);
   }
-  /* Three columns, two below 1000px (Shipped full width under the other two), one on phones. */
+  /* Three columns, two below 1000px (Planned and In progress side by side, Completed full width under them,
+     since it's the long folded list), one on phones in reading order. No CSS order, so what you see is what's read. */
   .board {
     margin-top: 24px;
     display: grid;
@@ -103,7 +101,7 @@ const mailto = `mailto:${site.contactEmail}?subject=${encodeURIComponent('Featur
     gap: 20px;
     align-items: start;
   }
-  /* Each column's color: In progress coral, Planned the body gray, Shipped muted. Every text color is AA on
+  /* Each column's color: Planned the body gray, In progress coral, Completed muted. Every text color is AA on
      --bg (coral-ink 5.7:1, ink-2 9:1, muted 5.4:1). */
   .in-progress {
     --dot: var(--coral);
@@ -113,7 +111,7 @@ const mailto = `mailto:${site.contactEmail}?subject=${encodeURIComponent('Featur
     --dot: var(--ink-2);
     --label: var(--ink-2);
   }
-  .shipped {
+  .completed {
     --dot: var(--muted);
     --label: var(--muted);
   }
@@ -229,23 +227,9 @@ const mailto = `mailto:${site.contactEmail}?subject=${encodeURIComponent('Featur
     gap: 10px;
   }
   .done li {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    align-items: baseline;
-    gap: 2px 16px;
     font-size: 15px;
     line-height: 1.45;
     color: var(--ink-2);
-  }
-  .what {
-    flex: 1 1 14em;
-  }
-  .when {
-    flex: none;
-    font-size: 14px;
-    color: var(--muted);
-    white-space: nowrap;
   }
 
   .foot {
@@ -268,7 +252,7 @@ const mailto = `mailto:${site.contactEmail}?subject=${encodeURIComponent('Featur
     .board {
       grid-template-columns: repeat(2, minmax(0, 1fr));
     }
-    .shipped {
+    .completed {
       grid-column: 1 / -1;
     }
   }
