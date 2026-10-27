@@ -1,10 +1,13 @@
 // Marketing add-on copy (Grant's model, Oct 26, 2026). Run with `npm test`.
-// The add-on "starts at $19/mo" for 2,000 credits; the old $39 / 1,000 texts / 10,000 emails / 3 cents
-// wording must never come back, and the Terms and refund policy must repeat the launch-pricing rule from
-// src/config/pricing.ts word for word.
-import { test } from 'node:test';
+// The add-on "starts at $19/mo" for 2,000 credits, credits don't roll over, and launch pricing doesn't
+// cover it. /pricing, the Terms and the refund policy must all say so, in the built HTML a visitor gets,
+// and none of them may show the old or unpublished prices. The old $39 / 1,000 texts / 10,000 emails /
+// 3 cents wording must never come back anywhere in src.
+import { test, before } from 'node:test';
 import assert from 'node:assert/strict';
-import { readFileSync, readdirSync, statSync } from 'node:fs';
+import { execFileSync } from 'node:child_process';
+import { mkdtempSync, readFileSync, readdirSync, rmSync, statSync } from 'node:fs';
+import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { marketingAddOn, addOnStartsAt, addOnLaunchNote } from '../../src/config/pricing.ts';
 
@@ -17,6 +20,33 @@ const files = (dir: string): string[] =>
     if (statSync(path).isDirectory()) return files(path);
     return textFile.test(name) ? [path] : [];
   });
+
+// The visible text of a built page: no tags, scripts or styles, entities decoded, whitespace collapsed.
+const pageText = (html: string) =>
+  html
+    .replace(/<(script|style)\b[^>]*>[\s\S]*?<\/\1>/g, ' ')
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/&#39;|&#x27;|&apos;|&rsquo;|’/g, "'")
+    .replace(/&quot;/g, '"')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&amp;/g, '&')
+    .replace(/\s+/g, ' ');
+
+const pages = ['pricing', 'terms', 'refunds'];
+const text: Record<string, string> = {};
+let pricingHtml = '';
+
+before(() => {
+  // Build into a temporary folder so the test sees exactly what each page renders, without touching dist/.
+  const out = mkdtempSync(join(tmpdir(), 'happli-addon-'));
+  try {
+    execFileSync(join(root, 'node_modules/.bin/astro'), ['build', '--outDir', out], { cwd: root, stdio: 'pipe' });
+    for (const page of pages) text[page] = pageText(readFileSync(join(out, page, 'index.html'), 'utf8'));
+    pricingHtml = readFileSync(join(out, 'pricing', 'index.html'), 'utf8');
+  } finally {
+    rmSync(out, { recursive: true, force: true });
+  }
+});
 
 const oldCopy = [
   { what: '$39', re: /\$39\b/ },
@@ -43,8 +73,25 @@ test('the add-on starts at $19/mo for 2,000 credits, and credits do not roll ove
   assert.equal(addOnStartsAt, 'Starts at $19/mo');
 });
 
-test('the Terms and refund policy repeat the add-on launch-pricing rule word for word', () => {
-  for (const page of ['src/legal/terms.html', 'src/legal/refunds.html']) {
-    assert.ok(readFileSync(join(root, page), 'utf8').includes(addOnLaunchNote), `${page} is missing: ${addOnLaunchNote}`);
-  }
+for (const page of pages) {
+  test(`/${page}/ says the add-on starts at $19, credits don't roll over, and launch pricing doesn't cover it`, () => {
+    const t = text[page];
+    const startsAt = [...t.matchAll(/starts at \$(\d+)/gi)].map((m) => m[1]);
+    assert.ok(startsAt.length > 0, `/${page}/ never says "starts at $19"`);
+    assert.deepEqual([...new Set(startsAt)], ['19'], `/${page}/ gives another starting price: ${startsAt.join(', ')}`);
+    assert.match(t, /credits don't roll over/i, `/${page}/ is missing "credits don't roll over"`);
+    assert.doesNotMatch(t, /\b(?:credits?|they) (?:do |will |can |may )?(?:roll|carry) over\b/i, `/${page}/ says credits roll over`);
+    assert.ok(t.includes(addOnLaunchNote), `/${page}/ is missing: ${addOnLaunchNote}`);
+    const unpublished = t.match(/\$(?:39|79|159)\b/g);
+    assert.equal(unpublished, null, `/${page}/ shows ${unpublished?.join(', ')}`);
+  });
+}
+
+test('the /pricing add-on card itself shows $19, no roll over and the launch-pricing sentence, not only the FAQ', () => {
+  const start = pricingHtml.indexOf('id="marketing"');
+  assert.ok(start > 0, 'the Marketing add-on card is missing from /pricing/');
+  const card = pageText(pricingHtml.slice(start, pricingHtml.indexOf('data-waitlist', start)));
+  assert.match(card, /starts at \$19\b/i);
+  assert.match(card, /credits don't roll over/i);
+  assert.ok(card.includes(addOnLaunchNote), `the add-on card is missing: ${addOnLaunchNote}`);
 });

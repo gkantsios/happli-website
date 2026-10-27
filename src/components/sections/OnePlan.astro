@@ -101,12 +101,16 @@ const calcData = JSON.stringify({ launch, regular, extraMember, share: plan.extr
       <p class="pack">
         <b>{m.starter.credits.toLocaleString('en-US')} credits a month:</b> {addOnCoverage}. <b>Credits don't roll over.</b>
       </p>
-      <p class="note">
-        1 credit = {m.emailsPerCredit} emails. 1 text = {m.creditsPerText} credits. 1 picture text = {m.creditsPerPictureText} credits.
-        Texts count per 160-character segment. Extra credits are {m.extraCreditCents}¢ each. Larger packs cost more. Email comes
-        first; marketing texts start once your studio's own number is registered. Appointment reminder texts stay free on every
-        plan. {addOnLaunchNote}
-      </p>
+      <ul class="note">
+        <li>1 credit = {m.emailsPerCredit} emails.</li>
+        <li>1 text = {m.creditsPerText} credits.</li>
+        <li>1 picture text = {m.creditsPerPictureText} credits.</li>
+        <li>Texts count per 160-character segment.</li>
+        <li>Extra credits are {m.extraCreditCents}¢ each. Larger packs cost more.</li>
+        <li>Email comes first. Marketing texts start once your studio's own number is registered.</li>
+        <li>Appointment reminder texts stay free on every plan.</li>
+        {addOnLaunchNote.split(/(?<=\.) /).map((sentence) => <li>{sentence}</li>)}
+      </ul>
           <div class="wl" data-waitlist>
             <form action="/api/waitlist" method="post" novalidate>
               <label class="wl-label" for="wl-email">Get notified when it launches</label>
@@ -388,7 +392,7 @@ const calcData = JSON.stringify({ launch, regular, extraMember, share: plan.extr
     margin: 22px 0 16px; padding: 16px 18px; border-radius: var(--radius-lg); background: var(--surface); font-size: 15px;
   }
   .pack b:last-child { white-space: nowrap; }
-  .note { margin-bottom: 20px; font-size: 14px; color: var(--muted); }
+  .note { display: grid; gap: 6px; margin: 0 0 20px; padding: 0; list-style: none; font-size: 14px; color: var(--muted); }
 
   .wl {
     position: relative;
