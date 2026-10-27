@@ -37,7 +37,7 @@ const mailto = `mailto:${site.contactEmail}?subject=${encodeURIComponent('Featur
             <div class="col-head">
               <span class="dot" aria-hidden="true" />
               <h2 id={`rm-${c.id}`}>{c.label}</h2>
-              <span class="count" aria-hidden="true" data-count>{c.notes.length}</span>
+              <span class="count" data-count>{c.notes.length}</span>
             </div>
             <ul class="cards">
               {c.notes.map((n) => (
@@ -54,7 +54,7 @@ const mailto = `mailto:${site.contactEmail}?subject=${encodeURIComponent('Featur
         <div class="col-head">
           <span class="dot" aria-hidden="true" />
           <h2 id="rm-completed">Completed</h2>
-          <span class="count" aria-hidden="true" data-count>{completed.reduce((n, a) => n + a.notes.length, 0)}</span>
+          <span class="count" data-count>{completed.reduce((n, a) => n + a.notes.length, 0)}</span>
         </div>
         <div class="areas">
           {
@@ -62,7 +62,7 @@ const mailto = `mailto:${site.contactEmail}?subject=${encodeURIComponent('Featur
               <details class="area">
                 <summary>
                   <span class="area-name">{a.label}</span>
-                  <span class="count" aria-hidden="true" data-count>{a.notes.length}</span>
+                  <span class="count" data-count>{a.notes.length}</span>
                 </summary>
                 <ul class="done">
                   {a.notes.map((n) => (
@@ -221,8 +221,9 @@ const mailto = `mailto:${site.contactEmail}?subject=${encodeURIComponent('Featur
   }
   .done {
     list-style: none;
-    margin: 0 0 14px;
-    padding: 0;
+    margin: 0 0 16px 2px;
+    padding: 0 0 0 12px;
+    border-left: 2px solid var(--line-strong);
     display: grid;
     gap: 10px;
   }

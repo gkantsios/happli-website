@@ -24,8 +24,8 @@ const text = (html: string) =>
     .replace(/\s+/g, ' ')
     .trim();
 
-// The counts next to each heading and Completed area are display-only numbers built from the copy, so the word
-// check leaves them out on purpose.
+// The counts next to each heading and Completed area are numbers built from the copy, not copy text, so the
+// word check leaves them out on purpose (the counts test checks them).
 const withoutCounts = (html: string) => html.replace(/<span\b[^>]*\bdata-count\b[^>]*>[^<]*<\/span>/g, ' ');
 
 // The copy as words on the page: Markdown markers and the separator between a title and its line are
