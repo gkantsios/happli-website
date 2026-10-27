@@ -25,7 +25,7 @@ Mangomint is a booking and payments system with a pricing model built on locatio
 | Free trial | Free until you go live, up to 30 days | Offered (length not stated)[^m-price][^m-trial] |
 | Online booking | Yes, booking pages that plug into your existing website | Yes, no fee on appointments booked online[^m-price] |
 | Deposits | Yes, a percentage of the service | Full payment, a percentage or a flat amount; requires Mangomint's payment processing[^m-book][^m-price] |
-| Text and email reminders | Yes, editable wording, quiet hours. Included on every plan (fair use about 1,000 texts a month) | Unlimited text and email confirmations and reminders at no extra cost[^m-price] |
+| Text and email reminders | Yes, editable wording, quiet hours. Included on every plan (fair use about 1,000 reminder texts a month) | Unlimited text and email confirmations and reminders at no extra cost[^m-price] |
 | Packages | Yes, prepaid session packages | Packages and memberships listed as core features[^m-price] |
 | Memberships | Coming soon | Listed as a core feature[^m-price] |
 | Payment processing | Your own Stripe account at Stripe's standard rate, no Happli markup | 2.45% + 15¢ in person, 2.90% + 30¢ virtual[^m-price] |

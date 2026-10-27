@@ -6,11 +6,10 @@ import SectionHead from '../components/sections/SectionHead.astro';
 import Faq, { type FaqItem } from '../components/sections/Faq.astro';
 import CtaBand from '../components/sections/CtaBand.astro';
 import { breadcrumbs, softwareApplication } from '../lib/jsonld';
-import { plan, launchLock, marketingAddOn, monthlyTotal, reminderFairUse, trialDays, usd, yearlyTotal } from '../config/pricing';
+import { plan, launchLock, marketingAddOn, addOnStartsAt, addOnCoverage, addOnLaunchNote, monthlyTotal, reminderFairUse, trialDays, usd, yearlyTotal } from '../config/pricing';
 
 const { launch, regular, extraMember } = plan;
 const xl = (b: 'monthly' | 'yearly') => usd(monthlyTotal(1, 2, b) - monthlyTotal(1, 1, b));
-const packs = marketingAddOn.packs;
 const title = `Pricing | Happli booking software, one plan from ${usd(launch.yearly)} a month`;
 const description = `One plan with everything, plus a website we build for you. Launch price ${usd(launch.monthly)} a month, or ${usd(launch.yearly)} a month billed yearly. +${usd(extraMember.monthly)} a month per extra team member who takes bookings. No contracts, no hidden fees.`;
 
@@ -46,7 +45,7 @@ const faq: FaqItem[] = [
   },
   {
     q: "What's in the Marketing add-on?",
-    a: `Text and email campaigns to bring clients back. It is coming soon and optional on any plan. You pick a monthly credit pack, from ${usd(packs[0].price)} for ${packs[0].credits.toLocaleString('en-US')} credits to ${usd(packs[packs.length - 1].price)} for ${packs[packs.length - 1].credits.toLocaleString('en-US')}. 1 credit is ${marketingAddOn.emailsPerCredit} emails, a text is ${marketingAddOn.creditsPerText} credits and a picture text is ${marketingAddOn.creditsPerPictureText} credits. Extra credits are ${marketingAddOn.extraCreditCents}¢ each.`,
+    a: `Text and email campaigns to bring clients back. It's coming soon and optional on any plan. It ${addOnStartsAt.toLowerCase()} for ${marketingAddOn.starter.credits.toLocaleString('en-US')} credits a month, ${addOnCoverage}; larger packs cost more. Credits don't roll over. 1 credit is ${marketingAddOn.emailsPerCredit} emails, a text is ${marketingAddOn.creditsPerText} credits and a picture text is ${marketingAddOn.creditsPerPictureText} credits, and extra credits are ${marketingAddOn.extraCreditCents}¢ each. Email comes first; marketing texts start once your studio's own number is registered. ${addOnLaunchNote}`,
   },
   {
     q: 'Do you charge for reminder texts?',
