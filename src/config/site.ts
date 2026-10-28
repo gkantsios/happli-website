@@ -16,6 +16,9 @@ export const site = {
   appUrl: 'https://app.gohappli.com',
   signInUrl: 'https://app.gohappli.com/login',
   contactEmail: 'hello@gohappli.com',
+  /** The legal entity and its mailing address, shown in the footer on every page. */
+  legalName: 'Happy Industries, Inc. dba Happli',
+  mailingAddress: '10124 Buggy Horse Rd, Charlotte, NC 28277',
   defaultOgImage: '/og-default.png',
   locale: 'en_US',
 
