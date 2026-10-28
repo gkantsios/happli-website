@@ -62,7 +62,7 @@ before(() => {
 
 test('the copy file is still the FINAL PAGE COPY block Grant signed off on', () => {
   // A deliberate copy change updates this hash in the same commit; anything else is an accidental edit.
-  assert.equal(createHash('sha256').update(copy).digest('hex'), '66d2d5bd7f85d6266f543bb6b8d328fb925c8ceb4710458b4b75f94a90d7c684');
+  assert.equal(createHash('sha256').update(copy).digest('hex'), 'c0468d5f8041eef2fc5af35d5017c0be21a70d6a40fc8799d18c6fb8ce5bf39f');
 });
 
 test('the roadmap shows the final copy word for word, and nothing else', () => {

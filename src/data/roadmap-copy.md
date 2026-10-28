@@ -7,13 +7,13 @@ Planned is what we'll build next. In progress is what we're building now. Comple
 - **Add-ons in reports**: See how often clients add extras to their visit.
 - **Calendar sync**: Each team member gets a private link to see their appointments in Google, Apple or Outlook Calendar.
 - **Referrals**: Reward clients who bring in friends.
-- **Square payments**: Take payments through Square if that's what you already use.
 - **A texting number for each studio**: Your own number for client texts, so replies come straight to you.
 - **Edit your website in Happli**: Update your studio site from the same place you run your day.
 
 ## In progress
 - **Revenue by source**: See which channels bring in your best clients.
 - **Memberships**: Monthly plans that bill automatically, with member perks at checkout. Turning on studio by studio.
+- **Square payments**: Take deposits and Check out payments through your own Square account.
 
 ## Completed
 ### Booking
