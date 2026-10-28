@@ -1,41 +1,19 @@
 ---
+// The roadmap as a three-column board, left to right as work moves toward done: Planned, In progress,
+// and Completed folded by area in native <details>. Every word comes from src/data/roadmap-copy.md
+// (Grant's final copy); worker/test/roadmap-copy.test.ts checks the built page against it. No script on
+// this page.
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PageIntro from '../components/sections/PageIntro.astro';
 import { breadcrumbs } from '../lib/jsonld';
+import { parseRoadmap } from '../lib/roadmap';
 import { site } from '../config/site';
+import copy from '../data/roadmap-copy.md?raw';
 
 const title = 'Roadmap | What we are building next at Happli';
-const description = "What's coming to Happli: what we're building now, what's next and what's later. Suggest a feature anytime.";
+const description = "What's happening at Happli: what's planned, what's in progress and what's completed. Suggest a feature anytime.";
 
-const columns = [
-  {
-    id: 'now',
-    label: 'Now',
-    items: [
-      { title: 'Booking on your own website', body: 'Clients book in a window right on your site, without leaving it.' },
-      { title: 'Deposits with Apple Pay and Google Pay', body: 'Clients pay their deposit in a tap, right on the booking page.' },
-      { title: 'Google Business Profile connect', body: 'Connect your Google listing to Happli in a few clicks.' },
-    ],
-  },
-  {
-    id: 'next',
-    label: 'Next',
-    items: [
-      { title: 'Memberships', body: 'Monthly plans that bill automatically and keep regulars coming back.' },
-      { title: 'Rewards and referrals', body: 'Thank loyal clients and reward the ones who bring friends.' },
-      { title: 'Square payments', body: "Take payments through Square if that's what you already use." },
-    ],
-  },
-  {
-    id: 'later',
-    label: 'Later',
-    items: [
-      { title: 'AI COO chat', body: 'Ask about your business and get a simple plan for the day.' },
-      { title: 'A texting number for each studio', body: 'Your own number for client texts, so replies come straight to you.' },
-      { title: 'Edit your website in Happli', body: 'Update your studio site from the same place you run your day.' },
-    ],
-  },
-];
+const { intro, columns, completed } = parseRoadmap(copy);
 const mailto = `mailto:${site.contactEmail}?subject=${encodeURIComponent('Feature suggestion')}`;
 ---
 
@@ -50,107 +28,241 @@ const mailto = `mailto:${site.contactEmail}?subject=${encodeURIComponent('Featur
     lede="A quick look at what's on the way. Tell us what would help your studio most."
     cta={false}
   />
-  <div class="wrap">
-    <div class="cols">
+  <div class="wrap" data-roadmap>
+    <p class="key">{intro}</p>
+    <div class="board">
       {
         columns.map((c) => (
-          <section class="col" aria-labelledby={`rm-${c.id}`}>
-            <h2 id={`rm-${c.id}`}><span class:list={['dot', c.id]} aria-hidden="true"></span>{c.label}</h2>
-            <ul>
-              {c.items.map((i) => (
-                <li>
-                  <h3>{i.title}</h3>
-                  <p>{i.body}</p>
+          <section class:list={['col', c.id]} aria-labelledby={`rm-${c.id}`}>
+            <div class="col-head">
+              <span class="dot" aria-hidden="true" />
+              <h2 id={`rm-${c.id}`}>{c.label}</h2>
+              <span class="count" data-count>{c.notes.length}</span>
+            </div>
+            <ul class="cards">
+              {c.notes.map((n) => (
+                <li class="card">
+                  <p class="card-title">{n.title}</p>
+                  <p class="card-line">{n.line}</p>
                 </li>
               ))}
             </ul>
           </section>
         ))
       }
+      <section class="col completed" aria-labelledby="rm-completed">
+        <div class="col-head">
+          <span class="dot" aria-hidden="true" />
+          <h2 id="rm-completed">Completed</h2>
+          <span class="count" data-count>{completed.reduce((n, a) => n + a.notes.length, 0)}</span>
+        </div>
+        <div class="areas">
+          {
+            completed.map((a) => (
+              <details class="area">
+                <summary>
+                  <span class="area-name">{a.label}</span>
+                  <span class="count" data-count>{a.notes.length}</span>
+                </summary>
+                <ul class="done">
+                  {a.notes.map((n) => (
+                    <li>
+                      <span class="what">{n.text}</span>
+                    </li>
+                  ))}
+                </ul>
+              </details>
+            ))
+          }
+        </div>
+      </section>
     </div>
+
     <div class="foot">
       <a class="btn btn-coral" href={mailto}>Suggest a feature</a>
-      <p class="note">Plans can change. Studios on launch pricing get early access.</p>
+      <p class="note-foot">Plans can change. Studios on launch pricing get early access.</p>
     </div>
   </div>
 </BaseLayout>
 
 <style>
-  .cols {
+  .key {
     margin-top: var(--space-block);
+    max-width: 44em;
+    font-size: 16px;
+    color: var(--ink-2);
+  }
+  /* Three columns, two below 1000px (Planned and In progress side by side, Completed full width under them,
+     since it's the long folded list), one on phones in reading order. No CSS order, so what you see is what's read. */
+  .board {
+    margin-top: 24px;
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 24px;
+    gap: 20px;
+    align-items: start;
+  }
+  /* Each column's color: Planned the body gray, In progress coral, Completed muted. Every text color is AA on
+     --bg (coral-ink 5.7:1, ink-2 9:1, muted 5.4:1). */
+  .in-progress {
+    --dot: var(--coral);
+    --label: var(--coral-ink);
+  }
+  .planned {
+    --dot: var(--ink-2);
+    --label: var(--ink-2);
+  }
+  .completed {
+    --dot: var(--muted);
+    --label: var(--muted);
   }
   .col {
-    padding: 28px;
-    border-radius: var(--radius-lg);
-    background: var(--blush-2);
+    padding: 20px;
     border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    background: var(--bg);
   }
-  h2 {
+  .col-head {
     display: flex;
     align-items: center;
     gap: 10px;
-    font-size: 28px;
   }
   .dot {
+    flex: none;
     width: 10px;
     height: 10px;
     border-radius: 50%;
-    background: var(--coral);
+    background: var(--dot);
   }
-  .dot.next {
-    background: var(--ap-sand-edge);
+  .col-head h2 {
+    font-family: var(--sans);
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--label);
   }
-  .dot.later {
-    background: var(--ap-sage-edge);
+  .count {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--muted);
   }
-  ul {
+  .cards {
     list-style: none;
-    margin: 20px 0 0;
+    margin: 16px 0 0;
     padding: 0;
     display: grid;
-    gap: 14px;
+    gap: 12px;
   }
-  li {
-    padding: 18px 20px;
+  .card {
+    padding: 16px 18px;
+    border: 1px solid var(--line);
     border-radius: var(--radius);
     background: var(--surface);
-    border: 1px solid var(--line);
   }
-  h3 {
-    font-family: var(--sans);
-    font-size: 17px;
+  .in-progress .card {
+    box-shadow: inset 3px 0 0 var(--coral);
+  }
+  .card-title {
+    font-size: 16px;
     font-weight: 700;
     line-height: 1.35;
+    color: var(--ink);
   }
-  li p {
-    margin-top: 6px;
-    font-size: 16px;
-    color: var(--ink-2);
+  .card-line {
+    margin-top: 4px;
+    font-size: 15px;
     line-height: 1.5;
+    color: var(--ink-2);
   }
-  .foot .btn {
+
+  .areas {
+    margin-top: 8px;
+  }
+  .area + .area {
+    border-top: 1px solid var(--line-strong);
+  }
+  .area summary {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 52px;
+    padding: 4px 4px 4px 0;
+    list-style: none;
     font-size: 16px;
+    font-weight: 600;
+    color: var(--ink);
+    cursor: pointer;
   }
+  .area summary::-webkit-details-marker {
+    display: none;
+  }
+  .area-name {
+    flex: 1;
+  }
+  /* A CSS chevron that points down when closed and up when open. */
+  .area summary::after {
+    content: '';
+    flex: none;
+    width: 8px;
+    height: 8px;
+    margin: 0 6px 4px 4px;
+    border-right: 2px solid var(--ink-2);
+    border-bottom: 2px solid var(--ink-2);
+    transform: rotate(45deg);
+  }
+  .area[open] summary::after {
+    margin-bottom: -4px;
+    transform: rotate(-135deg);
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .area summary::after {
+      transition: transform 0.2s var(--ease-out);
+    }
+  }
+  .done {
+    list-style: none;
+    margin: 0 0 16px 2px;
+    padding: 0 0 0 12px;
+    border-left: 2px solid var(--line-strong);
+    display: grid;
+    gap: 10px;
+  }
+  .done li {
+    font-size: 15px;
+    line-height: 1.45;
+    color: var(--ink-2);
+  }
+
   .foot {
-    margin-top: 40px;
+    margin-top: 48px;
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     gap: 16px 24px;
   }
-  .note {
+  .foot .btn {
+    min-height: 44px;
+    font-size: 16px;
+  }
+  .note-foot {
     font-size: 16px;
     color: var(--muted);
   }
-  @media (max-width: 960px) {
-    .cols {
+
+  @media (max-width: 999.98px) {
+    .board {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .completed {
+      grid-column: 1 / -1;
+    }
+  }
+  @media (max-width: 699.98px) {
+    .board {
       grid-template-columns: minmax(0, 1fr);
     }
     .col {
-      padding: 20px 16px;
+      padding: 16px;
     }
   }
 </style>
