@@ -54,6 +54,15 @@ for (const page of ['pricing', 'signup']) {
   });
 }
 
+test('the plan button reads "Book a demo" on /pricing/ and "Book a call to get started" on /signup/', () => {
+  const text = (html: string) => {
+    const start = html.indexOf(planButton(html), html.indexOf('<article class="plan"'));
+    return html.slice(start, html.indexOf('</a>', start)).replace(/<[^>]*>/g, '').trim();
+  };
+  assert.equal(text(pages.pricing), 'Book a demo');
+  assert.equal(text(pages.signup), 'Book a call to get started');
+});
+
 test('no Stripe checkout or Payment Link URLs anywhere on the built site', () => {
   assert.doesNotMatch(allHtml, /buy\.stripe|checkout\.stripe/);
 });

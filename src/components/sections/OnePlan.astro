@@ -12,8 +12,10 @@ interface Props {
   addon?: boolean;
   /** Where the plan button goes: the signup page, or straight to the book-a-call link (used on /signup/ itself). */
   cta?: 'signup' | 'call';
+  /** The plan button's text when cta is 'call'. */
+  ctaLabel?: string;
 }
-const { calculator = true, addon = true, cta = 'signup' } = Astro.props;
+const { calculator = true, addon = true, cta = 'signup', ctaLabel = 'Book a call to get started' } = Astro.props;
 
 const turnstileSiteKey = addon && import.meta.env.PUBLIC_TURNSTILE_SITE_KEY;
 const { launch, regular, extraMember } = plan;
@@ -56,7 +58,7 @@ const calcData = JSON.stringify({ launch, regular, extraMember, share: plan.extr
           {plan.features.map((f) => <li><Icon name="check" size={16} strokeWidth={2} /><span>{f}</span></li>)}
         </ul>
         {cta === 'call' ? (
-          <a class="btn btn-coral" href={site.cta.href} target="_blank" rel="noopener">Book a call to get started</a>
+          <a class="btn btn-coral" href={site.cta.href} target="_blank" rel="noopener">{ctaLabel}</a>
         ) : (
           <a class="btn btn-coral" href={plan.href}>Get started</a>
         )}
