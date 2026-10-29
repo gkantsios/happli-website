@@ -41,12 +41,10 @@ The zoom hero's landed screen (`src/components/sections/AppScreen.astro`) is mod
 ## Placeholders to fill
 
 - [ ] **New Stripe Payment Links** for Solo and Studio (monthly and yearly, normal and Founding Studio prices). The old links were for the old 1/2/3-location prices and are no longer linked; plan buttons go to /signup/ and the book-a-call link until the new ones exist (`src/config/pricing.ts`).
-- [ ] Rerun `node scripts/generate-og.mjs` (Node 22) to refresh `public/og-default.png`. The script now says "Plans from $69/month", but the committed image still shows the old "$99/month" line.
 - [ ] `src/legal/terms.html` still says "Founding-member pricing". Review the wording against the Founding Studio offer.
 - [ ] Pricing FAQ: the contract/cancellation answer is unsourced, so it's not rendered (TODO comment in `src/pages/pricing.astro`).
 - [ ] Signup page "What happens next" steps and timing (`src/pages/signup.astro`) are generic. Confirm the real onboarding steps.
 - [ ] Testimonials (`src/components/sections/Testimonials.astro`): 3 slots, rendered only when real quotes with written permission are added. Optional logos row, same rule.
-- [ ] Default OG image (`public/og-default.png`) is a generated placeholder. Replace it with a designed 1200×630 image, or edit and rerun `node scripts/generate-og.mjs`.
 - [ ] Primary CTA currently points to the TidyCal 30-minute meeting link. Change `cta.href` in `src/config/site.ts` if that changes.
 
 ## Review (added for layout, not from the copy doc)
@@ -55,7 +53,7 @@ The copy doc has no headings for some sections, so these were added. Please revi
 
 - Hero eyebrow: "For spray tan studios and beauty pros"
 - Zoom hero panel titles (adapted from the mockup): "An hour opens up. Pick who gets the offer.", "Three taps, from any phone.", "Notes and history, right where you need them."
-- Hero lead message: "Your front desk, down to one short list." (also in the social image, `public/og-default.png`, made by `node scripts/generate-og.mjs`)
+- Hero lead message: "Your front desk, down to one short list."
 - Home feature cards: eyebrow "What it does", heading "What Happli takes off your plate.", card titles and captions (`src/components/sections/FeatureCards.astro`)
 - /features rows: eyebrows, headings and text (`src/components/sections/FeatureRows.astro`)
 - Walkthrough section head: "How a Thursday runs" / "Four moments. None of them at the front desk." (from the mockup)
