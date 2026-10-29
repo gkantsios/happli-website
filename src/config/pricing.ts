@@ -6,7 +6,7 @@
 // Set by Grant on Oct 23, 2026 (one plan, launch pricing). Don't add other prices, trials or discounts
 // without Grant's say-so.
 //
-// Stripe: plan buttons go to /signup/, which offers the book-a-call link, until new Payment Links exist.
+// Plan buttons go to the book-a-demo link (site.cta.href); no Stripe or Payment Link URLs on the site.
 
 export const signupHref = '/signup/';
 

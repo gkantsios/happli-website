@@ -7,10 +7,10 @@
   <p>Every business's data is separated at the <strong>database layer</strong> using row-level security. Isolation is enforced by the database itself on every query, not just by application code. The application connects with least-privilege database roles: the app role cannot read across tenants and cannot delete records in append-only tables like the audit log.</p>
 
   <h2>Encryption</h2>
-  <p>Data is encrypted in transit (TLS). Our database, hosted by Neon, is encrypted at rest (AES-256), and our nightly database backups are encrypted before they're stored. Payment details are handled entirely by Stripe, so full card numbers never touch our systems.</p>
+  <p>Data is encrypted in transit (TLS). Our database is encrypted at rest by our database provider, and our nightly database backups are encrypted before they're stored. Payment details are handled entirely by Stripe, so full card numbers never touch our systems.</p>
 
   <h2>The approval gate as a safety control</h2>
-  <p>No AI-drafted message leaves the Service without the studio's explicit approval. This is a permanent architectural decision, not a setting: it means an AI mistake can't reach your clients on its own, and every approved message has a human decision attached to it in the audit trail. Messages a studio switches on in its settings, such as booking confirmations, reminders and thank-you texts, use the studio's own wording, involve no AI, and send automatically. Win-back ("time to come back") messages are different: each one waits in the studio's "Needs you" list until a team member approves it.</p>
+  <p>No AI-drafted message leaves the Service without the studio's explicit approval. That's how the Service is built, not a setting, so an AI mistake can't reach your clients on its own, and every approved message has a human decision attached to it in the audit trail. Messages a studio switches on in its settings, such as booking confirmations, reminders and thank-you texts, use the studio's own wording, involve no AI, and send automatically. Win-back ("time to come back") messages are off unless the studio turns them on, and go only to clients who agreed to marketing messages.</p>
 
   <h2>Auditability</h2>
   <p>Actions in the Service, such as syncs, drafts, approvals, sends and opt-outs, are recorded in an append-only audit log scoped to your business.</p>
@@ -22,7 +22,7 @@
   <p>AI drafting runs through Anthropic's API under commercial terms: content sent for drafting is <strong>not used to train models</strong>. The public website chat widget answers only from a business's public-appropriate information (services, prices the business has confirmed, hours, profile). It has no access to client records, metrics, or internal data.</p>
 
   <h2>Messaging safeguards</h2>
-  <p>Opt-outs (STOP, other clear requests to stop, unsubscribe) are honored immediately per channel and stay in effect until the person opts back in, for example by replying START. Quiet hours are enforced for text messages. Links Happli adds to messages go only to fixed destinations, such as a studio's booking or review page, and approved messages are checked for known unsafe content before they're sent.</p>
+  <p>Text opt-outs (STOP and similar keywords) are honored immediately and stay in effect until the person opts back in, for example by replying START. Texts follow the studio's sending hours. Links Happli adds to messages go only to fixed destinations, such as a studio's form, review or membership page.</p>
 
   <h2>What we haven't done yet, honestly</h2>
   <p>We're an early-stage company. We don't yet hold formal certifications (such as SOC 2), and we don't yet offer HIPAA business associate agreements. Those are on our roadmap as the Service matures. If your compliance needs are ahead of where we are, tell us; it directly shapes what we build next.</p>
