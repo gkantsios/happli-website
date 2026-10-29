@@ -31,7 +31,8 @@ const year = new Date().getFullYear();
       </nav>
     </div>
     <div class="legal">
-      <p>© {year} Happli</p>
+      <p>© {year} {site.legalName}</p>
+      <p>{site.mailingAddress}</p>
       <p>Booking software for spray tan and beauty studios.</p>
     </div>
   </div>
@@ -99,6 +100,7 @@ const year = new Date().getFullYear();
     color: var(--muted);
     font-size: 13px;
   }
+  @media (max-width: 1023px){ .legal { flex-direction: column; align-items: flex-start; gap: 4px; } }
   /* phones: room for the sticky "Book a demo" bar (StickyCta) so it never covers footer content */
   @media (max-width: 699.98px) {
     .footer {

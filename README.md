@@ -123,7 +123,7 @@ Each post gets Open Graph and Twitter tags and `BlogPosting` and `BreadcrumbList
 ## SEO
 
 - `@astrojs/sitemap` writes `sitemap-index.xml` on every build, and `public/robots.txt` points to it.
-- Every page sets a unique title and meta description, a canonical URL (on `https://gohappli.com`, with a trailing slash), and Open Graph and Twitter tags. The default share image is `public/og-default.png` (regenerate it with `node scripts/generate-og.mjs`).
+- Every page sets a unique title and meta description, a canonical URL (on `https://gohappli.com`, with a trailing slash), and Open Graph and Twitter tags. The default share image is `public/og-default.png` (1200×630).
 - Every page has `Organization` and `WebSite` JSON-LD (added in `BaseLayout`). Home, /pricing/ and the niche page add `SoftwareApplication` with the Solo and Studio `offers`; any page that renders an FAQ gets `FAQPage`; other pages get `BreadcrumbList`.
 - `public/robots.txt` allows search and AI-answer crawlers and blocks training-only crawlers. See `.seo/robots.md`.
 

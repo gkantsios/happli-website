@@ -1,5 +1,5 @@
 <h1>Privacy Policy</h1>
-  <p class="updated">Last updated: October 20, 2026</p>
+  <p class="updated">Last updated: October 29, 2026</p>
 
   <p>This policy explains what personal information Happli (Happy Industries, Inc. dba Happli) collects, how we use and share it, and the choices you have. Happli handles two kinds of information:</p>
   <ul>
@@ -23,13 +23,15 @@
     <li>Message history and text and email opt-out status.</li>
     <li>Payment records. Card details are entered into Stripe; Happli never sees full card numbers.</li>
     <li>Client lists a studio imports from another system.</li>
+  <li>How a client found the studio, if the studio uses client source tracking: the general source (for example a Google search, an Instagram post or an ad), campaign tags, the referring website, the page they landed on and, if the studio turns it on, the ad's click code.</li>
     <li>Website chat conversations and details a visitor chooses to share, if the studio uses the chat widget.</li>
   </ul>
 
   <h2>2. How we use it</h2>
   <ul>
     <li>To provide the Service: online booking, the calendar, checkout, reminders, forms, reports and the features a studio turns on.</li>
-    <li>To send messages on a studio's behalf: confirmations and reminders the studio switches on, and campaign messages the studio approves.</li>
+    <li>To send messages on a studio's behalf: confirmations and reminders the studio switches on, and campaign messages the studio approves. Win-back ("time to come back") messages are off unless a studio turns them on, and go only to clients who agreed to marketing messages. A thank-you text after a visit is a short thank-you from the studio. It goes only to clients who agreed to marketing texts and ends with "Reply STOP to opt out." Studios choose how often to send marketing texts, and you can reply STOP at any time.</li>
+  <li>To show a studio how its clients found it, so it can see which ads and posts work. We don't use this for our own advertising and don't share it with advertisers.</li>
     <li>To send you service emails, such as sign-in links, invitations, billing notices and important updates.</li>
     <li>To generate AI drafts, summaries and answers. Only the context needed is sent to our AI provider, client prompts use first names only, and under our agreement the provider doesn't use it to train its models.</li>
     <li>To secure, debug, support and improve the Service, including with aggregated, de-identified data.</li>
@@ -39,23 +41,29 @@
 
   <h2>3. Who we share it with</h2>
   <p>We share information only with the subprocessors below, which help us run the Service under contracts that limit their use of it, and when the law requires, to protect rights and safety, or as part of a merger or sale of the business.</p>
+  <p><strong>Text message registration.</strong> US mobile carriers require business texting to be registered (10DLC). For that, our messaging provider shares the studio's business details, sample messages and how clients opt in with the carriers and The Campaign Registry. Phone numbers and opt-in status go to our messaging provider and the carriers only to deliver texts and handle opt-outs, never for their own marketing.</p>
   <table>
     <tr><th>Subprocessor</th><th>Purpose</th><th>Data</th></tr>
-    <tr><td>Railway</td><td>Application and database hosting</td><td>All Service data</td></tr>
+    <tr><td>Railway</td><td>Application hosting (US East, Virginia)</td><td>All Service data while it is processed</td></tr>
+    <tr><td>Neon</td><td>Database hosting (AWS US East, N. Virginia); encrypted at rest</td><td>All Service data</td></tr>
     <tr><td>Stripe</td><td>Subscription billing and client card payments (Stripe Connect)</td><td>Billing, payment and payout data</td></tr>
     <tr><td>Twilio</td><td>Text message delivery and STOP handling</td><td>Phone numbers and message content</td></tr>
     <tr><td>Postmark (ActiveCampaign)</td><td>Email delivery</td><td>Email addresses and message content</td></tr>
     <tr><td>Anthropic</td><td>AI drafting, summaries and answers</td><td>Business context and client first names; no phone numbers or emails</td></tr>
     <tr><td>Google</td><td>Business and address lookup (Google Places and Maps)</td><td>Business name and address searches</td></tr>
-    <tr><td>Cloudflare</td><td>Hosting and protection for gohappli.com</td><td>Website visitor IP addresses and request data</td></tr>
+    <tr><td>Cloudflare</td><td>Hosting and protection for gohappli.com; storage of encrypted nightly database backups (R2)</td><td>Website visitor IP addresses and request data; encrypted backups of Service data</td></tr>
+    <tr><td>GitHub</td><td>Code hosting, and running the nightly backup job (GitHub Actions)</td><td>Service data, briefly, while each backup is made and encrypted</td></tr>
+    <tr><td>Kit</td><td>Email list for the gohappli.com waitlist and demo follow-up</td><td>Email addresses and sign-up details from website visitors</td></tr>
+    <tr><td>TidyCal</td><td>Demo booking on gohappli.com</td><td>Names, email addresses and booking times for people who book a demo</td></tr>
   </table>
-  <p>We'll update this list before adding a new subprocessor that handles studio client information.</p>
+  <p>We'll update this list, and email studios, at least 14 days before adding a new subprocessor that handles studio client information.</p>
 
   <h2>4. Retention</h2>
   <ul>
     <li>Account and studio client information is kept while the studio's account is active.</li>
     <li>After an account closes, we delete or de-identify studio data within 90 days, after any export window.</li>
     <li>Unconfirmed client-import files are deleted after 24 hours. Unrecognized inbound data kept for review is deleted after 30 days.</li>
+  <li>Detailed client source data (campaign tags, ad click codes, the referring website and landing page) is kept only as long as needed and deleted on a schedule we set. The general source stays with the client record until the studio deletes it. Source cookies on studio websites expire after 90 days.</li>
     <li>Opt-out records are kept so they stay honored. Audit logs and billing records are kept as long as needed for security, legal and tax purposes. Backups roll off on a regular schedule after deletion.</li>
   </ul>
 
@@ -70,16 +78,16 @@
   <p>Residents of other states with privacy laws may have similar rights and can make requests the same way. If we deny your request, you can appeal by replying to our decision or emailing us with "Appeal" in the subject, and we'll respond within the time the law requires.</p>
 
   <h2>6. Cookies</h2>
-  <p>We use only essential cookies, to keep you signed in and secure. We don't use advertising or third-party analytics cookies. See our <a href="/cookies/">Cookie Notice</a>.</p>
+  <p>We don't use advertising cookies or third-party analytics cookies. The Happli app uses only essential cookies, to keep you signed in and secure. Studio websites built by Happli, and other studio websites that add Happli's source tracking script, also set a first-party cookie on the studio's own website, <code>hb_src</code> (with a companion cookie, <code>hb_last</code>), that remembers for up to 90 days how a visitor found the studio, so the studio can see which ads and posts bring in bookings. Websites Happli builds include this script by default. It isn't used for advertising or to track you across other websites. If your browser sends a Global Privacy Control signal, these cookies aren't set, and only the general source (for example "Instagram") is kept. See our <a href="/cookies/">Cookie Notice</a>.</p>
 
   <h2>7. Security</h2>
-  <p>We use encryption in transit, per-studio data isolation enforced in the database, passwordless sign-in and an append-only audit log. See our <a href="/security/">Security page</a>. No system is perfectly secure; we'll notify affected studios of a breach as required by law.</p>
+  <p>We use encryption in transit, encryption at rest for our database and its backups, per-studio data isolation enforced in the database, passwordless sign-in and an append-only audit log. See our <a href="/security/">Security page</a>. No system is perfectly secure; we'll notify affected studios of a breach as required by law.</p>
 
   <h2>8. Children</h2>
   <p>Happli's service is for businesses and isn't directed to children. Studios may book clients under 18 only with a parent or guardian's consent, and studios are responsible for complying with state law, such as tanning restrictions for minors. Happli doesn't knowingly collect personal information directly from children under 13. If you believe a child under 13 has given us personal information directly, email <a href="mailto:hello@gohappli.com">hello@gohappli.com</a> and we'll delete it.</p>
 
   <h2>9. Where data is stored</h2>
-  <p>Happli serves studios in the United States only, and is operated from and stores data in the United States.</p>
+  <p>Happli serves studios in the United States only. We store Service data with U.S.-based infrastructure providers. Some of the service providers listed in section 3 may process data in other countries when they provide their services to us.</p>
 
   <h2>10. Changes and contact</h2>
-  <p>We'll post updates here with a new date and tell studios about material changes by email or in the app. Questions or requests: <a href="mailto:hello@gohappli.com">hello@gohappli.com</a>, Happy Industries, Inc. dba Happli, 10124 Buggy Horse Rd, Charlotte, NC 28277.</p>
+  <p>We'll post updates here with a new date and email studios at least 30 days before a material change takes effect, unless the law requires it sooner. Questions or requests: <a href="mailto:hello@gohappli.com">hello@gohappli.com</a>, Happy Industries, Inc. dba Happli, 10124 Buggy Horse Rd, Charlotte, NC 28277.</p>
