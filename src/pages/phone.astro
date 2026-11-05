@@ -1,0 +1,87 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageIntro from '../components/sections/PageIntro.astro';
+import SectionHead from '../components/sections/SectionHead.astro';
+import Split from '../components/sections/Split.astro';
+import FeatureGrid, { type Feature } from '../components/sections/FeatureGrid.astro';
+import Faq, { type FaqItem } from '../components/sections/Faq.astro';
+import CtaBand from '../components/sections/CtaBand.astro';
+import NeedsList from '../components/mocks/NeedsList.astro';
+import CheckoutSheet from '../components/mocks/CheckoutSheet.astro';
+import PhoneBooking from '../components/mocks/PhoneBooking.astro';
+import Icon from '../components/Icon.astro';
+import { breadcrumbs } from '../lib/jsonld';
+import { site } from '../config/site';
+
+const title = 'Happli on Your Phone | Run Your Spray Tan Studio from Your Phone';
+const description =
+  'Check your day, approve drafted texts and check clients out from your phone. Happli works in your phone browser at app.gohappli.com, with nothing to download.';
+
+// TODO confirm: the owner phone view is ready to advertise (see /features, "Check your day from your phone").
+const things: Feature[] = [
+  { icon: 'calendar', title: 'See your day', body: 'A phone-sized view of the calendar, with each team member and every appointment.' },
+  { icon: 'bell', title: 'Know what needs you', body: 'Open gaps, waitlist matches and drafted texts wait in the Needs you list.' },
+  { icon: 'message', title: 'Approve a text', body: 'Review a drafted gap offer or "on my way" text, then approve it. Nothing sends until you do.' },
+  { icon: 'card', title: 'Check out', body: 'Collect the balance with a suggested tip and sales tax, or mark it paid for cash.' },
+  { icon: 'users', title: 'Look up a client', body: 'Visits, spend, no-shows and notes, right where you need them.' },
+  { icon: 'car', title: 'Head to a mobile appointment', body: 'Happli can draft an "I\'m on my way" text for you to approve.' },
+];
+
+const faq: FaqItem[] = [
+  { q: 'Is there a Happli app in the App Store or Google Play?', a: 'Not today. Happli runs in your phone browser at app.gohappli.com, so there is nothing to download.' },
+  { q: 'Do my clients need to install anything?', a: 'No. Clients book from a web page on their own phones. Share the link or embed it on your website.' },
+  { q: 'Does it work on a tablet or computer too?', a: 'Yes. It is the same Happli, with a layout that fits your screen.' },
+];
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  jsonLd={[breadcrumbs([{ name: 'Home', href: '/' }, { name: 'Happli on your phone', href: '/phone/' }])]}
+>
+  <PageIntro
+    eyebrow="Happli on your phone"
+    title="Your studio, in your pocket."
+    lede="Between clients, in the car or on the couch. Open Happli in your phone's browser to see your day, handle what needs you and check people out."
+    secondary={{ label: 'Sign in at app.gohappli.com', href: site.signInUrl }}
+  >
+    <p class="note"><Icon name="check" size={13} strokeWidth={2.2} /> A web app. Nothing to download from an app store.</p>
+  </PageIntro>
+
+  <Split id="needs" eyebrow="Needs you" title="One short list, wherever you are">
+    <div slot="mock" class="win"><NeedsList app /></div>
+    <p>A cancellation opens a gap. A client joins the waitlist. Happli drafts a text for you. They all land in Needs you, and you handle them in a tap.</p>
+  </Split>
+
+  <Split id="checkout" eyebrow="Checkout" title="Check clients out at the door" reverse>
+    <div slot="mock" class="win"><CheckoutSheet /></div>
+    <p>Collect the balance with a suggested tip and sales tax. Paid cash? Mark it paid. Deposits already taken are accounted for, so you only collect what's owed.</p>
+  </Split>
+
+  <Split id="clients" eyebrow="For your clients" title="A booking page built for their phones">
+    <div slot="mock"><PhoneBooking /></div>
+    <p>Your clients pick a service, choose a day on a calendar sized for small screens and grab an open time. It works in any browser, with no app for them to install either.</p>
+  </Split>
+
+  <section class="section" aria-labelledby="things-title">
+    <div class="wrap">
+      <SectionHead eyebrow="From your phone" title="What you can do" id="things-title" />
+      <FeatureGrid items={things} columns={3} />
+    </div>
+  </section>
+
+  <Faq items={faq} title="Phone FAQ" id="phone-faq" />
+
+  <CtaBand title="See it on your own phone." body="Book a demo and we'll open your schedule on a phone together." />
+</BaseLayout>
+
+<style>
+  .note {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin-top: 20px;
+    font-size: 14px;
+    color: var(--ink-2);
+  }
+</style>

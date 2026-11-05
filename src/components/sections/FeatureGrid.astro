@@ -1,0 +1,83 @@
+---
+import Icon from '../Icon.astro';
+import type { ComponentProps } from 'astro/types';
+
+export type Feature = {
+  icon?: ComponentProps<typeof Icon>['name'];
+  title: string;
+  body: string;
+};
+
+interface Props {
+  items: Feature[];
+  columns?: 2 | 3;
+}
+const { items, columns = 3 } = Astro.props;
+---
+
+<div class:list={['features', `cols-${columns}`]} data-reveal-stagger>
+  {
+    items.map((f) => (
+      <div class="feature">
+        {f.icon && <Icon name={f.icon} class="ico" />}
+        <h3>{f.title}</h3>
+        <p>{f.body}</p>
+      </div>
+    ))
+  }
+</div>
+
+<style>
+  .features {
+    display: grid;
+    margin-top: var(--space-block);
+    border-top: 1px solid var(--line);
+  }
+  .cols-3 {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .cols-2 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .feature {
+    padding: 32px 32px 36px;
+    border-bottom: 1px solid var(--line);
+  }
+  .cols-3 .feature:nth-child(3n + 1),
+  .cols-2 .feature:nth-child(2n + 1) {
+    padding-left: 0;
+  }
+  .cols-3 .feature:not(:nth-child(3n)),
+  .cols-2 .feature:nth-child(2n + 1) {
+    border-right: 1px solid var(--line);
+  }
+  .features .feature:last-child {
+    border-right: 0;
+  }
+  .feature :global(.ico) {
+    color: var(--ink);
+  }
+  h3 {
+    font-size: var(--fs-h3);
+    line-height: 1.2;
+    margin-top: 22px;
+  }
+  .feature p {
+    margin-top: 12px;
+    font-size: 15px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+  @media (max-width: 860px) {
+    .cols-3,
+    .cols-2 {
+      grid-template-columns: 1fr;
+    }
+    .feature,
+    .cols-3 .feature:nth-child(n),
+    .cols-2 .feature:nth-child(n) {
+      padding: 28px 0;
+      border-right: 0;
+    }
+  }
+</style>

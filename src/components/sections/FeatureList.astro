@@ -1,0 +1,154 @@
+---
+// A features-page section: heading, short intro and checklist, next to a large product visual
+// (Mercury-style). Sections alternate sides on desktop; on phones the visual sits between the
+// heading and the checklist.
+import Icon from '../Icon.astro';
+import FeatureVisual, { type VisualKind } from '../mocks/FeatureVisual.astro';
+
+export type Status = 'soon' | 'early';
+export type FeatureItem = { title?: string; body: string; status?: Status };
+const label: Record<Status, string> = { soon: 'Coming soon', early: 'Early access' };
+
+interface Props {
+  id: string;
+  eyebrow?: string;
+  title: string;
+  intro?: string;
+  items: FeatureItem[];
+  status?: Status;
+  visual?: VisualKind;
+  flip?: boolean;
+}
+const { id, eyebrow, title, intro, items, status, visual, flip = false } = Astro.props;
+---
+
+<section class="flist" id={id} aria-labelledby={`${id}-title`}>
+  <div class:list={['wrap flist-in', { 'has-vis': visual, flip }]}>
+    <div class="head">
+      {eyebrow && <p class="eyebrow">{eyebrow}</p>}
+      <h2 id={`${id}-title`}>
+        {title}
+        {status && <span class="badge">{label[status]}</span>}
+      </h2>
+      {intro && <p class="intro">{intro}</p>}
+      <slot name="note" />
+    </div>
+    {visual && (
+      <div class="vis">
+        <FeatureVisual kind={visual} />
+      </div>
+    )}
+    <ul class="checks">
+      {
+        items.map((item) => (
+          <li>
+            <Icon name="check" size={16} strokeWidth={2} />
+            <span>
+              {item.title ? (
+                <>
+                  <b>{item.title}</b>
+                  {item.status && <span class="badge">{label[item.status]}</span>} {item.body}
+                </>
+              ) : (
+                <>
+                  {item.body}
+                  {item.status && <span class="badge">{label[item.status]}</span>}
+                </>
+              )}
+            </span>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>
+
+<style>
+  .flist {
+    padding-block: clamp(48px, 6vw, 72px);
+    border-top: 1px solid var(--line);
+  }
+  .flist:first-of-type {
+    border-top: 0;
+  }
+  .flist-in {
+    display: grid;
+    grid-template-columns: 0.8fr 1.2fr;
+    gap: 64px;
+    align-items: start;
+  }
+  h2 {
+    font-size: clamp(28px, 3vw, 38px);
+    line-height: 1.12;
+    letter-spacing: -0.015em;
+    margin-top: 12px;
+  }
+  h2 .badge {
+    margin-left: 8px;
+    font-family: var(--sans);
+    letter-spacing: 0.06em;
+  }
+  .intro {
+    margin-top: 14px;
+    color: var(--muted);
+    font-size: 17px;
+    max-width: 26em;
+  }
+  .checks li > span .badge {
+    margin: 0 4px;
+  }
+  /* with a visual: text column + large visual panel */
+  .flist-in.has-vis {
+    grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+    grid-template-areas: 'head vis' 'list vis';
+    grid-template-rows: auto 1fr;
+    column-gap: 72px;
+    row-gap: 32px;
+  }
+  .flist-in.has-vis.flip {
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+    grid-template-areas: 'vis head' 'vis list';
+  }
+  .has-vis .head { grid-area: head; }
+  .has-vis .checks { grid-area: list; align-self: start; }
+  .vis {
+    grid-area: vis;
+    align-self: start;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 460px;
+    padding: clamp(28px, 4vw, 56px);
+    border-radius: var(--radius-xl);
+    background:
+      radial-gradient(70% 80% at 20% 0%, #f8dad6 0%, rgba(248, 218, 214, 0) 70%),
+      linear-gradient(160deg, var(--blush-2), var(--blush));
+    min-width: 0;
+    position: sticky;
+    top: calc(var(--nav-h) + 32px);
+  }
+  .flist:has(.has-vis) {
+    padding-block: clamp(56px, 8vw, 104px);
+  }
+  @media (max-width: 960px) {
+    .flist-in.has-vis,
+    .flist-in.has-vis.flip {
+      grid-template-columns: minmax(0, 1fr);
+      grid-template-areas: 'head' 'vis' 'list';
+      grid-template-rows: auto;
+      row-gap: 28px;
+    }
+    .vis {
+      min-height: 0;
+      padding: 28px 16px;
+      border-radius: 20px;
+      position: static;
+    }
+  }
+  @media (max-width: 860px) {
+    .flist-in {
+      grid-template-columns: 1fr;
+      gap: 24px;
+    }
+  }
+</style>

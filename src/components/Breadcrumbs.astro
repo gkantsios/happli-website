@@ -1,0 +1,45 @@
+---
+import type { Crumb } from '../lib/jsonld';
+interface Props {
+  items: Crumb[];
+}
+const { items } = Astro.props;
+---
+
+<nav aria-label="Breadcrumb" class="crumbs">
+  <ol>
+    {
+      items.map((c, i) => (
+        <li>
+          {i < items.length - 1 ? <a href={c.href}>{c.name}</a> : <span aria-current="page">{c.name}</span>}
+        </li>
+      ))
+    }
+  </ol>
+</nav>
+
+<style>
+  ol {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    font-size: 13px;
+    color: var(--muted);
+  }
+  li + li::before {
+    content: '/';
+    margin-right: 6px;
+    color: var(--muted);
+  }
+  a {
+    color: var(--ink-2);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  span {
+    overflow-wrap: anywhere;
+  }
+</style>

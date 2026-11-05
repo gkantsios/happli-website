@@ -1,0 +1,23 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageIntro from '../../components/sections/PageIntro.astro';
+import PostList from '../../components/PostList.astro';
+import { getPublished } from '../../lib/posts';
+import { breadcrumbs } from '../../lib/jsonld';
+import { site } from '../../config/site';
+
+// Template: switched off in src/config/site.ts (sections.guides) until it has published entries.
+const entries = await getPublished('guides');
+---
+
+<BaseLayout
+  title="Guides | Happli"
+  description="Step-by-step guides for spray tan studios and beauty pros: booking rules, deposits, reminders, no-shows and running the front desk."
+  jsonLd={[breadcrumbs([{ name: 'Home', href: '/' }, { name: "Guides", href: '/guides/' }])]}
+  noindex={!site.sections['guides']}
+>
+  <PageIntro eyebrow="Guides" title="Guides for busy studio owners." cta={false} />
+  <div class="wrap">
+    <PostList entries={entries} base="/guides/" empty="The first guides are on their way. Check back soon." />
+  </div>
+</BaseLayout>

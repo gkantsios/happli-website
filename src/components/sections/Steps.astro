@@ -1,0 +1,128 @@
+---
+import SectionHead from './SectionHead.astro';
+
+const steps = [
+  {
+    title: 'Set up your studio',
+    body: "Add your services, team, locations, hours and closures. Set your booking rules and your studio's voice. Moving from another system? We bring your clients and bookings over from CSV.",
+  },
+  {
+    title: 'Connect Stripe and turn on booking',
+    body: 'Connect your own Stripe account from Settings, choose your deposit, tip, tax and no-show settings, and switch on your booking page. Share the link or embed it on your site.',
+  },
+  {
+    title: 'Run your day from one calendar',
+    body: 'Clients book, pay and get reminded automatically. You check people out, keep an eye on "Needs you," and approve any drafted texts before they go.',
+  },
+];
+---
+
+<section class="section" id="how" aria-labelledby="how-title" data-draw>
+  <div class="wrap">
+    <SectionHead eyebrow="3 steps" title="How it works" id="how-title" />
+    {/* each step draws a connector to the next number (CSS below); public/motion/reveal.js sets
+        --p from the scroll so it draws as you go */}
+    <ol class="steps">
+      {
+        steps.map((s, i) => (
+          <li class="step">
+            <span class="num" aria-hidden="true" data-draw-at>{i + 1}</span>
+            <h3>{s.title}</h3>
+            <p>{s.body}</p>
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+</section>
+
+<style>
+  .steps {
+    list-style: none;
+    margin: var(--space-block) 0 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+  .step {
+    position: relative;
+    padding: 28px 24px 30px;
+    border-radius: var(--radius);
+    background: var(--surface);
+    box-shadow: 0 1px 0 var(--line), 0 8px 24px -16px rgba(27, 22, 20, 0.25);
+    border: 1px solid var(--line);
+  }
+  .num {
+    position: relative;
+    z-index: 2;
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--blush);
+    color: var(--coral-ink);
+    font-family: var(--serif);
+    font-size: 18px;
+  }
+  /* The connector: from this step's number to the next one (the gap between cards is 16px), behind
+     the numbers. --p (0 to 1) is the scroll progress across the section, 1 unless reveal.js draws it,
+     so it's there from the first paint with reduced motion or without JavaScript. */
+  .step:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    z-index: 1;
+    left: 42px;
+    top: 45px;
+    width: calc(100% + 16px);
+    height: 2px;
+    border-radius: 2px;
+    background: rgba(244, 112, 122, 0.45);
+    pointer-events: none;
+    transform-origin: 0 0;
+    transform: scaleX(clamp(0, calc(var(--p, 1) * 2 - var(--k, 0)), 1));
+  }
+  .step:nth-child(2) {
+    --k: 1;
+  }
+  h3 {
+    font-size: 22px;
+    line-height: 1.2;
+    margin-top: 20px;
+  }
+  p {
+    margin-top: 10px;
+    font-size: 15px;
+    color: var(--muted);
+  }
+  @media (max-width: 860px) {
+    .steps {
+      grid-template-columns: 1fr;
+    }
+    /* phones and tablets: numbers in their own column, so the vertical connector never crosses text */
+    .step {
+      display: grid;
+      grid-template-columns: 36px minmax(0, 1fr);
+      column-gap: 16px;
+      align-items: start;
+    }
+    .num {
+      grid-row: span 2;
+    }
+    h3,
+    p {
+      grid-column: 2;
+    }
+    h3 {
+      margin-top: 5px;
+    }
+    .step:not(:last-child)::after {
+      left: 41px;
+      top: 46px;
+      width: 2px;
+      height: calc(100% + 16px);
+      transform: scaleY(clamp(0, calc(var(--p, 1) * 2 - var(--k, 0)), 1));
+    }
+  }
+</style>

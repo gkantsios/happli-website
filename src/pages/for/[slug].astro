@@ -1,0 +1,17 @@
+---
+import { render } from 'astro:content';
+import PostLayout from '../../layouts/PostLayout.astro';
+import { getPublished } from '../../lib/posts';
+
+export async function getStaticPaths() {
+  const entries = await getPublished('for');
+  return entries.map((entry) => ({ params: { slug: entry.id }, props: { entry } }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+---
+
+<PostLayout entry={entry} section={{ name: "Who it's for", href: '/for/' }}>
+  <Content />
+</PostLayout>

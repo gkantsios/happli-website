@@ -1,0 +1,166 @@
+---
+// Home: "Who it's for". Four cards, each with a small product mock on a blush panel.
+// TODO confirm: the sample text in the mocks is new; studio and location names are placeholders.
+import SectionHead from './SectionHead.astro';
+
+const audience = [
+  { mock: 'spray', title: 'Spray tan studios', body: 'that want online booking, deposits and prep reminders without the phone tag.' },
+  { mock: 'mobile', title: 'Mobile spray tan artists', body: 'who travel to clients. Happli supports mobile locations and can draft an "I\'m on my way" text for you to approve.' },
+  { mock: 'client', title: 'Estheticians, lash and brow artists, and other appointment-based beauty pros', body: 'who want one place for booking, payments and client history.' },
+  { mock: 'team', title: 'Small teams and multi-location studios', body: "that need a shared calendar, each person's hours, and a booking page for each location." },
+] as const;
+---
+
+<section class="section" aria-labelledby="who-title">
+  <div class="wrap">
+    <SectionHead title="Who it's for" id="who-title" />
+    <div class="who" data-reveal-stagger>
+      {
+        audience.map((a) => (
+          <article class="card">
+            <div class="panel" aria-hidden="true">
+              <div class="ui">
+                {a.mock === 'spray' && (
+                  <>
+                    <div class="row"><b>Custom spray tan · Sat 10:00</b></div>
+                    <div class="row"><span class="pill sage">Deposit paid</span><span class="pill sand">Prep reminder sent</span></div>
+                  </>
+                )}
+                {a.mock === 'mobile' && (
+                  <>
+                    <div class="row"><b>Happli's draft</b><span class="pill coral">Waiting for you</span></div>
+                    <div class="row"><span class="muted">"Hi Maria, I'm on my way. See you at 1:15."</span></div>
+                    <div class="row end"><span class="mini">Approve and send</span></div>
+                  </>
+                )}
+                {a.mock === 'client' && (
+                  <>
+                    <div class="row"><b>Maria K.</b><span class="muted">6th visit</span></div>
+                    <div class="row"><span>Lash lift · Brow tint</span><span class="pill sage">Paid</span></div>
+                    <div class="row"><span class="muted">Note: sensitive skin</span></div>
+                  </>
+                )}
+                {a.mock === 'team' && (
+                  <>
+                    <div class="row"><b>Thu 27</b><span class="muted">2 locations</span></div>
+                    <div class="row"><span>Dana</span><span>Jess</span><span>Maya</span></div>
+                    <div class="row"><span class="pill sand">South End</span><span class="pill sage">Ballantyne</span></div>
+                  </>
+                )}
+              </div>
+            </div>
+            <div class="text">
+              <h3>{a.title}</h3>
+              <p>{a.body}</p>
+            </div>
+          </article>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .who {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 24px;
+    margin-top: var(--space-block);
+  }
+  .card {
+    border-radius: var(--radius-lg);
+    background: var(--surface);
+    border: 1px solid var(--line);
+    overflow: hidden;
+  }
+  /* the same blush as the home feature cards' mock frames */
+  .panel {
+    display: grid;
+    place-items: center;
+    height: 220px;
+    padding: 28px;
+    background:
+      radial-gradient(70% 80% at 20% 0%, #f8dad6 0%, rgba(248, 218, 214, 0) 70%),
+      linear-gradient(160deg, var(--blush-2), var(--blush));
+  }
+  .ui {
+    width: 100%;
+    max-width: 300px;
+    padding: 6px 16px;
+    border-radius: var(--radius);
+    background: var(--surface);
+    box-shadow: var(--shadow-card);
+    font-size: 13px;
+    line-height: 1.4;
+  }
+  .row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 0;
+  }
+  .row + .row {
+    border-top: 1px solid var(--line);
+  }
+  .row.end {
+    justify-content: flex-end;
+  }
+  .row b {
+    font-weight: 600;
+  }
+  .muted {
+    color: var(--muted);
+  }
+  .pill {
+    flex: none;
+    padding: 3px 10px;
+    border-radius: var(--radius-pill);
+    font-size: 12px;
+    font-weight: 600;
+  }
+  .pill.sage {
+    background: var(--sage);
+    color: var(--sage-ink);
+  }
+  .pill.sand {
+    background: var(--sand);
+    color: #6e5420;
+  }
+  .pill.coral {
+    background: var(--coral-soft);
+    color: var(--coral-ink);
+  }
+  .mini {
+    padding: 6px 12px;
+    border-radius: var(--radius-pill);
+    border: 1px solid var(--line-strong);
+    font-weight: 600;
+    font-size: 12px;
+  }
+  .text {
+    padding: 28px 32px 32px;
+  }
+  h3 {
+    font-size: var(--fs-h3);
+    line-height: 1.2;
+  }
+  .text p {
+    margin-top: 10px;
+    font-size: 16px;
+    color: var(--muted);
+  }
+  @media (max-width: 767px) {
+    .who {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 16px;
+    }
+    .panel {
+      height: 180px;
+      padding: 20px;
+    }
+    .text {
+      padding: 22px;
+    }
+  }
+</style>

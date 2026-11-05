@@ -1,0 +1,178 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageIntro from '../components/sections/PageIntro.astro';
+import OnePlan from '../components/sections/OnePlan.astro';
+import SectionHead from '../components/sections/SectionHead.astro';
+import Faq, { type FaqItem } from '../components/sections/Faq.astro';
+import CtaBand from '../components/sections/CtaBand.astro';
+import { breadcrumbs, softwareApplication } from '../lib/jsonld';
+import { plan, launchLock, marketingAddOn, monthlyTotal, reminderFairUse, trialDays, usd, yearlyTotal } from '../config/pricing';
+
+const { launch, regular, extraMember } = plan;
+const xl = (b: 'monthly' | 'yearly') => usd(monthlyTotal(1, 2, b) - monthlyTotal(1, 1, b));
+const packs = marketingAddOn.packs;
+const title = `Pricing | Happli booking software, one plan from ${usd(launch.yearly)} a month`;
+const description = `One plan with everything, plus a website we build for you. Launch price ${usd(launch.monthly)} a month, or ${usd(launch.yearly)} a month billed yearly. +${usd(extraMember.monthly)} a month per extra team member who takes bookings. No contracts, no hidden fees.`;
+
+const why = [
+  { h: 'Real people set you up', p: "Our team does your import and setup for you, so you don't start from scratch." },
+  { h: 'No hidden fees', p: 'Everything you need to run your studio is in one price. Marketing is the only optional extra.' },
+  { h: 'Made for every beauty business', p: 'Lashes, brows, facials, nails, tanning and more.' },
+  { h: 'No contracts', p: "Stay because you love it, not because you're locked in. Cancel anytime." },
+  { h: 'Your data is yours', p: 'Export all of it anytime, including clients, bookings, history, forms and sales. No asking, no waiting.' },
+  { h: 'Open API', soon: true, p: 'Connect your favorite email and marketing tools to Happli.' },
+];
+
+const faq: FaqItem[] = [
+  {
+    q: 'How does pricing work for a team?',
+    a: `There's one plan with every feature. The launch price is ${usd(launch.monthly)} a month, or ${usd(launch.yearly)} a month billed yearly (${usd(yearlyTotal(launch.yearly))} a year), for 1 team member who takes bookings. Each extra team member who takes bookings is +${usd(extraMember.monthly)} a month, or +${usd(extraMember.yearly)} a month billed yearly. Front desk and admin logins are always free.`,
+  },
+  {
+    q: 'How do extra locations work?',
+    a: `Each extra location is half price. For a location with 1 team member who takes bookings, that is ${xl('monthly')} a month, or ${xl('yearly')} a month billed yearly. Use the calculator above to see your total.`,
+  },
+  {
+    q: 'Is there a free trial?',
+    a: `Yes. Happli is free until your studio goes live, for up to ${trialDays} days. Setup and client import are free too.`,
+  },
+  {
+    q: 'What is launch pricing?',
+    a: `Studios that join at launch pay ${usd(launch.monthly)} a month instead of ${usd(regular.monthly)}, or ${usd(launch.yearly)} a month instead of ${usd(regular.yearly)} billed yearly. ${launchLock} It ends if you cancel.`,
+  },
+  {
+    q: 'Is there a contract?',
+    a: "No. There are no contracts. You can cancel anytime, and you can export all of your data whenever you like.",
+  },
+  {
+    q: "What's in the Marketing add-on?",
+    a: `Text and email campaigns to bring clients back. It is coming soon and optional on any plan. You pick a monthly credit pack, from ${usd(packs[0].price)} for ${packs[0].credits.toLocaleString('en-US')} credits to ${usd(packs[packs.length - 1].price)} for ${packs[packs.length - 1].credits.toLocaleString('en-US')}. 1 credit is ${marketingAddOn.emailsPerCredit} emails, a text is ${marketingAddOn.creditsPerText} credits and a picture text is ${marketingAddOn.creditsPerPictureText} credits. Extra credits are ${marketingAddOn.extraCreditCents}¢ each.`,
+  },
+  {
+    q: 'Do you charge for reminder texts?',
+    a: `No. Appointment reminder texts are included on every plan, with fair use of about ${reminderFairUse.toLocaleString('en-US')} a month. Marketing texts come with the Marketing add-on.`,
+  },
+  {
+    q: 'Do you take a cut of my card payments?',
+    a: "No. Card payments run at Stripe's standard rate, with no Happli markup. Stripe's fees go to Stripe, and Happli takes no cut of your sales.",
+  },
+  {
+    q: 'Is there a setup fee?',
+    a: 'No. Setup is free, and so is client import. We bring your clients, services, team and appointments over from CSV.',
+  },
+  {
+    q: 'Is a website really included?',
+    a: "Yes. Our team at gohappybeauty builds your website, and it stays in sync with Happli. Need ecommerce or online courses? We'll quote the difference. Happy with the site you have? Happli booking pages plug right into it.",
+  },
+];
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  jsonLd={[
+    softwareApplication(),
+    breadcrumbs([{ name: 'Home', href: '/' }, { name: 'Pricing', href: '/pricing/' }]),
+  ]}
+>
+  <PageIntro
+    eyebrow="Pricing"
+    title="One plan. Everything you need to run your studio."
+    lede="Booking, clients, forms, payments and texting, plus a website we build for you. No tiers. No hidden fees."
+    cta={false}
+    center
+  />
+
+  <OnePlan cta="call" ctaLabel="Book a demo" />
+
+  <section class="section" aria-labelledby="why-title">
+    <div class="wrap">
+      <SectionHead eyebrow="Why Happli" title="What sets us apart" id="why-title" center />
+      <div class="why">
+        <div class="w lead">
+          <h3>Your website is included</h3>
+          <p>
+            Built by our team at gohappybeauty and always in sync with Happli. Change a service, a price or your hours
+            once, and your booking and website update everywhere.
+          </p>
+        </div>
+        {why.map((w) => (
+          <div class="w">
+            <h3>{w.h} {w.soon && <span class="badge badge-soon">Coming soon</span>}</h3>
+            <p>{w.p}</p>
+          </div>
+        ))}
+      </div>
+      <p class="fine">Need ecommerce or online courses on your site? We'll quote the difference.</p>
+    </div>
+  </section>
+
+  <Faq items={faq} title="Pricing FAQ" id="pricing-faq" />
+
+  <CtaBand
+    title="Not sure where to start?"
+    body="Book a 30-minute call and we'll walk through your studio."
+    secondary={{ label: 'Get started', href: '/signup/' }}
+  />
+</BaseLayout>
+
+<style>
+  .why {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 20px;
+    margin-top: 40px;
+  }
+  .w {
+    padding: 28px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-xl);
+    background: var(--surface);
+  }
+  .w.lead {
+    grid-column: 1 / -1;
+    padding: 40px;
+    border: 0;
+    background: var(--cta-band);
+  }
+  .w h3 {
+    font-size: 23px;
+    letter-spacing: -0.01em;
+    margin-bottom: 8px;
+  }
+  .w.lead h3 {
+    font-size: 30px;
+  }
+  .w p {
+    color: var(--muted);
+  }
+  .w.lead p {
+    max-width: 44em;
+    color: var(--ink-2);
+  }
+  .badge-soon {
+    vertical-align: middle;
+    background: var(--surface);
+    color: var(--muted);
+    border: 1px solid var(--line-strong);
+  }
+  .fine {
+    margin-top: 40px;
+    text-align: center;
+    font-size: 15px;
+    color: var(--muted);
+  }
+  @media (max-width: 960px) {
+    .why {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  @media (max-width: 640px) {
+    .why {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .w.lead {
+      padding: 28px;
+    }
+  }
+</style>

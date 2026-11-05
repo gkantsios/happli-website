@@ -1,0 +1,13 @@
+---
+import ProseLayout from '../layouts/ProseLayout.astro';
+import { legal } from '../lib/legal';
+import { breadcrumbs } from '../lib/jsonld';
+---
+
+<ProseLayout
+  title="SMS Terms | Happli"
+  description="Text messages sent through Happli: message frequency, STOP and HELP, and rates."
+  jsonLd={[breadcrumbs([{ name: 'Home', href: '/' }, { name: 'SMS Terms', href: '/sms-terms/' }])]}
+>
+  <Fragment set:html={legal.smsTerms} />
+</ProseLayout>

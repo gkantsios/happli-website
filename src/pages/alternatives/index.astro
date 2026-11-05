@@ -1,0 +1,23 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageIntro from '../../components/sections/PageIntro.astro';
+import PostList from '../../components/PostList.astro';
+import { getPublished } from '../../lib/posts';
+import { breadcrumbs } from '../../lib/jsonld';
+import { site } from '../../config/site';
+
+// Template: switched off in src/config/site.ts (sections.alternatives) until it has published entries.
+const entries = await getPublished('alternatives');
+---
+
+<BaseLayout
+  title="Booking software alternatives | Happli"
+  description="Looking for an alternative to your current booking software? See how Happli fits spray tan studios."
+  jsonLd={[breadcrumbs([{ name: 'Home', href: '/' }, { name: "Alternatives", href: '/alternatives/' }])]}
+  noindex={!site.sections['alternatives']}
+>
+  <PageIntro eyebrow="Alternatives" title="Looking for something else?" cta={false} />
+  <div class="wrap">
+    <PostList entries={entries} base="/alternatives/" empty="Alternatives pages are on their way." />
+  </div>
+</BaseLayout>

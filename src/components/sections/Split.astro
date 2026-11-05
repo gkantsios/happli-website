@@ -1,0 +1,76 @@
+---
+// Text on one side, a product illustration on the other (the same look as the /features rows).
+interface Props {
+  id: string;
+  eyebrow?: string;
+  title: string;
+  reverse?: boolean;
+}
+const { id, eyebrow, title, reverse = false } = Astro.props;
+---
+
+<section class:list={['split', { reverse }]} aria-labelledby={`${id}-title`}>
+  <div class="wrap split-in">
+    <div class="mock" aria-hidden="true"><slot name="mock" /></div>
+    <div class="text" data-reveal>
+      {eyebrow && <p class="eyebrow">{eyebrow}</p>}
+      <h2 id={`${id}-title`}>{title}</h2>
+      <slot />
+    </div>
+  </div>
+</section>
+
+<style>
+  .split {
+    padding-top: clamp(40px, 6vw, 72px);
+  }
+  .split-in {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 32px;
+    align-items: center;
+  }
+  @media (min-width: 900px) {
+    .split-in {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 64px;
+    }
+    .reverse .mock {
+      order: 2;
+    }
+  }
+  .mock {
+    display: flex;
+    justify-content: center;
+    padding: clamp(24px, 4vw, 40px);
+    border-radius: 20px;
+    background:
+      radial-gradient(70% 80% at 20% 0%, #f8dad6 0%, rgba(248, 218, 214, 0) 70%),
+      linear-gradient(160deg, var(--blush-2), var(--blush));
+    overflow: hidden;
+  }
+  .mock :global(.win) {
+    width: 100%;
+    max-width: 460px;
+    background: var(--surface);
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius);
+    padding: 6px 18px 18px;
+    box-shadow: 0 20px 40px -28px rgba(27, 22, 20, 0.35);
+  }
+  h2 {
+    font-size: var(--fs-h2);
+    line-height: 1.08;
+    letter-spacing: -0.02em;
+    margin-top: 16px;
+  }
+  .text :global(p:not(.eyebrow)) {
+    margin-top: 18px;
+    font-size: var(--fs-lede);
+    color: var(--ink-2);
+    max-width: 34em;
+  }
+  .text :global(.checks) {
+    margin-top: 22px;
+  }
+</style>

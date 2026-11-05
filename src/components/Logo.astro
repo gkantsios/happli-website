@@ -1,0 +1,21 @@
+---
+import { Image } from 'astro:assets';
+import logo from '../assets/logo-coral.png';
+
+interface Props {
+  height?: number;
+  eager?: boolean;
+}
+const { height = 26, eager = false } = Astro.props;
+const width = Math.round((logo.width / logo.height) * height);
+---
+
+<Image
+  src={logo}
+  alt="Happli"
+  width={width}
+  height={height}
+  densities={[1, 2]}
+  loading={eager ? 'eager' : 'lazy'}
+  fetchpriority={eager ? 'high' : undefined}
+/>

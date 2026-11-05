@@ -1,0 +1,13 @@
+---
+import ProseLayout from '../layouts/ProseLayout.astro';
+import { legal } from '../lib/legal';
+import { breadcrumbs } from '../lib/jsonld';
+---
+
+<ProseLayout
+  title="Acceptable Use Policy | Happli"
+  description="What studios can and can't do with Happli, including messaging, payments and data."
+  jsonLd={[breadcrumbs([{ name: 'Home', href: '/' }, { name: 'Acceptable Use Policy', href: '/acceptable-use/' }])]}
+>
+  <Fragment set:html={legal.acceptableUse} />
+</ProseLayout>
