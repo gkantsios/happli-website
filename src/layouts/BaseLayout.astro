@@ -28,7 +28,7 @@ const {
   title,
   description,
   image = site.defaultOgImage,
-  imageAlt = 'Happli: booking software for spray tan and beauty studios, with AI built in',
+  imageAlt = 'Happli: booking software for beauty studios. Clients book, pay deposits and get reminders on their own.',
   type = 'website',
   jsonLd = [],
   noindex = false,
@@ -71,6 +71,8 @@ const ogImage = new URL(image, site.url).href;
     <meta property="og:url" content={canonical} />
     <meta property="og:image" content={ogImage} />
     <meta property="og:image:alt" content={imageAlt} />
+    {image === site.defaultOgImage && <meta property="og:image:width" content="1200" />}
+    {image === site.defaultOgImage && <meta property="og:image:height" content="630" />}
     {publishedTime && <meta property="article:published_time" content={publishedTime.toISOString()} />}
     {modifiedTime && <meta property="article:modified_time" content={modifiedTime.toISOString()} />}
     <meta name="twitter:card" content="summary_large_image" />
