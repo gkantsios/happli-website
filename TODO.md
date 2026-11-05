@@ -40,7 +40,7 @@ The zoom hero's landed screen (`src/components/sections/AppScreen.astro`) is mod
 
 ## Placeholders to fill
 
-- [ ] **New Stripe Payment Links** for Solo and Studio (monthly and yearly, normal and Founding Studio prices). The old links were for the old 1/2/3-location prices and are no longer linked; plan buttons go to /signup/ and the book-a-call link until the new ones exist (`src/config/pricing.ts`).
+- [ ] **Online checkout.** The site has no Stripe Payment Links: the old ones (the old 1/2/3-location prices) are removed, and every plan button goes to the Book a demo link (`site.cta.href`, `src/config/pricing.ts`). `npm test` fails if a `buy.stripe` or `checkout.stripe` URL comes back.
 - [ ] `src/legal/terms.html` still says "Founding-member pricing". Review the wording against the Founding Studio offer.
 - [ ] Pricing FAQ: the contract/cancellation answer is unsourced, so it's not rendered (TODO comment in `src/pages/pricing.astro`).
 - [ ] Signup page "What happens next" steps and timing (`src/pages/signup.astro`) are generic. Confirm the real onboarding steps.
