@@ -9,7 +9,7 @@ section.plans-section { padding-block: var(--space-section); }
 main > section[aria-labelledby="problem-title"],
 main > section[aria-labelledby="testimonials-title"] { background: var(--blush-band); }
 /* Pricing stays clean: white band, cards separated by border and shadow. */
-section.plans-section { background: linear-gradient(to bottom, #fbfaf8 0, var(--surface) 320px); }
+section.plans-section { background: linear-gradient(to bottom, var(--page) 0, var(--surface) 320px); }
 main > section#payments { background: var(--sage-band); }
 .eyebrow { color: var(--coral-ink); }
 main > section#payments .eyebrow { color: var(--sage-ink); }
