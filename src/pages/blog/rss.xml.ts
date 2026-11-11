@@ -1,13 +1,13 @@
 import rss from '@astrojs/rss';
 import type { APIContext } from 'astro';
-import { getPublished } from '../lib/posts';
-import { site } from '../config/site';
+import { getPublished } from '../../lib/posts';
+import { site } from '../../config/site';
 
 export async function GET(context: APIContext) {
   const posts = (await getPublished('blog')).filter((post) => !post.data.draft);
   return rss({
     title: `${site.name} blog`,
-    description: 'Practical guides for spray tan studios and beauty pros.',
+    description: 'Practical tips for salon, spa and beauty studio owners on getting found, booking, deposits and reminders.',
     site: context.site ?? site.url,
     items: posts.map((post) => ({
       title: post.data.title,

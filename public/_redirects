@@ -7,3 +7,5 @@
 /privacy /privacy/ 301
 /terms /terms/ 301
 /security /security/ 301
+# The blog feed moved under /blog/; the old feed URL keeps working.
+/rss.xml /blog/rss.xml 301

@@ -115,3 +115,32 @@ export function blogPosting(post: {
     keywords: post.tags.join(', ') || undefined,
   };
 }
+
+// Blog posts: an Article with Happli as author and publisher (compare posts keep BlogPosting above).
+export function article(post: {
+  title: string;
+  description: string;
+  url: string;
+  pubDate: Date;
+  updatedDate?: Date;
+  author: string;
+  image: string;
+}) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: post.title,
+    description: post.description,
+    mainEntityOfPage: { '@type': 'WebPage', '@id': post.url },
+    datePublished: post.pubDate.toISOString(),
+    dateModified: (post.updatedDate ?? post.pubDate).toISOString(),
+    author: { '@type': 'Organization', name: post.author, url: `${site.url}/` },
+    publisher: {
+      '@type': 'Organization',
+      name: site.name,
+      url: `${site.url}/`,
+      logo: { '@type': 'ImageObject', url: abs('/logo.png') },
+    },
+    image: abs(post.image),
+  };
+}

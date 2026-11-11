@@ -5,7 +5,7 @@ export type NavLink = { label: string; href: string };
 // Content sections. While a section is off, its pages still build and work by URL, but they're
 // marked noindex, left out of the sitemap, and not linked from the footer. Turn one on once it has
 // published posts. guides, for (studio types) and alternatives are templates with drafts only.
-const sections = { blog: false, compare: true, guides: false, for: false, alternatives: false };
+const sections = { blog: true, compare: true, guides: false, for: false, alternatives: false };
 
 export const site = {
   name: 'Happli',
@@ -41,11 +41,12 @@ export const site = {
     href: 'https://app.gohappli.com/demo',
   },
 
-  // Header links. Add { label: 'Blog', href: '/blog/' } once the first post is published.
+  // Header links.
   nav: [
     { label: 'Features', href: '/features/' },
     { label: 'Pricing', href: '/pricing/' },
     { label: 'Compare', href: '/compare/' },
+    { label: 'Blog', href: '/blog/' },
     { label: 'Help', href: '/help/' },
   ] satisfies NavLink[],
 

@@ -59,7 +59,7 @@ const ogImage = new URL(image, site.url).href;
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/site.webmanifest" />
     <link rel="sitemap" href="/sitemap-index.xml" />
-    {site.sections.blog && <link rel="alternate" type="application/rss+xml" title={`${site.name} blog`} href={new URL('/rss.xml', site.url)} />}
+    {site.sections.blog && <link rel="alternate" type="application/rss+xml" title={`${site.name} blog`} href={new URL('/blog/rss.xml', site.url)} />}
     <link rel="preload" href={newsreaderLatin} as="font" type="font/woff2" crossorigin />
     <link rel="preload" href={manropeLatin} as="font" type="font/woff2" crossorigin />
 

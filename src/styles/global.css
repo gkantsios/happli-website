@@ -340,6 +340,47 @@ p {
   border-radius: 4px;
 }
 
+/* blog posts: reading rhythm, the checklist, the FAQ and the sources list */
+.prose.blog {
+  font-size: 17px;
+  overflow-wrap: break-word;
+}
+.prose.blog h2 {
+  margin: 52px 0 14px;
+}
+.prose.blog h3 {
+  margin: 36px 0 10px;
+}
+.prose.blog h2 + p,
+.prose.blog h3 + p {
+  margin-top: 0;
+}
+.prose.blog .contains-task-list {
+  list-style: none;
+  padding-left: 0;
+}
+.prose.blog .task-list-item {
+  display: flex;
+  gap: 10px;
+  align-items: baseline;
+}
+.prose.blog .task-list-item input {
+  flex: none;
+  margin: 0;
+  accent-color: var(--coral);
+}
+/* FAQ: each bold question sits on its own line above its answer */
+.prose.blog #faq ~ p > strong:first-child {
+  display: block;
+}
+.prose.blog #sources + ul {
+  font-size: 14px;
+  line-height: 1.6;
+}
+.prose.blog #sources + ul li {
+  margin-bottom: 6px;
+}
+
 /* compare posts: tables scroll sideways on phones and keep the first column in view */
 .prose.compare table {
   min-width: 100%;
