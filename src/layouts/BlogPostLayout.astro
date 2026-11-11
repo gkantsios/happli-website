@@ -130,11 +130,11 @@ const schemaAuthor = async (a: CollectionEntry<'authors'>): Promise<SchemaAuthor
   .main :global(.prose) {
     max-width: none;
   }
-  /* phones: room below the author box for the sticky "Book a demo" bar (StickyCta, 71px at 320), so the bar
-     never has to sit over the box */
+  /* phones: room below the author box for the sticky "Book a demo" bar (StickyCta, 71px at 320) plus 16px, so
+     the bar never has to sit over the box */
   @media (max-width: 699.98px) {
     .main {
-      padding-bottom: calc(72px + env(safe-area-inset-bottom, 0px));
+      padding-bottom: calc(88px + env(safe-area-inset-bottom, 0px));
     }
   }
   /* wide screens: the contents list in a sticky sidebar to the left of the article */
