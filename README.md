@@ -120,6 +120,10 @@ Each post gets Open Graph and Twitter tags and `BreadcrumbList` structured data,
 
 **Switching a section on.** /blog and /compare are on in `src/config/site.ts` (`sections`). While a section is off, its pages still build and work by URL, but they're marked noindex, left out of the sitemap and the footer, and (for the blog) the RSS link is left out of the page head. Blog is in the header `nav`.
 
+## Analytics
+
+Every page loads Umami (`umami-production-42bf.up.railway.app`) and Google Tag Manager (`GTM-T3TTM9JP`) from `src/layouts/BaseLayout.astro`, on production and preview builds alike. GA4 is configured inside GTM, not in code. Their hosts are allowed in the CSP in `public/_headers`; a GTM "Custom HTML" tag needs inline script and is blocked by that CSP.
+
 ## SEO
 
 - `@astrojs/sitemap` writes `sitemap-index.xml` on every build, and `public/robots.txt` points to it.

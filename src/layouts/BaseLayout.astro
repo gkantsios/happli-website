@@ -48,6 +48,16 @@ const ogImage = new URL(image, site.url).href;
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    {/* Google Tag Manager (container GTM-T3TTM9JP), Google's standard loader. GA4 is set up inside GTM, not here. */}
+    <script is:inline>
+      (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+      new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+      j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+      'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+      })(window,document,'script','dataLayer','GTM-T3TTM9JP');
+    </script>
+    {/* Umami analytics (self-hosted). */}
+    <script is:inline defer src="https://umami-production-42bf.up.railway.app/script.js" data-website-id="d5c98cb9-9a4b-4998-8a09-6e7a8090a157"></script>
     <title>{title}</title>
     <meta name="description" content={description} />
     {!noindex && <link rel="canonical" href={canonical} />}
@@ -84,6 +94,8 @@ const ogImage = new URL(image, site.url).href;
     {[organization(), website(), ...jsonLd].map((data) => <script type="application/ld+json" set:html={JSON.stringify(data)} />)}
   </head>
   <body>
+    {/* Google Tag Manager (noscript) */}
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-T3TTM9JP" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <a class="skip-link" href="#main">Skip to content</a>
     <Header />
     <main id="main" tabindex="-1">
