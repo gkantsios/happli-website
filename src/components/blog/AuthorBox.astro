@@ -1,0 +1,100 @@
+---
+// "About the author" at the end of a post: photo, name, title and short bio. Its id (author-<id>) is the
+// anchor the byline links to; the Person schema's @id ends with the same fragment.
+import { Picture } from 'astro:assets';
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  author: CollectionEntry<'authors'>;
+}
+const { author } = Astro.props;
+const bio = author.data.bio ?? author.data.oneLiner;
+---
+
+<section class="author-box" id={`author-${author.id}`} aria-labelledby="about-author-title">
+  <h2 id="about-author-title">About the author</h2>
+  <div class="card">
+    <Picture
+      class="photo"
+      src={author.data.photo}
+      formats={['webp']}
+      fallbackFormat="jpg"
+      widths={[96, 192]}
+      sizes="96px"
+      width={96}
+      height={96}
+      alt={author.data.name}
+      loading="lazy"
+    />
+    <div>
+      <p class="name">{author.data.name}</p>
+      <p class="title">{author.data.title}</p>
+      {bio && <p class="bio">{bio}</p>}
+    </div>
+  </div>
+</section>
+
+<style>
+  .author-box {
+    margin-top: 56px;
+    padding-top: 28px;
+    border-top: 1px solid var(--line);
+  }
+  h2 {
+    font-family: var(--sans);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 0 0 16px;
+  }
+  .card {
+    display: flex;
+    gap: 18px;
+    align-items: flex-start;
+    padding: 20px;
+    border-radius: var(--radius);
+    background: var(--blush-2);
+  }
+  .card :global(picture) {
+    flex: none;
+    display: block;
+  }
+  .card :global(.photo),
+  .card :global(img) {
+    flex: none;
+    width: 96px;
+    height: 96px;
+    border-radius: 50%;
+    object-fit: cover;
+    display: block;
+  }
+  p {
+    margin: 0;
+  }
+  .name {
+    font-family: var(--serif);
+    font-size: 22px;
+    line-height: 1.2;
+    color: var(--ink);
+  }
+  .title {
+    margin-top: 2px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--coral-ink);
+  }
+  .bio {
+    margin-top: 8px;
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--ink-2);
+  }
+  @media (max-width: 420px) {
+    .card {
+      flex-direction: column;
+      gap: 14px;
+    }
+  }
+</style>

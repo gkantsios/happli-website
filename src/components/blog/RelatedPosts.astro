@@ -1,0 +1,40 @@
+---
+// Up to 3 other blog posts: the post's pinned related slugs first, then posts sharing a tag, then the newest.
+// Renders nothing when there are no other posts.
+import type { CollectionEntry } from 'astro:content';
+import PostList from '../PostList.astro';
+
+interface Props {
+  current: CollectionEntry<'blog'>;
+  posts: CollectionEntry<'blog'>[];
+}
+const { current, posts } = Astro.props;
+const others = posts.filter((p) => p.id !== current.id);
+const pinned = (current.data.related ?? []).map((id) => others.find((p) => p.id === id)).filter((p) => p !== undefined);
+const tags = new Set(current.data.tags);
+const shared = others.filter((p) => !pinned.includes(p) && p.data.tags.some((t) => tags.has(t)));
+const rest = others.filter((p) => !pinned.includes(p) && !shared.includes(p));
+const picks = [...pinned, ...shared, ...rest].slice(0, 3);
+---
+
+{
+  picks.length > 0 && (
+    <section class="related" aria-labelledby="related-title">
+      <h2 id="related-title">More from the blog</h2>
+      <PostList entries={picks} base="/blog/" readingTime empty="" />
+    </section>
+  )
+}
+
+<style>
+  .related {
+    margin-top: 56px;
+  }
+  h2 {
+    font-size: 26px;
+    margin: 0;
+  }
+  .related :global(.posts) {
+    margin-top: 20px;
+  }
+</style>

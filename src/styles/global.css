@@ -377,12 +377,40 @@ p {
 .prose.blog #faq ~ p > strong:first-child {
   display: block;
 }
-.prose.blog #sources + ul {
-  font-size: 14px;
-  line-height: 1.6;
-}
 .prose.blog #sources + ul li {
   margin-bottom: 6px;
+}
+/* comparison tables in blog posts: they scroll sideways inside their own box on narrow screens (the
+   .prose table rule) and keep the first column in view while they do */
+.prose.blog table {
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 15px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+.prose.blog table th,
+.prose.blog table td {
+  min-width: 140px;
+  background: var(--surface);
+}
+.prose.blog table tbody tr:nth-child(even) td {
+  background: var(--bg);
+}
+.prose.blog table th:first-child,
+.prose.blog table td:first-child {
+  position: sticky;
+  left: 0;
+  min-width: 120px;
+  font-weight: 600;
+  color: var(--ink);
+  box-shadow: 1px 0 0 var(--line);
+}
+.prose.blog table thead th {
+  background: var(--blush-2);
+}
+.prose.blog table tr:last-child td {
+  border-bottom: 0;
 }
 
 /* compare posts: tables scroll sideways on phones and keep the first column in view */

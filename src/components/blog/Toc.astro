@@ -1,0 +1,192 @@
+---
+// The post's table of contents, from its H2s. variant "side": the sticky sidebar on wide screens (1100px and
+// up), with the script that highlights the section being read. variant "inline": a collapsed "On this page"
+// list in the page flow below 1100px; never sticky, so it can't cover the text. Without JavaScript both are
+// plain anchor links.
+import type { MarkdownHeading } from 'astro';
+
+interface Props {
+  headings: MarkdownHeading[];
+  variant: 'side' | 'inline';
+}
+const { headings, variant } = Astro.props;
+const items = headings.filter((h) => h.depth === 2);
+---
+
+{
+  items.length > 0 &&
+    (variant === 'side' ? (
+      <nav class="toc toc-side" aria-label="On this page" data-toc>
+        <p class="toc-title">On this page</p>
+        <ol>
+          {items.map((h) => (
+            <li>
+              <a href={`#${h.slug}`} data-toc-link={h.slug}>
+                {h.text}
+              </a>
+            </li>
+          ))}
+        </ol>
+      </nav>
+    ) : (
+      <details class="toc toc-inline" data-toc>
+        <summary>On this page</summary>
+        <nav aria-label="On this page">
+          <ol>
+            {items.map((h) => (
+              <li>
+                <a href={`#${h.slug}`} data-toc-link={h.slug}>
+                  {h.text}
+                </a>
+              </li>
+            ))}
+          </ol>
+        </nav>
+      </details>
+    ))
+}
+
+{
+  variant === 'side' && items.length > 0 && (
+    <script is:inline>
+      (function init() {
+        if (document.readyState === 'loading') return document.addEventListener('DOMContentLoaded', init);
+        var links = [].slice.call(document.querySelectorAll('[data-toc-link]'));
+        if (!links.length) return;
+        var ids = [];
+        links.forEach(function (a) {
+          if (ids.indexOf(a.getAttribute('data-toc-link')) < 0) ids.push(a.getAttribute('data-toc-link'));
+        });
+        var heads = ids.map(function (id) { return document.getElementById(id); }).filter(Boolean);
+        var current = null;
+        function update() {
+          var line = (parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop) || 84) + 40;
+          var found = null;
+          for (var i = 0; i < heads.length; i++) {
+            if (heads[i].getBoundingClientRect().top <= line) found = heads[i].id;
+          }
+          if (found === current) return;
+          current = found;
+          links.forEach(function (a) {
+            if (a.getAttribute('data-toc-link') === found) a.setAttribute('aria-current', 'true');
+            else a.removeAttribute('aria-current');
+          });
+        }
+        var ticking = false;
+        window.addEventListener('scroll', function () {
+          if (ticking) return;
+          ticking = true;
+          requestAnimationFrame(function () { ticking = false; update(); });
+        }, { passive: true });
+        window.addEventListener('resize', update);
+        update();
+        [].forEach.call(document.querySelectorAll('details.toc-inline'), function (d) {
+          d.addEventListener('click', function (e) {
+            if (e.target.closest && e.target.closest('a')) d.open = false;
+          });
+        });
+      })();
+    </script>
+  )
+}
+
+<style>
+  .toc ol {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .toc a {
+    display: block;
+    color: var(--ink-2);
+    text-decoration: none;
+    font-size: 14px;
+    line-height: 1.4;
+  }
+  .toc a:hover {
+    color: var(--ink);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .toc a[aria-current='true'] {
+    color: var(--ink);
+    font-weight: 600;
+  }
+
+  /* desktop sidebar */
+  .toc-side {
+    position: sticky;
+    top: calc(var(--nav-h) + 24px);
+    max-height: calc(100vh - var(--nav-h) - 48px);
+    overflow-y: auto;
+    padding-right: 4px;
+  }
+  .toc-title {
+    margin: 0 0 12px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .toc-side li a {
+    padding: 6px 0 6px 14px;
+    border-left: 2px solid var(--line);
+  }
+  .toc-side li a[aria-current='true'] {
+    border-left-color: var(--coral);
+  }
+
+  /* phones and tablets: collapsed list in the page flow */
+  .toc-inline {
+    margin: 0 0 32px;
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius);
+    background: var(--surface);
+  }
+  .toc-inline summary {
+    cursor: pointer;
+    list-style: none;
+    padding: 12px 16px;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--ink);
+  }
+  .toc-inline summary::-webkit-details-marker {
+    display: none;
+  }
+  .toc-inline summary::after {
+    content: '+';
+    font-size: 18px;
+    font-weight: 400;
+    color: var(--muted);
+  }
+  .toc-inline[open] summary::after {
+    content: '\2212';
+  }
+  .toc-inline nav {
+    padding: 0 16px 12px;
+  }
+  .toc-inline li a {
+    padding: 10px 0 10px 12px;
+    border-left: 2px solid var(--line);
+  }
+  .toc-inline li a[aria-current='true'] {
+    border-left-color: var(--coral);
+  }
+
+  @media (max-width: 1099.98px) {
+    .toc-side {
+      display: none;
+    }
+  }
+  @media (min-width: 1100px) {
+    .toc-inline {
+      display: none;
+    }
+  }
+</style>

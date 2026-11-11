@@ -1,17 +1,17 @@
 ---
 import { render } from 'astro:content';
-import PostLayout from '../../layouts/PostLayout.astro';
+import BlogPostLayout from '../../layouts/BlogPostLayout.astro';
 import { getPublished } from '../../lib/posts';
 
 export async function getStaticPaths() {
   const posts = await getPublished('blog');
-  return posts.map((entry) => ({ params: { slug: entry.id }, props: { entry } }));
+  return posts.map((entry) => ({ params: { slug: entry.id }, props: { entry, posts } }));
 }
 
-const { entry } = Astro.props;
-const { Content } = await render(entry);
+const { entry, posts } = Astro.props;
+const { Content, headings } = await render(entry);
 ---
 
-<PostLayout entry={entry} section={{ name: 'Blog', href: '/blog/' }}>
+<BlogPostLayout entry={entry} headings={headings} posts={posts}>
   <Content />
-</PostLayout>
+</BlogPostLayout>

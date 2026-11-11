@@ -1,0 +1,162 @@
+---
+// A blog post: breadcrumbs, title, byline (Written by, optional Reviewed by, Last updated), key takeaways,
+// the contents list (a sticky sidebar from 1100px, a collapsed "On this page" below it), the body, an optional
+// FAQ, About the author, related posts and the CTA band. Compare and other posts use PostLayout.
+import { Image, getImage } from 'astro:assets';
+import { getEntry, type CollectionEntry } from 'astro:content';
+import type { MarkdownHeading } from 'astro';
+import BaseLayout from './BaseLayout.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import CtaBand from '../components/sections/CtaBand.astro';
+import Byline from '../components/blog/Byline.astro';
+import Toc from '../components/blog/Toc.astro';
+import KeyTakeaways from '../components/blog/KeyTakeaways.astro';
+import PostFaq from '../components/blog/PostFaq.astro';
+import AuthorBox from '../components/blog/AuthorBox.astro';
+import RelatedPosts from '../components/blog/RelatedPosts.astro';
+import { article, breadcrumbs, type Crumb, type SchemaAuthor } from '../lib/jsonld';
+import { readingMinutes } from '../lib/posts';
+import { site } from '../config/site';
+
+interface Props {
+  entry: CollectionEntry<'blog'>;
+  headings: MarkdownHeading[];
+  posts: CollectionEntry<'blog'>[];
+}
+const { entry, headings, posts } = Astro.props;
+const { title, description, pubDate, updatedDate, heroImage, heroImageAlt, draft, ogImage: shareImage, tldr, faq } = entry.data;
+
+const author = await getEntry(entry.data.author);
+const reviewer = entry.data.reviewer ? await getEntry(entry.data.reviewer) : undefined;
+if (!author) throw new Error(`Unknown author in ${entry.id}`);
+
+const section: Crumb = { name: 'Blog', href: '/blog/' };
+const url = new URL(`${section.href}${entry.id}/`, site.url).href;
+const crumbs: Crumb[] = [{ name: 'Home', href: '/' }, section, { name: title, href: `${section.href}${entry.id}/` }];
+const ogImage = shareImage ?? (heroImage ? heroImage.src : site.defaultOgImage);
+const updated = updatedDate ?? pubDate;
+
+// Schema image for a Person: a 400px JPEG built from the author's photo, as an absolute URL.
+const schemaAuthor = async (a: CollectionEntry<'authors'>): Promise<SchemaAuthor> => ({
+  id: a.id,
+  type: a.data.type,
+  name: a.data.name,
+  jobTitle: a.data.jobTitle,
+  sameAs: a.data.sameAs,
+  image: a.data.type === 'Person' ? new URL((await getImage({ src: a.data.photo, width: 400, format: 'jpg' })).src, site.url).href : undefined,
+});
+---
+
+<BaseLayout
+  title={`${title} | Happli Blog`}
+  description={description}
+  image={ogImage}
+  imageAlt={heroImageAlt ?? title}
+  type="article"
+  publishedTime={pubDate}
+  modifiedTime={updated}
+  noindex={draft || !site.sections.blog}
+  jsonLd={[
+    article({
+      title,
+      description,
+      url,
+      pubDate,
+      updatedDate,
+      author: await schemaAuthor(author),
+      reviewer: reviewer ? await schemaAuthor(reviewer) : undefined,
+      image: ogImage,
+    }),
+    breadcrumbs(crumbs),
+  ]}
+>
+  <div class="wrap blog-post">
+    <Breadcrumbs items={crumbs} />
+    <div class="layout">
+      <aside class="side">
+        <Toc headings={headings} variant="side" />
+      </aside>
+      <div class="main">
+        <header class="post-head">
+          {draft && <p class="badge">Draft preview (not published)</p>}
+          <h1>{title}</h1>
+          <Byline author={author} reviewer={reviewer} updated={updated} minutes={readingMinutes(entry.body)} />
+          {heroImage && <Image src={heroImage} alt={heroImageAlt ?? ''} widths={[560, 1120]} sizes="(max-width: 600px) 100vw, 560px" loading="eager" />}
+        </header>
+        {tldr && <KeyTakeaways items={tldr} />}
+        <Toc headings={headings} variant="inline" />
+        <article class="prose blog">
+          <slot />
+          {faq && <PostFaq items={faq} />}
+        </article>
+        <AuthorBox author={author} />
+        <RelatedPosts current={entry} posts={posts} />
+      </div>
+    </div>
+  </div>
+  <CtaBand title="See it with your own schedule." />
+</BaseLayout>
+
+<style>
+  .blog-post {
+    padding-top: clamp(40px, 6vw, 72px);
+  }
+  .blog-post > :global(.crumbs),
+  .main {
+    max-width: 560px;
+    margin-inline: auto;
+  }
+  .side {
+    display: none;
+  }
+  .post-head {
+    margin: 24px 0 32px;
+  }
+  h1 {
+    font-size: clamp(34px, 4.4vw, 48px);
+    line-height: 1.1;
+    color: var(--ink);
+    letter-spacing: -0.02em;
+    margin: 0;
+  }
+  .post-head :global(img) {
+    margin-top: 28px;
+    border-radius: var(--radius);
+    height: auto;
+  }
+  .badge {
+    margin-bottom: 14px;
+  }
+  .main :global(.prose) {
+    max-width: none;
+  }
+  /* phones: room below the author box for the sticky "Book a demo" bar (StickyCta, 71px at 320), so the bar
+     never has to sit over the box */
+  @media (max-width: 699.98px) {
+    .main {
+      padding-bottom: calc(72px + env(safe-area-inset-bottom, 0px));
+    }
+  }
+  /* wide screens: the contents list in a sticky sidebar to the left of the article */
+  @media (min-width: 1100px) {
+    .layout {
+      display: grid;
+      grid-template-columns: 220px 560px;
+      column-gap: 64px;
+      justify-content: center;
+      align-items: start;
+    }
+    .blog-post > :global(.crumbs) {
+      max-width: calc(220px + 64px + 560px);
+    }
+    .side {
+      display: block;
+      align-self: stretch;
+      padding-top: 30px;
+    }
+    .main {
+      max-width: none;
+      margin: 0;
+    }
+  }
+</style>
