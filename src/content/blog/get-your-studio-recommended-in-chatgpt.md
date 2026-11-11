@@ -1,7 +1,7 @@
 ---
 title: 'How to get your beauty studio recommended in ChatGPT'
 description: 'When clients ask ChatGPT where to book near them, which studios get named? A local, booking-first checklist for salon, spa and beauty studio owners.'
-pubDate: 2026-11-11
+pubDate: 2026-11-11T12:00:00-05:00
 author: 'Happli team'
 ---
 
