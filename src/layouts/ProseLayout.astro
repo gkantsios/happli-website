@@ -24,4 +24,10 @@ const { title, description, jsonLd } = Astro.props;
   .prose {
     margin: 0 auto;
   }
+  /* phones: room below the text for the sticky "Book a demo" bar (StickyCta, 71px at 320) so it never covers the last line */
+  @media (max-width: 699.98px) {
+    .prose-page {
+      padding-bottom: calc(72px + env(safe-area-inset-bottom, 0px));
+    }
+  }
 </style>

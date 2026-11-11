@@ -106,10 +106,10 @@ test('forms post only to this site', () => {
   }
 });
 
-test('scripts load only from this site or Cloudflare Turnstile', () => {
+test('scripts load only from this site, Cloudflare Turnstile or our Umami analytics', () => {
   for (const { file, html } of built) {
     for (const m of html.matchAll(/<script\b[^>]*\bsrc="([^"]*)"/g)) {
-      assert.match(m[1], /^(\/(?!\/)|https:\/\/challenges\.cloudflare\.com\/)/, `${file}: ${m[1]}`);
+      assert.match(m[1], /^(\/(?!\/)|https:\/\/challenges\.cloudflare\.com\/|https:\/\/umami-production-42bf\.up\.railway\.app\/)/, `${file}: ${m[1]}`);
     }
   }
 });

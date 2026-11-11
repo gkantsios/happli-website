@@ -1,10 +1,11 @@
 <h1>Privacy Policy</h1>
-  <p class="updated">Last updated: October 29, 2026</p>
+  <p class="updated">Last updated: November 11, 2026</p>
 
-  <p>This policy explains what personal information Happli (Happy Industries, Inc. dba Happli) collects, how we use and share it, and the choices you have. Happli handles two kinds of information:</p>
+  <p>This policy explains what personal information Happli (Happy Industries, Inc. dba Happli) collects, how we use and share it, and the choices you have. Happli handles three kinds of information:</p>
   <ul>
     <li><strong>Studio account information</strong>: information about studio owners and their team members, such as names, emails and settings. Happli decides how this is used, as described here.</li>
     <li><strong>Studio client information</strong>: information about a studio's clients, such as names, contact details, appointments, form answers and purchases. <strong>This belongs to the studio.</strong> Happli processes it only on the studio's behalf and instructions, as a service provider (processor) under our <a href="/dpa/">Data Processing Addendum</a>. If you're a studio's client, the studio's own privacy policy also applies, and the studio is your first point of contact.</li>
+    <li><strong>Website visitor information</strong>: how people use gohappli.com, our marketing website, measured with the analytics tools in section 6. Happli decides how this is used, as described here.</li>
   </ul>
 
   <h2>1. What we collect</h2>
@@ -26,6 +27,10 @@
   <li>How a client found the studio, if the studio uses client source tracking: the general source (for example a Google search, an Instagram post or an ad), campaign tags, the referring website, the page they landed on and, if the studio turns it on, the ad's click code.</li>
     <li>Website chat conversations and details a visitor chooses to share, if the studio uses the chat widget.</li>
   </ul>
+  <h3>From visitors to gohappli.com</h3>
+  <ul>
+    <li><strong>Website usage:</strong> the pages you view, the website that sent you, device and browser details, approximate location from your IP address and, through Google Analytics cookies, an ID for your browser. See section 6.</li>
+  </ul>
 
   <h2>2. How we use it</h2>
   <ul>
@@ -35,6 +40,7 @@
     <li>To send you service emails, such as sign-in links, invitations, billing notices and important updates.</li>
     <li>To generate AI drafts, summaries and answers. Only the context needed is sent to our AI provider, client prompts use first names only, and under our agreement the provider doesn't use it to train its models.</li>
     <li>To secure, debug, support and improve the Service, including with aggregated, de-identified data.</li>
+    <li>To understand how visitors use gohappli.com, our marketing website, and improve it, with the website analytics in section 6.</li>
     <li>To comply with law and enforce our terms.</li>
   </ul>
   <p><strong>We never sell personal information or share it for cross-context behavioral advertising.</strong> We never use a studio's client list to market Happli or anyone else.</p>
@@ -44,14 +50,15 @@
   <p><strong>Text message registration.</strong> US mobile carriers require business texting to be registered (10DLC). For that, our messaging provider shares the studio's business details, sample messages and how clients opt in with the carriers and The Campaign Registry. Phone numbers and opt-in status go to our messaging provider and the carriers only to deliver texts and handle opt-outs, never for their own marketing.</p>
   <table>
     <tr><th>Subprocessor</th><th>Purpose</th><th>Data</th></tr>
-    <tr><td>Railway</td><td>Application hosting (US East, Virginia)</td><td>All Service data while it is processed</td></tr>
+    <tr><td>Railway</td><td>Application hosting (US East, Virginia), and hosting for our own Umami website analytics</td><td>All Service data while it is processed; visit and page-view data from gohappli.com</td></tr>
     <tr><td>Neon</td><td>Database hosting (AWS US East, N. Virginia); encrypted at rest</td><td>All Service data</td></tr>
     <tr><td>Stripe</td><td>Subscription billing and client card payments (Stripe Connect)</td><td>Billing, payment and payout data</td></tr>
     <tr><td>Twilio</td><td>Text message delivery and STOP handling</td><td>Phone numbers and message content</td></tr>
     <tr><td>Postmark (ActiveCampaign)</td><td>Email delivery</td><td>Email addresses and message content</td></tr>
     <tr><td>Anthropic</td><td>AI drafting, summaries and answers</td><td>Business context and client first names; no phone numbers or emails</td></tr>
     <tr><td>Google</td><td>Business and address lookup (Google Places and Maps)</td><td>Business name and address searches</td></tr>
-    <tr><td>Cloudflare</td><td>Hosting and protection for gohappli.com; storage of encrypted nightly database backups (R2)</td><td>Website visitor IP addresses and request data; encrypted backups of Service data</td></tr>
+    <tr><td>Google</td><td>Website analytics for gohappli.com (Google Tag Manager and Google Analytics 4)</td><td>Website visitor usage data and Google Analytics cookie IDs</td></tr>
+    <tr><td>Cloudflare</td><td>Hosting and protection for gohappli.com, including spam checks on its forms (Turnstile); storage of encrypted nightly database backups (R2)</td><td>Website visitor IP addresses and request data; encrypted backups of Service data</td></tr>
     <tr><td>GitHub</td><td>Code hosting, and running the nightly backup job (GitHub Actions)</td><td>Service data, briefly, while each backup is made and encrypted</td></tr>
     <tr><td>Kit</td><td>Email list for the gohappli.com waitlist and demo follow-up</td><td>Email addresses and sign-up details from website visitors</td></tr>
     <tr><td>TidyCal</td><td>Demo booking on gohappli.com</td><td>Names, email addresses and booking times for people who book a demo</td></tr>
@@ -64,6 +71,7 @@
     <li>After an account closes, we delete or de-identify studio data within 90 days, after any export window.</li>
     <li>Unconfirmed client-import files are deleted after 24 hours. Unrecognized inbound data kept for review is deleted after 30 days.</li>
   <li>Detailed client source data (campaign tags, ad click codes, the referring website and landing page) is kept only as long as needed and deleted on a schedule we set. The general source stays with the client record until the studio deletes it. Source cookies on studio websites expire after 90 days.</li>
+    <li>Website visit data from Google Analytics 4 and Umami is kept for 14 months, then deleted.</li>
     <li>Opt-out records are kept so they stay honored. Audit logs and billing records are kept as long as needed for security, legal and tax purposes. Backups roll off on a regular schedule after deletion.</li>
   </ul>
 
@@ -77,8 +85,17 @@
   <p>If you're a California resident, you have the right to know what personal information we collect, use and disclose; to request deletion and correction; to opt out of the sale or sharing of personal information; to limit use of sensitive personal information; and not to be discriminated against for using these rights. We don't sell or share personal information as those terms are defined, and we don't use sensitive personal information to infer characteristics. The categories we collect are listed in section 1, the sources are you, your studio and your use of the Service, and the purposes are in section 2. To make a request, email <a href="mailto:hello@gohappli.com">hello@gohappli.com</a>. We'll verify your identity and respond within 45 days. You can use an authorized agent. For studio client information, we act as the studio's service provider and will refer requests to the studio.</p>
   <p>Residents of other states with privacy laws may have similar rights and can make requests the same way. If we deny your request, you can appeal by replying to our decision or emailing us with "Appeal" in the subject, and we'll respond within the time the law requires.</p>
 
-  <h2>6. Cookies</h2>
-  <p>We don't use advertising cookies or third-party analytics cookies. The Happli app uses only essential cookies, to keep you signed in and secure. Studio websites built by Happli, and other studio websites that add Happli's source tracking script, also set a first-party cookie on the studio's own website, <code>hb_src</code> (with a companion cookie, <code>hb_last</code>), that remembers for up to 90 days how a visitor found the studio, so the studio can see which ads and posts bring in bookings. Websites Happli builds include this script by default. It isn't used for advertising or to track you across other websites. If your browser sends a Global Privacy Control signal, these cookies aren't set, and only the general source (for example "Instagram") is kept. See our <a href="/cookies/">Cookie Notice</a>.</p>
+  <h2>6. Cookies and website analytics</h2>
+  <p>On gohappli.com, our marketing website:</p>
+  <ul>
+    <li>We use <strong>Umami</strong>, which we host ourselves on Railway and which doesn't set cookies, to count visits and the pages viewed.</li>
+    <li>We use <strong>Google Tag Manager and Google Analytics 4</strong>, which set cookies to measure how visitors use the site. This data is shared with Google for that purpose.</li>
+    <li>We use <strong>Cloudflare Turnstile</strong> on forms to block spam.</li>
+    <li><strong>To opt out of Google Analytics</strong>, block or delete cookies in your browser settings, or install the <a href="https://tools.google.com/dlpage/gaoptout">Google Analytics opt-out browser add-on</a>. These don't stop Umami, because Umami doesn't use cookies.</li>
+    <li><strong>To opt out of Umami</strong>, turn on your browser's Do Not Track setting, or run <code>localStorage.setItem('umami.disabled', 1)</code> in your browser's console while on gohappli.com, then reload the page.</li>
+    <li>Content blockers usually stop Google Analytics. They may not stop Umami, because we host it ourselves.</li>
+  </ul>
+  <p>We don't sell personal information, and we don't use advertising cookies. The Happli app uses only essential cookies, to keep you signed in and secure. Studio websites built by Happli, and other studio websites that add Happli's source tracking script, also set a first-party cookie on the studio's own website, <code>hb_src</code> (with a companion cookie, <code>hb_last</code>), that remembers for up to 90 days how a visitor found the studio, so the studio can see which ads and posts bring in bookings. Websites Happli builds include this script by default. It isn't used for advertising or to track you across other websites. If your browser sends a Global Privacy Control signal, these studio-website cookies aren't set, and only the general source (for example "Instagram") is kept. See our <a href="/cookies/">Cookie Notice</a>.</p>
 
   <h2>7. Security</h2>
   <p>We use encryption in transit, encryption at rest for our database and its backups, per-studio data isolation enforced in the database, passwordless sign-in and an append-only audit log. See our <a href="/security/">Security page</a>. No system is perfectly secure; we'll notify affected studios of a breach as required by law.</p>
