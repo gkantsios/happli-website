@@ -69,6 +69,7 @@
     <li>After an account closes, we delete or de-identify studio data within 90 days, after any export window.</li>
     <li>Unconfirmed client-import files are deleted after 24 hours. Unrecognized inbound data kept for review is deleted after 30 days.</li>
   <li>Detailed client source data (campaign tags, ad click codes, the referring website and landing page) is kept only as long as needed and deleted on a schedule we set. The general source stays with the client record until the studio deletes it. Source cookies on studio websites expire after 90 days.</li>
+    <li>Website visit data from Google Analytics 4 and Umami is kept for 14 months, then deleted.</li>
     <li>Opt-out records are kept so they stay honored. Audit logs and billing records are kept as long as needed for security, legal and tax purposes. Backups roll off on a regular schedule after deletion.</li>
   </ul>
 
@@ -88,7 +89,9 @@
     <li>We use <strong>Umami</strong>, which we host ourselves and which doesn't set cookies, to count visits and the pages viewed.</li>
     <li>We use <strong>Google Tag Manager and Google Analytics 4</strong>, which set cookies to measure how visitors use the site. This data is shared with Google for that purpose.</li>
     <li>We use <strong>Cloudflare Turnstile</strong> on forms to block spam.</li>
-    <li><strong>To opt out</strong>, block or delete cookies in your browser settings, or install the <a href="https://tools.google.com/dlpage/gaoptout">Google Analytics opt-out browser add-on</a>.</li>
+    <li><strong>To opt out of Google Analytics</strong>, block or delete cookies in your browser settings, or install the <a href="https://tools.google.com/dlpage/gaoptout">Google Analytics opt-out browser add-on</a>. These don't stop Umami, because Umami doesn't use cookies.</li>
+    <li><strong>To opt out of Umami</strong>, turn on your browser's Do Not Track setting, or run <code>localStorage.setItem('umami.disabled', 1)</code> in your browser's console while on gohappli.com.</li>
+    <li>Content blockers also stop both.</li>
   </ul>
   <p>We don't sell personal information, and we don't use advertising cookies. The Happli app uses only essential cookies, to keep you signed in and secure. Studio websites built by Happli, and other studio websites that add Happli's source tracking script, also set a first-party cookie on the studio's own website, <code>hb_src</code> (with a companion cookie, <code>hb_last</code>), that remembers for up to 90 days how a visitor found the studio, so the studio can see which ads and posts bring in bookings. Websites Happli builds include this script by default. It isn't used for advertising or to track you across other websites. If your browser sends a Global Privacy Control signal, these cookies aren't set, and only the general source (for example "Instagram") is kept. See our <a href="/cookies/">Cookie Notice</a>.</p>
 

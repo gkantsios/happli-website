@@ -279,6 +279,10 @@ p {
 .legal .prose {
   max-width: 68ch;
 }
+/* legal pages: long inline code (e.g. the Umami opt-out command) wraps instead of widening the page on phones */
+.legal .prose code {
+  overflow-wrap: anywhere;
+}
 .prose .updated {
   font-size: 16px;
   color: var(--muted);

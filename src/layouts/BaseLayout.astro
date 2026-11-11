@@ -56,8 +56,8 @@ const ogImage = new URL(image, site.url).href;
       'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
       })(window,document,'script','dataLayer','GTM-T3TTM9JP');
     </script>
-    {/* Umami analytics (self-hosted). */}
-    <script is:inline defer src="https://umami-production-42bf.up.railway.app/script.js" data-website-id="d5c98cb9-9a4b-4998-8a09-6e7a8090a157"></script>
+    {/* Umami analytics (self-hosted). data-do-not-track: no tracking when the browser's Do Not Track setting is on. */}
+    <script is:inline defer src="https://umami-production-42bf.up.railway.app/script.js" data-website-id="d5c98cb9-9a4b-4998-8a09-6e7a8090a157" data-do-not-track="true"></script>
     <title>{title}</title>
     <meta name="description" content={description} />
     {!noindex && <link rel="canonical" href={canonical} />}

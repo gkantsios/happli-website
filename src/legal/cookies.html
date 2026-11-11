@@ -4,12 +4,13 @@
   <h2>gohappli.com (this website)</h2>
   <p>We use these tools on this marketing website:</p>
   <ul>
-    <li><strong>Umami:</strong> counts visits and the pages viewed. We host it ourselves, and it doesn't set cookies.</li>
+    <li><strong>Umami:</strong> counts visits and the pages viewed. We host it ourselves on Railway, and it doesn't set cookies.</li>
     <li><strong>Google Tag Manager and Google Analytics 4:</strong> Google Analytics sets cookies (<code>_ga</code> and <code>_ga_</code> followed by an ID) to measure how visitors use the site. They last up to 2 years. This data is shared with Google for that purpose.</li>
     <li><strong>Cloudflare Turnstile:</strong> checks the forms on this site, such as the waitlist form, to block spam.</li>
   </ul>
   <p>Our hosting provider, Cloudflare, may also set strictly necessary security cookies to protect the site from abuse.</p>
-  <p><strong>Opting out.</strong> You can block or delete cookies in your browser settings. To stop Google Analytics from measuring your visits on any website, use the <a href="https://tools.google.com/dlpage/gaoptout">Google Analytics opt-out browser add-on</a>. We don't sell personal information.</p>
+  <p><strong>How long it's kept.</strong> Visit data from Google Analytics 4 and Umami is kept for 14 months, then deleted.</p>
+  <p><strong>Opting out.</strong> Blocking or deleting cookies in your browser settings stops Google Analytics, and so does the <a href="https://tools.google.com/dlpage/gaoptout">Google Analytics opt-out browser add-on</a>, which works on any website. Neither stops Umami, because Umami doesn't use cookies. To stop Umami, turn on your browser's Do Not Track setting, or run <code>localStorage.setItem('umami.disabled', 1)</code> in your browser's console while on gohappli.com. Content blockers also stop both. We don't sell personal information.</p>
 
   <h2>app.gohappli.com and booking pages</h2>
   <p>The Happli app uses only strictly necessary cookies:</p>
@@ -27,7 +28,7 @@
   <p>These cookies are set on the studio's domain only and can't be read by other websites. When the visitor clicks a link to book, the script adds the details to the booking link, and the booking page keeps them in that browser tab's session storage until the booking is made. The studio then sees the source on the client's record. The cookies aren't used for advertising, ad pixels or tracking across other websites. Happli handles this data for the studio as its service provider.</p>
   <p><strong>Global Privacy Control.</strong> If your browser sends a Global Privacy Control (GPC) signal, the script sets no cookies and deletes any hb_src or hb_last cookie it set before, and the booking page keeps only the general source (for example "Instagram"), never campaign tags or ad click codes.</p>
   <p><strong>How long it's kept.</strong> The cookies expire after 90 days. Campaign tags, ad click codes, the referring website and the landing page saved with a booking are kept only as long as needed and deleted on a schedule we set. The general source stays with the client record until the studio deletes it.</p>
-  <p>We don't use advertising cookies. The sign-in and security cookies are strictly necessary, the studio-website source cookies are first-party, aren't used for advertising and honor Global Privacy Control, and the Google Analytics cookies are used on gohappli.com only, to measure how the site is used. Happli serves the United States, and we don't show a cookie banner. You can block or delete cookies in your browser. Signing in won't work without the sign-in cookie, but booking works without the source cookies, and gohappli.com works without the Google Analytics cookies.</p>
+  <p>We don't use advertising cookies. The sign-in and security cookies are strictly necessary, the studio-website source cookies are first-party, aren't used for advertising and honor Global Privacy Control, and the Google Analytics cookies are used on gohappli.com only, to measure how the site is used. Happli serves the United States, and we don't show a cookie banner. You can block or delete cookies in your browser (for gohappli.com analytics, see Opting out above). Signing in won't work without the sign-in cookie, but booking works without the source cookies, and gohappli.com works without the Google Analytics cookies.</p>
 
   <h2>Contact</h2>
   <p>Questions: <a href="mailto:hello@gohappli.com">hello@gohappli.com</a>.</p>
