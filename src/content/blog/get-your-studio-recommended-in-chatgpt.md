@@ -2,7 +2,12 @@
 title: 'How to get your beauty studio recommended in ChatGPT'
 description: 'When clients ask ChatGPT where to book near them, which studios get named? A local, booking-first checklist for salon, spa and beauty studio owners.'
 pubDate: 2026-11-11T12:00:00-05:00
-author: 'Happli team'
+author: grant
+tldr:
+  - "Let ChatGPT's search crawler in: robots.txt and your bot protection should allow OAI-SearchBot."
+  - 'Claim your Bing Places listing, and keep your name, address, phone and hours the same everywhere.'
+  - 'Say your services, city, prices and hours in plain words, and keep a public booking page that takes deposits.'
+  - "Claim your studio in ChatGPT Business Hub if you're eligible, and check monthly how often you're named."
 ---
 
 More of your future clients are asking a chatbot before they ask a friend. "Where should I get a lash lift in Tampa?" "Good brow studio near me open Saturday?" ChatGPT has [1.2 billion weekly users](https://openai.com/index/introducing-businesses-chatgpt/), and on November 10, 2026, OpenAI [opened Business Hub](https://openai.com/index/introducing-businesses-chatgpt/), a place for businesses to claim their profile in ChatGPT.
@@ -133,10 +138,6 @@ Not by itself. OpenAI treats [training (GPTBot) and search (OAI-SearchBot) as se
 **How long do changes take?**
 A robots.txt change takes [about 24 hours](https://platform.openai.com/docs/bots) for OpenAI. Business Hub edits are [reviewed before they appear](https://help.openai.com/en/articles/20001635-setting-up-your-business-on-chatgpt). New pages depend on when search engines crawl them, which is why IndexNow helps.
 
-## Want a booking page that's ready when ChatGPT sends someone?
-
-Happli gives salons, spas and beauty studios a public booking page with deposits and reminders, studio info that stays in sync with your gohappybeauty website, and easy CSV import from what you use now. [Book a demo](https://tidycal.com/gkantsios/happli-demo) and we'll walk through it.
-
 ## Sources
 
 - OpenAI, [Introducing Businesses in ChatGPT](https://openai.com/index/introducing-businesses-chatgpt/) (Nov 10, 2026)
@@ -149,3 +150,7 @@ Happli gives salons, spas and beauty studios a public booking page with deposits
 - IndexNow, [Documentation](https://www.indexnow.org/documentation)
 - Search Engine Journal, [LLMs.txt shows no clear effect on AI citations](https://www.searchenginejournal.com/llms-txt-shows-no-clear-effect-on-ai-citations-based-on-300k-domains/561542/) (SE Ranking data)
 - Federal Register, [Trade Regulation Rule on the Use of Consumer Reviews and Testimonials](https://www.federalregister.gov/documents/2024/08/22/2024-18519/trade-regulation-rule-on-the-use-of-consumer-reviews-and-testimonials)
+
+## Want a booking page that's ready when ChatGPT sends someone?
+
+Happli gives salons, spas and beauty studios a public booking page with deposits and reminders, studio info that stays in sync with your gohappybeauty website, and easy CSV import from what you use now. [Book a demo](https://tidycal.com/gkantsios/happli-demo) and we'll walk through it.

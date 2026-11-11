@@ -1,0 +1,100 @@
+---
+// The post's byline: "Written by" with a round photo, name and one-line bio; an optional "Reviewed by" line;
+// then "Last updated" (the updated date, or the publish date) and the reading time.
+import { Picture } from 'astro:assets';
+import type { CollectionEntry } from 'astro:content';
+import { formatDate } from '../../lib/posts';
+
+interface Props {
+  author: CollectionEntry<'authors'>;
+  reviewer?: CollectionEntry<'authors'>;
+  updated: Date;
+  minutes: number;
+}
+const { author, reviewer, updated, minutes } = Astro.props;
+---
+
+<div class="byline">
+  <div class="who">
+    <Picture
+      class="photo"
+      src={author.data.photo}
+      formats={['webp']}
+      fallbackFormat="jpg"
+      widths={[40, 80]}
+      sizes="40px"
+      width={40}
+      height={40}
+      alt={author.data.name}
+      loading="eager"
+    />
+    <p>
+      <span class="label">Written by</span>{' '}
+      <a class="name" href={`#author-${author.id}`}>{author.data.name}</a>
+      {author.data.oneLiner && <span class="bio">{author.data.oneLiner}</span>}
+    </p>
+  </div>
+  {
+    reviewer && (
+      <p class="reviewed">
+        <span class="label">Reviewed by</span> {reviewer.data.name}
+        {reviewer.data.title && <>, {reviewer.data.title}</>}
+      </p>
+    )
+  }
+  <p class="when">
+    Last updated <time datetime={updated.toISOString()}>{formatDate(updated)}</time> · {minutes} min read
+  </p>
+</div>
+
+<style>
+  .byline {
+    margin-top: 20px;
+    display: grid;
+    gap: 10px;
+    font-size: 14px;
+    color: var(--muted);
+  }
+  .who {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+  }
+  .who :global(picture) {
+    flex: none;
+    display: block;
+  }
+  .who :global(.photo),
+  .who :global(img) {
+    flex: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    display: block;
+  }
+  .who p {
+    margin: 0;
+    line-height: 1.4;
+  }
+  .label {
+    color: var(--muted);
+  }
+  .name {
+    color: var(--ink);
+    font-weight: 600;
+    text-decoration: none;
+  }
+  .name:hover {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .bio {
+    display: block;
+    color: var(--muted);
+  }
+  .reviewed,
+  .when {
+    margin: 0;
+  }
+</style>

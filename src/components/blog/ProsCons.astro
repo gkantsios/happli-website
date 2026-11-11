@@ -1,0 +1,69 @@
+---
+// Pros and cons side by side (stacked on phones). For .mdx blog posts:
+//   import ProsCons from '../../components/blog/ProsCons.astro';
+//   <ProsCons pros={['Fast setup']} cons={['No app yet']} />
+interface Props {
+  pros: string[];
+  cons: string[];
+  prosLabel?: string;
+  consLabel?: string;
+}
+const { pros, cons, prosLabel = 'Pros', consLabel = 'Cons' } = Astro.props;
+---
+
+<div class="pros-cons not-prose">
+  <div class="col pros">
+    <p class="head">{prosLabel}</p>
+    <ul>{pros.map((p) => <li>{p}</li>)}</ul>
+  </div>
+  <div class="col cons">
+    <p class="head">{consLabel}</p>
+    <ul>{cons.map((c) => <li>{c}</li>)}</ul>
+  </div>
+</div>
+
+<style>
+  .pros-cons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin: 0 0 20px;
+  }
+  .col {
+    padding: 14px 16px;
+    border-radius: var(--radius);
+    border: 1px solid var(--line);
+  }
+  .pros {
+    background: var(--ap-sage);
+  }
+  .cons {
+    background: var(--ap-rose);
+  }
+  .head {
+    margin: 0 0 6px;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--ink);
+  }
+  .pros .head {
+    color: var(--sage-ink);
+  }
+  .cons .head {
+    color: var(--coral-ink);
+  }
+  ul {
+    margin: 0;
+    padding-left: 18px;
+    font-size: 15px;
+    line-height: 1.55;
+  }
+  li {
+    margin-bottom: 4px;
+  }
+  @media (max-width: 560px) {
+    .pros-cons {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

@@ -1,0 +1,50 @@
+---
+// A post's FAQ from its faq frontmatter: numbered questions (H3) with their answers, plus FAQPage JSON-LD.
+// Posts without faq frontmatter get neither.
+import { faqPage } from '../../lib/jsonld';
+
+interface Props {
+  items: { q: string; a: string }[];
+  title?: string;
+}
+const { items, title = 'Frequently asked questions' } = Astro.props;
+---
+
+<script type="application/ld+json" set:html={JSON.stringify(faqPage(items))} />
+<section class="post-faq" aria-labelledby="post-faq-title">
+  <h2 id="post-faq-title">{title}</h2>
+  <ol>
+    {
+      items.map((item) => (
+        <li>
+          <h3>{item.q}</h3>
+          <p>{item.a}</p>
+        </li>
+      ))
+    }
+  </ol>
+</section>
+
+<style>
+  ol {
+    margin: 0;
+    padding-left: 24px;
+  }
+  li::marker {
+    font-weight: 700;
+    color: var(--coral-ink);
+  }
+  li + li {
+    margin-top: 18px;
+  }
+  h3 {
+    margin: 0 0 6px;
+    font-family: var(--sans);
+    font-size: 17px;
+    font-weight: 700;
+    line-height: 1.4;
+  }
+  p {
+    margin: 0;
+  }
+</style>

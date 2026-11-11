@@ -25,7 +25,13 @@ const isCurrent = (href: string) => current === href;
       <details class="menu">
         <summary>Menu</summary>
         <nav class="menu-panel" aria-label="Mobile">
-          {site.nav.map((link) => <a href={link.href}>{link.label}</a>)}
+          {
+            site.nav.map((link) => (
+              <a href={link.href} aria-current={isCurrent(link.href) ? 'page' : undefined}>
+                {link.label}
+              </a>
+            ))
+          }
           {site.demo.enabled && <a href={site.demo.href}>{site.demo.label}</a>}
           <a href="/signup/">Get started</a>
           <a href={site.signInUrl}>Sign in</a>
@@ -156,6 +162,11 @@ const isCurrent = (href: string) => current === href;
     font-weight: 700;
   }
   .menu-panel a:hover {
+    background: var(--blush-2);
+  }
+  .menu-panel a[aria-current='page'] {
+    color: var(--ink);
+    font-weight: 700;
     background: var(--blush-2);
   }
   @media (max-width: 860px) {

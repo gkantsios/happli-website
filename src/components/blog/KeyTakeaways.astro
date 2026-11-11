@@ -1,0 +1,42 @@
+---
+// The post's TL;DR box near the top, from the tldr frontmatter (optional per post).
+interface Props {
+  items: string[];
+}
+const { items } = Astro.props;
+---
+
+<aside class="takeaways" aria-labelledby="takeaways-title">
+  <p class="title" id="takeaways-title">Key takeaways</p>
+  <ul>
+    {items.map((t) => <li>{t}</li>)}
+  </ul>
+</aside>
+
+<style>
+  .takeaways {
+    margin: 0 0 28px;
+    padding: 18px 20px;
+    border-left: 4px solid var(--coral);
+    border-radius: 0 var(--radius) var(--radius) 0;
+    background: var(--blush-2);
+  }
+  .title {
+    margin: 0 0 8px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--coral-ink);
+  }
+  ul {
+    margin: 0;
+    padding-left: 20px;
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--ink);
+  }
+  li + li {
+    margin-top: 6px;
+  }
+</style>

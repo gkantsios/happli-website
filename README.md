@@ -118,6 +118,17 @@ todo: ['A claim to verify']         # optional, compare pages: never rendered
 
 Each post gets Open Graph and Twitter tags and `BreadcrumbList` structured data, plus `Article` (blog posts) or `BlogPosting` (compare posts). Blog posts can set an optional `ogImage` (a path under `public/`, falling back to `/og-default.png`), keep `description` to 155 characters, and default `author` to "Happli team". Once its section is switched on (below), a post also gets a canonical URL and an entry in the sitemap. Published blog posts go into `/blog/rss.xml` (`/rss.xml` redirects there).
 
+**Writing a blog post.** Blog posts use `src/layouts/BlogPostLayout.astro`: byline, key takeaways, a contents list built from the H2s (a sticky sidebar from 1100px wide, a collapsed "On this page" below that), About the author, related posts and the CTA band. Frontmatter on top of the shared fields:
+
+- `author`: an id from `src/content/authors.json` (defaults to `happli-team`). Each author has a name, title, one-line bio, an optional longer `bio`, a photo under `src/assets/authors/` and optional `sameAs` profile links. A `Person` author gets Person schema linked to the About the author box.
+- `reviewer` (optional): another author id, shown as "Reviewed by".
+- `tldr` (optional): 1 to 6 short strings for the Key takeaways box.
+- `faq` (optional): a list of `{ q, a }`, rendered after the body with FAQPage schema. Without it, a post has no FAQPage schema.
+- `related` (optional): up to 3 blog slugs to pin under More from the blog. Otherwise posts sharing a tag, then the newest, fill it. It's hidden while there are no other posts.
+- In an `.mdx` post, `<ProsCons pros={[...]} cons={[...]} />` (`src/components/blog/ProsCons.astro`) shows pros and cons side by side. Markdown tables get the comparison-table style.
+
+Links to other sites inside a blog post open in a new tab (`scripts/external-links.mjs`).
+
 **Switching a section on.** /blog and /compare are on in `src/config/site.ts` (`sections`). While a section is off, its pages still build and work by URL, but they're marked noindex, left out of the sitemap and the footer, and (for the blog) the RSS link is left out of the page head. Blog is in the header `nav`.
 
 ## SEO

@@ -1,0 +1,18 @@
+[
+  {
+    "id": "grant",
+    "type": "Person",
+    "name": "Grant Kantsios",
+    "title": "Founder, Happli",
+    "jobTitle": "Founder",
+    "oneLiner": "Founder of Happli, booking software for salons, spas and beauty studios.",
+    "photo": "../assets/authors/grant.jpg"
+  },
+  {
+    "id": "happli-team",
+    "type": "Organization",
+    "name": "Happli team",
+    "title": "Happli",
+    "photo": "../assets/logo-coral.png"
+  }
+]

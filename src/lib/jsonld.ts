@@ -116,14 +116,42 @@ export function blogPosting(post: {
   };
 }
 
-// Blog posts: an Article with Happli as author and publisher (compare posts keep BlogPosting above).
+// Blog authors: a Person (with a stable @id the post's About the author box carries too) or the Happli team as an
+// Organization. image: an absolute URL to a photo.
+export type SchemaAuthor = {
+  id: string;
+  type: 'Person' | 'Organization';
+  name: string;
+  jobTitle?: string;
+  image?: string;
+  sameAs?: string[];
+};
+
+export const authorSchemaId = (id: string) => `${site.url}/blog/#author-${id}`;
+
+export function author(a: SchemaAuthor) {
+  if (a.type === 'Organization') return { '@type': 'Organization', name: a.name, url: `${site.url}/` };
+  return {
+    '@type': 'Person',
+    '@id': authorSchemaId(a.id),
+    name: a.name,
+    jobTitle: a.jobTitle,
+    image: a.image,
+    worksFor: { '@id': `${site.url}/#organization` },
+    sameAs: a.sameAs && a.sameAs.length ? a.sameAs : undefined,
+  };
+}
+
+// Blog posts: an Article written by a blog author (Person or the Happli team), published by Happli
+// (compare posts keep BlogPosting above).
 export function article(post: {
   title: string;
   description: string;
   url: string;
   pubDate: Date;
   updatedDate?: Date;
-  author: string;
+  author: SchemaAuthor;
+  reviewer?: SchemaAuthor;
   image: string;
 }) {
   return {
@@ -134,7 +162,8 @@ export function article(post: {
     mainEntityOfPage: { '@type': 'WebPage', '@id': post.url },
     datePublished: post.pubDate.toISOString(),
     dateModified: (post.updatedDate ?? post.pubDate).toISOString(),
-    author: { '@type': 'Organization', name: post.author, url: `${site.url}/` },
+    author: author(post.author),
+    reviewedBy: post.reviewer ? author(post.reviewer) : undefined,
     publisher: {
       '@type': 'Organization',
       name: site.name,
