@@ -281,7 +281,7 @@ p {
 }
 /* legal pages: long inline code (e.g. the Umami opt-out command) wraps instead of widening the page on phones */
 .legal .prose code {
-  overflow-wrap: anywhere;
+  overflow-wrap: break-word;
 }
 .prose .updated {
   font-size: 16px;
