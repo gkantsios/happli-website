@@ -1,14 +1,16 @@
 ---
 import type { CollectionEntry } from 'astro:content';
 import type { PostCollection } from '../lib/posts';
-import { formatDate } from '../lib/posts';
+import { formatDate, readingMinutes } from '../lib/posts';
 
 interface Props {
   entries: CollectionEntry<PostCollection>[];
   base: string;
   empty: string;
+  /** Show each post's reading time after its date. */
+  readingTime?: boolean;
 }
-const { entries, base, empty } = Astro.props;
+const { entries, base, empty, readingTime = false } = Astro.props;
 ---
 
 {
@@ -24,7 +26,10 @@ const { entries, base, empty } = Astro.props;
               {e.data.draft && <span class="badge">Draft</span>}
             </h2>
             <p>{e.data.description}</p>
-            <time datetime={e.data.pubDate.toISOString()}>{formatDate(e.data.pubDate)}</time>
+            <p class="when">
+              <time datetime={e.data.pubDate.toISOString()}>{formatDate(e.data.pubDate)}</time>
+              {readingTime && <> · {readingMinutes(e.body)} min read</>}
+            </p>
           </a>
         </li>
       ))}
@@ -72,8 +77,7 @@ const { entries, base, empty } = Astro.props;
     margin-top: 8px;
     color: var(--ink-2);
   }
-  time {
-    display: block;
+  .when {
     margin-top: 10px;
     font-size: 13px;
     color: var(--muted);

@@ -1,7 +1,7 @@
 import rss from '@astrojs/rss';
 import type { APIContext } from 'astro';
-import { getPublished } from '../lib/posts';
-import { site } from '../config/site';
+import { getPublished } from '../../lib/posts';
+import { site } from '../../config/site';
 
 export async function GET(context: APIContext) {
   const posts = (await getPublished('blog')).filter((post) => !post.data.draft);

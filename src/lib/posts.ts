@@ -11,5 +11,9 @@ export async function getPublished<C extends PostCollection>(collection: C): Pro
   return entries.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 }
 
+/** Minutes to read a post at about 230 words a minute (link URLs not counted), never less than 1. */
+export const readingMinutes = (body: string | undefined) =>
+  Math.max(1, Math.round((body ?? '').replace(/\]\([^)]*\)/g, ']').trim().split(/\s+/).filter(Boolean).length / 230));
+
 export const formatDate = (date: Date) =>
   date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' });

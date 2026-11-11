@@ -81,9 +81,6 @@ Each compare page lists its own open items in the `todo:` frontmatter (not rende
 - [ ] Fill volume and KD in `.seo/keyword-map.csv` (marked TODO) from free sources and Search Console only ($0 paid keyword-data budget).
 - [ ] Node: the repo needs Node 22.12 or newer (`.node-version`).
 
-## After the first post
+## Blog
 
-/blog is switched off in `src/config/site.ts` (`sections`): its pages build and work by URL, but they're noindex, left out of the sitemap and footer, and the RSS link is left out of the page head. /compare is on.
-
-- [ ] Set `sections.blog` to `true` in `src/config/site.ts`, and add `{ label: 'Blog', href: '/blog/' }` to `nav` if it should be in the header.
-- [ ] Delete the draft sample in `src/content/blog/`.
+- [x] First post published, `sections.blog` on, Blog in the header and footer, the sample post deleted.

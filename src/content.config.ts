@@ -15,9 +15,16 @@ const postSchema = ({ image }: SchemaContext) =>
     heroImageAlt: z.string().optional(),
   });
 
+// Blog posts: the shared fields, with a shorter description (it is the meta description), "Happli team" as the
+// default author, and an optional share image path (public/...) that falls back to /og-default.png.
 const blog = defineCollection({
   loader: glob({ base: './src/content/blog', pattern: '**/*.{md,mdx}' }),
-  schema: postSchema,
+  schema: (ctx) =>
+    postSchema(ctx).extend({
+      description: z.string().max(155),
+      author: z.string().default('Happli team'),
+      ogImage: z.string().startsWith('/').optional(),
+    }),
 });
 
 const compare = defineCollection({

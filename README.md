@@ -116,9 +116,9 @@ todo: ['A claim to verify']         # optional, compare pages: never rendered
 
 **Drafts:** `draft: true` posts show in `npm run dev` (with a "Draft preview" badge) so you can review them. They are left out of the production build, the sitemap and the RSS feed. Set `draft: false` to publish.
 
-Each post gets Open Graph and Twitter tags and `BlogPosting` and `BreadcrumbList` structured data. Once its section is switched on (below), it also gets a canonical URL and an entry in the sitemap. Published blog posts go into `/rss.xml`.
+Each post gets Open Graph and Twitter tags and `BreadcrumbList` structured data, plus `Article` (blog posts) or `BlogPosting` (compare posts). Blog posts can set an optional `ogImage` (a path under `public/`, falling back to `/og-default.png`), keep `description` to 155 characters, and default `author` to "Happli team". Once its section is switched on (below), a post also gets a canonical URL and an entry in the sitemap. Published blog posts go into `/blog/rss.xml` (`/rss.xml` redirects there).
 
-**Switching a section on.** /blog is off in `src/config/site.ts` (`sections`) until it has published posts (/compare is on). While a section is off, its pages still build and work by URL, but they're marked noindex, left out of the sitemap and the footer, and (for the blog) the RSS link is left out of the page head. After the first post is published, set `sections.blog` (or `sections.compare`) to `true`, and add Blog to the header `nav` if you want it there.
+**Switching a section on.** /blog and /compare are on in `src/config/site.ts` (`sections`). While a section is off, its pages still build and work by URL, but they're marked noindex, left out of the sitemap and the footer, and (for the blog) the RSS link is left out of the page head. Blog is in the header `nav`.
 
 ## SEO
 
