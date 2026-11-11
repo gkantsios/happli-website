@@ -15,6 +15,13 @@ html {
     scroll-behavior: smooth;
   }
 }
+/* phones: anything scrolled into view (a jumped-to heading, a focused link) stops above the sticky
+   "Book a demo" bar (StickyCta, 71px) with room to spare */
+@media (max-width: 699.98px) {
+  html {
+    scroll-padding-bottom: calc(88px + env(safe-area-inset-bottom, 0px));
+  }
+}
 body {
   margin: 0;
   background: var(--bg);

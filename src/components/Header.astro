@@ -64,9 +64,9 @@ const isCurrent = (href: string) => current === href;
     position: sticky;
     top: 0;
     z-index: 20;
-    background: rgba(251, 250, 248, 0.86);
-    backdrop-filter: saturate(1.4) blur(14px);
-    -webkit-backdrop-filter: saturate(1.4) blur(14px);
+    /* opaque, so text scrolling under the header never ghosts through. (It used to be translucent with a
+       backdrop blur, but the CSS minifier kept only -webkit-backdrop-filter, so Chrome got no blur.) */
+    background: var(--bg);
     border-bottom: 1px solid var(--line);
   }
   .nav-in {

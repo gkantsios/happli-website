@@ -171,8 +171,12 @@ const items = headings.filter((h) => h.depth === 2);
   .toc-inline nav {
     padding: 0 16px 12px;
   }
+  /* at least 44px tall: a full touch target */
   .toc-inline li a {
-    padding: 10px 0 10px 12px;
+    display: flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 8px 0 8px 12px;
     border-left: 2px solid var(--line);
   }
   .toc-inline li a[aria-current='true'] {
