@@ -5,34 +5,40 @@ import { breadcrumbs } from '../lib/jsonld';
 import { site } from '../config/site';
 
 const title = 'Roadmap | What we are building next at Happli';
-const description = "What's coming to Happli: what we're building now, what's next and what's later. Suggest a feature anytime.";
+const description = "What's new and what's coming to Happli: what we've shipped, what we're building now and what's later. Suggest a feature anytime.";
 
 const columns = [
   {
     id: 'now',
     label: 'Now',
     items: [
-      { title: 'Booking on your own website', body: 'Clients book in a window right on your site, without leaving it.' },
-      { title: 'Deposits with Apple Pay and Google Pay', body: 'Clients pay their deposit in a tap, right on the booking page.' },
-      { title: 'Google Business Profile connect', body: 'Connect your Google listing to Happli in a few clicks.' },
-    ],
-  },
-  {
-    id: 'next',
-    label: 'Next',
-    items: [
-      { title: 'Memberships', body: 'Monthly plans that bill automatically and keep regulars coming back.' },
-      { title: 'Rewards and referrals', body: 'Thank loyal clients and reward the ones who bring friends.' },
-      { title: 'Square payments', body: "Take payments through Square if that's what you already use." },
+      { title: 'Memberships', body: 'Monthly plans that bill automatically, with member perks at checkout. Turning on studio by studio.' },
+      { title: 'Square payments', body: 'Use your own Square account for payments, starting with in-person card readers.' },
+      { title: 'In-person card readers', body: 'Take card payments at the front desk with a card reader.' },
+      { title: 'Approval for online bookings, service by service', body: 'Choose which services need your OK before an online booking is confirmed.' },
     ],
   },
   {
     id: 'later',
     label: 'Later',
     items: [
+      { title: 'Referrals', body: 'Reward clients who bring in friends.' },
       { title: 'AI COO chat', body: 'Ask about your business and get a simple plan for the day.' },
       { title: 'A texting number for each studio', body: 'Your own number for client texts, so replies come straight to you.' },
       { title: 'Edit your website in Happli', body: 'Update your studio site from the same place you run your day.' },
+    ],
+  },
+  {
+    id: 'shipped',
+    label: 'Shipped',
+    note: 'Live in Happli',
+    items: [
+      { title: 'Booking on your own website', body: 'Clients book in a window right on your site, without leaving it.' },
+      { title: 'Deposits with Apple Pay and Google Pay', body: 'Clients pay their deposit in a tap, right on the booking page.' },
+      { title: 'Google Business Profile connect', body: 'Connect your Google listing to Happli in a few clicks.' },
+      { title: 'Rewards', body: 'Clients earn points or punches for visits and redeem them at checkout.' },
+      { title: 'Inventory and retail products', body: 'Keep track of the products you sell and how many you have in stock.' },
+      { title: 'Client source and revenue by source', body: 'See where each client came from and which sources bring in the most revenue.' },
     ],
   },
 ];
@@ -47,7 +53,7 @@ const mailto = `mailto:${site.contactEmail}?subject=${encodeURIComponent('Featur
   <PageIntro
     eyebrow="Roadmap"
     title="What we're building."
-    lede="A quick look at what's on the way. Tell us what would help your studio most."
+    lede="What we're building now, what's later and what's already live. Tell us what would help your studio most."
     cta={false}
   />
   <div class="wrap">
@@ -56,6 +62,7 @@ const mailto = `mailto:${site.contactEmail}?subject=${encodeURIComponent('Featur
         columns.map((c) => (
           <section class="col" aria-labelledby={`rm-${c.id}`}>
             <h2 id={`rm-${c.id}`}><span class:list={['dot', c.id]} aria-hidden="true"></span>{c.label}</h2>
+            {c.note && <p class="col-note">{c.note}</p>}
             <ul>
               {c.items.map((i) => (
                 <li>
@@ -81,6 +88,7 @@ const mailto = `mailto:${site.contactEmail}?subject=${encodeURIComponent('Featur
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 24px;
+    align-items: start;
   }
   .col {
     padding: 28px;
@@ -100,11 +108,16 @@ const mailto = `mailto:${site.contactEmail}?subject=${encodeURIComponent('Featur
     border-radius: 50%;
     background: var(--coral);
   }
-  .dot.next {
+  .dot.later {
     background: var(--ap-sand-edge);
   }
-  .dot.later {
+  .dot.shipped {
     background: var(--ap-sage-edge);
+  }
+  .col-note {
+    margin-top: 4px;
+    font-size: 15px;
+    color: var(--muted);
   }
   ul {
     list-style: none;

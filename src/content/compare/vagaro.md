@@ -25,7 +25,7 @@ Vagaro is a general-purpose booking platform for salons, spas and other business
 | Free trial | Free until you go live, up to 30 days | 30 days, without email marketing, text marketing or the branded app[^v-price] |
 | Online booking | Yes, booking pages that plug into your existing website | Included in every plan, also on Instagram, Facebook and Apple Maps[^v-price] |
 | Reminders | Yes, text, email or both, with your own wording | Unlimited notifications and appointment reminders included; text marketing is an add-on from $20/month[^v-price] |
-| Packages | Yes, prepaid session packages, plus gift cards (memberships coming soon) | Memberships, packages and gift certificates included[^v-price] |
+| Packages | Yes, prepaid session packages, plus gift cards (memberships rolling out) | Memberships, packages and gift certificates included[^v-price] |
 | Waitlist | Yes, with match alerts and gap offers you approve | Customer waitlist options included[^v-price] |
 | Client marketplace | No | Free Marketplace listing[^v-price] |
 | Payment processing | Your own Stripe account at Stripe's standard rate, no Happli markup | Rates not stated on its pricing page[^v-price] |
