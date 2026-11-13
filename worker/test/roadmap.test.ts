@@ -54,6 +54,19 @@ test('Live is grouped under short headings and keeps the six earlier cards', () 
   assert.equal(new Set(live.cards).size, live.cards.length, 'a Live card is listed twice');
 });
 
+test('Live shows its first group and folds the rest behind a closed "Show all" button', () => {
+  const live = html.match(/<section class="col"[^>]*aria-labelledby="rm-live"[^>]*>([\s\S]*?)<\/section>/)?.[1] ?? '';
+  const details = live.match(/<details class="more"[^>]*>/)?.[0];
+  assert.ok(details, 'Live has no expand control');
+  assert.doesNotMatch(details, /\sopen\b/, 'Live starts expanded');
+  const [before, after] = live.split(details);
+  assert.deepEqual([...before.matchAll(/<h3 class="group"[^>]*>([^<]*)</g)].map((m) => m[1]), ['Booking']);
+  assert.match(after, /Show all 44 live features/);
+  assert.match(after, /Show fewer/);
+  // The faded preview is hidden from screen readers and isn't counted as a card.
+  assert.match(after, /<div class="peek" aria-hidden="true"/);
+});
+
 test('In progress and Later have their cards', () => {
   const [, progress, later] = columns();
   assert.deepEqual(progress.cards, [

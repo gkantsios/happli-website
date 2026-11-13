@@ -9,10 +9,12 @@ const description = "What's live in Happli, what's in progress and what's later.
 
 // Each column is a list of groups. Live groups its cards under short headings; the other columns have one unheaded group.
 type Group = { heading?: string; items: { title: string; body: string }[] };
-const columns: { id: string; label: string; groups: Group[] }[] = [
+// A column with `collapse` shows only its first group until the visitor opens the rest.
+const columns: { id: string; label: string; collapse?: boolean; groups: Group[] }[] = [
   {
     id: 'live',
     label: 'Live',
+    collapse: true,
     groups: [
       {
         heading: 'Booking',
@@ -145,7 +147,7 @@ const mailto = `mailto:${site.contactEmail}?subject=${encodeURIComponent('Featur
         columns.map((c) => (
           <section class="col" aria-labelledby={`rm-${c.id}`}>
             <h2 id={`rm-${c.id}`}><span class:list={['dot', c.id]} aria-hidden="true"></span>{c.label}</h2>
-            {c.groups.map((g) => {
+            {(c.collapse ? c.groups.slice(0, 1) : c.groups).map((g) => {
               // Under a group heading (h3) the card titles are h4; otherwise they're h3.
               const Title = g.heading ? 'h4' : 'h3';
               return (
@@ -162,6 +164,37 @@ const mailto = `mailto:${site.contactEmail}?subject=${encodeURIComponent('Featur
                 </>
               );
             })}
+            {c.collapse && (
+              <details class="more">
+                <summary>
+                  {/* A faded preview of the next group; the real cards are below, so screen readers skip it. */}
+                  <div class="peek" aria-hidden="true">
+                    <p class="group">{c.groups[1].heading}</p>
+                    <div class="peek-card">
+                      <p class="card-title">{c.groups[1].items[0].title}</p>
+                      <p>{c.groups[1].items[0].body}</p>
+                    </div>
+                  </div>
+                  <span class="btn btn-ghost">
+                    <span class="when-closed">Show all {c.groups.reduce((n, g) => n + g.items.length, 0)} live features</span>
+                    <span class="when-open">Show fewer</span>
+                  </span>
+                </summary>
+                {c.groups.slice(1).map((g) => (
+                  <>
+                    <h3 class="group">{g.heading}</h3>
+                    <ul>
+                      {g.items.map((i) => (
+                        <li>
+                          <h4 class="card-title">{i.title}</h4>
+                          <p>{i.body}</p>
+                        </li>
+                      ))}
+                    </ul>
+                  </>
+                ))}
+              </details>
+            )}
           </section>
         ))
       }
@@ -217,6 +250,46 @@ const mailto = `mailto:${site.contactEmail}?subject=${encodeURIComponent('Featur
   .group + ul {
     margin-top: 12px;
   }
+  /* Live: the rest of the groups open from a button under a faded preview */
+  .more summary {
+    display: block;
+    list-style: none;
+    cursor: pointer;
+    border-radius: var(--radius);
+  }
+  .more summary::-webkit-details-marker {
+    display: none;
+  }
+  .peek {
+    position: relative;
+    max-height: 150px;
+    overflow: hidden;
+  }
+  .peek::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, rgba(251, 241, 236, 0), var(--blush-2) 80%);
+  }
+  .peek-card {
+    margin-top: 12px;
+    padding: 18px 20px;
+    border-radius: var(--radius);
+    background: var(--surface);
+    border: 1px solid var(--line);
+  }
+  .more summary .btn {
+    margin-top: 4px;
+    width: 100%;
+  }
+  .more[open] .peek,
+  .more[open] .when-closed,
+  .more:not([open]) .when-open {
+    display: none;
+  }
+  .more[open] summary .btn {
+    margin-top: 16px;
+  }
   ul {
     list-style: none;
     margin: 20px 0 0;
@@ -236,7 +309,8 @@ const mailto = `mailto:${site.contactEmail}?subject=${encodeURIComponent('Featur
     font-weight: 700;
     line-height: 1.35;
   }
-  li p {
+  li p,
+  .peek-card p:not(.card-title) {
     margin-top: 6px;
     font-size: 16px;
     color: var(--ink-2);
