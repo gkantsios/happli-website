@@ -40,7 +40,7 @@ test('the columns are Live, In progress and Later, in that order', () => {
 test('Live is grouped under short headings and keeps the six earlier cards', () => {
   const live = columns()[0];
   assert.deepEqual(live.groups, ['Booking', 'Calendar and front desk', 'Payments', 'Clients', 'Forms and messages', 'Reports and marketing', 'Team and studio']);
-  assert.equal(live.cards.length, 44);
+  assert.equal(live.cards.length, 43);
   for (const title of [
     'Booking on your own website',
     'Deposits with Apple Pay and Google Pay',
@@ -61,7 +61,7 @@ test('Live shows its first group and folds the rest behind a closed "Show all" b
   assert.doesNotMatch(details, /\sopen\b/, 'Live starts expanded');
   const [before, after] = live.split(details);
   assert.deepEqual([...before.matchAll(/<h3 class="group"[^>]*>([^<]*)</g)].map((m) => m[1]), ['Booking']);
-  assert.match(after, /Show all 44 live features/);
+  assert.match(after, /Show all 43 live features/);
   assert.match(after, /Show fewer/);
   // The faded preview is hidden from screen readers and isn't counted as a card.
   assert.match(after, /<div class="peek" aria-hidden="true"/);
@@ -75,6 +75,7 @@ test('In progress and Later have their cards', () => {
     'In-person card readers',
     'Approval for online bookings, service by service',
     'Website chat assistant',
+    'Ask your reports',
   ]);
   assert.deepEqual(later.cards, ['Referrals', 'AI COO chat', 'A texting number for each studio', 'Edit your website in Happli']);
 });
