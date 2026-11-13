@@ -10,7 +10,7 @@ Happli is made by Happy Industries, Inc. dba Happli (Charlotte, North Carolina).
 - [Pricing](https://gohappli.com/pricing/): one plan with every feature and a website included, launch pricing, +$10/mo per extra team member, no setup fee, no contracts
 - [Spray tan studio software](https://gohappli.com/spray-tan-studio-software/): how Happli fits spray tan studios and mobile spray tan artists
 - [Happli on your phone](https://gohappli.com/phone/): running the day from a phone browser
-- [Roadmap](https://gohappli.com/roadmap/): what's shipped, what's being built now and what's later
+- [Roadmap](https://gohappli.com/roadmap/): what's live, what's in progress and what's later
 
 ## Comparisons
 
