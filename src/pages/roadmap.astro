@@ -5,40 +5,123 @@ import { breadcrumbs } from '../lib/jsonld';
 import { site } from '../config/site';
 
 const title = 'Roadmap | What we are building next at Happli';
-const description = "What's new and what's coming to Happli: what we've shipped, what we're building now and what's later. Suggest a feature anytime.";
+const description = "What's live in Happli, what's in progress and what's later. Suggest a feature anytime.";
 
-const columns = [
+// Each column is a list of groups. Live groups its cards under short headings; the other columns have one unheaded group.
+type Group = { heading?: string; items: { title: string; body: string }[] };
+const columns: { id: string; label: string; groups: Group[] }[] = [
   {
-    id: 'now',
-    label: 'Now',
-    items: [
-      { title: 'Memberships', body: 'Monthly plans that bill automatically, with member perks at checkout. Turning on studio by studio.' },
-      { title: 'Square payments', body: 'Use your own Square account for payments, starting with in-person card readers.' },
-      { title: 'In-person card readers', body: 'Take card payments at the front desk with a card reader.' },
-      { title: 'Approval for online bookings, service by service', body: 'Choose which services need your OK before an online booking is confirmed.' },
+    id: 'live',
+    label: 'Live',
+    groups: [
+      {
+        heading: 'Booking',
+        items: [
+          { title: 'Online booking page', body: 'A public page for each location that you can share as a link or embed on your website.' },
+          { title: 'Booking on your own website', body: 'Clients book in a window right on your site, without leaving it.' },
+          { title: 'Phone-friendly calendar', body: 'Clients pick a day and an open time. A slot is held while they finish booking.' },
+          { title: 'Booking rules', body: 'Set the minimum notice, how far ahead clients can book, and your cancellation window.' },
+          { title: 'Hours and closures', body: "Set each team member's working hours and add closed days. Closed days disappear from the booking page." },
+          { title: 'Add-ons at booking', body: 'Clients can add optional extras when they book.' },
+          { title: 'Deposits at booking', body: 'Require a deposit, as a percentage of the service, for online bookings, bookings by your team, or both.' },
+        ],
+      },
+      {
+        heading: 'Calendar and front desk',
+        items: [
+          { title: 'Day and week views', body: 'See each team member in their own column, or everyone at once.' },
+          { title: 'One appointment panel', body: 'Confirm, check out, reschedule, cancel, or mark a no-show, with notes.' },
+          { title: 'Reschedule with confidence', body: 'Drag to a new time or pick a new slot, then confirm before anything moves.' },
+          { title: 'Block time', body: 'Hold breaks, training, or personal time on the calendar.' },
+          { title: 'New or existing clients', body: 'Search by name or phone, add a new client, or book a walk-in.' },
+          { title: 'Needs you list', body: 'Open gaps, waitlist matches, and drafts waiting for your approval, in one spot.' },
+          { title: 'Check your day from your phone', body: 'A phone-sized view of the calendar and Needs you.' },
+        ],
+      },
+      {
+        heading: 'Payments',
+        items: [
+          { title: 'Stripe Connect', body: 'Connect your own Stripe account from Settings. Charges go to your account, and Happli takes no fee.' },
+          { title: 'Card checkout, cash, tips, and tax', body: 'Take a card, mark cash or other payments as paid, offer tip amounts you choose, and add sales tax at your rate.' },
+          { title: 'Deposits with Apple Pay and Google Pay', body: 'Clients pay their deposit in a tap, right on the booking page.' },
+          { title: 'No-show fees', body: 'Charge a percentage of the service through a secure payment link.' },
+          { title: 'Refunds', body: 'Issue a refund from the appointment.' },
+          { title: 'Gift cards', body: 'Sell gift cards online or at the desk, and redeem them at checkout.' },
+          { title: 'Prepaid packages', body: 'Create packages of sessions, sell them, and see what each client has left.' },
+          { title: 'Inventory and retail products', body: 'Keep track of the products you sell and how many you have in stock.' },
+          { title: 'Professional supplies', body: 'Track the supplies each service uses. They come out of stock when the visit is completed.' },
+        ],
+      },
+      {
+        heading: 'Clients',
+        items: [
+          { title: 'Client list and history', body: 'Search clients, keep notes, and see visits, no-shows, and spend.' },
+          { title: 'Rewards', body: 'Clients earn points or punches for visits and redeem them at checkout.' },
+          { title: 'Opt-outs respected', body: 'Clients who reply STOP do not get texts.' },
+          { title: 'Switch from another system', body: 'Import clients, services, team, and appointments from a CSV, with a preview and a start date for reminders.' },
+        ],
+      },
+      {
+        heading: 'Forms and messages',
+        items: [
+          { title: 'Online forms and waivers', body: 'Build intake forms and waivers, send them to clients, and review what they signed.' },
+          { title: 'Form import', body: 'Upload a Word or PDF form, and Happli turns it into an online form for you to review before you save it.' },
+          { title: 'Automatic messages', body: 'Booking confirmed, reminders, moved or canceled, thank-you after the visit, and time to come back.' },
+          { title: 'Text, email, or both', body: 'Choose the channel for each message. Quiet hours hold reminder texts until your window opens.' },
+          { title: 'Edit the wording', body: "Preview a message, send yourself a test, or go back to Happli's wording. Add custom messages such as prep instructions." },
+          { title: 'Messages you approve', body: 'Personal notes, gap offers, and on-my-way texts send only after you approve them.' },
+          { title: 'Waitlist and gap offers', body: 'Add clients to a waitlist, optionally let them join from the booking page, and send a gap-offer text you approve first.' },
+        ],
+      },
+      {
+        heading: 'Reports and marketing',
+        items: [
+          { title: 'Studio reports', body: 'Money collected, tips, deposits, no-show fees, package and gift card sales, refunds, visits, and results by team, service, and location, with CSV export.' },
+          { title: 'Product sales report', body: 'See retail product sales in Reports.' },
+          { title: 'Client source and revenue by source', body: 'See where each client came from and which sources bring in the most revenue.' },
+          { title: 'Ask your reports', body: 'Type a question on the Reports page and get an answer from your real numbers.' },
+          { title: 'Review request texts', body: 'Happli drafts a short text asking happy clients for a Google review. It sends only after you approve it.' },
+          { title: 'Google Business Profile connect', body: 'Connect your Google listing to Happli in a few clicks.' },
+        ],
+      },
+      {
+        heading: 'Team and studio',
+        items: [
+          { title: 'Locations', body: 'Studio or mobile locations, each with its own booking page.' },
+          { title: 'Team', body: 'Who works where, which services each person offers, and their hours.' },
+          { title: 'Profile and brand voice', body: 'Your business details and how your studio sounds, with a live preview.' },
+          { title: 'Quick search', body: 'Jump to any setting with Cmd+K on Mac or Ctrl+K on Windows.' },
+        ],
+      },
+    ],
+  },
+  {
+    id: 'progress',
+    label: 'In progress',
+    groups: [
+      {
+        items: [
+          { title: 'Memberships', body: 'Monthly plans that bill automatically, with member perks at checkout. Turning on studio by studio.' },
+          { title: 'Square payments', body: 'Use your own Square account for payments, starting with in-person card readers.' },
+          { title: 'In-person card readers', body: 'Take card payments at the front desk with a card reader.' },
+          { title: 'Approval for online bookings, service by service', body: 'Choose which services need your OK before an online booking is confirmed.' },
+          { title: 'Website chat assistant', body: "A chat bubble for your website that answers questions from your studio's information and can capture leads. Early access; ask us to turn it on." },
+        ],
+      },
     ],
   },
   {
     id: 'later',
     label: 'Later',
-    items: [
-      { title: 'Referrals', body: 'Reward clients who bring in friends.' },
-      { title: 'AI COO chat', body: 'Ask about your business and get a simple plan for the day.' },
-      { title: 'A texting number for each studio', body: 'Your own number for client texts, so replies come straight to you.' },
-      { title: 'Edit your website in Happli', body: 'Update your studio site from the same place you run your day.' },
-    ],
-  },
-  {
-    id: 'shipped',
-    label: 'Shipped',
-    note: 'Live in Happli',
-    items: [
-      { title: 'Booking on your own website', body: 'Clients book in a window right on your site, without leaving it.' },
-      { title: 'Deposits with Apple Pay and Google Pay', body: 'Clients pay their deposit in a tap, right on the booking page.' },
-      { title: 'Google Business Profile connect', body: 'Connect your Google listing to Happli in a few clicks.' },
-      { title: 'Rewards', body: 'Clients earn points or punches for visits and redeem them at checkout.' },
-      { title: 'Inventory and retail products', body: 'Keep track of the products you sell and how many you have in stock.' },
-      { title: 'Client source and revenue by source', body: 'See where each client came from and which sources bring in the most revenue.' },
+    groups: [
+      {
+        items: [
+          { title: 'Referrals', body: 'Reward clients who bring in friends.' },
+          { title: 'AI COO chat', body: 'Ask about your business and get a simple plan for the day.' },
+          { title: 'A texting number for each studio', body: 'Your own number for client texts, so replies come straight to you.' },
+          { title: 'Edit your website in Happli', body: 'Update your studio site from the same place you run your day.' },
+        ],
+      },
     ],
   },
 ];
@@ -53,7 +136,7 @@ const mailto = `mailto:${site.contactEmail}?subject=${encodeURIComponent('Featur
   <PageIntro
     eyebrow="Roadmap"
     title="What we're building."
-    lede="What we're building now, what's later and what's already live. Tell us what would help your studio most."
+    lede="What's live, what's in progress and what's later. Tell us what would help your studio most."
     cta={false}
   />
   <div class="wrap">
@@ -62,15 +145,23 @@ const mailto = `mailto:${site.contactEmail}?subject=${encodeURIComponent('Featur
         columns.map((c) => (
           <section class="col" aria-labelledby={`rm-${c.id}`}>
             <h2 id={`rm-${c.id}`}><span class:list={['dot', c.id]} aria-hidden="true"></span>{c.label}</h2>
-            {c.note && <p class="col-note">{c.note}</p>}
-            <ul>
-              {c.items.map((i) => (
-                <li>
-                  <h3>{i.title}</h3>
-                  <p>{i.body}</p>
-                </li>
-              ))}
-            </ul>
+            {c.groups.map((g) => {
+              // Under a group heading (h3) the card titles are h4; otherwise they're h3.
+              const Title = g.heading ? 'h4' : 'h3';
+              return (
+                <>
+                  {g.heading && <h3 class="group">{g.heading}</h3>}
+                  <ul>
+                    {g.items.map((i) => (
+                      <li>
+                        <Title class="card-title">{i.title}</Title>
+                        <p>{i.body}</p>
+                      </li>
+                    ))}
+                  </ul>
+                </>
+              );
+            })}
           </section>
         ))
       }
@@ -108,16 +199,23 @@ const mailto = `mailto:${site.contactEmail}?subject=${encodeURIComponent('Featur
     border-radius: 50%;
     background: var(--coral);
   }
+  .dot.live {
+    background: var(--ap-sage-edge);
+  }
   .dot.later {
     background: var(--ap-sand-edge);
   }
-  .dot.shipped {
-    background: var(--ap-sage-edge);
-  }
-  .col-note {
-    margin-top: 4px;
-    font-size: 15px;
+  .group {
+    margin-top: 28px;
+    font-family: var(--sans);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
     color: var(--muted);
+  }
+  .group + ul {
+    margin-top: 12px;
   }
   ul {
     list-style: none;
@@ -132,7 +230,7 @@ const mailto = `mailto:${site.contactEmail}?subject=${encodeURIComponent('Featur
     background: var(--surface);
     border: 1px solid var(--line);
   }
-  h3 {
+  .card-title {
     font-family: var(--sans);
     font-size: 17px;
     font-weight: 700;
