@@ -14,6 +14,7 @@ import { site } from '../../src/config/site.ts';
 const root = new URL('../../', import.meta.url).pathname;
 const pages: Record<string, string> = {};
 let allHtml = '';
+let sitemap = '';
 const built: { file: string; html: string }[] = [];
 
 const htmlFiles = (dir: string): string[] =>
@@ -31,6 +32,7 @@ before(() => {
     for (const page of ['pricing', 'signup']) pages[page] = readFileSync(join(out, page, 'index.html'), 'utf8');
     for (const f of htmlFiles(out)) built.push({ file: f.slice(out.length), html: readFileSync(f, 'utf8') });
     allHtml = built.map((b) => b.html).join('\n');
+    sitemap = readdirSync(out).filter((f) => f.startsWith('sitemap')).map((f) => readFileSync(join(out, f), 'utf8')).join('\n');
   } finally {
     rmSync(out, { recursive: true, force: true });
   }
@@ -104,6 +106,25 @@ test('forms post only to this site', () => {
     const action = f.tag.match(/\baction="([^"]*)"/)?.[1] ?? '';
     assert.match(action, /^\/(?!\/)/, `${f.file}: ${f.tag}`);
   }
+});
+
+test('frames load only from Turnstile, Google Tag Manager or the Vimeo player, and Vimeo only on /thanks/', () => {
+  for (const { file, html } of built) {
+    for (const m of html.matchAll(/<iframe\b[^>]*\bsrc="([^"]*)"/g)) {
+      assert.match(m[1], /^https:\/\/(challenges\.cloudflare\.com|www\.googletagmanager\.com|player\.vimeo\.com)\//, `${file}: ${m[1]}`);
+      if (m[1].startsWith('https://player.vimeo.com/')) assert.equal(file, '/thanks/index.html', `${file}: ${m[1]}`);
+    }
+  }
+});
+
+test('/thanks/ stays hidden: noindex, not linked from any page and not in the sitemap', () => {
+  const thanks = built.find((b) => b.file === '/thanks/index.html');
+  assert.ok(thanks, '/thanks/ was not built');
+  assert.match(thanks.html, /<meta name="robots" content="noindex">/);
+  assert.match(thanks.html, /src="https:\/\/player\.vimeo\.com\/video\/1247337676\?/);
+  assert.doesNotMatch(allHtml, /href="(https:\/\/(www\.)?gohappli\.com)?\/thanks\/?"/);
+  assert.match(sitemap, /\/roadmap\//, 'the sitemap was not read');
+  assert.doesNotMatch(sitemap, /\/thanks/);
 });
 
 test('scripts load only from this site, Cloudflare Turnstile or our Umami analytics', () => {

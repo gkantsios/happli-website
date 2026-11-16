@@ -21,9 +21,9 @@ export default defineConfig({
   integrations: [
     mdx(),
     sitemap({
-      // Drafts are never built, so they never reach the sitemap. The 404 page and switched-off
-      // sections are excluded too.
-      filter: (page) => !page.includes('/404') && !hiddenPaths.some((path) => new URL(page).pathname.startsWith(path)),
+      // Drafts are never built, so they never reach the sitemap. The 404 page, the hidden /thanks/
+      // video page and switched-off sections are excluded too.
+      filter: (page) => !page.includes('/404') && !page.includes('/thanks') && !hiddenPaths.some((path) => new URL(page).pathname.startsWith(path)),
     }),
   ],
 });

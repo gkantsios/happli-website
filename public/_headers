@@ -8,11 +8,13 @@
 # - Google Tag Manager (GTM-T3TTM9JP) and the GA4 tag configured inside it: gtm.js and gtag.js from
 #   https://www.googletagmanager.com (plus its noscript iframe), hits sent to www.google-analytics.com
 #   and region1.google-analytics.com. GTM "Custom HTML" tags need inline script and are blocked.
+# - Vimeo: the video player iframe from https://player.vimeo.com on the hidden /thanks/ page. Vimeo's
+#   player.js isn't loaded, so no Vimeo script runs on the site.
 # No other third-party scripts, styles, fonts, frames or trackers.
 # style-src allows inline styles: Astro inlines the page CSS and a few components set style="".
 # font-src allows data: because the build inlines the smallest font subsets into that CSS.
 /*
-  Content-Security-Policy: default-src 'self'; script-src 'self' https://challenges.cloudflare.com https://umami-production-42bf.up.railway.app https://www.googletagmanager.com {{INLINE_SCRIPT_HASHES}}; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://www.googletagmanager.com https://www.google-analytics.com https://region1.google-analytics.com; font-src 'self' data:; connect-src 'self' https://umami-production-42bf.up.railway.app https://www.googletagmanager.com https://www.google-analytics.com https://region1.google-analytics.com; manifest-src 'self'; frame-src https://challenges.cloudflare.com https://www.googletagmanager.com; frame-ancestors 'none'; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests
+  Content-Security-Policy: default-src 'self'; script-src 'self' https://challenges.cloudflare.com https://umami-production-42bf.up.railway.app https://www.googletagmanager.com {{INLINE_SCRIPT_HASHES}}; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://www.googletagmanager.com https://www.google-analytics.com https://region1.google-analytics.com; font-src 'self' data:; connect-src 'self' https://umami-production-42bf.up.railway.app https://www.googletagmanager.com https://www.google-analytics.com https://region1.google-analytics.com; manifest-src 'self'; frame-src https://challenges.cloudflare.com https://www.googletagmanager.com https://player.vimeo.com; frame-ancestors 'none'; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests
   X-Content-Type-Options: nosniff
   X-Frame-Options: DENY
   Referrer-Policy: strict-origin-when-cross-origin
