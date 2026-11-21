@@ -19,6 +19,7 @@ GlossGenius has three tiers, and its Gold plan covers up to 9 staff for one flat
 | How it scales | +$10/month for each extra person who takes bookings; front desk and admin logins are free[^happli] | Gold covers up to 9 staff[^gg] |
 | Solo / team of 3 / team of 5 | $52 / $72 / $92 a month[^happli] | Standard $28; Gold $56 / $56 a month[^gg] |
 | Card rates | Your own Stripe account at Stripe's standard 2.9% + 30¢; Happli takes no cut[^stripe] | 2.4% + $0.15 in person; 3.4% + $0.15 card on file or online[^gg] |
+| Website | Built for you by our team at gohappybeauty, kept in sync with Happli, and included[^happli] | A booking website builder on every plan, with templates you customize. Not built for you[^gg][^gg-site] |
 | Forms | Forms and waivers included, with AI form import you review[^happli] | Forms and waitlist start on Gold[^gg] |
 
 The monthly totals use the rules on the [compare page](/compare-v2/): bookable people only, one location, billed monthly in US dollars, software only. Solo uses Standard; teams use Gold.
@@ -37,6 +38,7 @@ Happli has one plan with everything in it. At launch pricing it's $52 a month ($
 
 ## Where Happli is different
 
+- **A website built for you.** Our team at gohappybeauty builds it, it stays in sync with Happli, and it's included in the plan.[^happli]
 - **The Needs you list.** What needs a decision today sits in one short list, and nothing drafted by AI goes to a client until you approve it.[^happli]
 - **A day book built for your phone**, so you can run the day between appointments.[^happli]
 - **Forms on every plan.** Forms and waivers are included, and AI imports your existing form for you to review.[^happli]
@@ -56,5 +58,6 @@ Choose Happli if you want an approval step before anything goes to a client, a d
 Each numbered marker above points to one of these. Competitor sources were checked on Nov 21, 2026.
 
 [^gg]: GlossGenius pricing page, [glossgenius.com/pricing](https://glossgenius.com/pricing), checked Nov 21, 2026.
+[^gg-site]: GlossGenius website builder, [glossgenius.com/custom-website-builder](https://glossgenius.com/custom-website-builder), checked Nov 21, 2026.
 [^stripe]: Stripe pricing page, [stripe.com/pricing](https://stripe.com/pricing), checked Nov 21, 2026.
 [^happli]: Happli [features](/features/) and [pricing](/pricing/).

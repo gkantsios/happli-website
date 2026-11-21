@@ -18,6 +18,7 @@ Fresha has the cheapest plan in our chart for one person, a price per team membe
 | Plans | One plan: $52/month launch price ($44/month billed yearly)[^happli] | Independent $19.95/month; Team $14.95/month per bookable member[^fr] |
 | How it scales | +$10/month for each extra person who takes bookings; front desk and admin logins are free[^happli] | $14.95/month for each bookable team member[^fr] |
 | Solo / team of 3 / team of 5 | $52 / $72 / $92 a month[^happli] | $19.95 / $44.85 / $74.75 a month[^fr] |
+| Website | Built for you by our team at gohappybeauty, kept in sync with Happli, and included[^happli] | Direct booking links are free; a professional site is the Smart Website add-on, $15.95/month, a builder that updates from your Fresha account. Not built for you[^fr][^fr-site] |
 | New clients from a marketplace | No marketplace | 20% one-time fee per new client, $6 minimum[^fr] |
 | Card rates | Your own Stripe account at Stripe's standard 2.9% + 30¢; Happli takes no cut[^stripe] | 2.79% + $0.20 online; 2.29% + $0.20 in person[^fr] |
 
@@ -37,6 +38,7 @@ Happli has one plan with everything in it. At launch pricing it's $52 a month ($
 
 ## Where Happli is different
 
+- **A website built for you.** Our team at gohappybeauty builds it, it stays in sync with Happli, and it's included in the plan.[^happli]
 - **The Needs you list.** What needs a decision today sits in one short list, and nothing drafted by AI goes to a client until you approve it.[^happli]
 - **A day book built for your phone**, so you can run the day between appointments.[^happli]
 - **One plan, nothing to add on.** Deposits, checkout, tips, no-show links, gift cards and packages; reminders in your own wording; forms and waivers, with AI that imports your existing form for you to review; review-request texts; and a website.[^happli]
@@ -56,5 +58,6 @@ Choose Happli if you want an approval step before anything goes to a client, a d
 Each numbered marker above points to one of these. Competitor sources were checked on Nov 21, 2026.
 
 [^fr]: Fresha pricing page, [fresha.com/pricing](https://www.fresha.com/pricing), checked Nov 21, 2026.
+[^fr-site]: Fresha Smart Website help, [fresha.com/help-center/…/launch-your-website](https://www.fresha.com/help-center/knowledge-base/online-presence/109897-launch-your-website), checked Nov 21, 2026.
 [^stripe]: Stripe pricing page, [stripe.com/pricing](https://stripe.com/pricing), checked Nov 21, 2026.
 [^happli]: Happli [features](/features/) and [pricing](/pricing/).

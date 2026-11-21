@@ -6,50 +6,58 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import SectionHead from '../../components/sections/SectionHead.astro';
 import CtaBand from '../../components/sections/CtaBand.astro';
 import PriceChart from '../../components/compare-v2/PriceChart.astro';
+import IncludedMatrix from '../../components/compare-v2/IncludedMatrix.astro';
 import '../../styles/compare-v2.css';
 import { site } from '../../config/site';
 import { breadcrumbs } from '../../lib/jsonld';
-import { checked, chartRows, formatCents, platforms, stripeRate, v2Base } from '../../config/compare-v2';
+import { chartNotes, checked, chartRows, formatCents, modes, platforms, stripeRate, v2Base } from '../../config/compare-v2';
 
 const priceOf = (slug: string, people: number) => formatCents(chartRows(people).find((r) => r.slug === slug)!.cents);
 const sizeLabel = (n: number) => (n === 1 ? 'Solo' : `Team of ${n}`);
 
-// One card per platform: an honest blurb with one thing they do better, and one number side by side.
-const cards: Array<{ slug: string; blurb: string; better: string; people: number }> = [
+// One card per platform: an honest blurb with one thing they do better, one calm sourced line on where Happli is
+// different, and one number side by side.
+const cards: Array<{ slug: string; blurb: string; better: string; diff: string; people: number }> = [
   {
     slug: 'square',
     blurb: 'One price per location with unlimited staff calendars, so the bill stays the same as the team grows.',
     better: 'A Free plan at $0, and Plus costs less than Happli at every team size.',
+    diff: 'A website built for you, rather than one you set up from templates.',
     people: 5,
   },
   {
     slug: 'glossgenius',
     blurb: 'Gold is one flat monthly price for up to 9 staff, with forms and waitlist included.',
     better: 'Its in-person card rate, 2.4% + $0.15, is lower than Stripe’s 2.9% + 30¢.',
+    diff: 'A website built for you, rather than a builder you set up.',
     people: 3,
   },
   {
     slug: 'vagaro',
     blurb: 'A low intro rate for 6 months, then $30, plus $10 per extra bookable calendar. Forms, website and text marketing are paid add-ons.',
     better: 'The lowest price here for a team of 3 while the intro rate lasts.',
+    diff: 'Forms and a website built for you are in the plan, not add-ons.',
     people: 3,
   },
   {
     slug: 'fresha',
     blurb: 'A one-person plan, or a price per bookable team member. Clients who find you on its marketplace cost 20% one time ($6 minimum).',
     better: 'The cheapest plan here for one person, and a marketplace that can send you new clients.',
+    diff: 'A website built for you, and no Happli fee on what clients pay.',
     people: 1,
   },
   {
     slug: 'mangomint',
     blurb: 'A price per location plus $10 per user. Deposits and cards on file need Mangomint’s own payments.',
     better: 'Its in-person card rate, 2.45% + 15¢, is lower than Stripe’s 2.9% + 30¢.',
+    diff: 'A website built for you; Mangomint adds booking to a site you already have.',
     people: 3,
   },
   {
     slug: 'boulevard',
     blurb: 'Essentials is one price for one location and up to 5 providers, with higher Premier and Prestige tiers above it.',
     better: 'One flat price that doesn’t change from 1 to 5 providers.',
+    diff: 'A website built for you; Boulevard’s booking sits on a site you already have.',
     people: 5,
   },
 ];
@@ -84,6 +92,38 @@ const cardData = cards.map((c) => {
     </div>
   </section>
 
+  <section class="section block near" aria-labelledby="included-title">
+    <div class="wrap">
+      <SectionHead eyebrow="Beyond the price" title="What comes in that price" id="included-title">
+        <p>The same seven platforms, feature by feature, from each company’s own pages on {checked}. Where a page doesn’t say, we write “Not listed,” not “No.”</p>
+      </SectionHead>
+      <IncludedMatrix />
+      <p class="honest">
+        Several of these still cost less a month, several include a waitlist or a site builder you set up yourself, and some
+        have lower in-person card rates than Stripe. Happli’s differences are the website built for you, setup done for you,
+        no Happli fee on payments, and the Needs you approval list.
+      </p>
+      <details class="notes" id="chart-notes">
+        <summary>Notes on each price in the chart</summary>
+        <div class="notes-body">
+          {modes.map((m) => (
+            <div>
+              <h3>{m.label}</h3>
+              <ul>
+                {chartNotes[m.key].map((n) => <li>{n}</li>)}
+              </ul>
+            </div>
+          ))}
+          <p class="notes-foot">
+            Happli: $52 a month launch price for one booker, plus $10 for each extra; forms, a waitlist and a website built
+            for you are in the plan. Card payments go to your own Stripe account at Stripe’s {stripeRate.text}. Every
+            competitor price was checked on {checked} against the pages linked under the chart and in the table.
+          </p>
+        </div>
+      </details>
+    </div>
+  </section>
+
   <section class="section block" aria-labelledby="pages-title">
     <div class="wrap">
       <SectionHead eyebrow="Side by side" title="One page per platform" id="pages-title">
@@ -98,6 +138,10 @@ const cardData = cards.map((c) => {
               <p class="better">
                 <span class="tag">Where they do more</span>
                 {c.better}
+              </p>
+              <p class="better diff">
+                <span class="tag">Where Happli is different</span>
+                {c.diff}
               </p>
               <dl class="nums">
                 <div>
@@ -268,6 +312,62 @@ const cardData = cards.map((c) => {
     text-underline-offset: 3px;
   }
 
+  .near {
+    padding-top: clamp(64px, 8vw, 104px);
+  }
+  .honest {
+    margin-top: 28px;
+    max-width: 52em;
+    font-size: 16px;
+    line-height: 1.65;
+    color: var(--ink-2);
+  }
+  .notes {
+    margin-top: 24px;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+  }
+  .notes summary {
+    padding: 16px 0;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--ink);
+    cursor: pointer;
+  }
+  .notes summary:focus-visible {
+    outline: 2px solid var(--coral-strong);
+    outline-offset: 2px;
+  }
+  .notes-body {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px 48px;
+    padding-bottom: 24px;
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--ink-2);
+  }
+  .notes-body h3 {
+    font-family: var(--sans);
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--ink);
+  }
+  .notes-body ul {
+    margin: 8px 0 0;
+    padding-left: 18px;
+  }
+  .notes-body li + li {
+    margin-top: 6px;
+  }
+  .notes-foot {
+    grid-column: 1 / -1;
+    color: var(--muted);
+  }
+  .diff .tag {
+    color: var(--coral-ink);
+  }
+
   .money {
     display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr);
@@ -321,6 +421,9 @@ const cardData = cards.map((c) => {
       padding-top: 0;
     }
     .money {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .notes-body {
       grid-template-columns: minmax(0, 1fr);
     }
   }

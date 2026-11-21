@@ -1,37 +1,46 @@
 ---
-// "What a studio pays a month": a ranked bar chart, cheapest at the top, with Solo / Team of 3 / Team of 5 pill
-// tabs. The tabs are plain radio inputs (no script, so nothing for the CSP to hash); every tab's rows are in the
-// HTML, and CSS shows the checked one. Bars share one scale across the tabs, so switching tabs never stretches
-// a price. Happli's bar is brand coral, everyone else's a muted grey. Numbers come from src/config/compare-v2.ts.
-import { chartRows, checked, defaultSize, happli, platforms, sizes, stripeRate } from '../../config/compare-v2';
+// "What a studio pays a month": a ranked bar chart, cheapest at the top. Two controls: what's counted (Software only /
+// With forms, waitlist and a website) and team size (Solo / Team of 3 / Team of 5). Both are plain radio inputs (no
+// script, so nothing for the CSP to hash): every combination's rows are in the HTML and CSS shows the checked one.
+// Bars share one scale across every mode and tab, so switching never stretches a price. Happli's bar is brand coral,
+// everyone else's a muted grey. Numbers come from src/config/compare-v2.ts; the longer notes sit under the matrix.
+import { chartRows, checked, defaultMode, defaultSize, modes, platforms, sizes, stripeRate, happli } from '../../config/compare-v2';
 
-const tabs = sizes.map((s) => ({ ...s, rows: chartRows(s.people) }));
-const max = Math.max(...tabs.flatMap((t) => t.rows.map((r) => r.cents)));
+const panels = modes.flatMap((m) => sizes.map((s) => ({ mode: m, size: s, rows: chartRows(s.people, m.key) })));
+const max = Math.max(...panels.flatMap((p) => p.rows.map((r) => r.cents)));
 const pct = (c: number) => `${Math.max(2, (c / max) * 100).toFixed(1)}%`;
-const notes = platforms.flatMap((p) => (p.note ? [p.note] : []));
 ---
 
 <figure class="chart" aria-labelledby="chart-title">
   <figcaption class="head">
     <h2 id="chart-title">What a studio pays a month</h2>
-    <p class="sub">Software only, cheapest first. Pick a team size.</p>
+    <p class="sub">Cheapest first. Choose what’s counted and a team size.</p>
   </figcaption>
 
   <div class="tabs-wrap">
-    {tabs.map((t) => <input class="tab-input" type="radio" name="chart-size" id={`size-${t.key}`} value={t.key} checked={t.key === defaultSize} />)}
+    {modes.map((m) => <input class="tab-input" type="radio" name="chart-mode" id={`mode-${m.key}`} value={m.key} checked={m.key === defaultMode} />)}
+    {sizes.map((s) => <input class="tab-input" type="radio" name="chart-size" id={`size-${s.key}`} value={s.key} checked={s.key === defaultSize} />)}
 
-    <div class="pills" role="presentation">
-      {tabs.map((t) => (
-        <label class="pill" for={`size-${t.key}`} data-size={t.key}>
-          {t.label}
+    <div class="modes">
+      {modes.map((m) => (
+        <label class="mode" for={`mode-${m.key}`} data-mode={m.key}>
+          {m.label}
+        </label>
+      ))}
+    </div>
+
+    <div class="pills">
+      {sizes.map((s) => (
+        <label class="pill" for={`size-${s.key}`} data-size={s.key}>
+          {s.label}
         </label>
       ))}
     </div>
 
     {
-      tabs.map((t) => (
-        <ol class="rows" data-size={t.key} aria-label={`${t.label}: monthly price, cheapest first`}>
-          {t.rows.map((r) => (
+      panels.map((p) => (
+        <ol class="rows" data-mode={p.mode.key} data-size={p.size.key} aria-label={`${p.mode.label}, ${p.size.label}: monthly price, cheapest first`}>
+          {p.rows.map((r) => (
             <li class:list={['row', { me: r.happli }]}>
               <div class="line">
                 <span class="name">{r.short}</span>
@@ -49,32 +58,31 @@ const notes = platforms.flatMap((p) => (p.note ? [p.note] : []));
         </ol>
       ))
     }
-  </div>
 
-  <div class="foot">
-    <p>
-      <strong>How we counted:</strong> bookable people only (front desk and admin seats not counted), one location,
-      billed monthly in US dollars, software only (card processing not included), and each platform's cheapest plan
-      with online booking and reminders for that many people. Prices from each company's own pricing page, checked {checked}.
-    </p>
-    <ul class="notes">
-      {notes.map((n) => <li>{n}</li>)}
-      <li>GlossGenius Gold covers up to 9 staff; Boulevard Essentials covers up to 5 providers.</li>
-      <li>Happli: {happli.pick(1).math}, launch price; card payments go to your own Stripe account at Stripe's {stripeRate.text}.</li>
-    </ul>
-    <p class="sources">
-      Sources:{' '}
-      {platforms.map((p, i) => (
-        <>
-          <a href={p.source.href} rel="nofollow noopener" target="_blank">{p.short}</a>
-          {i < platforms.length - 1 ? ', ' : ''}
-        </>
-      ))}
-      {', '}
-      <a href={stripeRate.href} rel="nofollow noopener" target="_blank">Stripe</a>
-      {', '}
-      <a href={happli.source.href}>Happli</a>.
-    </p>
+    <div class="foot">
+      <p class="rule" data-mode="base">
+        <strong>How we counted:</strong> bookable people, one location, monthly USD, software only, each platform’s cheapest
+        plan with online booking and reminders. Checked {checked}.
+      </p>
+      <p class="rule" data-mode="loaded">
+        <strong>How we counted:</strong> the cheapest plan with forms and a waitlist, plus any published website add-on. Bookable
+        people, one location, monthly USD. Checked {checked}.
+      </p>
+      <p class="sources">
+        <a href="#chart-notes">Notes on each price</a>
+        {' · Sources: '}
+        {platforms.map((p, i) => (
+          <>
+            <a href={p.source.href} rel="nofollow noopener" target="_blank">{p.short}</a>
+            {i < platforms.length - 1 ? ', ' : ''}
+          </>
+        ))}
+        {', '}
+        <a href={stripeRate.href} rel="nofollow noopener" target="_blank">Stripe</a>
+        {', '}
+        <a href={happli.source.href}>Happli</a>
+      </p>
+    </div>
   </div>
 </figure>
 
@@ -98,7 +106,7 @@ const notes = platforms.flatMap((p) => (p.note ? [p.note] : []));
     color: var(--muted);
   }
 
-  /* Pill tabs: radios stay in the tab order and take the arrow keys; the labels are what you see. */
+  /* The radios stay in the tab order and take the arrow keys; the labels are what you see. */
   .tab-input {
     position: absolute;
     opacity: 0;
@@ -106,11 +114,40 @@ const notes = platforms.flatMap((p) => (p.note ? [p.note] : []));
     height: 1px;
     pointer-events: none;
   }
+
+  /* What's counted: two equal halves with an underline on the chosen one. */
+  .modes {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    margin-top: 20px;
+    border-bottom: 1px solid var(--line);
+  }
+  .mode {
+    padding: 10px 6px 12px;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.3;
+    text-align: center;
+    color: var(--muted);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    transition: color 0.15s ease, border-color 0.15s ease;
+  }
+  .mode:hover {
+    color: var(--ink);
+  }
+  #mode-base:checked ~ .modes [data-mode='base'],
+  #mode-loaded:checked ~ .modes [data-mode='loaded'] {
+    color: var(--ink);
+    border-bottom-color: var(--coral);
+  }
+
   .pills {
     display: inline-flex;
     flex-wrap: wrap;
     gap: 4px;
-    margin-top: 20px;
+    margin-top: 16px;
     padding: 4px;
     border-radius: var(--radius-pill);
     background: var(--ap-grey);
@@ -136,6 +173,8 @@ const notes = platforms.flatMap((p) => (p.note ? [p.note] : []));
     color: var(--ink);
     box-shadow: 0 1px 3px rgba(27, 22, 20, 0.12);
   }
+  #mode-base:focus-visible ~ .modes [data-mode='base'],
+  #mode-loaded:focus-visible ~ .modes [data-mode='loaded'],
   #size-solo:focus-visible ~ .pills [data-size='solo'],
   #size-team3:focus-visible ~ .pills [data-size='team3'],
   #size-team5:focus-visible ~ .pills [data-size='team5'] {
@@ -146,12 +185,15 @@ const notes = platforms.flatMap((p) => (p.note ? [p.note] : []));
   .rows {
     display: none;
     list-style: none;
-    margin: 22px 0 0;
+    margin: 20px 0 0;
     padding: 0;
   }
-  #size-solo:checked ~ .rows[data-size='solo'],
-  #size-team3:checked ~ .rows[data-size='team3'],
-  #size-team5:checked ~ .rows[data-size='team5'] {
+  #mode-base:checked ~ #size-solo:checked ~ .rows[data-mode='base'][data-size='solo'],
+  #mode-base:checked ~ #size-team3:checked ~ .rows[data-mode='base'][data-size='team3'],
+  #mode-base:checked ~ #size-team5:checked ~ .rows[data-mode='base'][data-size='team5'],
+  #mode-loaded:checked ~ #size-solo:checked ~ .rows[data-mode='loaded'][data-size='solo'],
+  #mode-loaded:checked ~ #size-team3:checked ~ .rows[data-mode='loaded'][data-size='team3'],
+  #mode-loaded:checked ~ #size-team5:checked ~ .rows[data-mode='loaded'][data-size='team5'] {
     display: block;
   }
   .row {
@@ -213,26 +255,26 @@ const notes = platforms.flatMap((p) => (p.note ? [p.note] : []));
   }
 
   .foot {
-    margin-top: 20px;
-    padding-top: 18px;
+    margin-top: 18px;
+    padding-top: 16px;
     border-top: 1px solid var(--line);
     font-size: 13px;
     line-height: 1.55;
     color: var(--muted);
   }
+  .rule {
+    display: none;
+  }
+  #mode-base:checked ~ .foot .rule[data-mode='base'],
+  #mode-loaded:checked ~ .foot .rule[data-mode='loaded'] {
+    display: block;
+  }
   .foot strong {
     color: var(--ink-2);
     font-weight: 600;
   }
-  .notes {
-    margin: 10px 0 0;
-    padding-left: 18px;
-  }
-  .notes li + li {
-    margin-top: 4px;
-  }
   .sources {
-    margin-top: 10px;
+    margin-top: 8px;
   }
   .foot a {
     color: var(--ink-2);
@@ -244,7 +286,8 @@ const notes = platforms.flatMap((p) => (p.note ? [p.note] : []));
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .pill {
+    .pill,
+    .mode {
       transition: none;
     }
   }

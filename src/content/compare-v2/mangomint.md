@@ -19,6 +19,7 @@ Mangomint charges a price per location plus a price per user. Happli charges by 
 | How it scales | +$10/month for each extra person who takes bookings; front desk and admin logins are free[^happli] | +$10/month per user[^mm] |
 | Solo / team of 3 / team of 5 | $52 / $72 / $92 a month[^happli] | $130 / $150 / $170 a month[^mm] |
 | Card rates | Your own Stripe account at Stripe's standard 2.9% + 30¢; Happli takes no cut[^stripe] | 2.45% + 15¢ in person; 2.90% + 30¢ virtual[^mm] |
+| Website | Built for you by our team at gohappybeauty, kept in sync with Happli, and included[^happli] | No website or website builder listed; online booking is an overlay or link you add to a site you already have[^mm-booking][^mm-site] |
 | Deposits and cards on file | Deposits on your own Stripe account[^happli] | Need Mangomint's own payments[^mm] |
 
 The monthly totals use the rules on the [compare page](/compare-v2/): bookable people only, one location, billed monthly in US dollars, software only. We count each bookable person as one Mangomint user ($120 + 3 × $10 = $150 for a team of 3).
@@ -36,6 +37,7 @@ Happli has one plan with everything in it. At launch pricing it's $52 a month ($
 
 ## Where Happli is different
 
+- **A website built for you.** Our team at gohappybeauty builds it, it stays in sync with Happli, and it's included in the plan.[^happli]
 - **A lower monthly price.** $52, $72 and $92 for one, three and five people, against $130, $150 and $170.[^happli][^mm]
 - **The Needs you list.** What needs a decision today sits in one short list, and nothing drafted by AI goes to a client until you approve it.[^happli]
 - **A day book built for your phone**, so you can run the day between appointments.[^happli]
@@ -55,5 +57,7 @@ Choose Happli if you want a lower monthly price, an approval step before anythin
 Each numbered marker above points to one of these. Competitor sources were checked on Nov 21, 2026.
 
 [^mm]: Mangomint pricing page, [mangomint.com/pricing](https://mangomint.com/pricing), checked Nov 21, 2026.
+[^mm-booking]: Mangomint online booking, [mangomint.com/features/online-booking](https://mangomint.com/features/online-booking/), checked Nov 21, 2026.
+[^mm-site]: Mangomint, adding online booking to your website, [mangomint.com/learn/adding-online-booking-to-your-website](https://www.mangomint.com/learn/adding-online-booking-to-your-website/), checked Nov 21, 2026.
 [^stripe]: Stripe pricing page, [stripe.com/pricing](https://stripe.com/pricing), checked Nov 21, 2026.
 [^happli]: Happli [features](/features/) and [pricing](/pricing/).

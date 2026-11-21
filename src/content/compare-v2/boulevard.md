@@ -18,7 +18,8 @@ Boulevard's Essentials plan is one price for one location and up to 5 providers,
 | Plans | One plan: $52/month launch price ($44/month billed yearly)[^happli] | Essentials $159/month; Premier $260 and Prestige $364 (promotional prices)[^blvd] |
 | How it scales | +$10/month for each extra person who takes bookings; front desk and admin logins are free[^happli] | Essentials covers 1 location and up to 5 providers[^blvd] |
 | Solo / team of 3 / team of 5 | $52 / $72 / $92 a month[^happli] | Essentials: $159 / $159 / $159 a month[^blvd] |
-| Card rates | Your own Stripe account at Stripe's standard 2.9% + 30¢; Happli takes no cut[^stripe] | Not covered in this comparison; see Boulevard's pricing page[^blvd] |
+| Website | Built for you by our team at gohappybeauty, kept in sync with Happli, and included[^happli] | No website or website builder listed on its pricing page; self-booking is an overlay that "stays on your site"[^blvd][^blvd-booking] |
+| Card rates | Your own Stripe account at Stripe's standard 2.9% + 30¢; Happli takes no cut[^stripe] | Standard card rates not listed; an optional Offset program has clients pay a 3% fee and the business 1%[^blvd] |
 
 The monthly totals use the rules on the [compare page](/compare-v2/): bookable people only, one location, billed monthly in US dollars, software only.
 
@@ -35,6 +36,7 @@ Happli has one plan with everything in it. At launch pricing it's $52 a month ($
 
 ## Where Happli is different
 
+- **A website built for you.** Our team at gohappybeauty builds it, it stays in sync with Happli, and it's included in the plan.[^happli]
 - **A lower monthly price.** $52, $72 and $92 for one, three and five people, against $159.[^happli][^blvd]
 - **The Needs you list.** What needs a decision today sits in one short list, and nothing drafted by AI goes to a client until you approve it.[^happli]
 - **A day book built for your phone**, so you can run the day between appointments.[^happli]
@@ -54,5 +56,6 @@ Choose Happli if you want a lower monthly price, an approval step before anythin
 Each numbered marker above points to one of these. Competitor sources were checked on Nov 21, 2026.
 
 [^blvd]: Boulevard pricing page, [joinblvd.com/pricing](https://www.joinblvd.com/pricing), checked Nov 21, 2026.
+[^blvd-booking]: Boulevard self-booking, [joinblvd.com/features/self-booking](https://www.joinblvd.com/features/self-booking), checked Nov 21, 2026.
 [^stripe]: Stripe pricing page, [stripe.com/pricing](https://stripe.com/pricing), checked Nov 21, 2026.
 [^happli]: Happli [features](/features/) and [pricing](/pricing/).

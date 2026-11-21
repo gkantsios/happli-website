@@ -19,7 +19,7 @@ Vagaro starts low and adds $10 for each extra bookable calendar, with forms, a w
 | How it scales | +$10/month for each extra person who takes bookings; front desk and admin logins are free[^happli] | +$10/month per extra bookable calendar, up to 7[^v] |
 | Solo / team of 3 / team of 5 | $52 / $72 / $92 a month[^happli] | Intro: $23.99 / $43.99 / $63.99. After 6 months: $30 / $50 / $70[^v] |
 | Forms | Included, with AI form import you review[^happli] | Add-on, $10/month[^v] |
-| Website | Included[^happli] | Add-on, $20/month[^v] |
+| Website | Built for you by our team at gohappybeauty, kept in sync with Happli, and included[^happli] | Add-on: Vagaro MySite, $20/month, a site builder connected to your account. Not built for you[^v] |
 | Client texts | Reminders in your own wording and review-request texts, included[^happli] | Text marketing add-on from $20/month[^v] |
 | Card rates | Your own Stripe account at Stripe's standard 2.9% + 30¢; Happli takes no cut[^stripe] | Not listed on Vagaro's pricing page[^v] |
 
@@ -41,6 +41,7 @@ Happli has one plan with everything in it. At launch pricing it's $52 a month ($
 
 ## Where Happli is different
 
+- **A website built for you.** Our team at gohappybeauty builds it, it stays in sync with Happli, and it's included in the plan.[^happli]
 - **The Needs you list.** What needs a decision today sits in one short list, and nothing drafted by AI goes to a client until you approve it.[^happli]
 - **A day book built for your phone**, so you can run the day between appointments.[^happli]
 - **Forms, a website and client texts in the plan.** Forms and waivers with AI form import you review, a website, reminders in your own wording and review-request texts, with no add-ons.[^happli]
