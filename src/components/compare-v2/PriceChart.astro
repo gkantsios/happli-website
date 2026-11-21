@@ -123,6 +123,10 @@ const pct = (c: number) => `${Math.max(2, (c / max) * 100).toFixed(1)}%`;
     border-bottom: 1px solid var(--line);
   }
   .mode {
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     padding: 10px 6px 12px;
     font-size: 14px;
     font-weight: 600;
@@ -144,8 +148,8 @@ const pct = (c: number) => `${Math.max(2, (c / max) * 100).toFixed(1)}%`;
   }
 
   .pills {
-    display: inline-flex;
-    flex-wrap: wrap;
+    display: flex;
+    width: 100%;
     gap: 4px;
     margin-top: 16px;
     padding: 4px;
@@ -153,7 +157,13 @@ const pct = (c: number) => `${Math.max(2, (c / max) * 100).toFixed(1)}%`;
     background: var(--ap-grey);
   }
   .pill {
-    padding: 8px 16px;
+    flex: 1 1 0;
+    min-width: 0;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 8px;
     border-radius: var(--radius-pill);
     font-size: 14px;
     font-weight: 600;
@@ -178,7 +188,7 @@ const pct = (c: number) => `${Math.max(2, (c / max) * 100).toFixed(1)}%`;
   #size-solo:focus-visible ~ .pills [data-size='solo'],
   #size-team3:focus-visible ~ .pills [data-size='team3'],
   #size-team5:focus-visible ~ .pills [data-size='team5'] {
-    outline: 2px solid var(--coral-strong);
+    outline: 2px solid var(--ink);
     outline-offset: 2px;
   }
 
@@ -283,6 +293,19 @@ const pct = (c: number) => `${Math.max(2, (c / max) * 100).toFixed(1)}%`;
   }
   .foot a:hover {
     color: var(--coral-ink);
+  }
+
+  /* narrow phones: let a long plan name wrap instead of cutting it off */
+  @media (max-width: 479.98px) {
+    .line {
+      flex-wrap: wrap;
+      row-gap: 2px;
+    }
+    .plan {
+      white-space: normal;
+      overflow: visible;
+      text-overflow: clip;
+    }
   }
 
   @media (prefers-reduced-motion: reduce) {

@@ -18,8 +18,8 @@ Fresha has the cheapest plan in our chart for one person, a price per team membe
 | Plans | One plan: $52/month launch price ($44/month billed yearly)[^happli] | Independent $19.95/month; Team $14.95/month per bookable member[^fr] |
 | How it scales | +$10/month for each extra person who takes bookings; front desk and admin logins are free[^happli] | $14.95/month for each bookable team member[^fr] |
 | Solo / team of 3 / team of 5 | $52 / $72 / $92 a month[^happli] | $19.95 / $44.85 / $74.75 a month[^fr] |
-| Website | Built for you by our team at gohappybeauty, kept in sync with Happli, and included[^happli] | Direct booking links are free; a professional site is the Smart Website add-on, $15.95/month, a builder that updates from your Fresha account. Not built for you[^fr][^fr-site] |
-| New clients from a marketplace | No marketplace | 20% one-time fee per new client, $6 minimum[^fr] |
+| Website | Built for you by our team, kept in sync with Happli, and included[^happli] | Direct booking links are free; a professional site is the Smart Website add-on, $15.95/month, a builder that updates from your Fresha account. Not built for you[^fr][^fr-site] |
+| Fee on new clients it sends you | No marketplace | 20% one-time fee per new client, $6 minimum[^fr] |
 | Card rates | Your own Stripe account at Stripe's standard 2.9% + 30¢; Happli takes no cut[^stripe] | 2.79% + $0.20 online; 2.29% + $0.20 in person[^fr] |
 
 The monthly totals use the rules on the [compare page](/compare-v2/): bookable people only, one location, billed monthly in US dollars, software only. Solo uses Independent; teams use Team ($14.95 × 3 = $44.85, × 5 = $74.75).

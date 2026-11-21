@@ -7,7 +7,7 @@
 // Chart rules (shown in the footnote): bookable people only, one location, billed monthly in USD, software only
 // (no card processing).
 // - "Software only": each platform's cheapest plan with online booking and reminders for that many people.
-//   Square: Plus on every tab (its Free plan is footnoted). GlossGenius: Standard for one, Gold (up to 9 staff) for
+//   Square: Plus on every tab (its Free plan is footnoted). GlossGenius: Standard for one, Gold (up to 9 team members) for
 //   a team. Fresha: Independent for one, Team per bookable member for a team. Vagaro: the 6-month intro rate
 //   (footnoted with the regular $30).
 // - "With forms, waitlist and a website": the cheapest plan that includes forms and a waitlist, plus any published
@@ -113,7 +113,7 @@ export const platforms: ReadonlyArray<Platform> = [
     name: 'Square Appointments',
     short: 'Square',
     source: { href: sources.square.href, text: 'squareup.com/appointments/pricing' },
-    pick: () => ({ plan: 'Plus', cents: 4900, math: '$49 per location, unlimited staff calendars' }),
+    pick: () => ({ plan: 'Plus', cents: 4900, math: '$49 per location, calendars for unlimited team members' }),
     // Waitlist starts on Plus; a booking site / Square Online site is included; forms aren't listed, so no bump.
     loaded: () => ({ plan: 'Plus, site included', cents: 4900, math: '$49 Plus (waitlist starts on Plus; booking site included)' }),
   },
@@ -125,7 +125,7 @@ export const platforms: ReadonlyArray<Platform> = [
     pick: (n) =>
       n === 1
         ? { plan: 'Standard', cents: 2800, math: '$28 a month billed monthly' }
-        : { plan: 'Gold', cents: 5600, math: '$56 a month billed monthly, up to 9 staff' },
+        : { plan: 'Gold', cents: 5600, math: '$56 a month billed monthly, up to 9 team members' },
     // Forms and waitlist start on Gold; the website builder is on every plan.
     loaded: () => ({ plan: 'Gold, builder included', cents: 5600, math: '$56 Gold (forms and waitlist start on Gold; website builder included)' }),
   },
@@ -202,7 +202,7 @@ export const chartNotes: Record<ModeKey, string[]> = {
   base: [
     'Square: a Free plan ($0 per location) also exists; the chart uses Plus, where waitlist and no-show fees start.',
     'Vagaro: $23.99 is an intro rate for the first 6 months; $30 after that, so $30 / $50 / $70 for one, three and five people.',
-    'GlossGenius Gold covers up to 9 staff; Boulevard Essentials covers up to 5 providers.',
+    'GlossGenius Gold covers up to 9 team members; Boulevard Essentials covers up to 5 providers.',
     'Fresha: Independent for one person, Team at $14.95 per bookable member for a team.',
   ],
   loaded: [

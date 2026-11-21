@@ -18,7 +18,7 @@ Boulevard's Essentials plan is one price for one location and up to 5 providers,
 | Plans | One plan: $52/month launch price ($44/month billed yearly)[^happli] | Essentials $159/month; Premier $260 and Prestige $364 (promotional prices)[^blvd] |
 | How it scales | +$10/month for each extra person who takes bookings; front desk and admin logins are free[^happli] | Essentials covers 1 location and up to 5 providers[^blvd] |
 | Solo / team of 3 / team of 5 | $52 / $72 / $92 a month[^happli] | Essentials: $159 / $159 / $159 a month[^blvd] |
-| Website | Built for you by our team at gohappybeauty, kept in sync with Happli, and included[^happli] | No website or website builder listed on its pricing page; self-booking is an overlay that "stays on your site"[^blvd][^blvd-booking] |
+| Website | Built for you by our team, kept in sync with Happli, and included[^happli] | No website or website builder listed on its pricing page; self-booking is an overlay that "stays on your site"[^blvd][^blvd-booking] |
 | Card rates | Your own Stripe account at Stripe's standard 2.9% + 30¢; Happli takes no cut[^stripe] | Standard card rates not listed; an optional Offset program has clients pay a 3% fee and the business 1%[^blvd] |
 
 The monthly totals use the rules on the [compare page](/compare-v2/): bookable people only, one location, billed monthly in US dollars, software only.

@@ -20,14 +20,14 @@ const sizeLabel = (n: number) => (n === 1 ? 'Solo' : `Team of ${n}`);
 const cards: Array<{ slug: string; blurb: string; better: string; diff: string; people: number }> = [
   {
     slug: 'square',
-    blurb: 'One price per location with unlimited staff calendars, so the bill stays the same as the team grows.',
+    blurb: 'One price per location with calendars for unlimited team members, so the bill stays the same as the team grows.',
     better: 'A Free plan at $0, and Plus costs less than Happli at every team size.',
     diff: 'A website built for you, rather than one you set up from templates.',
     people: 5,
   },
   {
     slug: 'glossgenius',
-    blurb: 'Gold is one flat monthly price for up to 9 staff, with forms and waitlist included.',
+    blurb: 'Gold is one flat monthly price for up to 9 team members, with forms and waitlist included.',
     better: 'Its in-person card rate, 2.4% + $0.15, is lower than Stripe’s 2.9% + 30¢.',
     diff: 'A website built for you, rather than a builder you set up.',
     people: 3,
@@ -173,8 +173,8 @@ const cardData = cards.map((c) => {
         <div class="money-body">
           <p>
             Happli takes no cut of what your clients pay. Deposits, checkout, tips, no-show fees, gift cards and packages
-            are charged on your own Stripe account, at Stripe’s standard {stripeRate.text}
-            (<a href={stripeRate.href} rel="nofollow noopener" target="_blank">stripe.com/pricing</a>), and the money lands with you.
+            are charged on your own Stripe account, at Stripe’s standard {stripeRate.text}{' '}(<a href={stripeRate.href} rel="nofollow noopener" target="_blank">stripe.com/pricing</a>),
+            and the money lands with you.
           </p>
           <p>
             Some platforms need their own payments for deposits or cards on file. With Happli, your Stripe account stays
@@ -302,7 +302,10 @@ const cardData = cards.map((c) => {
   }
   .more {
     margin-top: auto;
-    padding-top: 6px;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    align-self: flex-start;
     font-size: 15px;
     font-weight: 600;
     color: var(--coral-ink);
@@ -335,7 +338,7 @@ const cardData = cards.map((c) => {
     cursor: pointer;
   }
   .notes summary:focus-visible {
-    outline: 2px solid var(--coral-strong);
+    outline: 2px solid var(--ink);
     outline-offset: 2px;
   }
   .notes-body {

@@ -15,12 +15,14 @@ interface Props {
   section: Crumb;
   /** Hidden preview pages (compare v2): noindex,nofollow with a self canonical; never in the nav, footer or sitemap. */
   hiddenPreview?: boolean;
+  /** A shorter name for the last breadcrumb (defaults to the title). */
+  crumbName?: string;
 }
-const { entry, section, hiddenPreview = false } = Astro.props;
+const { entry, section, hiddenPreview = false, crumbName } = Astro.props;
 const { title, description, pubDate, updatedDate, author, tags, heroImage, heroImageAlt, draft } = entry.data;
 
 const url = new URL(`${section.href}${entry.id}/`, site.url).href;
-const crumbs: Crumb[] = [{ name: 'Home', href: '/' }, section, { name: title, href: `${section.href}${entry.id}/` }];
+const crumbs: Crumb[] = [{ name: 'Home', href: '/' }, section, { name: crumbName ?? title, href: `${section.href}${entry.id}/` }];
 const ogImage = heroImage ? heroImage.src : site.defaultOgImage;
 ---
 

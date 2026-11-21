@@ -19,7 +19,7 @@ Mangomint charges a price per location plus a price per user. Happli charges by 
 | How it scales | +$10/month for each extra person who takes bookings; front desk and admin logins are free[^happli] | +$10/month per user[^mm] |
 | Solo / team of 3 / team of 5 | $52 / $72 / $92 a month[^happli] | $130 / $150 / $170 a month[^mm] |
 | Card rates | Your own Stripe account at Stripe's standard 2.9% + 30¢; Happli takes no cut[^stripe] | 2.45% + 15¢ in person; 2.90% + 30¢ virtual[^mm] |
-| Website | Built for you by our team at gohappybeauty, kept in sync with Happli, and included[^happli] | No website or website builder listed; online booking is an overlay or link you add to a site you already have[^mm-booking][^mm-site] |
+| Website | Built for you by our team, kept in sync with Happli, and included[^happli] | No website or website builder listed; online booking is an overlay or link you add to a site you already have[^mm-booking][^mm-site] |
 | Deposits and cards on file | Deposits on your own Stripe account[^happli] | Need Mangomint's own payments[^mm] |
 
 The monthly totals use the rules on the [compare page](/compare-v2/): bookable people only, one location, billed monthly in US dollars, software only. We count each bookable person as one Mangomint user ($120 + 3 × $10 = $150 for a team of 3).

@@ -16,6 +16,6 @@ const { entry } = Astro.props;
 const { Content } = await render(entry);
 ---
 
-<PostLayout entry={entry} section={{ name: 'Compare', href: v2Base }} hiddenPreview>
+<PostLayout entry={entry} section={{ name: 'Compare', href: v2Base }} crumbName={`Happli vs ${entry.data.competitor}`} hiddenPreview>
   <Content />
 </PostLayout>

@@ -13,20 +13,20 @@ Square Appointments prices by location: one monthly price covers everyone who ta
 
 ## At a glance
 
-| | Happli | Square Appointments |
+| | Happli | Square |
 |---|---|---|
 | Plans | One plan: $52/month launch price ($44/month billed yearly)[^happli] | Free $0, Plus $49/month and Premium $149/month, per location[^sq] |
-| How it scales | +$10/month for each extra person who takes bookings; front desk and admin logins are free[^happli] | Unlimited staff calendars on every plan[^sq] |
+| How it scales | +$10/month for each extra person who takes bookings; front desk and admin logins are free[^happli] | Calendars for unlimited team members on every plan[^sq] |
 | Solo / team of 3 / team of 5 | $52 / $72 / $92 a month[^happli] | Plus: $49 / $49 / $49 a month[^sq] |
 | Card rates | Your own Stripe account at Stripe's standard 2.9% + 30¢; Happli takes no cut[^stripe] | Free: 2.6% + 15¢ in person, 3.3% + 30¢ online. Plus: 2.5% + 15¢ in person, 2.9% + 30¢ online[^sq] |
-| Website | Built for you by our team at gohappybeauty, kept in sync with Happli, and included[^happli] | A free booking site, or a Square Online site you customize from templates, included with Appointments; booking can also be embedded on a site you have. Not built for you[^sq][^sq-site] |
+| Website | Built for you by our team, kept in sync with Happli, and included[^happli] | A free booking site, or a Square Online site you customize from templates, included with Appointments; booking can also be embedded on a site you have. Not built for you[^sq][^sq-site] |
 | No-show fees | No-show links included[^happli] | Start on Plus[^sq] |
 
 The monthly totals use the rules on the [compare page](/compare-v2/): bookable people only, one location, billed monthly in US dollars, software only. We use Square Plus because waitlist and no-show fees start there; Square's Free plan is $0.[^sq]
 
 ## Pricing
 
-Square lists three plans per location: **Free at $0**, **Plus at $49 a month** and **Premium at $149 a month**, each with unlimited staff calendars. Card rates drop a little on Plus: 2.5% + 15¢ in person and 2.9% + 30¢ online, against 2.6% + 15¢ and 3.3% + 30¢ on Free.[^sq]
+Square lists three plans per location: **Free at $0**, **Plus at $49 a month** and **Premium at $149 a month**, each with calendars for unlimited team members. Card rates drop a little on Plus: 2.5% + 15¢ in person and 2.9% + 30¢ online, against 2.6% + 15¢ and 3.3% + 30¢ on Free.[^sq]
 
 Happli has one plan with everything in it. At launch pricing it's $52 a month ($44 a month billed yearly) for one person who takes bookings, plus $10 a month for each extra one. Front desk and admin logins are free, your website is included, setup and client import are free, and there are no contracts.[^happli] Card payments go to your own Stripe account at Stripe's standard 2.9% + 30¢, and Happli takes no cut.[^stripe]
 
