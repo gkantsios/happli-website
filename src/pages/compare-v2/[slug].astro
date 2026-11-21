@@ -1,0 +1,21 @@
+---
+// Compare v2 platform pages: a HIDDEN preview (noindex,nofollow, self canonical, not in the nav, footer or sitemap).
+// The live /compare/ pages are unchanged.
+import { render } from 'astro:content';
+import PostLayout from '../../layouts/PostLayout.astro';
+import { getPublished } from '../../lib/posts';
+import { v2Base } from '../../config/compare-v2';
+import '../../styles/compare-v2.css';
+
+export async function getStaticPaths() {
+  const pages = await getPublished('compareV2');
+  return pages.map((entry) => ({ params: { slug: entry.id }, props: { entry } }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+---
+
+<PostLayout entry={entry} section={{ name: 'Compare', href: v2Base }} hiddenPreview>
+  <Content />
+</PostLayout>

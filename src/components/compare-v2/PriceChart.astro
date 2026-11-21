@@ -1,0 +1,251 @@
+---
+// "What a studio pays a month": a ranked bar chart, cheapest at the top, with Solo / Team of 3 / Team of 5 pill
+// tabs. The tabs are plain radio inputs (no script, so nothing for the CSP to hash); every tab's rows are in the
+// HTML, and CSS shows the checked one. Bars share one scale across the tabs, so switching tabs never stretches
+// a price. Happli's bar is brand coral, everyone else's a muted grey. Numbers come from src/config/compare-v2.ts.
+import { chartRows, checked, defaultSize, happli, platforms, sizes, stripeRate } from '../../config/compare-v2';
+
+const tabs = sizes.map((s) => ({ ...s, rows: chartRows(s.people) }));
+const max = Math.max(...tabs.flatMap((t) => t.rows.map((r) => r.cents)));
+const pct = (c: number) => `${Math.max(2, (c / max) * 100).toFixed(1)}%`;
+const notes = platforms.flatMap((p) => (p.note ? [p.note] : []));
+---
+
+<figure class="chart" aria-labelledby="chart-title">
+  <figcaption class="head">
+    <h2 id="chart-title">What a studio pays a month</h2>
+    <p class="sub">Software only, cheapest first. Pick a team size.</p>
+  </figcaption>
+
+  <div class="tabs-wrap">
+    {tabs.map((t) => <input class="tab-input" type="radio" name="chart-size" id={`size-${t.key}`} value={t.key} checked={t.key === defaultSize} />)}
+
+    <div class="pills" role="presentation">
+      {tabs.map((t) => (
+        <label class="pill" for={`size-${t.key}`} data-size={t.key}>
+          {t.label}
+        </label>
+      ))}
+    </div>
+
+    {
+      tabs.map((t) => (
+        <ol class="rows" data-size={t.key} aria-label={`${t.label}: monthly price, cheapest first`}>
+          {t.rows.map((r) => (
+            <li class:list={['row', { me: r.happli }]}>
+              <div class="line">
+                <span class="name">{r.short}</span>
+                <span class="plan">{r.plan}</span>
+                <span class="price">
+                  {r.price}
+                  <span class="per">/mo</span>
+                </span>
+              </div>
+              <div class="track" aria-hidden="true">
+                <span class="bar" style={`width:${pct(r.cents)}`} />
+              </div>
+            </li>
+          ))}
+        </ol>
+      ))
+    }
+  </div>
+
+  <div class="foot">
+    <p>
+      <strong>How we counted:</strong> bookable people only (front desk and admin seats not counted), one location,
+      billed monthly in US dollars, software only (card processing not included), and each platform's cheapest plan
+      with online booking and reminders for that many people. Prices from each company's own pricing page, checked {checked}.
+    </p>
+    <ul class="notes">
+      {notes.map((n) => <li>{n}</li>)}
+      <li>GlossGenius Gold covers up to 9 staff; Boulevard Essentials covers up to 5 providers.</li>
+      <li>Happli: {happli.pick(1).math}, launch price; card payments go to your own Stripe account at Stripe's {stripeRate.text}.</li>
+    </ul>
+    <p class="sources">
+      Sources:{' '}
+      {platforms.map((p, i) => (
+        <>
+          <a href={p.source.href} rel="nofollow noopener" target="_blank">{p.short}</a>
+          {i < platforms.length - 1 ? ', ' : ''}
+        </>
+      ))}
+      {', '}
+      <a href={stripeRate.href} rel="nofollow noopener" target="_blank">Stripe</a>
+      {', '}
+      <a href={happli.source.href}>Happli</a>.
+    </p>
+  </div>
+</figure>
+
+<style>
+  .chart {
+    margin: 0;
+    padding: clamp(22px, 3.2vw, 32px);
+    border-radius: var(--radius-xl);
+    background: var(--surface);
+    border: 1px solid var(--line);
+    box-shadow: var(--shadow-card);
+  }
+  .head h2 {
+    font-size: clamp(22px, 2.2vw, 26px);
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+  }
+  .sub {
+    margin-top: 6px;
+    font-size: 14px;
+    color: var(--muted);
+  }
+
+  /* Pill tabs: radios stay in the tab order and take the arrow keys; the labels are what you see. */
+  .tab-input {
+    position: absolute;
+    opacity: 0;
+    width: 1px;
+    height: 1px;
+    pointer-events: none;
+  }
+  .pills {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-top: 20px;
+    padding: 4px;
+    border-radius: var(--radius-pill);
+    background: var(--ap-grey);
+  }
+  .pill {
+    padding: 8px 16px;
+    border-radius: var(--radius-pill);
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.2;
+    color: var(--ink-2);
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background-color 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
+  }
+  .pill:hover {
+    color: var(--ink);
+  }
+  #size-solo:checked ~ .pills [data-size='solo'],
+  #size-team3:checked ~ .pills [data-size='team3'],
+  #size-team5:checked ~ .pills [data-size='team5'] {
+    background: var(--surface);
+    color: var(--ink);
+    box-shadow: 0 1px 3px rgba(27, 22, 20, 0.12);
+  }
+  #size-solo:focus-visible ~ .pills [data-size='solo'],
+  #size-team3:focus-visible ~ .pills [data-size='team3'],
+  #size-team5:focus-visible ~ .pills [data-size='team5'] {
+    outline: 2px solid var(--coral-strong);
+    outline-offset: 2px;
+  }
+
+  .rows {
+    display: none;
+    list-style: none;
+    margin: 22px 0 0;
+    padding: 0;
+  }
+  #size-solo:checked ~ .rows[data-size='solo'],
+  #size-team3:checked ~ .rows[data-size='team3'],
+  #size-team5:checked ~ .rows[data-size='team5'] {
+    display: block;
+  }
+  .row {
+    padding: 11px 0 12px;
+    border-top: 1px solid var(--line);
+  }
+  .row:first-child {
+    border-top: 0;
+  }
+  .line {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+  }
+  .name {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--ink);
+  }
+  .plan {
+    flex: 1;
+    min-width: 0;
+    font-size: 13px;
+    color: var(--muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .price {
+    font-size: 15px;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    color: var(--ink);
+    white-space: nowrap;
+  }
+  .per {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--muted);
+  }
+  .track {
+    margin-top: 8px;
+    height: 6px;
+    border-radius: var(--radius-pill);
+    background: var(--bg);
+    overflow: hidden;
+  }
+  .bar {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+    background: var(--ap-grey-edge);
+  }
+  .me .name {
+    color: var(--coral-ink);
+  }
+  .me .bar {
+    background: var(--coral);
+  }
+
+  .foot {
+    margin-top: 20px;
+    padding-top: 18px;
+    border-top: 1px solid var(--line);
+    font-size: 13px;
+    line-height: 1.55;
+    color: var(--muted);
+  }
+  .foot strong {
+    color: var(--ink-2);
+    font-weight: 600;
+  }
+  .notes {
+    margin: 10px 0 0;
+    padding-left: 18px;
+  }
+  .notes li + li {
+    margin-top: 4px;
+  }
+  .sources {
+    margin-top: 10px;
+  }
+  .foot a {
+    color: var(--ink-2);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+  .foot a:hover {
+    color: var(--coral-ink);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .pill {
+      transition: none;
+    }
+  }
+</style>

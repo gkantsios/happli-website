@@ -1,0 +1,20 @@
+/* Compare v2 (hidden preview) only: imported by src/pages/compare-v2/*, and every rule is scoped to
+   html[data-preview='v2'] (set by BaseLayout's hiddenPreview), so the live site is untouched.
+   The preview's floor is 13px for any text, so the site's 12px eyebrows, the footer headings, footnote
+   markers and the narrow-phone compare table step up to 13px here. */
+html[data-preview='v2'] .eyebrow,
+html[data-preview='v2'] footer h2 {
+  font-size: 13px;
+}
+html[data-preview='v2'] .prose sup {
+  font-size: 13px;
+}
+html[data-preview='v2'] .prose.compare table th:first-child,
+html[data-preview='v2'] .prose.compare table td:first-child {
+  font-size: 13px;
+}
+/* long source URLs wrap instead of pushing the page sideways on small phones */
+html[data-preview='v2'] .prose .footnotes a,
+html[data-preview='v2'] .prose td {
+  overflow-wrap: anywhere;
+}

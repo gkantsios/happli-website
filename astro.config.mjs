@@ -23,7 +23,7 @@ export default defineConfig({
     sitemap({
       // Drafts are never built, so they never reach the sitemap. The 404 page, the hidden /thanks/
       // video page and switched-off sections are excluded too.
-      filter: (page) => !page.includes('/404') && !page.includes('/thanks') && !hiddenPaths.some((path) => new URL(page).pathname.startsWith(path)),
+      filter: (page) => !page.includes('/404') && !page.includes('/thanks') && !page.includes('/compare-v2') && !hiddenPaths.some((path) => new URL(page).pathname.startsWith(path)),
     }),
   ],
 });

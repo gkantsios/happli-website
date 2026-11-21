@@ -13,8 +13,10 @@ import type { PostCollection } from '../lib/posts';
 interface Props {
   entry: CollectionEntry<Exclude<PostCollection, 'blog'>>;
   section: Crumb;
+  /** Hidden preview pages (compare v2): noindex,nofollow with a self canonical; never in the nav, footer or sitemap. */
+  hiddenPreview?: boolean;
 }
-const { entry, section } = Astro.props;
+const { entry, section, hiddenPreview = false } = Astro.props;
 const { title, description, pubDate, updatedDate, author, tags, heroImage, heroImageAlt, draft } = entry.data;
 
 const url = new URL(`${section.href}${entry.id}/`, site.url).href;
@@ -30,7 +32,8 @@ const ogImage = heroImage ? heroImage.src : site.defaultOgImage;
   type="article"
   publishedTime={pubDate}
   modifiedTime={updatedDate}
-  noindex={draft || !site.sections[entry.collection]}
+  noindex={hiddenPreview || draft || !(entry.collection in site.sections && site.sections[entry.collection as keyof typeof site.sections])}
+  hiddenPreview={hiddenPreview}
   jsonLd={[
     blogPosting({ title, description, url, pubDate, updatedDate, author, image: ogImage, tags }),
     breadcrumbs(crumbs),
@@ -38,7 +41,7 @@ const ogImage = heroImage ? heroImage.src : site.defaultOgImage;
 >
   <div class="wrap post">
     <Breadcrumbs items={crumbs} />
-    <article class:list={['prose', { compare: entry.collection === 'compare' }]}>
+    <article class:list={['prose', { compare: entry.collection === 'compare' || entry.collection === 'compareV2' }]}>
       <header>
         {draft && <p class="badge">Draft preview (not published)</p>}
         <h1>{title}</h1>

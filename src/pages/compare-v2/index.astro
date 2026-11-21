@@ -1,0 +1,335 @@
+---
+// Compare v2: a HIDDEN preview of the compare hub. noindex,nofollow with a self canonical, left out of the nav,
+// footer and sitemap (astro.config.mjs), and nothing on the live site links here. The live /compare/ is unchanged.
+// Every competitor number is from that company's pricing page on `checked` (src/config/compare-v2.ts).
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import SectionHead from '../../components/sections/SectionHead.astro';
+import CtaBand from '../../components/sections/CtaBand.astro';
+import PriceChart from '../../components/compare-v2/PriceChart.astro';
+import '../../styles/compare-v2.css';
+import { site } from '../../config/site';
+import { breadcrumbs } from '../../lib/jsonld';
+import { checked, chartRows, formatCents, platforms, stripeRate, v2Base } from '../../config/compare-v2';
+
+const priceOf = (slug: string, people: number) => formatCents(chartRows(people).find((r) => r.slug === slug)!.cents);
+const sizeLabel = (n: number) => (n === 1 ? 'Solo' : `Team of ${n}`);
+
+// One card per platform: an honest blurb with one thing they do better, and one number side by side.
+const cards: Array<{ slug: string; blurb: string; better: string; people: number }> = [
+  {
+    slug: 'square',
+    blurb: 'One price per location with unlimited staff calendars, so the bill stays the same as the team grows.',
+    better: 'A Free plan at $0, and Plus costs less than Happli at every team size.',
+    people: 5,
+  },
+  {
+    slug: 'glossgenius',
+    blurb: 'Gold is one flat monthly price for up to 9 staff, with forms and waitlist included.',
+    better: 'Its in-person card rate, 2.4% + $0.15, is lower than Stripe’s 2.9% + 30¢.',
+    people: 3,
+  },
+  {
+    slug: 'vagaro',
+    blurb: 'A low intro rate for 6 months, then $30, plus $10 per extra bookable calendar. Forms, website and text marketing are paid add-ons.',
+    better: 'The lowest price here for a team of 3 while the intro rate lasts.',
+    people: 3,
+  },
+  {
+    slug: 'fresha',
+    blurb: 'A one-person plan, or a price per bookable team member. Clients who find you on its marketplace cost 20% one time ($6 minimum).',
+    better: 'The cheapest plan here for one person, and a marketplace that can send you new clients.',
+    people: 1,
+  },
+  {
+    slug: 'mangomint',
+    blurb: 'A price per location plus $10 per user. Deposits and cards on file need Mangomint’s own payments.',
+    better: 'Its in-person card rate, 2.45% + 15¢, is lower than Stripe’s 2.9% + 30¢.',
+    people: 3,
+  },
+  {
+    slug: 'boulevard',
+    blurb: 'Essentials is one price for one location and up to 5 providers, with higher Premier and Prestige tiers above it.',
+    better: 'One flat price that doesn’t change from 1 to 5 providers.',
+    people: 5,
+  },
+];
+const cardData = cards.map((c) => {
+  const p = platforms.find((x) => x.slug === c.slug)!;
+  return { ...c, name: p.name, short: p.short, theirs: priceOf(c.slug, c.people), ours: priceOf('happli', c.people) };
+});
+---
+
+<BaseLayout
+  title="Happli compared with Square, Vagaro, Fresha and more | Happli"
+  description={`What a beauty studio pays a month on Happli, Square, GlossGenius, Vagaro, Fresha, Mangomint and Boulevard. Prices from each pricing page, checked ${checked}.`}
+  jsonLd={[breadcrumbs([{ name: 'Home', href: '/' }, { name: 'Compare', href: v2Base }])]}
+  hiddenPreview
+>
+  <section class="hero">
+    <div class="wrap hero-grid">
+      <div class="hero-copy">
+        <p class="eyebrow">Compare</p>
+        <h1>Happli next to the booking apps you know.</h1>
+        <p class="lede">
+          Prices from each platform’s pricing page on {checked}, what comes in the plan, where they do more than we do,
+          and how to switch.
+        </p>
+        <div class="btn-row actions">
+          <a class="btn btn-coral" href={site.cta.href} target="_blank" rel="noopener">{site.cta.label}</a>
+        </div>
+      </div>
+      <div class="hero-chart">
+        <PriceChart />
+      </div>
+    </div>
+  </section>
+
+  <section class="section block" aria-labelledby="pages-title">
+    <div class="wrap">
+      <SectionHead eyebrow="Side by side" title="One page per platform" id="pages-title">
+        <p>Each page has the plans, what’s included, where they’re stronger than Happli, and who should pick which. Sources and check dates on every claim.</p>
+      </SectionHead>
+      <ul class="cards">
+        {
+          cardData.map((c) => (
+            <li class="card">
+              <h3>{c.name}</h3>
+              <p class="blurb">{c.blurb}</p>
+              <p class="better">
+                <span class="tag">Where they do more</span>
+                {c.better}
+              </p>
+              <dl class="nums">
+                <div>
+                  <dt>{c.short}, {sizeLabel(c.people).toLowerCase()}</dt>
+                  <dd>{c.theirs}<span>/mo</span></dd>
+                </div>
+                <div class="me">
+                  <dt>Happli, {sizeLabel(c.people).toLowerCase()}</dt>
+                  <dd>{c.ours}<span>/mo</span></dd>
+                </div>
+              </dl>
+              <a class="more" href={`${v2Base}${c.slug}/`} aria-label={`Compare Happli and ${c.name}`}>
+                Compare <span aria-hidden="true">→</span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <section class="section block" aria-labelledby="money-title">
+    <div class="wrap">
+      <div class="money">
+        <div>
+          <p class="eyebrow">Payments</p>
+          <h2 id="money-title">Your money goes to you.</h2>
+        </div>
+        <div class="money-body">
+          <p>
+            Happli takes no cut of what your clients pay. Deposits, checkout, tips, no-show fees, gift cards and packages
+            are charged on your own Stripe account, at Stripe’s standard {stripeRate.text}
+            (<a href={stripeRate.href} rel="nofollow noopener" target="_blank">stripe.com/pricing</a>), and the money lands with you.
+          </p>
+          <p>
+            Some platforms need their own payments for deposits or cards on file. With Happli, your Stripe account stays
+            yours if you ever leave.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <CtaBand
+    eyebrow="Switching"
+    title="We’ll move you over."
+    body="A real person sets up your services, team and hours with you, and we import your clients from a CSV export of your current app. Setup is free, and there’s no contract."
+  />
+
+  <section class="legal" aria-label="Trademarks and sources">
+    <div class="wrap">
+      <p>
+        Square, GlossGenius, Vagaro, Fresha, Mangomint and Boulevard are trademarks of their owners. Happli isn’t
+        affiliated with or endorsed by any of them. Prices and plans change: everything on this page was checked on
+        {' '}{checked} against each company’s own pricing page, linked under the chart. Spotted something out of date?
+        Email <a href={`mailto:${site.contactEmail}`}>{site.contactEmail}</a> and we’ll fix it.
+      </p>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .hero {
+    padding: clamp(48px, 7vw, 96px) 0 0;
+    background: radial-gradient(55% 60% at 20% 0%, rgba(246, 233, 228, 0.95) 0%, rgba(246, 233, 228, 0) 70%), var(--bg);
+  }
+  .hero-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
+    gap: clamp(40px, 6vw, 80px);
+    align-items: start;
+  }
+  .hero-copy {
+    padding-top: clamp(8px, 3vw, 40px);
+  }
+  h1 {
+    font-size: clamp(38px, 4.6vw, 60px);
+    line-height: 1.04;
+    letter-spacing: -0.025em;
+    margin-top: 18px;
+    max-width: 12em;
+  }
+  .lede {
+    margin-top: 22px;
+    max-width: 30em;
+  }
+  .actions {
+    margin-top: 30px;
+  }
+
+  .block {
+    padding-top: var(--space-section);
+  }
+  .cards {
+    list-style: none;
+    margin: 40px 0 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 20px;
+  }
+  .card {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding: 28px;
+    border-radius: var(--radius-lg);
+    background: var(--page);
+    border: 1px solid var(--line);
+  }
+  h3 {
+    font-size: 24px;
+    line-height: 1.2;
+  }
+  .blurb {
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--ink-2);
+  }
+  .better {
+    font-size: 15px;
+    line-height: 1.55;
+    color: var(--ink);
+  }
+  .tag {
+    display: block;
+    margin-bottom: 4px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--muted);
+  }
+  .nums {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin: 4px 0 0;
+    padding-top: 16px;
+    border-top: 1px solid var(--line);
+  }
+  .nums dt {
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .nums dd {
+    margin: 4px 0 0;
+    font-size: 22px;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    color: var(--ink);
+  }
+  .nums dd span {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--muted);
+  }
+  .nums .me dd {
+    color: var(--coral-ink);
+  }
+  .more {
+    margin-top: auto;
+    padding-top: 6px;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--coral-ink);
+  }
+  .more:hover {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .money {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr);
+    gap: clamp(24px, 5vw, 72px);
+    padding: clamp(28px, 5vw, 56px);
+    border-radius: var(--radius-xl);
+    background: var(--page);
+    border: 1px solid var(--line);
+  }
+  .money h2 {
+    margin-top: 14px;
+    font-size: clamp(30px, 3.4vw, 42px);
+    line-height: 1.08;
+    letter-spacing: -0.02em;
+  }
+  .money-body p {
+    font-size: 17px;
+    line-height: 1.65;
+    color: var(--ink-2);
+  }
+  .money-body p + p {
+    margin-top: 14px;
+  }
+  .money-body a,
+  .legal a {
+    color: var(--ink-2);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  .legal {
+    padding: 48px 0 0;
+  }
+  .legal p {
+    max-width: 52em;
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--muted);
+  }
+
+  @media (max-width: 1060px) {
+    .cards {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  @media (max-width: 960px) {
+    .hero-grid {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .hero-copy {
+      padding-top: 0;
+    }
+    .money {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+  @media (max-width: 680px) {
+    .cards {
+      grid-template-columns: 1fr;
+    }
+    .card {
+      padding: 22px;
+    }
+  }
+</style>
