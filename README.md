@@ -133,7 +133,7 @@ Links to other sites inside a blog post open in a new tab (`scripts/external-lin
 
 ## Analytics
 
-Every page loads Umami (`umami-production-42bf.up.railway.app`) and Google Tag Manager (`GTM-T3TTM9JP`) from `src/layouts/BaseLayout.astro`, on production and preview builds alike. GA4 is configured inside GTM, not in code. Their hosts are allowed in the CSP in `public/_headers`; a GTM "Custom HTML" tag needs inline script and is blocked by that CSP.
+Every page loads Umami (`analytics.teamhappy.io`) and Google Tag Manager (`GTM-T3TTM9JP`) from `src/layouts/BaseLayout.astro`, on production and preview builds alike. GA4 is configured inside GTM, not in code. Their hosts are allowed in the CSP in `public/_headers`; a GTM "Custom HTML" tag needs inline script and is blocked by that CSP.
 
 ## SEO
 
