@@ -10,15 +10,15 @@ tldr:
   - 'Pair deposits with reminders that repeat the policy, and apply the same rule to every client, every time.'
 faq:
   - q: 'Do deposits scare clients away?'
-    a: 'Some first-timers hesitate, which is why the policy should be short, visible before they pay, and fair. A client who will not put down a small deposit for a long appointment is often the one most likely to skip it. Most regulars are used to paying a deposit for a lash set or a color appointment.'
+    a: 'Some first-timers hesitate, which is why the policy should be short, visible before they pay, and fair. A client who will not put down a small deposit for a long appointment can also be the one who skips it. Paying a deposit is already common for a lash set or a color appointment.'
   - q: 'How much should a beauty deposit be?'
-    a: 'Enough that a client thinks twice before skipping, and small enough that it does not feel like paying in full up front. Many studios take a percentage of the service so the amount scales with the time you are holding. Pick a number, try it for a few months, and adjust.'
+    a: 'Enough that a client thinks twice before skipping, and small enough that it does not feel like paying in full up front. Many studios take a percent of the booked total so the amount scales with the time you are holding. Pick a number, try it for a few months, and adjust.'
   - q: 'Should I refund a deposit if the client cancels?'
     a: 'Follow your written policy. A common approach is to refund or move the deposit when a client cancels outside your cancellation window, and keep it when they cancel late or do not show. What matters most is that the client saw the rule before they paid.'
   - q: 'Is a deposit the same as a no-show fee?'
     a: 'No. A deposit is collected when the client books and comes off their bill at checkout. A no-show fee is charged after a client misses the appointment. Some studios use one, some use both.'
   - q: 'Should regular clients pay a deposit too?'
-    a: 'That is your call, but be consistent. If you waive deposits for regulars, decide what earns the waiver (for example, a set number of visits with no late cancellations) and write it down, so it never feels personal.'
+    a: 'Yes, and keep the rule the same for everyone. You can require a deposit for online bookings, bookings by your team, or both. That setting applies to every appointment in that channel, rather than being waived client by client.'
 related:
   - get-your-studio-recommended-in-chatgpt
 ---
@@ -53,11 +53,11 @@ You don't have to take a deposit on everything. Start where a no-show hurts most
 
 **Why it helps:** a deposit on a 15-minute brow wax can feel like more hassle than it's worth to a regular. A deposit on a three-hour set protects real money.
 
-**Example:** a spa takes deposits on every online booking, since most of those are new clients, but lets the front desk skip it for regulars booking their next visit in person.
+**Example:** a spa requires a deposit for online bookings and for bookings made by the team, so a Saturday color appointment needs a deposit whether the client booked on their phone or called the desk.
 
 ## Step 3: Pick an amount that fits the service
 
-A percentage of the service price is the simplest rule, because the deposit grows with the time you're holding. A flat amount is easy to explain but feels heavy on a small service and light on a big one.
+A percent of the booked total is the simplest rule, because the deposit grows with the time you're holding. A flat amount is easy to explain but feels heavy on a small service and light on a big one.
 
 **Why it helps:** the deposit has to be big enough that skipping stings a little, and small enough that it doesn't feel like paying in full a week early.
 
@@ -83,7 +83,7 @@ Not every booking comes in online. Calls, DMs and walk-ins who book their next v
 
 Deposits and reminders work together. The deposit gives the client a reason to come. The reminder makes sure they remember.
 
-**Why it helps:** most no-shows aren't people trying to skip. They forgot, or they meant to cancel and didn't get around to it. A reminder sent before your cancellation window closes gives them a last easy chance to move the appointment while you can still fill it.
+**Why it helps:** a no-show is often someone who forgot, or who meant to cancel and didn't get around to it. A reminder sent before your cancellation window closes gives them a last easy chance to move the appointment while you can still fill it.
 
 **Example:** with a 48-hour window, send a reminder about three days out. "Hi Maya, see you Saturday at 10 a.m. for your lash fill. Need to move it? Reschedule by Thursday at 10 a.m. to keep your deposit." Then send a short day-before reminder with the address and any prep notes.
 
@@ -107,7 +107,7 @@ Use this as a starting point. Change the amounts and times to fit your studio, a
 
 > **Deposits and cancellations**
 >
-> A deposit of [X]% of your service is required to book. It holds your time and comes off your total at checkout.
+> A deposit of [X]% of the booked total is required to book. It holds your time and comes off your total at checkout.
 >
 > **Need to cancel or reschedule?** Let us know at least [48] hours before your appointment and we'll move your deposit to your new time [or refund it].
 >
@@ -127,6 +127,6 @@ Use this as a starting point. Change the amounts and times to fit your studio, a
 
 ## How Happli helps
 
-Happli is booking software for salons, spas and beauty studios, with deposits built in. You can require a deposit as a percentage of the service, for online bookings, bookings by your team, or both. When a deposit is required online, the booking is confirmed once it's paid. Payments go through your own Stripe account, Happli takes no cut of them, and deposits already paid come off the balance at checkout. You set your cancellation window in your booking rules, and when a client doesn't show, you mark the no-show and, if you've turned on a no-show fee, collect it through a secure Stripe payment link. Confirmations and reminders go out by text or email in your own wording, once you turn them on, and reports show deposits, no-show fees and no-shows. See [all of Happli's features](/features/), or read [how deposits and no-show fees work](https://support.gohappli.com/hc/happli-help/articles/i3-how-do-deposits-and-no-show-fees-work) in our help center.
+Happli is booking software for salons, spas and beauty studios, with deposits built in. You can require a deposit as a percent of the booked total, for online bookings, bookings by your team, or both. When a deposit is required online, the booking is confirmed once it's paid. Payments go through your own Stripe account, Happli takes no cut of them, and deposits already paid come off the balance at checkout. You set your cancellation window in your booking rules, and when a client doesn't show, you mark the no-show and, if you've turned on a no-show fee, collect it through a secure Stripe payment link. Confirmations and reminders go out by text or email in your own wording, once you turn them on, and reports show deposits, no-show fees and no-shows. See [all of Happli's features](/features/), or read [how deposits and no-show fees work](https://support.gohappli.com/hc/happli-help/articles/i3-how-do-deposits-and-no-show-fees-work) in our help center.
 
 A booking page that takes deposits also matters when new clients find you through AI search. We cover that in [how to get your beauty studio recommended in ChatGPT](/blog/get-your-studio-recommended-in-chatgpt/).
