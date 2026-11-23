@@ -1,5 +1,5 @@
 <h1>Security</h1>
-  <p class="updated">Last updated: October 29, 2026</p>
+  <p class="updated">Last updated: November 22, 2026</p>
 
   <p>Happli holds business data on behalf of working businesses, and we treat that as the core responsibility of the product. Here's how the Service is protected today, stated plainly, without badges we haven't earned yet.</p>
 
@@ -10,7 +10,7 @@
   <p>Data is encrypted in transit (TLS). Our database is encrypted at rest by our database provider, and our nightly database backups are encrypted before they're stored. Payment details are handled entirely by Stripe, so full card numbers never touch our systems.</p>
 
   <h2>The approval gate as a safety control</h2>
-  <p>No AI-drafted message leaves the Service without the studio's explicit approval. That's how the Service is built, not a setting, so an AI mistake can't reach your clients on its own, and every approved message has a human decision attached to it in the audit trail. Messages a studio switches on in its settings, such as booking confirmations, reminders and thank-you texts, use the studio's own wording, involve no AI, and send automatically. Win-back ("time to come back") messages are off unless the studio turns them on, and go only to clients who agreed to marketing messages.</p>
+  <p>A one-off text or email drafted by AI is never sent until you approve it in your Needs You list, and that decision is recorded in the audit trail. If you turn on a follow-up or win-back campaign, messages in that campaign can send after you've reviewed how the campaign works — each live draft is not re-reviewed. The optional website chat replies to visitors on its own from your public business information; it cannot see your client list. Messages a studio switches on in its settings, such as booking confirmations, reminders and thank-you texts, use the studio's own wording, involve no AI, and send automatically. Win-back ("time to come back") messages are off unless the studio turns them on, and go only to clients who agreed to marketing messages.</p>
 
   <h2>Auditability</h2>
   <p>Actions in the Service, such as syncs, drafts, approvals, sends and opt-outs, are recorded in an append-only audit log scoped to your business.</p>
@@ -18,8 +18,10 @@
   <h2>Access and authentication</h2>
   <p>Sign-in uses secure, expiring email links, so there are no passwords to steal or reuse. Sessions are cookie-based and can be ended by signing out.</p>
 
-  <h2>AI and your data</h2>
-  <p>AI drafting runs through Anthropic's API under commercial terms: content sent for drafting is <strong>not used to train models</strong>. The public website chat widget answers only from a business's public-appropriate information (services, prices the business has confirmed, hours, profile). It has no access to client records, metrics, or internal data.</p>
+  <h2>Your data and AI</h2>
+  <p>Happli uses Anthropic's commercial API — not the public Claude chat app — to help draft messages, phrase insights, answer questions about your reports, turn a blank form into a draft, and power an optional website chat. Under Anthropic's commercial terms, your studio's data is not used to train their models.</p>
+  <p>We send only what a feature needs, and we keep each studio's data separate. When AI helps with a message to a client, it sees first names, not phone numbers, emails, or payment details. A one-off text or email is never sent until you approve it. Campaigns you turn on can send follow-ups in your voice after you've reviewed how the campaign works. The optional website chat answers visitors from your public business information only — it cannot see your client list — and phone numbers or emails a visitor types are stripped before the AI sees them.</p>
+  <p>You can pause a campaign or choose not to use the chat at any time.</p>
 
   <h2>Messaging safeguards</h2>
   <p>Text opt-outs (STOP and similar keywords) are honored immediately and stay in effect until the person opts back in, for example by replying START. Texts follow the studio's sending hours. Links Happli adds to messages go only to fixed destinations, such as a studio's form or review page.</p>
