@@ -472,6 +472,18 @@ p {
     font-size: 13px;
   }
 }
+/* phones: plan tables (plan name, then two text columns) need a narrow label column and whole
+   words, since the plan names are short and prices or long words shouldn't split */
+@media (max-width: 640px) {
+  .prose.compare .plan-table table th,
+  .prose.compare .plan-table table td {
+    hyphens: manual;
+  }
+  .prose.compare .plan-table table th:first-child,
+  .prose.compare .plan-table table td:first-child {
+    width: 25%;
+  }
+}
 /* very narrow phones: step the compared columns down a notch so they still fit, and give the label
    column a touch more room so long labels (e.g. "Memberships") wrap whole instead of mid-word */
 @media (max-width: 359.98px) {
