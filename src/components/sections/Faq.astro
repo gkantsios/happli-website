@@ -2,6 +2,7 @@
 import SectionHead from './SectionHead.astro';
 import { faqPage } from '../../lib/jsonld';
 import { site } from '../../config/site';
+import { umamiAttrsForHref } from '../../lib/umami-events.mjs';
 
 export type FaqItem = { q: string; a: string; comingSoon?: boolean };
 
@@ -23,8 +24,8 @@ const { items, title = 'Frequently asked questions', id = 'faq' } = Astro.props;
         <p class="help-title">Still have a question?</p>
         <p class="help-body">We're happy to walk you through it.</p>
         <div class="help-actions">
-          <a class="btn btn-ghost" href={site.cta.href} target="_blank" rel="noopener">{site.cta.label}</a>
-          <a class="mail" href={`mailto:${site.contactEmail}`}>{site.contactEmail}</a>
+          <a class="btn btn-ghost" href={site.cta.href} target="_blank" rel="noopener" {...umamiAttrsForHref(site.cta.href, { location: 'faq' })}>{site.cta.label}</a>
+          <a class="mail" href={`mailto:${site.contactEmail}`} {...umamiAttrsForHref(`mailto:${site.contactEmail}`, { location: 'faq' })}>{site.contactEmail}</a>
         </div>
       </div>
     </div>

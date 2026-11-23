@@ -9,6 +9,7 @@ import PriceChart from '../../components/compare-v2/PriceChart.astro';
 import IncludedMatrix from '../../components/compare-v2/IncludedMatrix.astro';
 import '../../styles/compare-v2.css';
 import { site } from '../../config/site';
+import { umamiAttrsForHref } from '../../lib/umami-events.mjs';
 import { breadcrumbs } from '../../lib/jsonld';
 import { chartNotes, checked, chartRows, formatCents, modes, platforms, stripeRate, v2Base } from '../../config/compare-v2';
 
@@ -83,7 +84,7 @@ const cardData = cards.map((c) => {
           and how to switch.
         </p>
         <div class="btn-row actions">
-          <a class="btn btn-coral" href={site.cta.href} target="_blank" rel="noopener">{site.cta.label}</a>
+          <a class="btn btn-coral" href={site.cta.href} target="_blank" rel="noopener" {...umamiAttrsForHref(site.cta.href, { location: 'compare' })}>{site.cta.label}</a>
         </div>
       </div>
       <div class="hero-chart">
@@ -197,7 +198,7 @@ const cardData = cards.map((c) => {
         Square, GlossGenius, Vagaro, Fresha, Mangomint and Boulevard are trademarks of their owners. Happli isn’t
         affiliated with or endorsed by any of them. Prices and plans change: everything on this page was checked on
         {' '}{checked} against each company’s own pricing page, linked under the chart. Spotted something out of date?
-        Email <a href={`mailto:${site.contactEmail}`}>{site.contactEmail}</a> and we’ll fix it.
+        Email <a href={`mailto:${site.contactEmail}`} {...umamiAttrsForHref(`mailto:${site.contactEmail}`, { location: 'compare' })}>{site.contactEmail}</a> and we’ll fix it.
       </p>
     </div>
   </section>

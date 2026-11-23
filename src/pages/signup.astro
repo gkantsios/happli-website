@@ -5,6 +5,7 @@ import OnePlan from '../components/sections/OnePlan.astro';
 import SectionHead from '../components/sections/SectionHead.astro';
 import { breadcrumbs } from '../lib/jsonld';
 import { site } from '../config/site';
+import { umamiAttrsForHref } from '../lib/umami-events.mjs';
 import { plan, launchLock, trialDays, usd } from '../config/pricing';
 
 const title = 'Get Started | Join Happli at launch pricing';
@@ -23,7 +24,7 @@ const description = `Join Happli at launch pricing: ${usd(plan.launch.monthly)} 
     cta={false}
   >
     <div class="btn-row call">
-      <a class="btn btn-coral" href={site.cta.href} target="_blank" rel="noopener">Book a call</a>
+      <a class="btn btn-coral" href={site.cta.href} target="_blank" rel="noopener" {...umamiAttrsForHref(site.cta.href, { location: 'signup' })}>Book a call</a>
       {site.demo.enabled && <a class="btn btn-ghost" href={site.demo.href}>{site.demo.label}</a>}
     </div>
   </PageIntro>
@@ -39,7 +40,7 @@ const description = `Join Happli at launch pricing: ${usd(plan.launch.monthly)} 
         <li><b>Set up your studio, free.</b> Add services, team and hours, and we bring your clients over from CSV if you're switching. There's no setup fee.</li>
         <li><b>Go live.</b> Happli is free until your studio goes live, for up to {trialDays} days. Then you pay one plan price, monthly or yearly. {launchLock}</li>
       </ol>
-      <p class="help">Questions first? <a href="/pricing/">See pricing details</a>, <a href="/help/">visit Help</a> or email <a href={`mailto:${site.contactEmail}`}>{site.contactEmail}</a>.</p>
+      <p class="help">Questions first? <a href="/pricing/">See pricing details</a>, <a href="/help/">visit Help</a> or email <a href={`mailto:${site.contactEmail}`} {...umamiAttrsForHref(`mailto:${site.contactEmail}`, { location: 'signup' })}>{site.contactEmail}</a>.</p>
     </div>
   </section>
 </BaseLayout>

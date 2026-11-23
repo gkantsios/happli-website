@@ -8,11 +8,11 @@
   },
   "scripts": {
     "dev": "astro dev",
-    "build": "astro build && node scripts/trim-inline-scripts.mjs && node scripts/external-links.mjs && node scripts/csp-hashes.mjs",
+    "build": "astro build && node scripts/trim-inline-scripts.mjs && node scripts/external-links.mjs && node scripts/csp-hashes.mjs && node scripts/check-umami-events.mjs",
     "preview": "astro preview",
     "check": "astro check",
     "astro": "astro",
-    "test": "tsx --test --test-concurrency=1 worker/test/*.test.ts"
+    "test": "tsx --test --test-concurrency=1 worker/test/*.test.ts && node --test scripts/test/*.test.mjs"
   },
   "dependencies": {
     "@astrojs/mdx": "^8.0.2",

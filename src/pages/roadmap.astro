@@ -3,6 +3,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import PageIntro from '../components/sections/PageIntro.astro';
 import { breadcrumbs } from '../lib/jsonld';
 import { site } from '../config/site';
+import { umamiAttrsForHref } from '../lib/umami-events.mjs';
 
 const title = 'Roadmap | What we are building next at Happli';
 const description = "What's live in Happli, what's in progress and what's later. Suggest a feature anytime.";
@@ -200,7 +201,7 @@ const mailto = `mailto:${site.contactEmail}?subject=${encodeURIComponent('Featur
       }
     </div>
     <div class="foot">
-      <a class="btn btn-coral" href={mailto}>Suggest a feature</a>
+      <a class="btn btn-coral" href={mailto} {...umamiAttrsForHref(mailto, { location: 'roadmap' })}>Suggest a feature</a>
       <p class="note">Plans can change. Studios on launch pricing get early access.</p>
     </div>
   </div>

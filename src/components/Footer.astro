@@ -1,6 +1,7 @@
 ---
 import Logo from './Logo.astro';
 import { site } from '../config/site';
+import { umamiAttrsForHref } from '../lib/umami-events.mjs';
 const year = new Date().getFullYear();
 ---
 
@@ -18,11 +19,11 @@ const year = new Date().getFullYear();
       <nav aria-labelledby="footer-company">
         <h2 id="footer-company">Company</h2>
         <ul>
-          <li><a href={site.cta.href} target="_blank" rel="noopener">{site.cta.label}</a></li>
-          <li><a href="/signup/">Get started</a></li>
+          <li><a href={site.cta.href} target="_blank" rel="noopener" {...umamiAttrsForHref(site.cta.href, { location: 'footer' })}>{site.cta.label}</a></li>
+          <li><a href="/signup/" {...umamiAttrsForHref('/signup/', { location: 'footer' })}>Get started</a></li>
           <li><a href="/help/">Help</a></li>
           <li><a href={site.signInUrl}>Sign in</a></li>
-          <li><a href={`mailto:${site.contactEmail}`}>{site.contactEmail}</a></li>
+          <li><a href={`mailto:${site.contactEmail}`} {...umamiAttrsForHref(`mailto:${site.contactEmail}`, { location: 'footer' })}>{site.contactEmail}</a></li>
         </ul>
       </nav>
       <nav aria-labelledby="footer-legal">
