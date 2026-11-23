@@ -1,6 +1,6 @@
 # happli-website
 
-The marketing site for Happli, at [gohappli.com](https://gohappli.com). It's built with [Astro](https://astro.build) as a static site and deployed to Cloudflare Workers as static assets, with one small Worker endpoint for the Marketing add-on waitlist.
+The marketing site for Happli, at [gohappli.com](https://gohappli.com). It's built with [Astro](https://astro.build) as a static site and deployed to Cloudflare Workers as static assets, with small Worker endpoints for the Marketing add-on waitlist and the Beauty Business Snapshot.
 
 ## Run it locally
 
@@ -39,7 +39,8 @@ npm run build && npx wrangler deploy --dry-run
 | `src/content/blog/`, `src/content/compare/` | Markdown posts |
 | `public/` | Files served as-is: logos, favicons (`favicon.ico` is made by `node scripts/generate-favicon.mjs`), `robots.txt`, the default social image, `_redirects` (Cloudflare edge redirects) |
 | `wrangler.jsonc` | Cloudflare Worker config: the Worker `happli-website` serves `dist/` as static assets and runs `worker/` only for `/api/*` |
-| `worker/` | The Worker script: `POST /api/waitlist` (the Marketing add-on waitlist on /pricing/; see below) |
+| `worker/` | The Worker script: `POST /api/waitlist` (the Marketing add-on waitlist on /pricing/) and `POST /api/snapshot` (the Beauty Business Snapshot on /snapshot/); see below |
+| `migrations/` | D1 migrations for the Snapshot database `happli-snapshot` |
 | `TODO.md` | Launch blockers, claims to confirm and placeholders to fill |
 
 ## Homepage hero
@@ -173,6 +174,26 @@ The Marketing add-on card on /pricing/ has a "Get notified when it launches" for
 
 Sign-ups are rate-limited to 5 a minute per IP (the `WAITLIST_RATE_LIMITER` binding in `wrangler.jsonc`). Nothing personal (email, IP, token) is logged. If the server-side variables are missing, the endpoint answers `503` and the form shows its "Something went wrong" message.
 
+### Beauty Business Snapshot (/snapshot/)
+
+A free public benchmark: ten range-only questions, then an on-screen comparison. **Preview only:** the page is `noindex`, left out of the sitemap (`astro.config.mjs`) and not linked from the nav, footer or any page until the privacy copy on it is approved. The questions and bands live in `src/config/snapshot.ts`, shared by the page and the Worker.
+
+`POST /api/snapshot` (`worker/snapshot.ts`) checks the origin, a per-IP rate limit (`SNAPSHOT_RATE_LIMITER`, 5 a minute), the body size, a honeypot (`website`) and Turnstile (the same keys and hostname allowlist as the waitlist, in `worker/shared.ts`), and accepts only the allowlisted bands. It maps the ZIP (or city and state) to city, metro and state keys with the bundled table `worker/snapshot-zips.ts` (GeoNames + Census CBSA data, rebuilt with `scripts/build-zip-regions.mjs`; no outside lookup), then drops the ZIP. It saves to the D1 database `happli-snapshot` (binding `SNAPSHOT_DB`) in two tables that cannot be joined (`migrations/0001_snapshot.sql`):
+
+- `snapshot_answers`: a random id, region keys and bands. No ZIP, email, name, IP or timestamp.
+- `snapshot_contacts`: its own random id, the email, optional first name, an HMAC-SHA256 of the email (keyed by `SNAPSHOT_HASH_SECRET`) that allows one submission per email, and the month.
+
+No shared id, foreign key, hash or exact time links them, and both are `WITHOUT ROWID` so insertion order can't line rows up. The reply compares the answers with the most local group (city → metro → state → national) that has at least 15 answers; below that everywhere, it uses clearly labeled sample data that is never stored. If the database, the secret, the rate limiter or (outside localhost) the Turnstile secret is missing, it answers `503 not_configured` and the page shows the labeled sample instead.
+
+New migrations: `npx wrangler d1 migrations apply happli-snapshot --remote` (and `--local` for `wrangler dev`). To try it locally without Turnstile (skipped only on localhost when no `TURNSTILE_SECRET_KEY` is set):
+
+```sh
+npm run build
+npx wrangler d1 migrations apply happli-snapshot --local
+npx wrangler dev --var SNAPSHOT_HASH_SECRET:any-local-value
+# then open http://localhost:8787/snapshot/
+```
+
 ### Demo bookings → Kit (cron)
 
 Every 5 minutes (`triggers.crons` in `wrangler.jsonc`) the Worker's `scheduled` handler (`worker/demo-sync.ts`) reads TidyCal bookings that started in the last 24 hours or start later (`GET https://tidycal.com/api/bookings?starts_at=…`, paged), keeps the **Happli Demo** ones created in the last 24 hours that aren't canceled or deleted, and tags each contact **Happli demo** in Kit. The windows overlap and Kit's tag subscribe is idempotent, so no state is stored and an outage shorter than a day loses nothing. It reads at most 25 pages per run and logs a warning count if it hits that cap. Only counts and status codes are logged. If a secret or variable is missing it does nothing and logs which names are missing.
@@ -181,13 +202,16 @@ Environment variables:
 
 | Name | Where | Required | What it is |
 |---|---|---|---|
-| `PUBLIC_TURNSTILE_SITE_KEY` | **Build** variable (Workers & Pages → happli-website → Settings → Build → Variables), or `.env` locally | Yes | The Turnstile widget's site key. It's public and is baked into /pricing/ at build time, so rebuild after changing it |
+| `PUBLIC_TURNSTILE_SITE_KEY` | **Build** variable (Workers & Pages → happli-website → Settings → Build → Variables), or `.env` locally | Yes | The Turnstile widget's site key. It's public and is baked into /pricing/ and /snapshot/ at build time, so rebuild after changing it |
 | `TURNSTILE_SECRET_KEY` | Worker **secret** (Settings → Variables and Secrets, or `npx wrangler secret put TURNSTILE_SECRET_KEY`) | Yes | The Turnstile widget's secret key |
 | `KIT_API_KEY` | Worker secret | Yes | A Kit **v3** API key (Kit → Settings → Developer; the API key, not the API secret) |
 | `KIT_WAITLIST_TAG_ID` | Worker variable in `wrangler.jsonc` (`vars`) | Yes | The id of the Kit tag "Happli Marketing waitlist" (`24908051`). It isn't secret |
 | `TIDYCAL_API_TOKEN` | Worker **secret** (`npx wrangler secret put TIDYCAL_API_TOKEN`) | Yes, for the demo cron | TidyCal API token, read-only use of `GET /api/bookings` |
 | `TIDYCAL_BOOKING_TYPE_ID` | Worker variable in `wrangler.jsonc` | Yes, for the demo cron | TidyCal booking type "Happli Demo" (`2132151`) |
 | `KIT_DEMO_TAG_ID` | Worker variable in `wrangler.jsonc` | Yes, for the demo cron | Kit tag "Happli demo" (`24907991`) |
+| `SNAPSHOT_DB` | D1 binding in `wrangler.jsonc` (`d1_databases`, database `happli-snapshot`) | Yes, for /snapshot/ | The Snapshot's answers and contacts tables. Schema in `migrations/` |
+| `SNAPSHOT_HASH_SECRET` | Worker **secret** (`npx wrangler secret put SNAPSHOT_HASH_SECRET`) | Yes, for /snapshot/ | A long random pepper for the email HMAC that blocks repeat submissions. Changing it lets every email submit once more |
+| `SNAPSHOT_RATE_LIMITER` | Rate limiting binding in `wrangler.jsonc` (`ratelimits`) | Yes, for /snapshot/ | Per-IP limit on Snapshot submissions (5 a minute) |
 
 Add `gohappli.com` (and any preview hostnames) to the Turnstile widget's allowed hostnames. To try it locally, Turnstile's [test keys](https://developers.cloudflare.com/turnstile/troubleshooting/testing/) always pass:
 

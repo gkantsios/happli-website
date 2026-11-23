@@ -1,0 +1,986 @@
+---
+// Beauty Business Snapshot: a free public benchmark. Ten range-only questions, then an on-screen
+// comparison with the most local group that has at least K_MIN answers (worker/snapshot.ts).
+// Preview only for now: noindex, left out of the sitemap (astro.config.mjs) and not linked from the
+// nav, footer or any other page until the privacy copy below is approved.
+// The phones-only "Book a demo" bar is off here so it never covers a question, the privacy note,
+// the submit button or the results.
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { site } from '../config/site';
+import { K_MIN, questions, sampleGroups, services, states } from '../config/snapshot';
+
+const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY;
+const config = JSON.stringify({
+  k: K_MIN,
+  services,
+  questions: questions.map(({ name, chart, bands }) => ({ name, chart, bands })),
+  sample: sampleGroups(),
+});
+// "Not sure"-style answers sit outside the ordered scale, so "one step higher" never counts them.
+const unordered = ['na', 'new', 'unsure'];
+// The privacy promises, shown above the submit button and again in the privacy section.
+const promises = [
+  'We never connect your email to your answers.',
+  'We never ask for your business name.',
+  'We only ask for ranges, not exact numbers.',
+  'Your answers and your email are stored in separate tables, with no link between them.',
+  'We use your email to prevent spam and to send you the results or the annual report.',
+  'We do not sell your answers or your email.',
+];
+---
+
+<BaseLayout
+  title="Beauty Business Snapshot: a free benchmark for beauty studios | Happli"
+  description="Answer ten quick range questions and see how your spray tan, lash, esthetics, hair or nail business compares in your city, state and nationally. Free, no account, no exact numbers."
+  noindex
+  stickyCta={false}
+>
+  <section class="snap-hero" aria-labelledby="snap-title">
+    <div class="wrap narrow">
+      <p class="eyebrow">A free public benchmark from Happli</p>
+      <h1 id="snap-title">Beauty Business Snapshot</h1>
+      <p class="lede">
+        Ten quick questions, about two minutes. See how your studio compares with others in your city, your area, your state
+        and across the US.
+      </p>
+      <ul class="trust" aria-label="At a glance">
+        <li>Ranges only, never exact numbers</li>
+        <li>No business name</li>
+        <li>Results right away, no account</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="snap-form-section" aria-label="Your answers" data-snapshot data-config={config} data-unordered={unordered.join(',')}>
+    <div class="wrap narrow">
+      <noscript>
+        <p class="notice">The comparison is drawn in your browser, so this page needs JavaScript turned on.</p>
+      </noscript>
+
+      <form class="snap-form" action="/api/snapshot" method="post" novalidate data-form>
+        <div class="q-block"><fieldset class="q" data-q="location" aria-describedby="err-location">
+          <legend><span class="num" aria-hidden="true">1</span><span class="q-title">Where do you work?</span></legend>
+          <p class="hint">We map this to your city, area and state, then drop it. Your ZIP is never stored.</p>
+          <div class="field zip-field">
+            <label for="snap-zip">ZIP code</label>
+            <input id="snap-zip" name="zip" inputmode="numeric" autocomplete="postal-code" maxlength="10" pattern="[0-9]{5}(-[0-9]{4})?" placeholder="74103" />
+          </div>
+          <details class="alt-location" data-alt-location>
+            <summary>No ZIP handy? Use city and state</summary>
+            <div class="city-row">
+              <div class="field">
+                <label for="snap-city">City</label>
+                <input id="snap-city" name="city" autocomplete="address-level2" maxlength="80" />
+              </div>
+              <div class="field">
+                <label for="snap-state">State</label>
+                <select id="snap-state" name="state" autocomplete="address-level1">
+                  <option value="">Choose…</option>
+                  {states.map(([code, name]) => <option value={code}>{name}</option>)}
+                </select>
+              </div>
+            </div>
+          </details>
+          <p class="q-error" id="err-location" data-error hidden></p>
+        </fieldset></div>
+
+        <div class="q-block"><fieldset class="q" data-q="services" aria-describedby="err-services">
+          <legend><span class="num" aria-hidden="true">2</span><span class="q-title">What do you offer?</span></legend>
+          <p class="hint">Choose all that apply.</p>
+          <div class="pills">
+            {
+              services.map((s) => (
+                <label class="pill">
+                  <input type="checkbox" name="services" value={s.value} />
+                  <span>{s.label}</span>
+                </label>
+              ))
+            }
+          </div>
+          <p class="q-error" id="err-services" data-error hidden></p>
+        </fieldset></div>
+
+        {
+          questions.map((q, i) => (
+            <div class="q-block"><fieldset class="q" data-q={q.name} aria-describedby={`err-${q.name}`}>
+              <legend>
+                <span class="num" aria-hidden="true">{i + 3}</span>
+                <span class="q-title">{q.title}</span>
+              </legend>
+              {q.hint && <p class="hint">{q.hint}</p>}
+              <div class="pills">
+                {q.bands.map((b) => (
+                  <label class="pill">
+                    <input type="radio" name={q.name} value={b.value} />
+                    <span>{b.label}</span>
+                  </label>
+                ))}
+              </div>
+              <p class="q-error" id={`err-${q.name}`} data-error hidden />
+            </fieldset></div>
+          ))
+        }
+
+        <div class="q-block"><fieldset class="q contact" data-q="email" aria-describedby="err-email">
+          <legend><span class="q-title">Where should we send the annual report?</span></legend>
+          <p class="hint">
+            Your email keeps the Snapshot free of repeat and spam answers, and lets us send you the results or the annual report.
+            It is stored on its own, never next to your answers.
+          </p>
+          <div class="contact-row">
+            <div class="field">
+              <label for="snap-email">Email <span class="req">(required)</span></label>
+              <input id="snap-email" name="email" type="email" autocomplete="email" inputmode="email" maxlength="254" required placeholder="you@studio.com" />
+            </div>
+            <div class="field">
+              <label for="snap-name">First name <span class="opt">(optional)</span></label>
+              <input id="snap-name" name="first_name" autocomplete="given-name" maxlength="60" />
+            </div>
+          </div>
+          <p class="q-error" id="err-email" data-error hidden></p>
+        </fieldset></div>
+
+        <div class="hp" aria-hidden="true">
+          <label>Website<input name="website" tabindex="-1" autocomplete="off" /></label>
+        </div>
+
+        <aside class="privacy-note" aria-labelledby="privacy-note-title">
+          <h2 id="privacy-note-title">Your privacy, in plain words</h2>
+          <ul>{promises.map((p) => <li>{p}</li>)}</ul>
+          <p class="more"><a href="#privacy">More on how we handle your answers</a></p>
+        </aside>
+
+        {
+          turnstileSiteKey && (
+            <div
+              class="cf-turnstile ts"
+              data-turnstile
+              data-sitekey={turnstileSiteKey}
+              data-appearance="interaction-only"
+              data-size="flexible"
+              data-refresh-expired="auto"
+            />
+          )
+        }
+
+        <div class="submit-row">
+          <button class="btn btn-primary submit" type="submit">
+            <span class="spin" aria-hidden="true"></span>
+            <span data-submit-label>See how I compare</span>
+          </button>
+          <p class="form-msg" id="form-msg" aria-live="polite" data-form-msg></p>
+        </div>
+        <p class="fine">For general comparison only. Not financial, tax or credit advice.</p>
+      </form>
+    </div>
+  </section>
+
+  <section class="snap-results" aria-labelledby="results-title" data-results hidden>
+    <div class="wrap">
+      <div class="results-head">
+        <p class="eyebrow">Your Snapshot</p>
+        <h2 id="results-title" tabindex="-1">How you compare</h2>
+        <p class="lede" data-results-sub></p>
+        <div class="notes" data-notes></div>
+      </div>
+      <div class="charts" data-charts></div>
+
+      <aside class="tie-in" aria-labelledby="tie-in-title">
+        <p class="eyebrow">From Happli, the team behind the Snapshot</p>
+        <h2 id="tie-in-title">Want fewer gaps in your book?</h2>
+        <p>
+          Happli is booking software for beauty studios. Clients book online, pay deposits and get reminders on their own, and
+          Happli helps you fill open spots and keep clients coming back.
+        </p>
+        <div class="btn-row">
+          <a class="btn btn-ghost" href="/features/">See how Happli works</a>
+          <a class="btn btn-coral" href={site.cta.href} target="_blank" rel="noopener">{site.cta.label}</a>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <section class="snap-privacy" id="privacy" aria-labelledby="privacy-title">
+    <div class="wrap narrow">
+      <p class="eyebrow">Privacy</p>
+      <h2 id="privacy-title">How we handle your answers</h2>
+      <ul class="promises">{promises.map((p) => <li>{p}</li>)}</ul>
+      <div class="privacy-detail">
+        <p>
+          <strong>Two separate tables.</strong> Your answers are saved as ranges plus your city, area and state, with a random
+          id. Your email and first name are saved in a different table with a different random id. Neither table holds the
+          other's id, your email in any form, or the exact time you answered, so the two can't be matched up.
+        </p>
+        <p>
+          <strong>No ZIP, no IP.</strong> Your ZIP code is used once to look up your city, area and state, then dropped. We
+          don't store your IP address or device details with either table.
+        </p>
+        <p>
+          <strong>Groups of {K_MIN} or more.</strong> We only show a city or area once at least {K_MIN} studios there have
+          answered. Until then you'll see your state or the national picture instead, and we never cut the results by team
+          size, service or anything else that could single out one studio.
+        </p>
+        <p>
+          <strong>Your email.</strong> One set of answers per email keeps the results honest. We'll use it for the results or
+          the annual report, not a sales sequence. To have it deleted, email <a href={`mailto:${site.contactEmail}`}>{site.contactEmail}</a>.
+          Because your answers aren't linked to your email, we can't find or remove them afterwards: they're one anonymous set
+          of ranges among many.
+        </p>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+{turnstileSiteKey && <script is:inline src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>}
+<script is:inline>
+  (function () {
+    var root = document.querySelector('[data-snapshot]');
+    if (!root || !window.fetch || !window.FormData) return;
+    var cfg = JSON.parse(root.dataset.config);
+    var unordered = root.dataset.unordered.split(',');
+    var form = root.querySelector('[data-form]');
+    var btn = form.querySelector('button[type="submit"]');
+    var label = btn.querySelector('[data-submit-label]');
+    var idle = label.textContent;
+    var msg = form.querySelector('[data-form-msg]');
+    var ts = form.querySelector('[data-turnstile]');
+    var alt = form.querySelector('[data-alt-location]');
+    var results = document.querySelector('[data-results]');
+    var EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@.]{2,}$/;
+    var errors = {
+      location: 'Enter a 5-digit ZIP code, or a city and state.',
+      unknown_zip: "We couldn't find that ZIP. Check it, or use your city and state instead.",
+      unknown_city: "We couldn't find that city in that state. Check the spelling, or use your ZIP.",
+      services: 'Choose at least one service.',
+      band: 'Choose one answer.',
+      email: 'Enter an email like name@studio.com.',
+      verification_failed: "We couldn't verify the request. Please try again.",
+      rate_limited: 'Too many tries in a row. Wait a minute and try again.',
+      server: 'Something went wrong on our end. Try again in a minute.',
+    };
+
+    function el(tag, cls, text) {
+      var n = document.createElement(tag);
+      if (cls) n.className = cls;
+      if (text != null) n.textContent = text;
+      return n;
+    }
+    function fieldError(name, text) {
+      var fs = form.querySelector('[data-q="' + name + '"]');
+      if (!fs) return null;
+      var e = fs.querySelector('[data-error]');
+      fs.classList.toggle('has-error', !!text);
+      e.hidden = !text;
+      e.textContent = text || '';
+      if (text) e.setAttribute('role', 'alert');
+      else e.removeAttribute('role');
+      return fs;
+    }
+    function clearErrors() {
+      form.querySelectorAll('[data-q]').forEach(function (fs) { fieldError(fs.dataset.q, ''); });
+      msg.textContent = '';
+      msg.classList.remove('err');
+    }
+    function focusField(fs) {
+      if (!fs) return;
+      var target = fs.querySelector('input:not([type=hidden]), select');
+      fs.scrollIntoView({ block: 'center' });
+      if (target) target.focus({ preventScroll: true });
+    }
+    function busy(on) {
+      btn.disabled = on;
+      if (on) btn.setAttribute('aria-busy', 'true');
+      else btn.removeAttribute('aria-busy');
+      label.textContent = on ? 'Comparing…' : idle;
+    }
+    function turnstile() {
+      return ts && window.turnstile ? window.turnstile : null;
+    }
+    function token() {
+      return new Promise(function (resolve) {
+        var waited = 0;
+        (function check() {
+          var t = turnstile() ? turnstile().getResponse(ts) : '';
+          if (t || !ts || waited >= 6000) return resolve(t || '');
+          waited += 200;
+          setTimeout(check, 200);
+        })();
+      });
+    }
+
+    // Checks the form in the browser first; the server checks everything again.
+    function validate() {
+      var bad = [];
+      var zip = form.zip.value.trim();
+      var useCity = !zip && (form.city.value.trim() || form.state.value);
+      if (zip ? !/^\d{5}(-\d{4})?$/.test(zip) : !(useCity && form.city.value.trim() && form.state.value)) bad.push(['location', errors.location]);
+      if (!form.querySelector('input[name="services"]:checked')) bad.push(['services', errors.services]);
+      cfg.questions.forEach(function (q) {
+        if (!form.querySelector('input[name="' + q.name + '"]:checked')) bad.push([q.name, errors.band]);
+      });
+      var email = form.email.value.trim();
+      if (!EMAIL.test(email) || email.length > 254) bad.push(['email', errors.email]);
+      return bad;
+    }
+    function answers() {
+      var you = { services: [] };
+      form.querySelectorAll('input[name="services"]:checked').forEach(function (i) { you.services.push(i.value); });
+      cfg.questions.forEach(function (q) {
+        var c = form.querySelector('input[name="' + q.name + '"]:checked');
+        you[q.name] = c ? c.value : '';
+      });
+      return you;
+    }
+
+    function pct(n, total) {
+      return total ? Math.round((n / total) * 100) : 0;
+    }
+    function sentence(q, counts, you, place) {
+      var ordered = q.bands.filter(function (b) { return unordered.indexOf(b.value) < 0; });
+      var top = ordered.slice().sort(function (a, b) { return counts[b.value] - counts[a.value]; })[0];
+      var mine = q.bands.filter(function (b) { return b.value === you; })[0];
+      if (!top || !counts[top.value]) return 'No answers in this group yet.';
+      var lead = 'Most common in ' + place + ': ' + top.label + '.';
+      if (!mine || unordered.indexOf(mine.value) >= 0) return lead;
+      if (mine.value === top.value) return 'You are in the most common range in ' + place + '.';
+      var steps = ordered.indexOf(mine) - ordered.indexOf(top);
+      var n = Math.abs(steps);
+      return lead + ' Your answer is ' + (n === 1 ? 'one step' : n + ' steps') + (steps > 0 ? ' higher.' : ' lower.');
+    }
+    function chart(title, rows, summary, youLabel) {
+      var card = el('article', 'chart');
+      var head = el('div', 'chart-head');
+      head.append(el('h3', null, title));
+      if (youLabel) head.append(el('p', 'you-chip', youLabel));
+      card.append(head);
+      var list = el('ul', 'bars');
+      rows.forEach(function (r) {
+        var li = el('li', r.you ? 'is-you' : '');
+        var top = el('div', 'bar-top');
+        var name = el('span', 'bar-label', r.label);
+        if (r.you) {
+          var tag = el('span', 'you-tag', 'You');
+          name.append(' ', tag);
+        }
+        top.append(name, el('span', 'bar-val', r.pct + '%'));
+        var track = el('div', 'track');
+        track.setAttribute('aria-hidden', 'true');
+        var fill = el('div', 'fill');
+        fill.style.width = Math.max(r.pct, r.pct ? 2 : 0) + '%';
+        track.append(fill);
+        li.append(top, track);
+        list.append(li);
+      });
+      card.append(list);
+      if (summary) card.append(el('p', 'chart-sum', summary));
+      return card;
+    }
+
+    function render(res, you, extra) {
+      var sub = results.querySelector('[data-results-sub]');
+      var notes = results.querySelector('[data-notes]');
+      var charts = results.querySelector('[data-charts]');
+      notes.textContent = '';
+      charts.textContent = '';
+      if (extra) notes.append(el('p', 'note note-info', extra));
+      if (res.fallback) notes.append(el('p', 'note note-info', res.fallback));
+      if (res.sample) notes.append(el('p', 'note note-sample', 'Sample results, for preview — not live data.'));
+      sub.textContent = res.sample
+        ? 'Your answers next to sample data, so you can see how the comparison will look.'
+        : 'Your answers next to ' + res.count + ' studios in ' + res.place + '.';
+
+      var place = res.sample ? 'the sample' : res.place;
+      var offered = cfg.services.map(function (s) {
+        return { label: s.label, pct: pct(res.groups.services[s.value] || 0, res.total), you: you.services.indexOf(s.value) >= 0 };
+      });
+      charts.append(chart('What studios offer', offered, 'Share of studios in ' + place + ' offering each service. Yours are marked.', null));
+      cfg.questions.forEach(function (q) {
+        var counts = res.groups[q.name] || {};
+        var total = q.bands.reduce(function (s, b) { return s + (counts[b.value] || 0); }, 0);
+        var rows = q.bands.map(function (b) { return { label: b.label, pct: pct(counts[b.value] || 0, total), you: b.value === you[q.name] }; });
+        var mine = q.bands.filter(function (b) { return b.value === you[q.name]; })[0];
+        charts.append(chart(q.chart, rows, sentence(q, counts, you[q.name], place), mine ? 'You: ' + mine.label : null));
+      });
+
+      root.hidden = true;
+      results.hidden = false;
+      var h = results.querySelector('#results-title');
+      h.scrollIntoView({ block: 'start' });
+      h.focus({ preventScroll: true });
+    }
+
+    function sampleResults() {
+      return { sample: true, fallback: null, place: 'the US', count: null, groups: cfg.sample, total: 100 };
+    }
+
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      if (btn.disabled) return;
+      clearErrors();
+      var bad = validate();
+      if (bad.length) {
+        bad.forEach(function (b) { fieldError(b[0], b[1]); });
+        msg.textContent = bad.length === 1 ? 'One answer needs a look.' : bad.length + ' answers need a look.';
+        msg.classList.add('err');
+        return focusField(form.querySelector('[data-q="' + bad[0][0] + '"]'));
+      }
+      var you = answers();
+      busy(true);
+      token()
+        .then(function (t) {
+          var data = new FormData(form);
+          if (form.zip.value.trim()) {
+            data.delete('city');
+            data.delete('state');
+          }
+          data.set('email', form.email.value.trim());
+          if (t) data.set('cf-turnstile-response', t);
+          return fetch(form.action, { method: 'POST', body: data, headers: { Accept: 'application/json' } });
+        })
+        .then(function (res) {
+          return res.json().catch(function () { return { ok: false, code: 'server' }; });
+        })
+        .catch(function () { return { ok: false, code: 'server' }; })
+        .then(function (reply) {
+          busy(false);
+          if (reply && reply.ok && reply.results) {
+            return render(reply.results, you, reply.duplicate ? "We already have answers from this email, so we didn't save them again. Here is how these compare." : null);
+          }
+          if (turnstile()) turnstile().reset(ts);
+          var code = (reply && reply.code) || 'server';
+          if (code === 'not_configured') {
+            return render(sampleResults(), you, "Saving isn't switched on yet, so nothing was stored. Here is how your results will look.");
+          }
+          if (code === 'unknown_zip' || code === 'unknown_city' || code === 'missing_location') {
+            if (code === 'unknown_zip' && alt) alt.open = true;
+            return focusField(fieldError('location', errors[code] || errors.location));
+          }
+          if (code === 'invalid_email') return focusField(fieldError('email', errors.email));
+          if (code === 'invalid_answers' && reply.field) return focusField(fieldError(reply.field, reply.field === 'services' ? errors.services : errors.band));
+          msg.textContent = errors[code] || errors.server;
+          msg.classList.add('err');
+        });
+    });
+    form.addEventListener('change', function (e) {
+      var fs = e.target.closest && e.target.closest('[data-q]');
+      if (fs && fs.classList.contains('has-error')) fieldError(fs.dataset.q, '');
+    });
+  })();
+</script>
+
+<style>
+  .narrow {
+    max-width: calc(760px + 2 * var(--gutter));
+  }
+  .snap-hero {
+    padding: clamp(56px, 9vw, 112px) 0 clamp(40px, 6vw, 64px);
+    text-align: center;
+  }
+  .snap-hero h1 {
+    margin-top: 18px;
+    font-size: var(--fs-h1);
+    line-height: 1.08;
+    letter-spacing: -0.02em;
+  }
+  .snap-hero .lede {
+    margin: 22px auto 0;
+  }
+  .trust {
+    list-style: none;
+    margin: 32px 0 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px 12px;
+  }
+  .trust li {
+    padding: 8px 16px;
+    border-radius: var(--radius-pill);
+    background: var(--sage-band);
+    color: var(--sage-ink);
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.4;
+  }
+
+  /* the form */
+  .snap-form-section {
+    padding-bottom: clamp(64px, 9vw, 112px);
+  }
+  .snap-form {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-xl);
+    box-shadow: 0 1px 0 rgba(27, 22, 20, 0.02), 0 24px 60px -36px rgba(27, 22, 20, 0.25);
+    padding: clamp(24px, 5vw, 56px);
+  }
+  .notice {
+    margin-bottom: 24px;
+    padding: 16px 20px;
+    border-radius: var(--radius);
+    background: var(--blush-band);
+    color: var(--ink-2);
+  }
+  .q {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    min-width: 0;
+  }
+  /* the divider and spacing sit on a wrapper, not the fieldset, so the legend never cuts through them */
+  .q-block + .q-block {
+    margin-top: 44px;
+    padding-top: 44px;
+    border-top: 1px solid var(--line);
+  }
+  legend {
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+    padding: 0;
+    font-family: var(--serif);
+    font-size: clamp(22px, 2.6vw, 26px);
+    line-height: 1.25;
+    color: var(--ink);
+  }
+  .num {
+    flex: none;
+    display: inline-grid;
+    place-items: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--blush);
+    color: var(--coral-ink);
+    font-family: var(--sans);
+    font-size: 14px;
+    font-weight: 700;
+    transform: translateY(-3px);
+  }
+  .hint {
+    margin-top: 8px;
+    color: var(--muted);
+    font-size: 15px;
+    line-height: 1.55;
+  }
+  .contact .hint {
+    max-width: 58ch;
+  }
+  .pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 20px;
+  }
+  .pill {
+    position: relative;
+    cursor: pointer;
+  }
+  .pill input {
+    position: absolute;
+    opacity: 0;
+    inset: 0;
+    margin: 0;
+    cursor: pointer;
+  }
+  .pill span {
+    display: inline-flex;
+    align-items: center;
+    min-height: 48px;
+    padding: 10px 20px;
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius-pill);
+    background: var(--bg);
+    font-size: 15px;
+    font-weight: 600;
+    line-height: 1.3;
+    color: var(--ink-2);
+    transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+  }
+  .pill:hover span {
+    border-color: var(--ink-2);
+  }
+  .pill input:checked + span {
+    background: var(--ink);
+    border-color: var(--ink);
+    color: #fff;
+  }
+  .pill input:focus-visible + span {
+    outline: 2px solid var(--ink);
+    outline-offset: 3px;
+  }
+  .has-error .pill span {
+    border-color: var(--coral-strong);
+  }
+  .q-error {
+    margin-top: 12px;
+    color: var(--coral-ink);
+    font-size: 15px;
+    font-weight: 600;
+  }
+  .field {
+    display: grid;
+    gap: 8px;
+    min-width: 0;
+  }
+  .field label {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--ink-2);
+  }
+  .req,
+  .opt {
+    font-weight: 500;
+    color: var(--muted);
+  }
+  input:not([type='radio']):not([type='checkbox']),
+  select {
+    width: 100%;
+    min-height: 52px;
+    padding: 12px 16px;
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius);
+    background: var(--surface);
+    font: inherit;
+    font-size: 16px;
+    color: var(--ink);
+  }
+  input:not([type='radio']):not([type='checkbox']):focus-visible,
+  select:focus-visible {
+    outline: 2px solid var(--ink);
+    outline-offset: 1px;
+  }
+  .has-error input:not([type='radio']):not([type='checkbox']) {
+    border-color: var(--coral-strong);
+  }
+  .zip-field {
+    margin-top: 20px;
+    max-width: 220px;
+  }
+  .alt-location {
+    margin-top: 18px;
+  }
+  .alt-location summary {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--coral-ink);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .city-row,
+  .contact-row {
+    display: grid;
+    gap: 20px;
+    margin-top: 16px;
+  }
+  .contact-row {
+    margin-top: 22px;
+  }
+  @media (min-width: 640px) {
+    .city-row {
+      grid-template-columns: 1.4fr 1fr;
+    }
+    .contact-row {
+      grid-template-columns: 1.4fr 1fr;
+    }
+  }
+  .hp {
+    position: absolute;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+  }
+
+  .privacy-note {
+    margin-top: 44px;
+    padding: clamp(22px, 4vw, 32px);
+    border-radius: var(--radius-lg);
+    background: var(--sage-band);
+  }
+  .privacy-note h2 {
+    font-size: 22px;
+    line-height: 1.3;
+  }
+  .privacy-note ul,
+  .promises {
+    list-style: none;
+    margin: 16px 0 0;
+    padding: 0;
+    display: grid;
+    gap: 12px;
+  }
+  .privacy-note li,
+  .promises li {
+    position: relative;
+    padding-left: 28px;
+    color: var(--ink-2);
+    line-height: 1.55;
+  }
+  .privacy-note li::before,
+  .promises li::before {
+    content: '';
+    position: absolute;
+    left: 4px;
+    top: 0.5em;
+    width: 10px;
+    height: 6px;
+    border-left: 2px solid var(--sage-ink);
+    border-bottom: 2px solid var(--sage-ink);
+    transform: rotate(-45deg);
+  }
+  .privacy-note .more {
+    margin-top: 18px;
+    font-size: 15px;
+  }
+  .privacy-note .more a,
+  .privacy-detail a {
+    color: var(--sage-ink);
+    font-weight: 600;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .ts {
+    margin-top: 24px;
+  }
+  .submit-row {
+    margin-top: 32px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 16px 20px;
+  }
+  .submit {
+    min-height: 56px;
+    padding: 0 32px;
+    font-size: 16px;
+  }
+  .form-msg {
+    font-size: 15px;
+    color: var(--muted);
+  }
+  .form-msg.err {
+    color: var(--coral-ink);
+    font-weight: 600;
+  }
+  .fine {
+    margin-top: 20px;
+    font-size: 14px;
+    color: var(--muted);
+  }
+  .spin {
+    display: none;
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(255, 255, 255, 0.45);
+    border-top-color: #fff;
+    border-radius: 50%;
+  }
+  .submit[aria-busy='true'] .spin {
+    display: inline-block;
+    animation: spin 0.8s linear infinite;
+  }
+  @keyframes spin {
+    to {
+      transform: rotate(1turn);
+    }
+  }
+  @media (max-width: 559.98px) {
+    .submit {
+      width: 100%;
+    }
+  }
+
+  /* results */
+  .snap-results {
+    padding: clamp(8px, 2vw, 24px) 0 clamp(64px, 9vw, 112px);
+  }
+  .results-head {
+    max-width: 760px;
+  }
+  .results-head h2 {
+    margin-top: 14px;
+    font-size: var(--fs-h2);
+    line-height: 1.1;
+  }
+  .results-head h2:focus {
+    outline: none;
+  }
+  .results-head .lede {
+    margin-top: 16px;
+  }
+  .notes {
+    display: grid;
+    gap: 12px;
+    margin-top: 24px;
+  }
+  .notes :global(.note) {
+    padding: 14px 18px;
+    border-radius: var(--radius);
+    font-size: 15px;
+    line-height: 1.5;
+  }
+  .notes :global(.note-info) {
+    background: var(--sage-band);
+    color: var(--sage-ink);
+    font-weight: 600;
+  }
+  .notes :global(.note-sample) {
+    background: var(--coral-soft);
+    color: var(--coral-ink);
+    font-weight: 700;
+  }
+  .charts {
+    display: grid;
+    align-items: start;
+    gap: 24px;
+    margin-top: 40px;
+  }
+  @media (min-width: 880px) {
+    .charts {
+      grid-template-columns: 1fr 1fr;
+      gap: 28px;
+    }
+  }
+  .charts :global(.chart) {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    padding: clamp(22px, 3vw, 32px);
+  }
+  .charts :global(.chart-head) {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 8px 16px;
+  }
+  .charts :global(.chart h3) {
+    font-size: 22px;
+    line-height: 1.25;
+  }
+  .charts :global(.you-chip) {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--coral-ink);
+  }
+  .charts :global(.bars) {
+    list-style: none;
+    margin: 20px 0 0;
+    padding: 0;
+    display: grid;
+    gap: 14px;
+  }
+  .charts :global(.bar-top) {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 12px;
+    font-size: 15px;
+    line-height: 1.4;
+    color: var(--ink-2);
+  }
+  .charts :global(.bar-val) {
+    font-variant-numeric: tabular-nums;
+    color: var(--muted);
+  }
+  .charts :global(.is-you .bar-label),
+  .charts :global(.is-you .bar-val) {
+    color: var(--ink);
+    font-weight: 700;
+  }
+  .charts :global(.you-tag) {
+    display: inline-block;
+    margin-left: 4px;
+    padding: 1px 8px;
+    border-radius: var(--radius-pill);
+    background: var(--coral-strong);
+    color: #fff;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    vertical-align: 1px;
+  }
+  .charts :global(.track) {
+    margin-top: 6px;
+    height: 10px;
+    border-radius: var(--radius-pill);
+    background: var(--ap-grey);
+    overflow: hidden;
+  }
+  .charts :global(.fill) {
+    height: 100%;
+    border-radius: inherit;
+    background: var(--ap-sage-edge);
+  }
+  .charts :global(.is-you .fill) {
+    background: var(--coral-strong);
+  }
+  .charts :global(.chart-sum) {
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px solid var(--line);
+    font-size: 15px;
+    line-height: 1.55;
+    color: var(--ink-2);
+  }
+
+  .tie-in {
+    margin-top: clamp(48px, 7vw, 80px);
+    padding: clamp(28px, 5vw, 48px);
+    border-radius: var(--radius-xl);
+    background: var(--cta-band);
+    max-width: 880px;
+  }
+  .tie-in h2 {
+    margin-top: 12px;
+    font-size: clamp(26px, 3vw, 34px);
+    line-height: 1.15;
+  }
+  .tie-in p:not(.eyebrow) {
+    margin-top: 14px;
+    max-width: 60ch;
+    color: var(--ink-2);
+  }
+  .tie-in .btn-row {
+    margin-top: 24px;
+  }
+
+  /* privacy section */
+  .snap-privacy {
+    padding: clamp(64px, 9vw, 112px) 0;
+    background: var(--footer-sand);
+  }
+  .snap-privacy h2 {
+    margin-top: 14px;
+    font-size: var(--fs-h2);
+    line-height: 1.1;
+  }
+  .promises {
+    margin-top: 28px;
+  }
+  .privacy-detail {
+    display: grid;
+    gap: 18px;
+    margin-top: 32px;
+    color: var(--ink-2);
+    line-height: 1.65;
+  }
+  .privacy-detail strong {
+    color: var(--ink);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .pill span {
+      transition: none;
+    }
+    .submit[aria-busy='true'] .spin {
+      animation: none;
+    }
+  }
+</style>
