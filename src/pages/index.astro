@@ -17,7 +17,7 @@ import { plan, usd } from '../config/pricing';
 
 const title = 'Happli | Booking software for salons and spas';
 const description =
-  'Booking software for salons and spas. Clients book online, pay deposits, and get reminders. Gaps and drafted texts wait for your approval.';
+  'Booking software for salons and spas. Clients book online, pay deposits, and get reminders. Gaps and one-off drafted texts wait for your approval.';
 
 const faq: FaqItem[] = [
   { q: 'Does Happli take a cut of my payments?', a: 'No. Happli never takes a cut of your payments. Card processing fees go to Stripe.' },
@@ -25,8 +25,7 @@ const faq: FaqItem[] = [
   { q: "What happens when a client doesn't show?", a: "Mark the appointment as a no-show and, if you've turned on a no-show fee, collect it through a secure Stripe payment link. The fee is a percentage of the service price you set in Settings." },
   { q: 'I use another booking system. Is switching hard?', a: "We import your clients, services, team and appointments from CSV files exported from your current system. Reminders for imported bookings stay off until you pick a switch-over date, so clients don't hear from two systems at once." },
   { q: 'Can I sell packages?', a: "Yes. Create prepaid session packages, sell them by card or mark them paid, and see each client's balance. Redeeming sessions at checkout is coming soon." },
-  // TODO confirm: live texting to clients.
-  { q: 'Does Happli text my clients without asking me?', a: "Drafted texts, like gap offers and waitlist offers, always wait for your approval. Automatic messages like confirmations and reminders only send if you've turned them on, and reminder texts wait for your sending hours." },
+  { q: 'Does Happli text my clients without asking me?', a: "One-off drafted texts, like gap offers and waitlist offers, wait for your approval. If you turn on a follow-up or win-back campaign, messages in that campaign can send after you've reviewed how the campaign works — each live draft is not re-reviewed. Automatic messages like confirmations and reminders only send if you've turned them on, and reminder texts wait for your sending hours. The optional website chat replies to visitors on its own from your public business information. You can pause a campaign or turn AI features off in Settings." },
   { q: 'Can I see reports on my business?', a: 'Yes. Reports show money collected (card and marked paid), tips, deposits, no-show fees, package sales and refunds, completed visits, no-shows, new vs returning clients, and results by team member, service and location, with CSV export.' },
 ];
 ---
