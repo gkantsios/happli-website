@@ -85,8 +85,10 @@ export async function handleWaitlist(request: Request, env: WaitlistEnv): Promis
   // Only our own pages post here. Browsers send Origin on every POST; the one exception allowed
   // is a plain HTML form post (no JavaScript), recognized by its urlencoded content type.
   const origin = request.headers.get('origin');
-  const contentType = (request.headers.get('content-type') ?? '').toLowerCase();
-  const plainFormPost = !wantsJson && contentType.startsWith('application/x-www-form-urlencoded');
+  // Keep the header as sent: multipart boundaries are case-sensitive on Workers, and a lowercased
+  // boundary no longer matches the body, so formData() throws. Lowercase only a copy for the check.
+  const contentType = request.headers.get('content-type') ?? '';
+  const plainFormPost = !wantsJson && contentType.toLowerCase().startsWith('application/x-www-form-urlencoded');
   if (origin ? URL.parse(origin)?.host !== new URL(request.url).host : !plainFormPost) {
     return Response.json({ ok: false, code: 'server' }, { status: 403, headers: { 'Cache-Control': 'no-store' } });
   }
