@@ -135,6 +135,8 @@ Links to other sites inside a blog post open in a new tab (`scripts/external-lin
 
 Every page loads Umami (`analytics.teamhappy.io`) and Google Tag Manager (`GTM-T3TTM9JP`) from `src/layouts/BaseLayout.astro`, on production and preview builds alike. GA4 is configured inside GTM, not in code. Their hosts are allowed in the CSP in `public/_headers`; a GTM "Custom HTML" tag needs inline script and is blocked by that CSP.
 
+Clicks are tracked too, by default, when an element has `data-umami-event` (plus optional `data-umami-event-*` properties). Use `src/lib/umami-events.mjs` rather than inventing new event names. Markdown and MDX links (blog, compare, guides) get the same attributes through the Sätteri HAST plugin in `src/lib/rehype-umami-events.mjs`. Standard names: `Book now` on every TidyCal "Book a demo" link (`data-umami-event-location` is `header`, `hero`, `footer`, `sticky`, or a section id); `Signup` on Get started / `/signup/` links; `Email` on `mailto:` links. `scripts/check-umami-events.mjs` runs at the end of `npm run build` and fails if a book-a-demo link is missing `data-umami-event="Book now"`, so this stays the default.
+
 ## SEO
 
 - `@astrojs/sitemap` writes `sitemap-index.xml` on every build, and `public/robots.txt` points to it.

@@ -51,7 +51,7 @@ Choose Square if you want to start at $0, if your team is growing and you want o
 
 ## Who should pick Happli
 
-Choose Happli if you want an approval step before anything goes to a client, a day book that works on your phone, and forms, a website and client texts in one plan, set up for you. <a href="https://tidycal.com/gkantsios/happli-demo" target="_blank" rel="noopener">Book a demo</a> to see it with your own schedule.
+Choose Happli if you want an approval step before anything goes to a client, a day book that works on your phone, and forms, a website and client texts in one plan, set up for you. [Book a demo](https://tidycal.com/gkantsios/happli-demo) to see it with your own schedule.
 
 ## Sources
 

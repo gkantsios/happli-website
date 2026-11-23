@@ -51,7 +51,7 @@ Choose GlossGenius if price matters most, if you have a team of up to 9 and want
 
 ## Who should pick Happli
 
-Choose Happli if you want an approval step before anything goes to a client, a day book that works on your phone, and deposits, forms, a website and review-request texts in one plan, set up for you. <a href="https://tidycal.com/gkantsios/happli-demo" target="_blank" rel="noopener">Book a demo</a> to see it with your own schedule.
+Choose Happli if you want an approval step before anything goes to a client, a day book that works on your phone, and deposits, forms, a website and review-request texts in one plan, set up for you. [Book a demo](https://tidycal.com/gkantsios/happli-demo) to see it with your own schedule.
 
 ## Sources
 

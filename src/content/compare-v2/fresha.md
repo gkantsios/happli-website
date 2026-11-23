@@ -51,7 +51,7 @@ Choose Fresha if you work on your own and want the lowest monthly price, or if y
 
 ## Who should pick Happli
 
-Choose Happli if you want an approval step before anything goes to a client, a day book that works on your phone, and your card payments in your own Stripe account. <a href="https://tidycal.com/gkantsios/happli-demo" target="_blank" rel="noopener">Book a demo</a> to see it with your own schedule.
+Choose Happli if you want an approval step before anything goes to a client, a day book that works on your phone, and your card payments in your own Stripe account. [Book a demo](https://tidycal.com/gkantsios/happli-demo) to see it with your own schedule.
 
 ## Sources
 

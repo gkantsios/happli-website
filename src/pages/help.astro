@@ -3,6 +3,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import PageIntro from '../components/sections/PageIntro.astro';
 import { breadcrumbs } from '../lib/jsonld';
 import { site } from '../config/site';
+import { umamiAttrsForHref } from '../lib/umami-events.mjs';
 
 const title = 'Help | Happli Support';
 const description = 'Find answers in the Happli help center, or email us. Support for spray tan studios and beauty pros using Happli.';
@@ -45,12 +46,12 @@ const topics = [
         <p>Guides and answers for setting up and running your studio in Happli.</p>
         <span class="go">Open the help center →</span>
       </a>
-      <a class="card" href={`mailto:${site.contactEmail}`}>
+      <a class="card" href={`mailto:${site.contactEmail}`} {...umamiAttrsForHref(`mailto:${site.contactEmail}`, { location: 'help' })}>
         <h2>Email us</h2>
         <p>Questions about your account, your setup or switching from another system.</p>
         <span class="go">{site.contactEmail} →</span>
       </a>
-      <a class="card" href={site.cta.href} target="_blank" rel="noopener">
+      <a class="card" href={site.cta.href} target="_blank" rel="noopener" {...umamiAttrsForHref(site.cta.href, { location: 'help' })}>
         <h2>Talk it through</h2>
         <p>Book a 30-minute call and we'll look at your schedule together.</p>
         <span class="go">{site.cta.label} →</span>
