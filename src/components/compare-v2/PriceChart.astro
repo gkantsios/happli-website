@@ -1,0 +1,317 @@
+---
+// "What a studio pays a month": a ranked bar chart, cheapest at the top. Two controls: what's counted (Software only /
+// With forms, waitlist and a website) and team size (Solo / Team of 3 / Team of 5). Both are plain radio inputs (no
+// script, so nothing for the CSP to hash): every combination's rows are in the HTML and CSS shows the checked one.
+// Bars share one scale across every mode and tab, so switching never stretches a price. Happli's bar is brand coral,
+// everyone else's a muted grey. Numbers come from src/config/compare-v2.ts; the longer notes sit under the matrix.
+import { chartRows, checked, defaultMode, defaultSize, modes, platforms, sizes, stripeRate, happli } from '../../config/compare-v2';
+
+const panels = modes.flatMap((m) => sizes.map((s) => ({ mode: m, size: s, rows: chartRows(s.people, m.key) })));
+const max = Math.max(...panels.flatMap((p) => p.rows.map((r) => r.cents)));
+const pct = (c: number) => `${Math.max(2, (c / max) * 100).toFixed(1)}%`;
+---
+
+<figure class="chart" aria-labelledby="chart-title">
+  <figcaption class="head">
+    <h2 id="chart-title">What a studio pays a month</h2>
+    <p class="sub">Cheapest first. Choose what’s counted and a team size.</p>
+  </figcaption>
+
+  <div class="tabs-wrap">
+    {modes.map((m) => <input class="tab-input" type="radio" name="chart-mode" id={`mode-${m.key}`} value={m.key} checked={m.key === defaultMode} />)}
+    {sizes.map((s) => <input class="tab-input" type="radio" name="chart-size" id={`size-${s.key}`} value={s.key} checked={s.key === defaultSize} />)}
+
+    <div class="modes">
+      {modes.map((m) => (
+        <label class="mode" for={`mode-${m.key}`} data-mode={m.key}>
+          {m.label}
+        </label>
+      ))}
+    </div>
+
+    <div class="pills">
+      {sizes.map((s) => (
+        <label class="pill" for={`size-${s.key}`} data-size={s.key}>
+          {s.label}
+        </label>
+      ))}
+    </div>
+
+    {
+      panels.map((p) => (
+        <ol class="rows" data-mode={p.mode.key} data-size={p.size.key} aria-label={`${p.mode.label}, ${p.size.label}: monthly price, cheapest first`}>
+          {p.rows.map((r) => (
+            <li class:list={['row', { me: r.happli }]}>
+              <div class="line">
+                <span class="name">{r.short}</span>
+                <span class="plan">{r.plan}</span>
+                <span class="price">
+                  {r.price}
+                  <span class="per">/mo</span>
+                </span>
+              </div>
+              <div class="track" aria-hidden="true">
+                <span class="bar" style={`width:${pct(r.cents)}`} />
+              </div>
+            </li>
+          ))}
+        </ol>
+      ))
+    }
+
+    <div class="foot">
+      <p class="rule" data-mode="base">
+        <strong>How we counted:</strong> bookable people, one location, monthly USD, software only, each platform’s cheapest
+        plan with online booking and reminders. Checked {checked}.
+      </p>
+      <p class="rule" data-mode="loaded">
+        <strong>How we counted:</strong> the cheapest plan with forms and a waitlist, plus any published website add-on. Bookable
+        people, one location, monthly USD. Checked {checked}.
+      </p>
+      <p class="sources">
+        <a href="#chart-notes">Notes on each price</a>
+        {' · Sources: '}
+        {platforms.map((p, i) => (
+          <>
+            <a href={p.source.href} rel="nofollow noopener" target="_blank">{p.short}</a>
+            {i < platforms.length - 1 ? ', ' : ''}
+          </>
+        ))}
+        {', '}
+        <a href={stripeRate.href} rel="nofollow noopener" target="_blank">Stripe</a>
+        {', '}
+        <a href={happli.source.href}>Happli</a>
+      </p>
+    </div>
+  </div>
+</figure>
+
+<style>
+  .chart {
+    margin: 0;
+    padding: clamp(22px, 3.2vw, 32px);
+    border-radius: var(--radius-xl);
+    background: var(--surface);
+    border: 1px solid var(--line);
+    box-shadow: var(--shadow-card);
+  }
+  .head h2 {
+    font-size: clamp(22px, 2.2vw, 26px);
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+  }
+  .sub {
+    margin-top: 6px;
+    font-size: 14px;
+    color: var(--muted);
+  }
+
+  /* The radios stay in the tab order and take the arrow keys; the labels are what you see. */
+  .tab-input {
+    position: absolute;
+    opacity: 0;
+    width: 1px;
+    height: 1px;
+    pointer-events: none;
+  }
+
+  /* What's counted: two equal halves with an underline on the chosen one. */
+  .modes {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    margin-top: 20px;
+    border-bottom: 1px solid var(--line);
+  }
+  .mode {
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 6px 12px;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.3;
+    text-align: center;
+    color: var(--muted);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    transition: color 0.15s ease, border-color 0.15s ease;
+  }
+  .mode:hover {
+    color: var(--ink);
+  }
+  #mode-base:checked ~ .modes [data-mode='base'],
+  #mode-loaded:checked ~ .modes [data-mode='loaded'] {
+    color: var(--ink);
+    border-bottom-color: var(--coral);
+  }
+
+  .pills {
+    display: flex;
+    width: 100%;
+    gap: 4px;
+    margin-top: 16px;
+    padding: 4px;
+    border-radius: var(--radius-pill);
+    background: var(--ap-grey);
+  }
+  .pill {
+    flex: 1 1 0;
+    min-width: 0;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 8px;
+    border-radius: var(--radius-pill);
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.2;
+    color: var(--ink-2);
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background-color 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
+  }
+  .pill:hover {
+    color: var(--ink);
+  }
+  #size-solo:checked ~ .pills [data-size='solo'],
+  #size-team3:checked ~ .pills [data-size='team3'],
+  #size-team5:checked ~ .pills [data-size='team5'] {
+    background: var(--surface);
+    color: var(--ink);
+    box-shadow: 0 1px 3px rgba(27, 22, 20, 0.12);
+  }
+  #mode-base:focus-visible ~ .modes [data-mode='base'],
+  #mode-loaded:focus-visible ~ .modes [data-mode='loaded'],
+  #size-solo:focus-visible ~ .pills [data-size='solo'],
+  #size-team3:focus-visible ~ .pills [data-size='team3'],
+  #size-team5:focus-visible ~ .pills [data-size='team5'] {
+    outline: 2px solid var(--ink);
+    outline-offset: 2px;
+  }
+
+  .rows {
+    display: none;
+    list-style: none;
+    margin: 20px 0 0;
+    padding: 0;
+  }
+  #mode-base:checked ~ #size-solo:checked ~ .rows[data-mode='base'][data-size='solo'],
+  #mode-base:checked ~ #size-team3:checked ~ .rows[data-mode='base'][data-size='team3'],
+  #mode-base:checked ~ #size-team5:checked ~ .rows[data-mode='base'][data-size='team5'],
+  #mode-loaded:checked ~ #size-solo:checked ~ .rows[data-mode='loaded'][data-size='solo'],
+  #mode-loaded:checked ~ #size-team3:checked ~ .rows[data-mode='loaded'][data-size='team3'],
+  #mode-loaded:checked ~ #size-team5:checked ~ .rows[data-mode='loaded'][data-size='team5'] {
+    display: block;
+  }
+  .row {
+    padding: 11px 0 12px;
+    border-top: 1px solid var(--line);
+  }
+  .row:first-child {
+    border-top: 0;
+  }
+  .line {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+  }
+  .name {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--ink);
+  }
+  .plan {
+    flex: 1;
+    min-width: 0;
+    font-size: 13px;
+    color: var(--muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .price {
+    font-size: 15px;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    color: var(--ink);
+    white-space: nowrap;
+  }
+  .per {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--muted);
+  }
+  .track {
+    margin-top: 8px;
+    height: 6px;
+    border-radius: var(--radius-pill);
+    background: var(--bg);
+    overflow: hidden;
+  }
+  .bar {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+    background: var(--ap-grey-edge);
+  }
+  .me .name {
+    color: var(--coral-ink);
+  }
+  .me .bar {
+    background: var(--coral);
+  }
+
+  .foot {
+    margin-top: 18px;
+    padding-top: 16px;
+    border-top: 1px solid var(--line);
+    font-size: 13px;
+    line-height: 1.55;
+    color: var(--muted);
+  }
+  .rule {
+    display: none;
+  }
+  #mode-base:checked ~ .foot .rule[data-mode='base'],
+  #mode-loaded:checked ~ .foot .rule[data-mode='loaded'] {
+    display: block;
+  }
+  .foot strong {
+    color: var(--ink-2);
+    font-weight: 600;
+  }
+  .sources {
+    margin-top: 8px;
+  }
+  .foot a {
+    color: var(--ink-2);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+  .foot a:hover {
+    color: var(--coral-ink);
+  }
+
+  /* narrow phones: let a long plan name wrap instead of cutting it off */
+  @media (max-width: 479.98px) {
+    .line {
+      flex-wrap: wrap;
+      row-gap: 2px;
+    }
+    .plan {
+      white-space: normal;
+      overflow: visible;
+      text-overflow: clip;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .pill,
+    .mode {
+      transition: none;
+    }
+  }
+</style>

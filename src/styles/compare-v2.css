@@ -1,0 +1,46 @@
+/* Compare v2 (hidden preview) only: imported by src/pages/compare-v2/*, and every rule is scoped to
+   html[data-preview='v2'] (set by BaseLayout's hiddenPreview), so the live site is untouched.
+   The preview's floor is 13px for any text, so the site's 12px eyebrows, the footer headings, footnote
+   markers and the narrow-phone compare table step up to 13px here. */
+html[data-preview='v2'] .eyebrow,
+html[data-preview='v2'] footer h2 {
+  font-size: 13px;
+}
+html[data-preview='v2'] .prose sup {
+  font-size: 13px;
+}
+html[data-preview='v2'] .prose.compare table th:first-child,
+html[data-preview='v2'] .prose.compare table td:first-child {
+  font-size: 13px;
+}
+/* long source URLs wrap instead of pushing the page sideways on small phones */
+html[data-preview='v2'] .prose .footnotes a {
+  overflow-wrap: anywhere;
+}
+/* phones: the compare table keeps whole words (the shared break-word rule stays as the last resort), with no
+   automatic hyphenation, and the two value columns get a little more room than the label column */
+@media (max-width: 640px) {
+  html[data-preview='v2'] .prose.compare table th,
+  html[data-preview='v2'] .prose.compare table td {
+    hyphens: manual;
+    -webkit-hyphens: manual;
+  }
+  html[data-preview='v2'] .prose.compare table th:first-child,
+  html[data-preview='v2'] .prose.compare table td:first-child {
+    width: 26%;
+  }
+}
+@media (max-width: 359.98px) {
+  html[data-preview='v2'] .prose.compare table th:first-child,
+  html[data-preview='v2'] .prose.compare table td:first-child {
+    width: 25%;
+  }
+  html[data-preview='v2'] .prose.compare table th,
+  html[data-preview='v2'] .prose.compare table td {
+    padding-inline: 6px;
+  }
+}
+/* breadcrumbs: each crumb (with its "/") stays on one line, so a wrap never leaves a lone "/" or word */
+html[data-preview='v2'] .crumbs li {
+  white-space: nowrap;
+}

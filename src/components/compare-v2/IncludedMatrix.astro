@@ -1,0 +1,281 @@
+---
+// "What comes in that price": one row per feature, one cell per platform, Happli first and softly highlighted.
+// Wide screens get a real table; below 1024px each feature becomes a short stacked block (Happli first), so nothing
+// shrinks under 13px or clips. Only one of the two is displayed at a time (the other is display:none, so screen
+// readers get one copy). A page that is silent is written "Not listed", never "No". Every competitor cell links its
+// source; the data lives in src/config/compare-v2.ts.
+import { columnNames, columns, matrix, sources, type Cell, type SourceKey } from '../../config/compare-v2';
+
+const shortName: Partial<Record<SourceKey, string>> = {
+  happliPricing: 'Pricing',
+  happliFeatures: 'Features',
+  stripe: 'Stripe',
+  square: 'Pricing',
+  squareSite: 'Booking site',
+  gg: 'Pricing',
+  ggSite: 'Site builder',
+  vagaro: 'Pricing',
+  fresha: 'Pricing',
+  freshaSite: 'Smart Website',
+  mm: 'Pricing',
+  mmBooking: 'Online booking',
+  mmSite: 'Booking on your site',
+  blvd: 'Pricing',
+  blvdBooking: 'Self-booking',
+  blvdForms: 'Forms',
+};
+const srcLinks = (c: Cell) => c.src.map((k) => ({ href: sources[k].href, text: shortName[k] ?? sources[k].text, title: sources[k].text, external: sources[k].href.startsWith('http') }));
+---
+
+<div class="matrix">
+  <table class="grid">
+    <caption class="sr-only">What comes in each platform’s price, from each company’s own pages</caption>
+    <thead>
+      <tr>
+        <th scope="col" class="feat-h">What’s included</th>
+        {columns.map((c) => <th scope="col" class:list={[{ me: c === 'happli' }]}>{columnNames[c]}</th>)}
+      </tr>
+    </thead>
+    <tbody>
+      {
+        matrix.map((row) => (
+          <tr>
+            <th scope="row" class="feat">{row.title}</th>
+            {columns.map((c) => {
+              const cell = row.cells[c];
+              return (
+                <td class:list={[{ me: c === 'happli' }]}>
+                  <span class:list={['chip', cell.tone]}>{cell.label}</span>
+                  {cell.detail && <span class="detail">{cell.detail}</span>}
+                  <span class="src">
+                    {srcLinks(cell).map((s, i) => (
+                      <>
+                        {i > 0 && ' · '}
+                        <a href={s.href} title={s.title} {...(s.external ? { rel: 'nofollow noopener', target: '_blank' } : {})}>{s.text}</a>
+                      </>
+                    ))}
+                  </span>
+                </td>
+              );
+            })}
+          </tr>
+        ))
+      }
+    </tbody>
+  </table>
+
+  <div class="stack">
+    {
+      matrix.map((row) => (
+        <section class="block" aria-label={row.title}>
+          <h3>{row.title}</h3>
+          <ul>
+            {columns.map((c) => {
+              const cell = row.cells[c];
+              return (
+                <li class:list={[{ me: c === 'happli' }]}>
+                  <span class="who">{columnNames[c]}</span>
+                  <span class="what">
+                    <span class:list={['chip', cell.tone]}>{cell.label}</span>
+                    {cell.detail && <span class="detail">{cell.detail}</span>}
+                    <span class="src">
+                      {srcLinks(cell).map((s, i) => (
+                        <>
+                          {i > 0 && ' · '}
+                          <a href={s.href} title={s.title} {...(s.external ? { rel: 'nofollow noopener', target: '_blank' } : {})}>{s.text}</a>
+                        </>
+                      ))}
+                    </span>
+                  </span>
+                </li>
+              );
+            })}
+          </ul>
+        </section>
+      ))
+    }
+  </div>
+</div>
+
+<style>
+  .matrix {
+    margin-top: 40px;
+  }
+
+  /* chips: soft, never loud. Text on every tint is 4.5:1 or better. */
+  .chip {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.35;
+  }
+  .chip.yes {
+    background: #e9f2e7;
+    color: #2d5631;
+  }
+  .chip.addon {
+    background: #fbefdf;
+    color: #74460f;
+  }
+  .chip.partial {
+    background: #efece7;
+    color: var(--ink-2);
+  }
+  .chip.info {
+    padding-inline: 0;
+    color: var(--ink);
+  }
+  .chip.unlisted {
+    background: transparent;
+    padding-inline: 0;
+    color: var(--muted);
+    font-weight: 500;
+  }
+  .detail {
+    display: block;
+    margin-top: 6px;
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--ink-2);
+  }
+  .src {
+    display: block;
+    margin-top: 6px;
+    font-size: 13px;
+    line-height: 1.4;
+    color: var(--muted);
+  }
+  .src a {
+    color: var(--muted);
+    text-decoration: underline;
+    text-decoration-color: var(--line-strong);
+    text-underline-offset: 2px;
+  }
+  .src a:hover {
+    color: var(--coral-ink);
+  }
+
+  /* wide: a real table */
+  .grid {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    table-layout: fixed;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+  }
+  .grid th,
+  .grid td {
+    padding: 18px 14px;
+    text-align: left;
+    vertical-align: top;
+    border-top: 1px solid var(--line);
+  }
+  .grid thead th {
+    border-top: 0;
+    padding-block: 16px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--ink);
+    background: var(--page);
+  }
+  .grid .feat-h {
+    width: 15%;
+    color: var(--muted);
+    font-weight: 500;
+  }
+  .grid .feat {
+    font-family: var(--serif);
+    font-size: 17px;
+    font-weight: 500;
+    line-height: 1.3;
+    color: var(--ink);
+  }
+  .grid .me {
+    background: rgba(255, 225, 227, 0.32);
+  }
+  .grid thead .me {
+    background: #fbe4e3;
+    color: var(--coral-ink);
+  }
+  .grid td.me {
+    box-shadow: inset 1px 0 0 rgba(244, 112, 122, 0.25), inset -1px 0 0 rgba(244, 112, 122, 0.25);
+  }
+
+  /* narrow: one short block per feature */
+  .stack {
+    display: none;
+  }
+  .block {
+    padding: 22px 20px;
+    border-radius: var(--radius-lg);
+    background: var(--surface);
+    border: 1px solid var(--line);
+  }
+  .block + .block {
+    margin-top: 16px;
+  }
+  .block h3 {
+    font-size: 20px;
+    line-height: 1.25;
+  }
+  .block ul {
+    list-style: none;
+    margin: 14px 0 0;
+    padding: 0;
+  }
+  .block li {
+    display: grid;
+    grid-template-columns: minmax(84px, 30%) minmax(0, 1fr);
+    gap: 12px;
+    padding: 12px 0;
+    border-top: 1px solid var(--line);
+  }
+  .block li.me {
+    margin: 0 -12px;
+    padding: 12px;
+    border-top: 0;
+    border-radius: 12px;
+    background: rgba(255, 225, 227, 0.4);
+  }
+  .block li.me + li {
+    border-top: 0;
+  }
+  .who {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--ink);
+    padding-top: 3px;
+  }
+  .me .who {
+    color: var(--coral-ink);
+  }
+  .what {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+
+  @media (max-width: 1023.98px) {
+    .grid {
+      display: none;
+    }
+    .stack {
+      display: block;
+    }
+  }
+  @media (min-width: 640px) and (max-width: 1023.98px) {
+    .stack {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+      align-items: start;
+    }
+    .block + .block {
+      margin-top: 0;
+    }
+  }
+</style>

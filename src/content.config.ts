@@ -64,6 +64,13 @@ const compare = defineCollection({
   }),
 });
 
+// Compare v2: a hidden preview of the compare pages (/compare-v2/), noindex,nofollow, outside the nav, footer and
+// sitemap. Same fields as compare.
+const compareV2 = defineCollection({
+  loader: glob({ base: './src/content/compare-v2', pattern: '**/*.{md,mdx}' }),
+  schema: (ctx) => postSchema(ctx).extend({ competitor: z.string(), todo: z.array(z.string()).default([]) }),
+});
+
 // Guides (long-form how-tos), studio-type pages (/for/) and "X alternatives" pages (/alternatives/).
 // Templates only for now: each has one draft example and its section is switched off in site.ts.
 const guides = defineCollection({
@@ -81,4 +88,4 @@ const alternatives = defineCollection({
   schema: (ctx) => postSchema(ctx).extend({ competitor: z.string(), todo: z.array(z.string()).default([]) }),
 });
 
-export const collections = { authors, blog, compare, guides, for: forStudios, alternatives };
+export const collections = { authors, blog, compare, compareV2, guides, for: forStudios, alternatives };
