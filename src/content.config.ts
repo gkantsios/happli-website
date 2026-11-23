@@ -54,6 +54,11 @@ const blog = defineCollection({
 const compare = defineCollection({
   loader: glob({ base: './src/content/compare', pattern: '**/*.{md,mdx}' }),
   schema: (ctx) => postSchema(ctx).extend({ competitor: z.string(),
+    // 'happli': Happli vs the competitor. 'pair': two other tools head to head (competitor is then the
+    // card label, e.g. "Vagaro vs Square"); the hub lists these separately.
+    kind: z.enum(['happli', 'pair']).default('happli'),
+    // Optional FAQ; render it in the body with <PostFaq items={frontmatter.faq} />, which also outputs FAQPage schema.
+    faq: z.array(z.object({ q: z.string(), a: z.string() })).min(1).optional(),
     // Claims to verify; kept here so they never render. Search the repo for "todo:".
     todo: z.array(z.string()).default([]),
   }),
