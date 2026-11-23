@@ -9,7 +9,10 @@ import { breadcrumbs } from '../../lib/jsonld';
 import { site } from '../../config/site';
 import { plan, trialDays, usd } from '../../config/pricing';
 
-const pages = await getPublished('compare');
+const published = await getPublished('compare');
+// Happli vs one competitor, and head-to-head pages between two other tools, listed in their own sections.
+const pages = published.filter((e) => e.data.kind === 'happli');
+const pairs = published.filter((e) => e.data.kind === 'pair');
 
 // Prices as listed on each company's own pricing page. Each row says when it was last checked; update
 // that date whenever the row is re-verified against its source.
@@ -69,6 +72,28 @@ const rows: PriceRow[] = [
       </ul>
     </div>
   </section>
+
+  {
+    pairs.length > 0 && (
+      <section class="section tight" aria-labelledby="pairs-title">
+        <div class="wrap">
+          <SectionHead eyebrow="Head to head" title="Two other tools, side by side" id="pairs-title" />
+          <ul class="cards" data-reveal-stagger>
+            {pairs.map((e) => (
+              <li>
+                <a href={`/compare/${e.id}/`}>
+                  <p class="eyebrow">{e.data.competitor}</p>
+                  <h3>{e.data.title}</h3>
+                  <p class="desc">{e.data.description.replace(/ Sourced and checked.*$/, '')}</p>
+                  <span class="more">Read the comparison →</span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+    )
+  }
 
   <CtaBand title="See it with your own schedule." />
 </BaseLayout>
