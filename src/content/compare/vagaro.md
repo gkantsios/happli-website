@@ -2,7 +2,7 @@
 title: 'Happli vs Vagaro for spray tan studios (2026)'
 description: 'How Happli and Vagaro compare on price, booking, reminders, waitlist and payments for spray tan studios and beauty pros. Sourced and checked Oct 21, 2026.'
 pubDate: 2026-10-15
-updatedDate: 2026-10-21
+updatedDate: 2026-11-23
 author: 'Happli team'
 competitor: 'Vagaro'
 tags: ['comparison', 'vagaro']
@@ -21,7 +21,7 @@ Vagaro is a general-purpose booking platform for salons, spas and other business
 | | Happli | Vagaro |
 |---|---|---|
 | Starting price | $52/month launch price ($44/month billed yearly) | $23.99/month as an exclusive rate for the first 6 months, with $30.00 shown struck through beside it[^v-price] |
-| How it scales | +$10/month ($8.60 billed yearly) for each extra team member who takes bookings; extra locations are half price. Logins for everyone else are free | $10 (US) per bookable calendar license, up to seven per location; multiple locations are custom-priced[^v-price] |
+| How it scales | +$10/month ($8.60 billed yearly) for each extra team member who takes bookings; extra locations are half price. Logins for everyone else are free | $10 (US) per bookable calendar license, up to seven per location; each location has its own cost, with no added multi-location fee[^v-price] |
 | Free trial | Free until you go live, up to 30 days | 30 days, without email marketing, text marketing or the branded app[^v-price] |
 | Online booking | Yes, booking pages that plug into your existing website | Included in every plan, also on Instagram, Facebook and Apple Maps[^v-price] |
 | Reminders | Yes, text, email or both, with your own wording | Unlimited notifications and appointment reminders included; text marketing is an add-on from $20/month[^v-price] |
@@ -32,7 +32,7 @@ Vagaro is a general-purpose booking platform for salons, spas and other business
 
 ## Pricing
 
-Vagaro's pricing page lists **$23.99/month** for one location as an exclusive rate for the first 6 months, with $30.00 shown struck through beside it. Each bookable calendar license is **$10 (US)**, up to seven licenses per business location; beyond seven, additional employees cost nothing extra. Multiple locations are custom-priced, with no added multi-location fee. The page says you can cancel any time with no cancellation fees, and its FAQ lists a 30-day free trial that excludes email marketing, text marketing and the branded app.[^v-price]
+Vagaro's pricing page lists **$23.99/month** for one location as an exclusive rate for the first 6 months, with $30.00 shown struck through beside it. Each bookable calendar license is **$10 (US)**, up to seven licenses per business location; beyond seven, additional employees cost nothing extra. Each location has its own cost, with no added multi-location fee. The page says you can cancel any time with no cancellation fees, and its FAQ lists a 30-day free trial that excludes email marketing, text marketing and the branded app.[^v-price]
 
 Some tools are paid add-ons on the same page: text marketing from $20/month, forms at $10/month, and payroll at $34/month plus $5 per employee. Email marketing is free to start, with 1,000 free emails a month included.[^v-price]
 
@@ -65,6 +65,6 @@ Choose Happli if you run a spray tan studio or beauty business and want a simple
 
 Each numbered marker above points to one of these. Competitor sources were checked on Oct 21, 2026.
 
-[^v-price]: Vagaro pricing page and its FAQ, [vagaro.com/pro/pricing](https://www.vagaro.com/pro/pricing), checked Oct 21, 2026. The trial, add-on and calendar-license details are in the page's "One Location" tab and FAQ.
+[^v-price]: Vagaro pricing page and its FAQ, [vagaro.com/pro/pricing](https://www.vagaro.com/pro/pricing), checked Oct 21, 2026. The trial, add-on and calendar-license details are in the page's "One Location" tab and FAQ. The multi-location details are in the page's FAQ, re-checked November 23, 2026.
 [^v-tan]: Vagaro tanning salon page, [vagaro.com/pro/tanning-salon-software](https://www.vagaro.com/pro/tanning-salon-software), linked from its pricing page, checked Oct 21, 2026.
 [^happli]: Happli [features](/features/) and [pricing](/pricing/).
