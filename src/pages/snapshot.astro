@@ -8,6 +8,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { site } from '../config/site';
 import { K_MIN, questions, sampleGroups, services, states } from '../config/snapshot';
+import { umamiAttrsForHref } from '../lib/umami-events.mjs';
 
 const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY;
 const config = JSON.stringify({
@@ -194,7 +195,7 @@ const promises = [
         </p>
         <div class="btn-row">
           <a class="btn btn-ghost" href="/features/">See how Happli works</a>
-          <a class="btn btn-coral" href={site.cta.href} target="_blank" rel="noopener">{site.cta.label}</a>
+          <a class="btn btn-coral" href={site.cta.href} target="_blank" rel="noopener" {...umamiAttrsForHref(site.cta.href, { location: 'snapshot' })}>{site.cta.label}</a>
         </div>
       </aside>
     </div>

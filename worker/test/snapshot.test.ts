@@ -12,6 +12,7 @@ import { join } from 'node:path';
 import { handleSnapshot, pickLevel, compare, type D1Like, type D1Statement, type SnapshotEnv, type Results } from '../snapshot.ts';
 import { normalizeCity, regionForCity, regionForZip } from '../snapshot-regions.ts';
 import { K_MIN, questions } from '../../src/config/snapshot.ts';
+import { untaggedBookingHrefs } from '../../src/lib/umami-events.mjs';
 
 const root = new URL('../../', import.meta.url).pathname;
 const migration = readFileSync(join(root, 'migrations/0001_snapshot.sql'), 'utf8');
@@ -348,6 +349,11 @@ test('/snapshot/ is noindex, not in the sitemap, and has no sticky demo bar', ()
   assert.match(sitemap, /\/roadmap\//, 'the sitemap was not read');
   assert.doesNotMatch(sitemap, /snapshot/);
   assert.doesNotMatch(html, /data-sticky-cta/);
+});
+
+test('/snapshot/ tags the book-a-demo link for Umami', () => {
+  assert.deepEqual(untaggedBookingHrefs(html), []);
+  assert.match(html, /data-umami-event-location="snapshot"/);
 });
 
 test('/snapshot/ shows the privacy promises above the submit button', () => {
