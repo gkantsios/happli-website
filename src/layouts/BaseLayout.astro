@@ -24,6 +24,8 @@ interface Props {
   hiddenPreview?: boolean;
   publishedTime?: Date;
   modifiedTime?: Date;
+  /** The phones-only "Book a demo" bar. Off on pages where it would sit over a long form (/snapshot/). */
+  stickyCta?: boolean;
 }
 
 const {
@@ -37,6 +39,7 @@ const {
   hiddenPreview = false,
   publishedTime,
   modifiedTime,
+  stickyCta = true,
 } = Astro.props;
 
 // Canonical URLs always use the trailing-slash form the host serves (Cloudflare redirects /page to /page/).
@@ -105,7 +108,7 @@ const ogImage = new URL(image, site.url).href;
       <slot />
     </main>
     <Footer />
-    <StickyCta />
+    {stickyCta && <StickyCta />}
     {/* scroll motion below the hero (public/motion/reveal.js): loaded on the first scroll, or 3s after
         the page has loaded, so it never competes with the first paint */}
     <script is:inline>

@@ -11,6 +11,8 @@
 // A plain form post (no JavaScript) is redirected back to /pricing/ instead.
 // Secrets stay server-side, and nothing personal (email, IP, token) is ever logged.
 
+import { FETCH_TIMEOUT_MS, isAllowedTurnstileHost, isSameOriginPost, isValidEmail, readCapped, verifyTurnstile } from './shared';
+
 export interface WaitlistEnv {
   TURNSTILE_SECRET_KEY?: string;
   /** A Kit v3 API key (not the v3 API secret). */
@@ -24,46 +26,11 @@ export interface WaitlistEnv {
 type Code = 'invalid_email' | 'verification_failed' | 'server' | 'rate_limited' | 'too_large';
 
 const KIT_API = 'https://api.convertkit.com/v3';
-const FETCH_TIMEOUT_MS = 10_000; // per outside call (Turnstile, Kit)
-const SITEVERIFY = 'https://challenges.cloudflare.com/turnstile/v0/siteverify';
 const MAX_BODY_BYTES = 8 * 1024;
-// Hostnames a Turnstile token may have been solved on: production, plus the workers.dev preview
-// host and its per-branch and per-version aliases (e.g. feat-site-polish-happli-website.…).
-const TURNSTILE_HOSTS = new Set(['gohappli.com', 'www.gohappli.com', 'happli-website.gkantsios.workers.dev']);
-const PREVIEW_HOST_SUFFIX = '-happli-website.gkantsios.workers.dev';
 
-export function isAllowedTurnstileHost(hostname: string | undefined): boolean {
-  if (!hostname) return false;
-  const host = hostname.toLowerCase();
-  return TURNSTILE_HOSTS.has(host) || (host.endsWith(PREVIEW_HOST_SUFFIX) && /^[a-z0-9-]+$/.test(host.slice(0, -PREVIEW_HOST_SUFFIX.length)));
-}
-
-/** Reads the body, giving up as soon as it passes `max` bytes (null), whatever Content-Length says. */
-async function readCapped(request: Request, max: number): Promise<Uint8Array | null> {
-  if (!request.body) return new Uint8Array();
-  const reader = request.body.getReader();
-  const chunks: Uint8Array[] = [];
-  let size = 0;
-  for (;;) {
-    const { done, value } = await reader.read();
-    if (done) break;
-    size += value.byteLength;
-    if (size > max) {
-      await reader.cancel().catch(() => {});
-      return null;
-    }
-    chunks.push(value);
-  }
-  const out = new Uint8Array(size);
-  let at = 0;
-  for (const c of chunks) { out.set(c, at); at += c.byteLength; }
-  return out;
-}
-const EMAIL = /^[^\s@<>()[\]\\,;:"]+@[^\s@<>()[\]\\,;:"]+\.[^\s@<>()[\]\\,;:".]{2,}$/;
-
-export function isValidEmail(email: string): boolean {
-  return email.length >= 6 && email.length <= 254 && EMAIL.test(email) && !email.includes('..');
-}
+// The Turnstile hostname allowlist and the email check live in worker/shared.ts (also used by
+// /api/snapshot); re-exported here for the existing callers and tests.
+export { isAllowedTurnstileHost, isValidEmail };
 
 export async function handleWaitlist(request: Request, env: WaitlistEnv): Promise<Response> {
   const wantsJson = (request.headers.get('accept') ?? '').includes('application/json');
@@ -82,14 +49,10 @@ export async function handleWaitlist(request: Request, env: WaitlistEnv): Promis
     return Response.json({ ok: false, code: 'server' }, { status: 405, headers: { Allow: 'POST', 'Cache-Control': 'no-store' } });
   }
 
-  // Only our own pages post here. Browsers send Origin on every POST; the one exception allowed
-  // is a plain HTML form post (no JavaScript), recognized by its urlencoded content type.
-  const origin = request.headers.get('origin');
-  // Keep the header as sent: multipart boundaries are case-sensitive on Workers, and a lowercased
-  // boundary no longer matches the body, so formData() throws. Lowercase only a copy for the check.
+  // Only our own pages post here (see isSameOriginPost: a plain urlencoded form post may come without Origin).
+  // Kept as sent: a multipart boundary is case-sensitive (lowercasing it breaks parsing on Workers).
   const contentType = request.headers.get('content-type') ?? '';
-  const plainFormPost = !wantsJson && contentType.toLowerCase().startsWith('application/x-www-form-urlencoded');
-  if (origin ? URL.parse(origin)?.host !== new URL(request.url).host : !plainFormPost) {
+  if (!isSameOriginPost(request, wantsJson, ['application/x-www-form-urlencoded'])) {
     return Response.json({ ok: false, code: 'server' }, { status: 403, headers: { 'Cache-Control': 'no-store' } });
   }
 
@@ -132,28 +95,9 @@ export async function handleWaitlist(request: Request, env: WaitlistEnv): Promis
   if (!isValidEmail(email)) return reply(400, { ok: false, code: 'invalid_email' });
 
   // 3. Turnstile
-  const token = field('cf-turnstile-response');
-  if (!token || token.length > 2048) return reply(403, { ok: false, code: 'verification_failed' });
-  try {
-    const body = new FormData();
-    body.set('secret', env.TURNSTILE_SECRET_KEY!);
-    body.set('response', token);
-    const ip = request.headers.get('cf-connecting-ip');
-    if (ip) body.set('remoteip', ip);
-    const res = await fetch(SITEVERIFY, { method: 'POST', body, signal: AbortSignal.timeout(FETCH_TIMEOUT_MS) });
-    const outcome = (await res.json()) as { success?: boolean; hostname?: string; 'error-codes'?: string[] };
-    if (!outcome.success) {
-      console.warn(`waitlist: turnstile rejected (${(outcome['error-codes'] ?? []).join(', ') || 'no code'})`);
-      return reply(403, { ok: false, code: 'verification_failed' });
-    }
-    if (!isAllowedTurnstileHost(outcome.hostname)) {
-      console.warn('waitlist: turnstile token solved on a hostname not in the allowlist');
-      return reply(403, { ok: false, code: 'verification_failed' });
-    }
-  } catch {
-    console.error('waitlist: turnstile siteverify unreachable');
-    return reply(502, { ok: false, code: 'server' });
-  }
+  const verified = await verifyTurnstile(env.TURNSTILE_SECRET_KEY!, field('cf-turnstile-response'), request.headers.get('cf-connecting-ip'), 'waitlist');
+  if (verified === 'unreachable') return reply(502, { ok: false, code: 'server' });
+  if (verified !== 'ok') return reply(403, { ok: false, code: 'verification_failed' });
 
   // 4. Kit
   try {

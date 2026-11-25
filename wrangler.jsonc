@@ -1,7 +1,7 @@
 {
   "$schema": "./node_modules/wrangler/config-schema.json",
   // gohappli.com: Astro's static pages, plus a small Worker script for /api/* (the Marketing
-  // waitlist). The name must match the Cloudflare project.
+  // waitlist and the Beauty Business Snapshot). The name must match the Cloudflare project.
   "name": "happli-website",
   "main": "./worker/index.ts",
   "compatibility_date": "2026-09-30",
@@ -20,6 +20,22 @@
       "name": "WAITLIST_RATE_LIMITER",
       "namespace_id": "1001",
       "simple": { "limit": 5, "period": 60 }
+    },
+    // Per-IP limit on Beauty Business Snapshot submissions (/api/snapshot): 5 a minute.
+    {
+      "name": "SNAPSHOT_RATE_LIMITER",
+      "namespace_id": "1002",
+      "simple": { "limit": 5, "period": 60 }
+    }
+  ],
+  // Beauty Business Snapshot answers and contacts, in two unlinked tables (migrations/0001_snapshot.sql).
+  // Apply new migrations with `npx wrangler d1 migrations apply happli-snapshot --remote`.
+  "d1_databases": [
+    {
+      "binding": "SNAPSHOT_DB",
+      "database_name": "happli-snapshot",
+      "database_id": "f1dbd37b-26a7-4032-9405-dea30de923cb",
+      "migrations_dir": "migrations"
     }
   ],
   // Non-secret Worker variables.
@@ -33,5 +49,6 @@
   // Every 5 minutes: tag new Happli Demo bookings in Kit (the Worker's scheduled handler).
   "triggers": { "crons": ["*/5 * * * *"] }
   // Secrets (set with `npx wrangler secret put NAME` or in the dashboard, never in this file):
-  // TURNSTILE_SECRET_KEY, KIT_API_KEY (a Kit v3 API key) and TIDYCAL_API_TOKEN. See the README.
+  // TURNSTILE_SECRET_KEY, KIT_API_KEY (a Kit v3 API key), TIDYCAL_API_TOKEN and SNAPSHOT_HASH_SECRET
+  // (the pepper for the Snapshot's email hash). See the README.
 }
