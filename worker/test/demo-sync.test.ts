@@ -49,6 +49,20 @@ test('tags a new demo booking and sends the right request', async () => {
   assert.deepEqual(JSON.parse(String(k.init!.body)), { api_key: 'kk', email: 'a@example.com', first_name: 'Ann' });
 });
 
+test('tags a new demo booking via Kit v4 when the key starts with kit_', async () => {
+  const calls = mock([[bk({})]]);
+  const r = await syncDemoBookings({ ...env, KIT_API_KEY: 'kit_testkey' }, NOW);
+  assert.deepEqual(r, { ok: true, matched: 1, tagged: 1, failed: 0 });
+  const kit = calls.filter((c) => c.url.includes('api.kit.com'));
+  assert.equal(kit.length, 2);
+  assert.equal(kitCalls(calls).length, 0);
+  assert.equal(kit[0].url, 'https://api.kit.com/v4/subscribers');
+  assert.equal((kit[0].init!.headers as Record<string, string>)['X-Kit-Api-Key'], 'kit_testkey');
+  assert.deepEqual(JSON.parse(String(kit[0].init!.body)), { email_address: 'a@example.com', first_name: 'Ann' });
+  assert.equal(kit[1].url, 'https://api.kit.com/v4/tags/24907991/subscribers');
+  assert.deepEqual(JSON.parse(String(kit[1].init!.body)), { email_address: 'a@example.com' });
+});
+
 test('skips other types, cancelled, deleted, old and bad-email bookings', async () => {
   const calls = mock([[
     bk({ booking_type_id: 105143 }), bk({ cancelled_at: recent }), bk({ deleted_at: recent }),

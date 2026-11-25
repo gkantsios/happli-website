@@ -58,6 +58,49 @@ test('omits first_name when not given', async () => {
   assert.deepEqual(JSON.parse(String(kit.init?.body)), { api_key: 'kit-key', email: 'person@example.com' });
 });
 
+const v4env: WaitlistEnv = { ...env, KIT_API_KEY: 'kit_testkey' };
+const kitCalls = (list: Call[] = calls) => list.filter((c) => /convertkit|api\.kit\.com/.test(c.url));
+const header = (c: Call, name: string) => new Headers(c.init?.headers).get(name);
+
+test('subscribes via Kit v4 when the key starts with kit_', async () => {
+  const res = await handleWaitlist(post({ ...good, first_name: 'Pat' }), v4env);
+  assert.equal(res.status, 200);
+  assert.deepEqual(await res.json(), { ok: true });
+  const kit = kitCalls();
+  assert.equal(kit.length, 2);
+  assert.ok(!calls.some((c) => c.url.includes('convertkit')));
+  assert.equal(kit[0].url, 'https://api.kit.com/v4/subscribers');
+  assert.equal(header(kit[0], 'X-Kit-Api-Key'), 'kit_testkey');
+  assert.deepEqual(JSON.parse(String(kit[0].init?.body)), { email_address: 'person@example.com', first_name: 'Pat' });
+  assert.equal(kit[1].url, 'https://api.kit.com/v4/tags/24908051/subscribers');
+  assert.equal(header(kit[1], 'X-Kit-Api-Key'), 'kit_testkey');
+  assert.deepEqual(JSON.parse(String(kit[1].init?.body)), { email_address: 'person@example.com' });
+});
+
+test('v4 omits first_name when not given and accepts a plus-address email', async () => {
+  const res = await handleWaitlist(post({ ...good, email: 'Grant+Testing@example.com' }), v4env);
+  assert.equal(res.status, 200);
+  const kit = kitCalls();
+  assert.deepEqual(JSON.parse(String(kit[0].init?.body)), { email_address: 'grant+testing@example.com' });
+  assert.deepEqual(JSON.parse(String(kit[1].init?.body)), { email_address: 'grant+testing@example.com' });
+});
+
+test('v4 Kit error is 502, skips the tag call, and does not log the email', async () => {
+  kitStatus = 401;
+  const logged: string[] = [];
+  const orig = console.error;
+  console.error = (m: string) => logged.push(m);
+  try {
+    const res = await handleWaitlist(post(good), v4env);
+    assert.equal(res.status, 502);
+    assert.deepEqual(await res.json(), { ok: false, code: 'server' });
+  } finally { console.error = orig; }
+  assert.equal(kitCalls().length, 1);
+  assert.equal(kitCalls()[0].url, 'https://api.kit.com/v4/subscribers');
+  assert.ok(logged.join(' ').includes('401'));
+  assert.ok(!logged.join(' ').includes('example.com'));
+});
+
 test('honeypot returns ok and calls nothing', async () => {
   const res = await handleWaitlist(post({ ...good, company: 'Bot Inc' }), env);
   assert.deepEqual(await res.json(), { ok: true });

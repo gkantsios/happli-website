@@ -3,17 +3,18 @@
 // 1. A filled honeypot ("company") gets a silent { ok: true } and nothing else happens.
 // 2. The email is validated here, whatever the browser checked.
 // 3. The Turnstile token is verified with Cloudflare's siteverify.
-// 4. The email is subscribed in Kit (v3 API) by adding the "Happli Marketing waitlist" tag. Kit's
-//    tag-subscribe call returns the existing subscriber for a known email, so "already subscribed"
-//    counts as success.
+// 4. The email is subscribed in Kit by adding the "Happli Marketing waitlist" tag. A known email
+//    already on the tag counts as success (v3 tag-subscribe, or v4 create-subscriber then tag).
 //
 // Replies with JSON: { ok: true } or { ok: false, code: 'invalid_email' | 'verification_failed' | 'server' }.
 // A plain form post (no JavaScript) is redirected back to /pricing/ instead.
 // Secrets stay server-side, and nothing personal (email, IP, token) is ever logged.
 
+import { subscribeToTag } from './kit.ts';
+
 export interface WaitlistEnv {
   TURNSTILE_SECRET_KEY?: string;
-  /** A Kit v3 API key (not the v3 API secret). */
+  /** A Kit v4 API key (starts with kit_), or a v3 API key (not the v3 API secret). */
   KIT_API_KEY?: string;
   /** The id of the Kit tag "Happli Marketing waitlist" (set in wrangler.jsonc). */
   KIT_WAITLIST_TAG_ID?: string;
@@ -23,7 +24,6 @@ export interface WaitlistEnv {
 
 type Code = 'invalid_email' | 'verification_failed' | 'server' | 'rate_limited' | 'too_large';
 
-const KIT_API = 'https://api.convertkit.com/v3';
 const FETCH_TIMEOUT_MS = 10_000; // per outside call (Turnstile, Kit)
 const SITEVERIFY = 'https://challenges.cloudflare.com/turnstile/v0/siteverify';
 const MAX_BODY_BYTES = 8 * 1024;
@@ -166,14 +166,5 @@ export async function handleWaitlist(request: Request, env: WaitlistEnv): Promis
 }
 
 async function subscribe(env: WaitlistEnv, email: string, firstName: string): Promise<void> {
-  const tagId = env.KIT_WAITLIST_TAG_ID!.trim();
-  // Adds the tag, creating the subscriber if needed. A known email or an existing tag is a 200.
-  const res = await fetch(`${KIT_API}/tags/${encodeURIComponent(tagId)}/subscribe`, {
-    method: 'POST',
-    signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
-    headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-    body: JSON.stringify({ api_key: env.KIT_API_KEY, email, ...(firstName ? { first_name: firstName } : {}) }),
-  });
-  // Only the status goes into the error: Kit's error bodies can echo the email back.
-  if (!res.ok) throw new Error(`POST /tags/:id/subscribe ${res.status}`);
+  await subscribeToTag(env.KIT_API_KEY!.trim(), env.KIT_WAITLIST_TAG_ID!.trim(), email, firstName, FETCH_TIMEOUT_MS);
 }
