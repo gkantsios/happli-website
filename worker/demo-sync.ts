@@ -6,11 +6,13 @@
 //   1. ask for bookings starting from LOOKBACK (24h) ago onward (a new demo is always in the future),
 //   2. keep those with booking_type_id === TIDYCAL_BOOKING_TYPE_ID, no cancelled_at / deleted_at (TidyCal's field names),
 //      and created_at within the last LOOKBACK,
-//   3. subscribe each contact to the Kit v3 tag KIT_DEMO_TAG_ID.
-// The 24-hour window overlaps 288 runs, so an outage or paused cron shorter than a day loses nothing. Kit's tag
-// subscribe is idempotent (a known email that already has the tag is a 200), so repeats are harmless
+//   3. subscribe each contact to the Kit tag KIT_DEMO_TAG_ID.
+// The 24-hour window overlaps 288 runs, so an outage or paused cron shorter than a day loses nothing. Tagging
+// is idempotent (a known email that already has the tag is success), so repeats are harmless
 // and no state (KV) is needed.
 // Logs hold only counts and status codes: never an email, name or booking id.
+
+import { KitRequestError, subscribeToTag } from './kit.ts';
 
 export interface DemoSyncEnv {
   TIDYCAL_API_TOKEN?: string;
@@ -29,7 +31,6 @@ export interface DemoSyncResult {
 }
 
 const TIDYCAL_API = 'https://tidycal.com/api';
-const KIT_API = 'https://api.convertkit.com/v3';
 export const LOOKBACK_MS = 24 * 60 * 60 * 1000;
 export const MAX_PAGES = 25;
 export const FETCH_TIMEOUT_MS = 10_000;
@@ -102,20 +103,11 @@ export async function syncDemoBookings(env: DemoSyncEnv, now: Date = new Date())
   const statuses: number[] = [];
   for (const [email, firstName] of found) {
     try {
-      const res = await fetch(`${KIT_API}/tags/${tagId}/subscribe`, {
-        method: 'POST',
-        signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
-        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-        body: JSON.stringify({ api_key: env.KIT_API_KEY!.trim(), email, ...(firstName ? { first_name: firstName } : {}) }),
-      });
-      if (res.ok) tagged++;
-      else {
-        failed++;
-        statuses.push(res.status);
-      }
-    } catch {
+      await subscribeToTag(env.KIT_API_KEY!.trim(), tagId, email, firstName, FETCH_TIMEOUT_MS);
+      tagged++;
+    } catch (err) {
       failed++;
-      statuses.push(0);
+      statuses.push(err instanceof KitRequestError ? err.status : 0);
     }
   }
   const tail = statuses.length ? ` (kit statuses ${[...new Set(statuses)].join(', ')})` : '';
