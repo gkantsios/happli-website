@@ -3,6 +3,8 @@ import { defineConfig } from 'astro/config';
 import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
 import { site } from './src/config/site.ts';
+import { satteri } from '@astrojs/markdown-satteri';
+import { umamiEventsHastPlugin } from './src/lib/rehype-umami-events.mjs';
 
 // Sections that are switched off in src/config/site.ts stay out of the sitemap.
 const hiddenPaths = Object.entries(site.sections)
@@ -13,6 +15,11 @@ export default defineConfig({
   site: 'https://gohappli.com',
   output: 'static',
   trailingSlash: 'ignore',
+  markdown: {
+    processor: satteri({
+      hastPlugins: [umamiEventsHastPlugin],
+    }),
+  },
   build: {
     format: 'directory',
     // Small site CSS: inline it so nothing blocks the first render.

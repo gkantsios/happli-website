@@ -3,6 +3,7 @@
 // Every number comes from src/config/pricing.ts.
 import Icon from '../Icon.astro';
 import { site } from '../../config/site';
+import { umamiAttrsForHref } from '../../lib/umami-events.mjs';
 import { plan, launchLock, marketingAddOn, yearlySavePercent, usd, yearlyTotal } from '../../config/pricing';
 
 interface Props {
@@ -58,9 +59,9 @@ const calcData = JSON.stringify({ launch, regular, extraMember, share: plan.extr
           {plan.features.map((f) => <li><Icon name="check" size={16} strokeWidth={2} /><span>{f}</span></li>)}
         </ul>
         {cta === 'call' ? (
-          <a class="btn btn-coral" href={site.cta.href} target="_blank" rel="noopener">{ctaLabel}</a>
+          <a class="btn btn-coral" href={site.cta.href} target="_blank" rel="noopener" {...umamiAttrsForHref(site.cta.href, { location: 'pricing' })}>{ctaLabel}</a>
         ) : (
-          <a class="btn btn-coral" href={plan.href}>Get started</a>
+          <a class="btn btn-coral" href={plan.href} {...umamiAttrsForHref(plan.href, { location: 'pricing' })}>Get started</a>
         )}
       </div>
     </article>

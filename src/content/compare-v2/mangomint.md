@@ -50,7 +50,7 @@ Choose Mangomint if most of your payments are taken in person and the lower in-p
 
 ## Who should pick Happli
 
-Choose Happli if you want a lower monthly price, an approval step before anything goes to a client, and your card payments in your own Stripe account. <a href="https://tidycal.com/gkantsios/happli-demo" target="_blank" rel="noopener">Book a demo</a> to see it with your own schedule.
+Choose Happli if you want a lower monthly price, an approval step before anything goes to a client, and your card payments in your own Stripe account. [Book a demo](https://tidycal.com/gkantsios/happli-demo) to see it with your own schedule.
 
 ## Sources
 

@@ -13,6 +13,7 @@ import Faq, { type FaqItem } from '../components/sections/Faq.astro';
 import CtaBand from '../components/sections/CtaBand.astro';
 import { softwareApplication } from '../lib/jsonld';
 import { site } from '../config/site';
+import { umamiAttrsForHref } from '../lib/umami-events.mjs';
 import { plan, usd } from '../config/pricing';
 
 const title = 'Happli | Booking software for salons and spas';
@@ -50,7 +51,7 @@ const faq: FaqItem[] = [
     body="See how Happli books, collects and reminds for you."
   >
     <p class="more">
-      One plan with everything, from {usd(plan.launch.yearly)} a month at launch pricing. <a href="/pricing/">See pricing</a> or <a href="/signup/">get started</a>.
+      One plan with everything, from {usd(plan.launch.yearly)} a month at launch pricing. <a href="/pricing/">See pricing</a> or <a href="/signup/" {...umamiAttrsForHref('/signup/', { location: 'home' })}>get started</a>.
     </p>
   </CtaBand>
 </BaseLayout>

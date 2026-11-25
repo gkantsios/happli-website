@@ -2,6 +2,7 @@
 import Icon from '../Icon.astro';
 import ProductBook from './ProductBook.astro';
 import { site } from '../../config/site';
+import { umamiAttrsForHref } from '../../lib/umami-events.mjs';
 ---
 
 <section class="hero" aria-labelledby="hero-title">
@@ -13,7 +14,7 @@ import { site } from '../../config/site';
       list for you.
     </p>
     <div class="btn-row hero-actions">
-      <a class="btn btn-coral" href={site.cta.href} target="_blank" rel="noopener">{site.cta.label}</a>
+      <a class="btn btn-coral" href={site.cta.href} target="_blank" rel="noopener" {...umamiAttrsForHref(site.cta.href, { location: 'hero' })}>{site.cta.label}</a>
       {site.demo.enabled && <a class="btn btn-ghost" href={site.demo.href}>{site.demo.label}</a>}
           <a class="btn btn-ghost" href="#walkthrough">See a day in Happli</a>
     </div>

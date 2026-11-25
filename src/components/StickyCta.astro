@@ -10,10 +10,11 @@
 // form error, and stays hidden while focus moves within a form (e.g. Tab to its submit button). The bar publishes its height as --cta-bar-h so the hero's phone sheet sits above it.
 // (Comments live up here, not in the inline script, so they don't ship in every page.)
 import { site } from '../config/site';
+import { umamiAttrsForHref } from '../lib/umami-events.mjs';
 ---
 
 <div class="sticky-cta" data-sticky-cta aria-hidden="true" inert>
-  <a class="btn btn-coral" href={site.cta.href} target="_blank" rel="noopener">{site.cta.label}</a>
+  <a class="btn btn-coral" href={site.cta.href} target="_blank" rel="noopener" {...umamiAttrsForHref(site.cta.href, { location: 'sticky' })}>{site.cta.label}</a>
 </div>
 
 <script is:inline>
