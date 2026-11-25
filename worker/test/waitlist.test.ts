@@ -87,6 +87,20 @@ test('failed Turnstile is 403 and skips Kit', async () => {
   assert.ok(!calls.some((c) => c.url.includes('convertkit')));
 });
 
+// Browsers send a mixed-case boundary; Node's FormData uses a lowercase one, so build the body by hand.
+test('mixed-case multipart boundary parses and reaches Turnstile', async () => {
+  const boundary = '----WebKitFormBoundaryAbCdEf';
+  const body = `--${boundary}\r\nContent-Disposition: form-data; name="email"\r\n\r\nperson@example.com\r\n--${boundary}--\r\n`;
+  const req = new Request('https://gohappli.com/api/waitlist', {
+    method: 'POST', body,
+    headers: { accept: 'application/json', origin: 'https://gohappli.com', 'content-type': `multipart/form-data; boundary=${boundary}` },
+  });
+  const res = await handleWaitlist(req, env);
+  assert.equal(res.status, 403);
+  assert.deepEqual(await res.json(), { ok: false, code: 'verification_failed' });
+  assert.ok(!calls.some((c) => c.url.includes('convertkit')));
+});
+
 test('Kit error is 502 and does not log the email', async () => {
   kitStatus = 401;
   const logged: string[] = [];
